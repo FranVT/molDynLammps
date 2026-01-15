@@ -83,7 +83,7 @@ compute clsize CM property/chunk Nclpart count                      # Counts the
 compute idcl CM property/chunk Nclpart id                           # Get the ids of the clusters
 
 # Discretize the height into small boxes
-compute spatialChunks CM chunk/atom bin/3d x lower 1 y lower 1 z center ${bin_y} nchunk every units reduced
+#compute spatialChunks CM chunk/atom bin/3d x lower 1 y lower 1 z center ${bin_y} nchunk every units reduced
 
 # DUMPS and FIXES
 
@@ -99,7 +99,7 @@ fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pre
 fix 1 CM ave/time 1 1 ${Ndump} c_idcl c_clsize file ${Dir}/${file3_name} mode vector
 
 # The ave/chunk creates a temporal average. The ave keyword creates a spatial average.
-fix fixChunks CM ave/chunk 1 ${Nsave} ${Nsave} spatialChunks vx vy vz c_disp[*] ave one file ${Dir}/${file4_name}
+#fix fixChunks CM ave/chunk 1 ${Nsave} ${Nsave} spatialChunks vx vy vz c_disp[*] ave one file ${Dir}/${file4_name}
 
 # Save atom positions with cluster id
 dump dumpID all custom ${Ndump} ${Dir}/traj/${file5_name} id mol c_clusters type x y z vx vy vz
