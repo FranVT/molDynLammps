@@ -1,0 +1,17 @@
+# Debug in.assembly
+- swapMech.3b: tab1 y tab2
+- bin_y
+- omp -> agregar hilos
+
+# Debug simulacion
+- Promedios temporales
+- Limpiar los fix files
+
+# tables
+- simplificar scripts
+- combinar swap Mech
+- revisar diferencias finitas
+
+# Plan ya que funcione el script
+- damp
+- temperatura
