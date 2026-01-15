@@ -1,0 +1,60 @@
+LAMMPS (22 Jul 2025)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+package omp 0
+using multi-threaded neighbor list subroutines
+# Input Script of lammps for assembly simulation of polimeric network.
+# Main code is based on: https://github.com/PipeB62/Hydrogel-Simulation
+# Patchy particles are with bond style.
+
+# Felipe Benavides modified by Fco. Vazquez
+
+# Initialization
+units lj
+dimension 3
+boundary p p p
+
+# Styles of atoms and that stuff
+atom_style full
+bond_style harmonic
+angle_style harmonic
+pair_style hybrid/overlay zero 0.0 lj/cut/omp 1.12 table/omp linear 5000000 threebody/table
+
+newton on
+
+# Create simulaiton box
+region simulation_box block -$L $L -$L $L -$L $L
+region simulation_box block -5.211203 $L -$L $L -$L $L
+region simulation_box block -5.211203 5.211203 -$L $L -$L $L
+region simulation_box block -5.211203 5.211203 -5.211203 $L -$L $L
+region simulation_box block -5.211203 5.211203 -5.211203 5.211203 -$L $L
+region simulation_box block -5.211203 5.211203 -5.211203 5.211203 -5.211203 $L
+region simulation_box block -5.211203 5.211203 -5.211203 5.211203 -5.211203 5.211203
+# N-atom-types region-ID keyword value Is necesesary the extra/special/per/atom (# of special neighbors per atom)
+create_box 4 simulation_box     bond/types 1     angle/types 2     extra/bond/per/atom 10     extra/angle/per/atom 6     extra/special/per/atom 10
+Created orthogonal box = (-5.211203 -5.211203 -5.211203) to (5.211203 5.211203 5.211203)
+  1 by 1 by 1 MPI processor grid
+
+# Atom types
+mass 1 1.0      # CL
+mass 2 1.0      # MO
+mass 3 0.1      # PA
+mass 4 0.1      # PB
+
+# Coefficients
+include potential.in
+# Script with the pair-wise interaction and bonds between particles
+
+bond_coeff 1 100.0 0.45
+angle_coeff 1 100.0 180
+angle_coeff 2 100.0 109.4712
+pair_coeff 1 3 zero 0.5
+pair_coeff 1 4 zero 0.5
+pair_coeff 2 3 zero 0.5
+pair_coeff 2 4 zero 0.5
+pair_coeff 3 3 zero 0.5
+pair_coeff 1 1 lj/cut/omp 1.0 1.0 1.12
+pair_coeff 2 2 lj/cut/omp 1.0 1.0 1.12
+pair_coeff 1 2 lj/cut/omp 1.0 1.0 1.12
+pair_coeff 3 4 table/omp sysFiles/pachTab.table POT 0.6 # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB
+ERROR on proc 0: cannot open pair table potential file sysFiles/pachTab.table: No such file or directory (src/potential_file_reader.cpp:58)
