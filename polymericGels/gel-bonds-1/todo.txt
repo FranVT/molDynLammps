@@ -1,7 +1,5 @@
 # Debug in.assembly
 - swapMech.3b: tab1 y tab2
-- bin_y
-- omp -> agregar hilos
 
 # Debug simulacion
 - Promedios temporales
@@ -11,6 +9,13 @@
 - simplificar scripts
 - combinar swap Mech
 - revisar diferencias finitas
+
+# Acerca de promedios temproales en LAMMPS
+fix ... ave/time Nevery Nrepeat Nfreq ...
+
+Nevery = 1 => Usar cada paso temporal en el promedio
+Nrepeat = 1000 => Usar mil pasos temporales para crear el promedio temporal
+Nfreq = 1000 => Cada mil iteraciones realizar un promedio temporal
 
 # Plan ya que funcione el script
 - damp

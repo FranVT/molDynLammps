@@ -10,9 +10,9 @@ Vol_CL1=4.80538;
 
 # Assign values to the independent variables
 T=0.05;
-N_particles=100;
-phi=0.4;
-CL_con=0.1;
+N_particles=2500;
+phi=0.3;
+CL_con=0.05;
 
 # Assign computational parameters
 damp=1;
@@ -21,10 +21,8 @@ seed1=3234;
 seed2=6321;
 seed3=2010;
 
-steps_isot=800;
-steps_heat=500;
-
-bin_y=0.1;
+steps_isot=8000000;
+steps_heat=500000;
 
 log_name="log-test.log";
 
@@ -41,12 +39,13 @@ Vol_Totg=$(echo "scale=$cs; $Vol_MO + $Vol_CL" | bc);       # Total volume of a 
 Vol_Tot=$(echo "scale=$cs; $Vol_Totg / $phi" | bc);
 L_real=$(echo "scale=$cs; e( (1/3) * l($Vol_Tot) )" | bc -l );
 L=$(echo "scale=$cs; $L_real / 2" | bc);
+aux2=$(echo "scale=$cs; 1 / $damp" | bc);
 aux=$(echo "scale=$cs; 1 / $dt" | bc);
-Nsave=$(echo "scale=0; $damp * $aux" | bc);
+Nsave=$(echo "scale=0; $aux2 * $aux" | bc);
 Nsave=${Nsave%.*};
-NsaveStress=$(echo "scale=0; $damp * $aux" | bc);
+NsaveStress=$(echo "scale=0; $aux2 * $aux" | bc);
 NsaveStress=${NsaveStress%.*};
-Ndump=$(echo "scale=0; 1000 *  $aux" | bc);
+Ndump=$(echo "scale=0; $aux" | bc);
 Ndump=${Ndump%.*};
 
 # Assign values to file management variables
@@ -57,4 +56,4 @@ mkdir "$dir_save";
 mkdir "$dir_save/traj";
 files_name=("system_assembly.fixf" "stress_assembly.fixf" "clust_assembly.fixf" "profiles_assembly.fixf" "traj_assembly.*.dumpf" "data.hydrogel" "system_shear.fixf" "stress_shear.fixf" "clust_shear.fixf" "profiles_shear.fixf" "traj_shear.*.dumpf" "strain-*.restart")
 
-lmp -sf omp -in in.assembly.lmp -log $log_name -var bin_y $bin_y -var temp $T -var damp $damp -var L $L -var NCL $N_CL -var NMO $N_MO -var seed1 $seed1 -var seed2 $seed2 -var seed3 $seed3 -var tstep $dt -var Nsave $Nsave -var NsaveStress $NsaveStress -var Ndump $Ndump -var steps $steps_isot -var stepsheat $steps_heat -var Dir $dir_save -var file1_name ${files_name[0]} -var file2_name ${files_name[1]} -var file3_name ${files_name[2]} -var file4_name ${files_name[3]} -var file5_name ${files_name[4]} -var file6_name ${files_name[5]};
+mpirun -np 8 lmp -sf omp -in in.assembly.lmp -log $log_name -var temp $T -var damp $damp -var L $L -var NCL $N_CL -var NMO $N_MO -var seed1 $seed1 -var seed2 $seed2 -var seed3 $seed3 -var tstep $dt -var Nsave $Nsave -var NsaveStress $NsaveStress -var Ndump $Ndump -var steps $steps_isot -var stepsheat $steps_heat -var Dir $dir_save -var file1_name ${files_name[0]} -var file2_name ${files_name[1]} -var file3_name ${files_name[2]} -var file4_name ${files_name[3]} -var file5_name ${files_name[4]} -var file6_name ${files_name[5]};
