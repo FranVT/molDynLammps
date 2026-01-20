@@ -60,6 +60,14 @@ Ahora, el problema principal es la aglomeración de interación de más de dos p
     \caption{Configuración final del assembly}%\label{fig:strain-vs-normstress}
 \end{figure}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-20-111704/temp-0.050.30.05500-2026-01-20-111704.png}
+    \caption{Temperatura durante el assembly}%\label{fig:strain-vs-normstress}
+\end{figure}
+
+
+
 \newpage
 
 \subsection{Directory: 0.050.30.05500-2026-01-20-121005}
@@ -86,11 +94,39 @@ Se tardó 36 minutos.
     \caption{Configuración final del assembly}%\label{fig:strain-vs-normstress}
 \end{figure}
 
-
-
+\newpage
 
 \subsection{Directory: 0.050.30.05500-2026-01-20-143651}
 Ahora se explora con $w=0.5$
+35 minutos.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-20-143651/triple.png}
+    \caption{Configuración final del assembly}%\label{fig:strain-vs-normstress}
+\end{figure}
+
+Mi intuición ahora es que puede que tenga mal las diferencias finitas.
+En las simulaciones que use para la Tesis de maestría se tenía el $\mathrm{damp}=0.1$ y ahora es de $\mathrm{damp}=1$.
+Intuyo que también por eso no se está logrando estabilizar mucho esto.
+También, viendo rápidamente la temperatura, está se relaja arriba de \num{0.05}, lo cuál no es esperado. 
+
+Volveré a intentar, pero cambiaré la masa de las partículas patchy a $1$, a ver que onda.
+
+
+
+\subsection{Directory: 0.050.30.05500-2026-01-20-151755}
+Ahora se explora con $w=1$
+Masa de partículas patchy de $0.1$ a $1$.
+32 minutos.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-20-151755/triple.png}
+    \caption{Configuración final del assembly}%\label{fig:strain-vs-normstress}
+\end{figure}
+
+No se ´´arreglo'' la interacción de más de dos patches, pero parece ser que la temperatura si se estabilizó en el valor esperado, \num{0.05}.
 
 
 \end{document}
