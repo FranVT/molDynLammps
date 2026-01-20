@@ -1,0 +1,11 @@
+# Bitacora
+
+
+
+## Enero 20
+- Se inicia esta bitacora
+- Se Modifica el archivo swapMech.3b:
+    - swapMechTab1 es cuando los tipos de partículas son distintos (PA PB PA)
+    - swapMechTab2 es cuando los tipos de partículas son iguales (PB PA PA)
+- Simulacion prueba con 500 partículas
+    - Directorio: 0.050.30.05500-2026-01-20-111704

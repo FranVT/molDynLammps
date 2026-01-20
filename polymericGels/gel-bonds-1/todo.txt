@@ -1,6 +1,3 @@
-# Debug in.assembly
-- swapMech.3b: tab1 y tab2
-
 # Debug simulacion
 - Promedios temporales
 - Limpiar los fix files

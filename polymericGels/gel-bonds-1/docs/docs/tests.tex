@@ -1,0 +1,58 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Directory: 0.050.30.052500-2026-01-16-102953}
+
+La simulación tardó, aproximadamente, 5 hrs.
+Fueron \num{2500} partículas y \num{8.5d6} iteraciones.
+Se asginó $\mathrm{damp}=1$ para ver que onda.
+Fracción de empaquetamiento y concentración de crosslinkers son irrelevantes por el momento.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.052500-2026-01-16-102953/finalConfigAssembly.png}
+    \caption{Configuración final del assembly}%\label{fig:strain-vs-normstress}
+\end{figure}
+
+El error proviene del archivo \verb|swapMech.3b|.
+Estaba declarado de la siguiente forma:
+
+\begin{code}
+PA PA PA 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PB PA PA 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PA PB PA 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PB PB PA 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PA PA PB 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PB PA PB 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PA PB PB 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PB PB PB 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+\end{code}
+
+La diferencia con el archivo \verb|swapMechTab2_w0.75.table| es la evaluación de los potenciales.
+En el archivo 1 tiene más elementos evaluados que en el segundo archivo.
+Esto por la forma que tiene LAMMPS para evaluar potenciales \emph{numéricos}\footnote{%The tabulation is done on a three-dimensional grid of the two distances\ldots
+\ldots There are two different cases. 
+If element 2 and element 3 are of the same type (e.g. SiCC),\ldots %the distance is varied in “N” steps from rmin to rmax and the distance  is varied from  to rmax. \ldots
+If element 2 and element 3 are not of the same type (e.g. SiCSi),\ldots %there is no additional symmetry and the distance  is also varied from rmin to rmax in “N” steps. 
+%The angle  is always varied in “2N” steps from (0.0 + 180.0/(4N)) to (180.0 - 180.0/(4N)). 
+Therefore, the total number of table entries is “M = N * N * (N+1)” for the symmetric (element 2 and element 3 are of the same type) and “M = 2 * N * N * N” for the general case (element 2 and element 3 are not of the same type).}.
+
+\subsection{Directory: 0.050.30.05500-2026-01-20-111704}
+
+\begin{code}
+PA PA PA 0.6 swapMechTab2_w0.75.table SEC1 linear 100
+PB PA PA 0.6 swapMechTab2_w0.75.table SEC1 linear 100
+PA PB PA 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PB PB PA 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PA PA PB 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PB PA PB 0.6 swapMechTab1_w0.75.table SEC1 linear 100
+PA PB PB 0.6 swapMechTab2_w0.75.table SEC1 linear 100
+PB PB PB 0.6 swapMechTab2_w0.75.table SEC1 linear 100
+\end{code}
+
+The triple patches propertie reappears
+
+
+
+\end{document}
