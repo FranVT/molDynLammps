@@ -40,6 +40,7 @@ Therefore, the total number of table entries is “M = N * N * (N+1)” for the 
 
 \subsection{Directory: 0.050.30.05500-2026-01-20-111704}
 
+Main fix:
 \begin{code}
 PA PA PA 0.6 swapMechTab2_w0.75.table SEC1 linear 100
 PB PA PA 0.6 swapMechTab2_w0.75.table SEC1 linear 100
@@ -51,8 +52,45 @@ PA PB PB 0.6 swapMechTab2_w0.75.table SEC1 linear 100
 PB PB PB 0.6 swapMechTab2_w0.75.table SEC1 linear 100
 \end{code}
 
-The triple patches propertie reappears
+Ahora, el problema principal es la aglomeración de interación de más de dos patches, se tiene que $w=0.75$,
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-20-111704/triple.png}
+    \caption{Configuración final del assembly}%\label{fig:strain-vs-normstress}
+\end{figure}
+
+\newpage
+
+\subsection{Directory: 0.050.30.05500-2026-01-20-121005}
+
+En esta simulación se cambió el parámetro $w$ a $w=1$,
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-20-121005/triple.png}
+    \caption{Configuración final del assembly}%\label{fig:strain-vs-normstress}
+\end{figure}
+
+Parece que incrementar el parámetro $w$, incrementa la cantidad de interacciones entre patches.
+Posiblemente sea error de signo en la evaluación de la fuerza o potencial, porque debería de pasar lo contrario, por la definición del potencial.
+
+\subsection{Directory: 0.050.30.05500-2026-01-20-135923}
+
+$w=2$
+Para reducir el tiempo de espera, la cantidad de iteraciones se disminuyeron a \num{5.5d6}.
+Se tardó 36 minutos.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-20-135923/triple.png}
+    \caption{Configuración final del assembly}%\label{fig:strain-vs-normstress}
+\end{figure}
+
+
+
+
+\subsection{Directory: 0.050.30.05500-2026-01-20-143651}
+Ahora se explora con $w=0.5$
 
 
 \end{document}
