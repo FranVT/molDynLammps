@@ -107,13 +107,13 @@ timestep ${tstep}
 fix VelVerlet all nve # Use Velocity Verlet integrator
 
 # First elevate the temperature
-fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero no # Brownian Dynamics: langevin + nve 
+fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
 run ${stepsheat}
 
 unfix ThermoLng
 
 # Now we let the system to create the polymeric network
-fix ThermoLng all langevin ${temp} ${temp} ${damp} ${seed3} tally yes zero no # Brownian Dynamics: langevin + nve 
+fix ThermoLng all langevin ${temp} ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
 run ${steps}
 
 # Write data for deformation

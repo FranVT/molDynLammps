@@ -2,6 +2,46 @@
     Functions 
 """
 
+function fig_EngPair(cm, pt, dt,DATA)
+
+fig=Figure(size = (15cm, 12cm), fontsize = 12pt);
+
+clbr=:managua10;
+
+ax=Axis(fig[1:1,1:1],
+    title=latexstring("\\mathrm{Energy~Interactions}"),
+    #subtitle=latexstring(subtitle),
+    xlabel=L"\mathrm{Time~units}~[\tau^*]",
+    ylabel=L"\langle U \rangle~[J/\epsilon]",
+    titlesize=24.0f0,
+    subtitlesize=20.0f0,
+    xticklabelsize=18.0f0,
+    yticklabelsize=18.0f0,
+    xlabelsize=22.0f0,
+    ylabelsize=22.0f0,
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(nothing,nothing,nothing,nothing), 
+    #yticks = 0:0.01:1.5*T
+    #xticks=domain
+   )
+
+plot!(ax,dt.*DATA.TimeStep,DATA."c_wcaPair",label=L"\mathrm{WCA}")
+plot!(ax,dt.*DATA.TimeStep,DATA."c_patchPair",label=L"\mathrm{patch}")
+plot!(ax,dt.*DATA.TimeStep,DATA."c_swapPair",label=L"\mathrm{swap}")
+
+#hlines!(ax,[T])
+
+Legend(fig[1,2],ax,
+      L"\mathrm{Legend}",
+     labelsize=12pt)
+
+    return fig
+
+end
+
+
+
 function fig_EngSys(cm, pt, dt,DATA)
 
 fig=Figure(size = (15cm, 12cm), fontsize = 12pt);
