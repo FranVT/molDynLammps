@@ -1,5 +1,41 @@
 # Bitacora
 
+## Enero 21
+- Junta con asesores
+- VPN y entrar al cluster
+
+- Probar:
+    - Packing bajo
+    - Cl
+    - Temperatura
+    - Pozo de potencial
+    - damp (amortiguamiento)
+
+
+La temperatura es el 5% del pozo de potencial
+
+
+Cambio de temperatura 1.
+
+Se puede disminuis el timesteo a 10^(-2)
+
+
+Ver si se lográ tener una red a bajas concentraciones.
+
+Longitud y temperatura.
+
+Primero estructura y luego reología.
+
+Phi menor del 0.1.
+Phi alrededor de 0.05
+
+Análisis del assembly: Tiempo de equilibrio conforme va bajando la concentración.
+
+Diferencias en la estructura de la red.
+
+Ir armando scripts para analizar la red.
+Porosidad: distribución de tamaño de poro.
+
 
 
 ## Enero 20

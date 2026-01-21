@@ -124,7 +124,7 @@ create_atoms 0 random 475 6321 spawn_box mol MO ${seed2} overlap 1.0 maxtry 5000
 create_atoms 0 random 475 6321 spawn_box mol MO 6321 overlap 1.0 maxtry 5000 
 Created 1425 atoms
   using lattice units in orthogonal box = (-9.796741 -9.796741 -9.796741) to (9.796741 9.796741 9.796741)
-  create_atoms CPU = 0.008 seconds
+  create_atoms CPU = 0.007 seconds
 
 # Create patchy particles
 group CrossLinker type 1 3
@@ -199,27 +199,27 @@ thermo 1000
 fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file ${Dir}/${file1_name}
 fix Energy all ave/time 1 1000 ${Nsave} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file ${Dir}/${file1_name}
 fix Energy all ave/time 1 1000 1000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file ${Dir}/${file1_name}
-fix Energy all ave/time 1 1000 1000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/${file1_name}
-fix Energy all ave/time 1 1000 1000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/system_assembly.fixf
+fix Energy all ave/time 1 1000 1000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/${file1_name}
+fix Energy all ave/time 1 1000 1000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/system_assembly.fixf
 
 # Save Pressure and Stress tensor
 fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
 fix fixStress5 all ave/time 1 1000 ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
 fix fixStress5 all ave/time 1 1000 1000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
-fix fixStress5 all ave/time 1 1000 1000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/${file2_name}
-fix fixStress5 all ave/time 1 1000 1000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/stress_assembly.fixf
+fix fixStress5 all ave/time 1 1000 1000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/${file2_name}
+fix fixStress5 all ave/time 1 1000 1000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/stress_assembly.fixf
 
 # Save the global cluster information
 fix 1 CM ave/time 1 1 ${Ndump} c_idcl c_clsize file ${Dir}/${file3_name} mode vector
 fix 1 CM ave/time 1 1 1000 c_idcl c_clsize file ${Dir}/${file3_name} mode vector
-fix 1 CM ave/time 1 1 1000 c_idcl c_clsize file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/${file3_name} mode vector
-fix 1 CM ave/time 1 1 1000 c_idcl c_clsize file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/clust_assembly.fixf mode vector
+fix 1 CM ave/time 1 1 1000 c_idcl c_clsize file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/${file3_name} mode vector
+fix 1 CM ave/time 1 1 1000 c_idcl c_clsize file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/clust_assembly.fixf mode vector
 
 # Save atom positions with cluster id
 dump dumpID all custom ${Ndump} ${Dir}/traj/${file5_name} id mol c_clusters type x y z vx vy vz
 dump dumpID all custom 1000 ${Dir}/traj/${file5_name} id mol c_clusters type x y z vx vy vz
-dump dumpID all custom 1000 /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/traj/${file5_name} id mol c_clusters type x y z vx vy vz
-dump dumpID all custom 1000 /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/traj/traj_assembly.*.dumpf id mol c_clusters type x y z vx vy vz
+dump dumpID all custom 1000 /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/traj/${file5_name} id mol c_clusters type x y z vx vy vz
+dump dumpID all custom 1000 /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/traj/traj_assembly.*.dumpf id mol c_clusters type x y z vx vy vz
 dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
 
 # RUN SIMULATION
@@ -232,10 +232,10 @@ timestep 0.001
 fix VelVerlet all nve # Use Velocity Verlet integrator
 
 # First elevate the temperature
-fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} # Brownian Dynamics: langevin + nve
-fix ThermoLng all langevin 0.0 0.05 ${damp} ${seed3} 
-fix ThermoLng all langevin 0.0 0.05 1 ${seed3} 
-fix ThermoLng all langevin 0.0 0.05 1 2010 
+fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero no # Brownian Dynamics: langevin + nve
+fix ThermoLng all langevin 0.0 0.05 ${damp} ${seed3} tally yes zero no 
+fix ThermoLng all langevin 0.0 0.05 1 ${seed3} tally yes zero no 
+fix ThermoLng all langevin 0.0 0.05 1 2010 tally yes zero no 
 run ${stepsheat}
 run 500000
 WARNING: Using a manybody potential with bonds/angles/dihedrals and special_bond exclusions (src/pair.cpp:250)
@@ -283,7 +283,7 @@ Neighbor list info ...
       pair build: halffull/newton/omp
       stencil: none
       bin: none
-Per MPI rank memory allocation (min/avg/max) = 19.65 | 19.65 | 19.65 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 20.03 | 20.03 | 20.03 Mbytes
    Step          Temp          E_pair         E_mol          TotEng         Press     
          0   0              0.00041490155  0.15480456     0.15521947    -0.21361809   
       1000   0.038128318    0              0.00013757075  0.057293149    0.0036255378 
@@ -786,21 +786,21 @@ Per MPI rank memory allocation (min/avg/max) = 19.65 | 19.65 | 19.65 Mbytes
     498000   0.050673695   -0.6314765      0.037859694   -0.51765531     0.010652124  
     499000   0.051148864   -0.63107303     0.035917484   -0.51848174     0.014880524  
     500000   0.050493806   -0.63094086     0.035369723   -0.5198793      0.0059610213 
-Loop time of 122.016 on 8 procs for 500000 steps with 1550 atoms
+Loop time of 124.671 on 8 procs for 500000 steps with 1550 atoms
 
-Performance: 354050.527 tau/day, 4097.807 timesteps/s, 6.352 Matom-step/s
+Performance: 346512.588 tau/day, 4010.562 timesteps/s, 6.216 Matom-step/s
 92.2% CPU use with 8 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 14.439     | 15.072     | 16.73      |  17.4 | 12.35
-Bond    | 5.0076     | 5.3104     | 5.7282     |   9.7 |  4.35
-Neigh   | 0.045807   | 0.045894   | 0.046041   |   0.0 |  0.04
-Comm    | 11.877     | 13.966     | 14.987     |  23.9 | 11.45
-Output  | 0.39187    | 0.41198    | 0.43432    |   2.2 |  0.34
-Modify  | 85.751     | 85.839     | 85.905     |   0.5 | 70.35
-Other   |            | 1.371      |            |       |  1.12
+Pair    | 14.043     | 15.221     | 16.952     |  26.5 | 12.21
+Bond    | 4.9454     | 5.3241     | 5.7977     |  13.2 |  4.27
+Neigh   | 0.044897   | 0.045292   | 0.045605   |   0.1 |  0.04
+Comm    | 11.969     | 14.183     | 15.817     |  36.3 | 11.38
+Output  | 0.39032    | 0.41046    | 0.43214    |   2.2 |  0.33
+Modify  | 87.824     | 88.025     | 88.29      |   1.4 | 70.61
+Other   |            | 1.463      |            |       |  1.17
 
 Nlocal:         193.75 ave         213 max         179 min
 Histogram: 3 0 0 1 0 2 0 0 1 1
@@ -820,17 +820,17 @@ Dangerous builds = 0
 unfix ThermoLng
 
 # Now we let the system to create the polymeric network
-fix ThermoLng all langevin ${temp} ${temp} ${damp} ${seed3} # Brownian Dynamics: langevin + nve
-fix ThermoLng all langevin 0.05 ${temp} ${damp} ${seed3} 
-fix ThermoLng all langevin 0.05 0.05 ${damp} ${seed3} 
-fix ThermoLng all langevin 0.05 0.05 1 ${seed3} 
-fix ThermoLng all langevin 0.05 0.05 1 2010 
+fix ThermoLng all langevin ${temp} ${temp} ${damp} ${seed3} tally yes zero no # Brownian Dynamics: langevin + nve
+fix ThermoLng all langevin 0.05 ${temp} ${damp} ${seed3} tally yes zero no 
+fix ThermoLng all langevin 0.05 0.05 ${damp} ${seed3} tally yes zero no 
+fix ThermoLng all langevin 0.05 0.05 1 ${seed3} tally yes zero no 
+fix ThermoLng all langevin 0.05 0.05 1 2010 tally yes zero no 
 run ${steps}
 run 5000000
 WARNING: Using a manybody potential with bonds/angles/dihedrals and special_bond exclusions (src/pair.cpp:250)
 Hybrid pair style last /omp style table/omp
 Last active /omp style is angle_style harmonic/omp
-Per MPI rank memory allocation (min/avg/max) = 23.66 | 23.66 | 23.66 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 24.03 | 24.04 | 24.04 Mbytes
    Step          Temp          E_pair         E_mol          TotEng         Press     
     500000   0.050493806   -0.63094086     0.035369723   -0.5198793      0.00068438568
     501000   0.04864942    -0.63160077     0.036891284   -0.52178243     0.004706289  
@@ -5833,21 +5833,21 @@ Per MPI rank memory allocation (min/avg/max) = 23.66 | 23.66 | 23.66 Mbytes
    5498000   0.051260625   -0.81818326     0.049596069   -0.69174586     0.020216119  
    5499000   0.052108128   -0.81869326     0.047650331   -0.69293116     0.02712183   
    5500000   0.051962763   -0.8179861      0.049191559   -0.69090068     0.035170099  
-Loop time of 1786.31 on 8 procs for 5000000 steps with 1550 atoms
+Loop time of 1763.38 on 8 procs for 5000000 steps with 1550 atoms
 
-Performance: 241839.945 tau/day, 2799.073 timesteps/s, 4.339 Matom-step/s
-94.1% CPU use with 8 MPI tasks x 1 OpenMP threads
+Performance: 244983.617 tau/day, 2835.459 timesteps/s, 4.395 Matom-step/s
+94.2% CPU use with 8 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 213.76     | 301.92     | 434.77     | 415.8 | 16.90
-Bond    | 44.883     | 55.099     | 70.229     | 111.4 |  3.08
-Neigh   | 1.0041     | 1.0052     | 1.0062     |   0.1 |  0.06
-Comm    | 224.82     | 368.99     | 463.57     | 403.7 | 20.66
-Output  | 13.081     | 13.309     | 13.488     |   3.9 |  0.75
-Modify  | 1026.6     | 1030.3     | 1033.9     |   9.5 | 57.68
-Other   |            | 15.72      |            |       |  0.88
+Pair    | 211.58     | 300.77     | 434.44     | 424.6 | 17.06
+Bond    | 44.446     | 54.386     | 68.855     | 111.7 |  3.08
+Neigh   | 0.98186    | 0.98217    | 0.98256    |   0.0 |  0.06
+Comm    | 217.02     | 361        | 456.34     | 415.6 | 20.47
+Output  | 12.747     | 12.969     | 13.147     |   3.9 |  0.74
+Modify  | 1013.8     | 1017.9     | 1020.9     |   9.0 | 57.72
+Other   |            | 15.38      |            |       |  0.87
 
 Nlocal:         193.75 ave         410 max          45 min
 Histogram: 1 1 2 1 0 1 0 1 0 1
@@ -5867,10 +5867,10 @@ Dangerous builds = 0
 # Write data for deformation
 
 write_restart ${Dir}/${file6_name}
-write_restart /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/${file6_name}
-write_restart /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-20-151755/data.hydrogel
+write_restart /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/${file6_name}
+write_restart /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/0.050.30.05500-2026-01-21-133721/data.hydrogel
 System init for write_restart ...
 WARNING: Using a manybody potential with bonds/angles/dihedrals and special_bond exclusions (src/pair.cpp:250)
 Hybrid pair style last /omp style table/omp
 Last active /omp style is angle_style harmonic/omp
-Total wall time: 0:32:07
+Total wall time: 0:31:45
