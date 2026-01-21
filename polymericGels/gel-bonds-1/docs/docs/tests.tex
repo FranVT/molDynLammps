@@ -260,6 +260,19 @@ No se ´´arreglo'' la interacción de más de dos patches, pero parece ser que 
     \caption{ep y ek}
 \end{marginfigure}
 
+Se supone recomienda que econserve se debe mantener constante a lo largo de las simulaciones, pero claramente empezó a tener un comportamiento exponencial y pienso que eso no es deseado.
+En las simulaciones pasadas ese comportamiento no se podía apreciar porque en el commando \verb|fix lagevin| no estaba activada la opción \verb|tally|, que permité guardar la suma acumulada de la energía que se introduce al sistema através del baño térmico.
+Además, el problema de las interacciones entre tres patches no se ´´arregló''
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-21-133721/triple.png}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-21-133721/cluster-patch-patch.png}
+\end{figure}
+
 
 
 \end{document}
