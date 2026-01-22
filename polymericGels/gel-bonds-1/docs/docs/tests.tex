@@ -318,7 +318,134 @@ Se tardó 35 mins.
     \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-21-161335/cluster-patch-patch.png}
 \end{figure}
 
+\newpage 
+
+\section{Directory: 0.050.30.05500-2026-01-22-154929}
+
+\marginpar{
+    \textbf{Parámetros \emph{importantes} de la simulación}
+    \[\mathrm{damp}=0.5;\qquad w=1\]
+}
+
+Cambie el damp, para ver que onda.
+
+\begin{marginfigure}
+    \includegraphics[width=\linewidth]{../Figures/0.050.30.05500-2026-01-22-154929/temp-0.050.30.05500-2026-01-22-154929.png}
+    \caption{Temperature during assembly.}
+\end{marginfigure}
+
+\begin{marginfigure}
+    \includegraphics[width=\linewidth]{../Figures/0.050.30.05500-2026-01-22-154929/eSys-0.050.30.05500-2026-01-22-154929.png}
+    \caption{Econserve and ecouple.}
+\end{marginfigure}
+
+\begin{marginfigure}
+    \includegraphics[width=\linewidth]{../Figures/0.050.30.05500-2026-01-22-154929/ePair-0.050.30.05500-2026-01-22-154929.png}
+    \caption{Energía de potenciales de interacción}
+\end{marginfigure}
+
+\begin{marginfigure}
+    \includegraphics[width=\linewidth]{../Figures/0.050.30.05500-2026-01-22-154929/epk-0.050.30.05500-2026-01-22-154929.png}
+    \caption{ep y ek}
+\end{marginfigure}
 
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-22-154929/cluster-patch-patch.png}
+\end{figure}
+
+Parece que no cambió mucho.
+
+
+\newpage
+
+\section{Acerca del potencial de tres cuerpos}
+
+Mi intuición es que hay algo mal en la forma en como estoy evaluando el potencial de tres cuerpos.
+Porque la energía que se registra debido al potential de swap es comprable con la energía que se registra debido al potencial de interacción.
+Posiblemente estoy evaluando mal los dominios.
+
+Revisando con calma la última versión que usé para crear las tablas del potencial de tres cuerpos me encontré que estaba mal evaluada.
+En la documentación de lammps se espera que $f_{i1}=-f_{j1},~f_{i2}=-f_{k1},~f_{j2}=-f_{k2}$ y esas propiedades no se cumplieron para todas las evaluaciones.
+
+Esto se puede aprecair facilmente en la declaración de la función que evalua las fuerzas debido al potencial de tres cuarpos:
+\begin{code}
+    th = deg2rad(th);
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+
+    f_i=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik);
+    f_j=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk);
+    f_k=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+
+    f_i1=f_i;
+    f_i2=f_i*cos(th);
+   
+    f_j1=f_j;
+    f_j2=f_j*(1-cos(th));
+
+    f_k1=f_k*cos(th);
+    f_k2=f_k*(1-cos(th));
+\end{code}
+
+Cambié el código al siguiente:
+
+\begin{code}
+    th = deg2rad(th);
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+
+    f_i=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik);
+    f_j=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk);
+    f_k=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+
+    f_i1=f_i;
+    f_i2=f_i*cos(th);
+   
+    f_j1=-f_i1;
+    f_j2=f_j*(1-cos(th));
+
+    f_k1=-f_i2;
+    f_k2=-f_j2;
+\end{code}
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-22-163251}
+
+\begin{marginfigure}
+    \includegraphics[width=\linewidth]{../Figures/0.050.30.05500-2026-01-22-163251/temp-0.050.30.05500-2026-01-22-163251.png}
+    \caption{Temperature during assembly.}
+\end{marginfigure}
+
+\begin{marginfigure}
+    \includegraphics[width=\linewidth]{../Figures/0.050.30.05500-2026-01-22-163251/eSys-0.050.30.05500-2026-01-22-163251.png}
+    \caption{Econserve and ecouple.}
+\end{marginfigure}
+
+\begin{marginfigure}
+    \includegraphics[width=\linewidth]{../Figures/0.050.30.05500-2026-01-22-163251/ePair-0.050.30.05500-2026-01-22-163251.png}
+    \caption{Energía de potenciales de interacción}
+\end{marginfigure}
+
+\begin{marginfigure}
+    \includegraphics[width=\linewidth]{../Figures/0.050.30.05500-2026-01-22-163251/epk-0.050.30.05500-2026-01-22-163251.png}
+    \caption{ep y ek}
+\end{marginfigure}
+
+
+
+Cambié la evaluación de las tablas de la forma anterior.
+Disminuí de \num{5d6} a \num{3d6} en el proceso isotérmico para que tardará menos las simulciones de prueba.
+Fue hasta \num{3d6} pporque observando la energía potential de interacción, se relajaba a un valor más o menos constante al rededor de esas iteraciones.
+
+Tardó 16 mins
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-22-163251/cluster-patch-patch.png}
+\end{figure}
+
+Tiene vibras que mejoró, voy a poner \num{8d6}
 
 \end{document}

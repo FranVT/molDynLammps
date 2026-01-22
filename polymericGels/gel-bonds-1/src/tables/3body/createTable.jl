@@ -118,11 +118,14 @@ function force2(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     f_i1=f_i;
     f_i2=f_i*cos(th);
    
-    f_j1=f_j;
+    #f_j1=f_j;
+    f_j1=-f_i1;
     f_j2=f_j*(1-cos(th));
 
-    f_k1=f_k*cos(th);
-    f_k2=f_k*(1-cos(th));
+    #f_k1=f_k*cos(th);
+    f_k1=-f_i2;
+    #f_k2=f_k*(1-cos(th));
+    f_k2=-f_j2;
 
     eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
     eng=round(eng/3,digits=2^7)
@@ -144,7 +147,7 @@ rmin = sig/1000;
 rmax = 2*sig;
 thi = 180/(4*N)
 thf = 180 - thi;
-w=0.5;
+w=1;
 
 filename1 = string("swapMechTab1_w",w,".table");
 filename2 = string("swapMechTab2_w",w,".table");
