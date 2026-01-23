@@ -516,14 +516,28 @@ Considerando la relación entre potencial y fuerza en interacciones conservativa
 \begin{align*}
     \vec{F}_{i} &= -\nabla U_\mathrm{swap}\qty(r_{ij},r_{ik}) \\
             &= -\pdv{r} \alpha U_3(r_{ij})U_3(r_{ik})\hat{e}_{r} \\
-            &= -\alpha\left[ U_3(r_{ik})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{ik}) \right] 
+            &= -\alpha\left[ U_3(r_{ik})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{ik}) \right]\hat{e}_{r} 
 \end{align*}
 } para la fuerza de cada partículs:
 
 \begin{align*}
-    \vec{F}_{i} &= -\alpha\left[ U_3(r_{ik})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{ik}) \right] \\
-    \vec{F}_{j} &=  -\alpha\left[ U_3(r_{jk})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{jk}) \right] \\
-    \vec{F}_{k} &= -\alpha\left[ U_3(r_{jk})\pdv{r}U_3(r_{ik}) + U_3(r_{ik})\pdv{r}U_3(r_{jk}) \right]
+    \vec{F}_{i} &= -\alpha\left[ U_3(r_{ik})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{ik}) \right]\hat{e}_{r} \\
+    \vec{F}_{j} &=  -\alpha\left[ U_3(r_{jk})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{jk}) \right]\hat{e}_{r} \\
+    \vec{F}_{k} &= -\alpha\left[ U_3(r_{jk})\pdv{r}U_3(r_{ik}) + U_3(r_{ik})\pdv{r}U_3(r_{jk}) \right]\hat{e}_{r}
+\end{align*}
+
+Por argumento intuitivo/diagrama las fuerzas no son recíprocas $f_{ij}\neq -f_{ji}$.
+Porque se depende de la distancia $r_{jk}$ y $f_{ik}$.
+
+Analizando el caso en que $\vec{F}_{i} = -\vec{F}_{j}$,
+\begin{align*}
+    \vec{F}_{i} &= \vec{F}_{j} \\
+    -\alpha\left[ U_3(r_{ik})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{ik}) \right]\hat{e}_{r}
+                &=
+    \alpha\left[ U_3(r_{jk})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{jk}) \right]\hat{e}_{r} \\
+    -U_3(r_{ik})\pdv{r}U_3(r_{ij}) - U_3(r_{ij})\pdv{r}U_3(r_{ik})
+                &=
+    U_3(r_{jk})\pdv{r}U_3(r_{ij}) + U_3(r_{ij})\pdv{r}U_3(r_{jk}) \\
 \end{align*}
 
 
@@ -547,7 +561,7 @@ No se arregló.
 
 \newpage
 
-\section{Directory: }
+\section{Directory: 0.050.30.05500-2026-01-23-152756}
 
 
 Realicé el siguiente cambio en la declaración del potencial
@@ -570,6 +584,21 @@ Realicé el siguiente cambio en la declaración del potencial
 \end{code}
 
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-23-152756/cluster-patch-patch.png}
+\end{figure}
+
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-23-171941}
+
+Hice algo que pensaba que estaba mal, pero después de rebotar planteamientos con DeepSeek me rendí y quise probar a ver que onda:
+\begin{align*}
+    f_{i1} &= -w\epsilon_{ij}\pdv{U_3\qty(r_{ij})}{r_{ij}}U_3\qty(r_{jk}) \\
+    f_{i2} &= -w\epsilon_{ij}U_3\qty(r_{ij})\pdv{U_3\qty(r_{jk})}{r_{ik}}
+\end{align*}
 
 
 \end{document}
