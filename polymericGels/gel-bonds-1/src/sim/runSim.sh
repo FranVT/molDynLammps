@@ -21,7 +21,7 @@ seed1=3234;
 seed2=6321;
 seed3=2010;
 
-steps_isot=8000000;
+steps_isot=3500000;
 steps_heat=500000;
 
 log_name="log-test.log";
