@@ -600,5 +600,47 @@ Hice algo que pensaba que estaba mal, pero después de rebotar planteamientos co
     f_{i2} &= -w\epsilon_{ij}U_3\qty(r_{ij})\pdv{U_3\qty(r_{jk})}{r_{ik}}
 \end{align*}
 
+\begin{code}
+function force3(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
+    th = deg2rad(th);
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+
+    f_i1=-w*eps_jk*DiffU3(eps_ij,eps_ij,sig_p,r_ik)*U3(eps_ik,eps_jk,sig_p,r_ik);
+    f_i2=-w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ik)*DiffU3(eps_ik,eps_jk,sig_p,r_ik);
+   
+    f_j1=-f_i1;
+    f_j2=-w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ik)*DiffU3(eps_ik,eps_jk,sig_p,r_jk);
+
+    f_k1=-f_i2;
+    f_k2=-f_j2;
+
+    eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
+    eng=round(eng/3,digits=2^7)
+
+    return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
+end
+\end{code}
+
+Va a estar mal, porque me equivoqué en la evaluación de $f_i1$.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png}
+\end{figure}
+
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-23-174419}
+
+No entiendo.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png}
+\end{figure}
+
+
+
 
 \end{document}

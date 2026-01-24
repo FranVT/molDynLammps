@@ -138,7 +138,7 @@ function force3(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     th = deg2rad(th);
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
 
-    f_i1=-w*eps_jk*DiffU3(eps_ij,eps_ij,sig_p,r_ik)*U3(eps_ik,eps_jk,sig_p,r_ik);
+    f_i1=-w*eps_jk*DiffU3(eps_ij,eps_ij,sig_p,r_ij)*U3(eps_ik,eps_jk,sig_p,r_ik);
     f_i2=-w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ik)*DiffU3(eps_ik,eps_jk,sig_p,r_ik);
    
     f_j1=-f_i1;
@@ -153,6 +153,33 @@ function force3(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
 end
 
+
+function force4(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
+"""
+    Compute the scalars for the proyection of the forces
+"""
+    th = deg2rad(th);
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+ 
+    f1 = -w*eps_jk*DiffU3(eps_ij,eps_ij,sig_p,r_ij)*U3(eps_ik,eps_jk,sig_p,r_ik);
+    f2 = -w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ij)*DiffU3(eps_ik,eps_jk,sig_p,r_ik);
+    f3 = 0;
+
+    f_i1=f1/r_ij;
+    f_i2=f2/r_ik;
+   
+    f_j1=-f_i1;
+    f_j2=f3;
+
+    f_k1=-f_i2;
+    f_k2=-f_j2;
+
+    eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
+    eng=round(eng/3,digits=2^7)
+
+    return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
+
+end
 
 
 
