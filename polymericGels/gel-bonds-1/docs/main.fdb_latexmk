@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1769446710.8579 "main.aux" "main.bbl" "main" 1769447905.8043 2
-  "main.aux" 1769447905.71747 9008 aeeb32ec4d28c5ebffd8d20dcb804567 "pdflatex"
+["bibtex main"] 1769456668.09856 "main.aux" "main.bbl" "main" 1769458182.0289 2
+  "main.aux" 1769458181.93786 9571 02c3504b8ade0e35d5a7a2a69a39376f "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1769447897.1307 "main.tex" "main.pdf" "main" 1769447905.80443 0
+["pdflatex"] 1769458173.26898 "main.tex" "main.pdf" "main" 1769458182.02901 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1767555874 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplb8r.tfm" 1767555874 2532 9ad73cf4dd2173a847f2a5f5608e0b9a ""
@@ -244,10 +244,13 @@
   "docs/../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png" 1769211801.74659 44299 c6967a99b026fb859762322712124643 ""
   "docs/../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png" 1769213342.42278 43852 8b18861ee8527fba723fdfed1ef88f22 ""
   "docs/../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png" 1769445472.20773 43852 8b18861ee8527fba723fdfed1ef88f22 ""
-  "docs/tests.tex" 1769447896.68283 24764 5e48e97c383bb2390daab6a5531904c7 ""
-  "main.aux" 1769447905.71747 9008 aeeb32ec4d28c5ebffd8d20dcb804567 "pdflatex"
-  "main.bbl" 1769446710.8886 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1769447905.71885 2718 dacb9911dc25d542e5a35ab9a67c3cf1 "pdflatex"
+  "docs/../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png" 1769450028.74002 42589 d288741128ee261e9366a65ada336e6e ""
+  "docs/../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png" 1769456612.18338 44937 920fcf27962d36326cfca55088d6bd9d ""
+  "docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png" 1769458079.95689 44704 e08efd61b9e412091a65549921b70318 ""
+  "docs/tests.tex" 1769458171.77046 26096 3930dbf18484b8508aa9991225787e63 ""
+  "main.aux" 1769458181.93786 9571 02c3504b8ade0e35d5a7a2a69a39376f "pdflatex"
+  "main.bbl" 1769456668.17397 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1769458181.93877 3510 6d5560493f3d7b419c19ce9e3fab538b "pdflatex"
   "main.tex" 1769213476.30515 2726 91a15d8776df4c6eb5dfc2e85988dc53 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""

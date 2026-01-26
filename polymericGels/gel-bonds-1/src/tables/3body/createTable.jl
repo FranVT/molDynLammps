@@ -64,25 +64,21 @@ function DiffU3(eps_pair,eps_3,sig_p,r)
      return (1/(2*dh))*( fo - ff );
 end
 
-function force4(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
+function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
 """
     Compute the scalars for the proyection of the forces
 """
     th = deg2rad(th);
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
  
-    f1 = w*eps_jk*DiffU3(eps_ij,eps_ij,sig_p,r_ij)*U3(eps_ik,eps_jk,sig_p,r_ik);
-    f2 = w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ij)*DiffU3(eps_ik,eps_jk,sig_p,r_ik);
-    f3 = 0;
-
-    f_i1=f1/r_ij;
-    f_i2=f2/r_ik;
+    f_i1=-w*eps_jk*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_ik,eps_ik,sig_p,r_ik) );
+    f_i2=-w*eps_jk*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_ik,eps_ik,sig_p,r_ik) );
    
-    f_j1=-f_i1;
-    f_j2=f3;
+    f_j1=0;#-w*eps_ik*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_j2=0;#-w*eps_ik*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
 
-    f_k1=-f_i2;
-    f_k2=-f_j2;
+    f_k1=0;#-w*eps_ij*( DiffU3(eps_ik,eps_ik,sig_p,r_ik) * U3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_k2=0;#-w*eps_ij*( U3(eps_ik,eps_ik,sig_p,r_ik) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
 
     eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
     eng=round(eng/3,digits=2^7)
@@ -124,7 +120,7 @@ docs1 =  map(eachindex(doms1)) do s
             (
                  s,
                  doms1[s]...,
-                 force3(w,eps_ij,eps_ik,eps_jk,sig,doms1[s]...)...
+                 force(w,eps_ij,eps_ik,eps_jk,sig,doms1[s]...)...
             )
         end;
 
@@ -132,11 +128,11 @@ docs2 =  map(eachindex(doms2)) do s
             (
                  s,
                  doms2[s]...,
-                 force3(w,eps_ij,eps_ik,eps_jk,sig,doms2[s]...)...
+                 force(w,eps_ij,eps_ik,eps_jk,sig,doms2[s]...)...
             )
         end;
 
-createTable(N,rmin,rmax,docs1,filename1)
-createTable(N,rmin,rmax,docs2,filename2)
+#createTable(N,rmin,rmax,docs1,filename1)
+#createTable(N,rmin,rmax,docs2,filename2)
 
 nothing

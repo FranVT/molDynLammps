@@ -653,10 +653,9 @@ Cambié de signo, a ver que pasa.
 
 \newpage
 
-\subsection{Acerca de la tabulación del potencial de tres cuerpos}
+\subsection{Acerca de la tabulación del potencial de tres cuerpos}\label{subsec:tabpot}
 
 Voy a asumir lo siguiente:
-$$U_\mathrm{swap}\qty(r_{ij},r_{ik}) = \alpha U_3(r_{ij})U_3(r_{ik})$$
 
 \begin{align*}
     f_{i1} &= -\pdv{r_{ij}}U_\mathrm{swap}(r_{ij},r_{ik}) = -\alpha \left[\pdv{U_3(r_{ij})}{r_{ij}}U_3(r_{ik})\right] \\
@@ -667,7 +666,49 @@ $$U_\mathrm{swap}\qty(r_{ij},r_{ik}) = \alpha U_3(r_{ij})U_3(r_{ik})$$
     f_{k2} &= -\pdv{r_{jk}}U_\mathrm{swap}(r_{ik},r_{jk}) = -\alpha \left[U_3(r_{ik})\pdv{U_3(r_{jk})}{r_{jk}}\right]
 \end{align*}
 
-Mientrás realizaba está tabla, me dí cuenta que estuve evaluando mal los potenciales y derivadas.
+Mientrás realizaba está tabla, me dí cuenta que estuve evaluando mal los potenciales y derivadas\footnote{A pesar de no tener la misma expressión algebraica, la evaluación estaba incorrecta.}.
 Estás relaciones no siguen la relación $f_{i1} = -f_{j1}$, al menos que $r_{ik} = r_{jk}$.
+
+La idea es que el sufijo $i,j,k$, infican partícula.
+Los sufijos $1$ y $2$, lo intepreté como la contribución de la fuerza debido a la distancia $r_{lm}$ y la distancia $r_{ln}$.
+Si el potencial también depende del ángulo, intuyo que hay que obtener las proyecciones a las distancias $r_{lm},r_{ln}$.
+
+Aún no estoy seguro si hay que agregar el factor escala $r_{lm}$, ya que lammps hace la multiplicación con $\vec{r}_{lm}$.
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-26-113021}
+
+El cambio anterior no ayudo.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png}
+\end{figure}
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-26-120745}
+
+Forcé el parámetro de reciprocidad 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png}
+\end{figure}
+
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-26-134421}
+
+Regrese a las definiciones de~\ref{subsec:tabpot}, pero sin el signo negativo. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png}
+\end{figure}
+
+No entiendo que está pasando.
 
 \end{document}
