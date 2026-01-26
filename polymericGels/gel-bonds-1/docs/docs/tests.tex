@@ -640,7 +640,34 @@ No entiendo.
     \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png}
 \end{figure}
 
+\newpage
 
+\section{Directory: 0.050.30.05500-2026-01-26-101526}
+
+Cambié de signo, a ver que pasa.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png}
+\end{figure}
+
+\newpage
+
+\subsection{Acerca de la tabulación del potencial de tres cuerpos}
+
+Voy a asumir lo siguiente:
+$$U_\mathrm{swap}\qty(r_{ij},r_{ik}) = \alpha U_3(r_{ij})U_3(r_{ik})$$
+
+\begin{align*}
+    f_{i1} &= -\pdv{r_{ij}}U_\mathrm{swap}(r_{ij},r_{ik}) = -\alpha \left[\pdv{U_3(r_{ij})}{r_{ij}}U_3(r_{ik})\right] \\
+    f_{i2} &= -\pdv{r_{ik}}U_\mathrm{swap}(r_{ij},r_{ik}) = -\alpha \left[U_3(r_{ij})\pdv{U_3(r_{ik})}{r_{ik}}\right] \\
+    f_{j1} &= -\pdv{r_{ij}}U_\mathrm{swap}(r_{ij},r_{jk}) = -\alpha \left[\pdv{U_3(r_{ij})}{r_{ij}}U_3(r_{jk})\right] \\
+    f_{j2} &= -\pdv{r_{jk}}U_\mathrm{swap}(r_{ij},r_{jk}) = -\alpha \left[U_3(r_{ij})\pdv{U_3(r_{jk})}{r_{jk}}\right] \\
+    f_{k1} &= -\pdv{r_{ik}}U_\mathrm{swap}(r_{ik},r_{jk}) = -\alpha \left[\pdv{U_3(r_{ik})}{r_{ik}}U_3(r_{jk})\right] \\
+    f_{k2} &= -\pdv{r_{jk}}U_\mathrm{swap}(r_{ik},r_{jk}) = -\alpha \left[U_3(r_{ik})\pdv{U_3(r_{jk})}{r_{jk}}\right]
+\end{align*}
+
+Mientrás realizaba está tabla, me dí cuenta que estuve evaluando mal los potenciales y derivadas.
 
 
 \end{document}

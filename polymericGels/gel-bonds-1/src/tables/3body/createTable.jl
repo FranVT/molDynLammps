@@ -161,8 +161,8 @@ function force4(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     th = deg2rad(th);
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
  
-    f1 = -w*eps_jk*DiffU3(eps_ij,eps_ij,sig_p,r_ij)*U3(eps_ik,eps_jk,sig_p,r_ik);
-    f2 = -w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ij)*DiffU3(eps_ik,eps_jk,sig_p,r_ik);
+    f1 = w*eps_jk*DiffU3(eps_ij,eps_ij,sig_p,r_ij)*U3(eps_ik,eps_jk,sig_p,r_ik);
+    f2 = w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ij)*DiffU3(eps_ik,eps_jk,sig_p,r_ik);
     f3 = 0;
 
     f_i1=f1/r_ij;
