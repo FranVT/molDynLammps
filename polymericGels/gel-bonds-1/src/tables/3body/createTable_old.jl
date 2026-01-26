@@ -1,5 +1,5 @@
 """
-    Script to tabulate the table of the 3body potential
+    Script to create the threebody/table filename parameter
 """
 
 function createTable(N,rmin,rmax,info,filename)
@@ -63,6 +63,96 @@ function DiffU3(eps_pair,eps_3,sig_p,r)
     ff=U3(eps_pair,eps_3,sig_p,r-dh);
      return (1/(2*dh))*( fo - ff );
 end
+
+function forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_1,r_2)
+"""
+    Compute the force of the swap potential
+    d/dr[U(r_ij)U(r_ik)] = U(r_ik)d/dr[U(r_ij)] + U(r_ij)d/dr[U(r_ik)]
+"""
+    a=U3(eps_ik,eps_jk,sig_p,r_2); 
+    b=DiffU3(eps_ij,eps_jk,sig_p,r_1);
+    c=U3(eps_ij,eps_jk,sig_p,r_1);
+    d=DiffU3(eps_ik,eps_jk,sig_p,r_2);
+
+    return -w*eps_jk*(a*b + c*d) 
+
+end
+
+function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
+"""
+    Function that computes the f_i1 and f_i2 for lammps force projection tot the plane formed by the vector distances r_ij, r_ik and r_jk
+"""
+    th = deg2rad(th);
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+
+    f_i=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik);
+    f_j=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk);
+    f_k=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+
+    f_i1=f_i;
+    f_i2=f_i*cos(th);
+   
+    f_j1=-f_i1;
+    f_j2=f_j*(1-cos(th));
+
+    f_k1=-f_i2;
+    f_k2=-f_j2;
+
+    eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
+    eng=round(eng/3,digits=2^7)
+
+    return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
+end
+
+function force2(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
+"""
+    Function that computes the f_i1 and f_i2 for lammps force projection tot the plane formed by the vector distances r_ij, r_ik and r_jk
+"""
+    th = deg2rad(th);
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+
+    f_i=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik);
+    f_j=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk);
+    f_k=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+
+    f_i1=f_i;
+    f_i2=f_i*cos(th);
+   
+    f_j1=f_j;
+    f_j2=f_j*cos(th);
+
+    f_k1=f_k;
+    f_k2=f_k*cos(th);
+
+    eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
+    eng=round(eng/3,digits=2^7)
+
+    return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
+end
+
+
+function force3(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
+"""
+    Function that computes the f_i1 and f_i2 for lammps force projection tot the plane formed by the vector distances r_ij, r_ik and r_jk
+"""
+    th = deg2rad(th);
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+
+    f_i1=-w*eps_jk*DiffU3(eps_ij,eps_ij,sig_p,r_ij)*U3(eps_ik,eps_jk,sig_p,r_ik);
+    f_i2=-w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ik)*DiffU3(eps_ik,eps_jk,sig_p,r_ik);
+   
+    f_j1=-f_i1;
+    f_j2=-w*eps_jk*U3(eps_ij,eps_ij,sig_p,r_ik)*DiffU3(eps_ik,eps_jk,sig_p,r_jk);
+
+    f_k1=-f_i2;
+    f_k2=-f_j2;
+
+    eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
+    eng=round(eng/3,digits=2^7)
+
+    return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
+end
+
 
 function force4(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
 """
