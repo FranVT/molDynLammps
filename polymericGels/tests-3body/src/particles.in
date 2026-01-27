@@ -9,8 +9,8 @@ region spawn_box block -$L $L -$L $L -$L $L
 # keyword_mol: template-ID seed
 # keyword_overlap: overlap value = only insert if at least this distance from all existing atoms
 # keyword_maxtry: maxtry value = number of attempts to insert a particle before failure
-create_atoms 0 random ${NPA} ${seed1} spawn_box overlap 0.5 maxtry 5000
-create_atoms 0 random ${NPB} ${seed2} spawn_box overlap 0.5 maxtry 5000
+create_atoms 1 random ${NPA} ${seed1} spawn_box overlap 0.5 maxtry 5000
+create_atoms 2 random ${NPB} ${seed2} spawn_box overlap 0.5 maxtry 5000
 
 # Create groups for the threebody potential
 group PA type 1
