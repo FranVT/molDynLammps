@@ -2,6 +2,17 @@
     Functions 
 """
 
+function getDump(dir,file_name)
+"""
+    Get the data from a single dump file that stores one timeste information
+"""
+    data = split.(readlines(joinpath(dir,file_name))," ")[9:end];
+    HEADERS=data[1][3:end];
+    INFO=parse.(Float64,reduce(hcat,data[2:end]))';
+
+    return DataFrame(INFO,HEADERS)
+end
+
 function fig_EngPair(cm, pt, dt,DATA)
 
 fig=Figure(size = (15cm, 12cm), fontsize = 12pt);

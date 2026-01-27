@@ -71,14 +71,14 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     th = deg2rad(th);
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
  
-    f_i1=-w*eps_jk*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_ik,eps_ik,sig_p,r_ik) );
-    f_i2=-w*eps_jk*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_ik,eps_ik,sig_p,r_ik) );
+    f_i1=w*eps_jk*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_ik,eps_ik,sig_p,r_ik) );
+    f_i2=w*eps_jk*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_ik,eps_ik,sig_p,r_ik) );
    
-    f_j1=0;#-w*eps_ik*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_jk,eps_jk,sig_p,r_jk) );
-    f_j2=0;#-w*eps_ik*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_j1=w*eps_ik*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_j2=w*eps_ik*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
 
-    f_k1=0;#-w*eps_ij*( DiffU3(eps_ik,eps_ik,sig_p,r_ik) * U3(eps_jk,eps_jk,sig_p,r_jk) );
-    f_k2=0;#-w*eps_ij*( U3(eps_ik,eps_ik,sig_p,r_ik) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_k1=w*eps_ij*( DiffU3(eps_ik,eps_ik,sig_p,r_ik) * U3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_k2=w*eps_ij*( U3(eps_ik,eps_ik,sig_p,r_ik) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
 
     eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
     eng=round(eng/3,digits=2^7)
@@ -102,7 +102,7 @@ rmin = sig/1000;
 rmax = 2*sig;
 thi = 180/(4*N)
 thf = 180 - thi;
-w=1;
+w=0.25;
 
 filename1 = string("swapMechTab1_w",w,".table");
 filename2 = string("swapMechTab2_w",w,".table");
@@ -132,7 +132,7 @@ docs2 =  map(eachindex(doms2)) do s
             )
         end;
 
-#createTable(N,rmin,rmax,docs1,filename1)
-#createTable(N,rmin,rmax,docs2,filename2)
+createTable(N,rmin,rmax,docs1,filename1)
+createTable(N,rmin,rmax,docs2,filename2)
 
 nothing

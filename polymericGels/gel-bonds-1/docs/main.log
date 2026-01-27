@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  26 JAN 2026 14:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  27 JAN 2026 12:38
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -715,74 +715,78 @@ File: translations-basic-dictionary-english.trsl (english translation file `tran
 Package translations Info: loading dictionary `translations-basic-dictionary' for `english'. on input line 58.
 \c@lstlisting=\count353
  (./docs/tests.tex
-LaTeX Font Info:    Trying to load font information for TS1+pplj on input line 16.
+LaTeX Font Info:    Trying to load font information for TS1+pplj on input line 18.
  (/usr/share/texmf-dist/tex/latex/psnfss/ts1pplj.fd
 File: ts1pplj.fd 2004/09/06 font definitions for TS1/pplj.
 )
 
 LaTeX Warning: Marginpar on page 1 moved.
 
-LaTeX Font Info:    Trying to load font information for OT1+pplx on input line 21.
+LaTeX Font Info:    Trying to load font information for OT1+pplx on input line 23.
 (/usr/share/texmf-dist/tex/latex/psnfss/ot1pplx.fd
 File: ot1pplx.fd 2004/09/06 font definitions for OT1/pplx.
 )
-LaTeX Font Info:    Trying to load font information for OML+zplm on input line 21.
+LaTeX Font Info:    Trying to load font information for OML+zplm on input line 23.
  (/usr/share/texmf-dist/tex/latex/psnfss/omlzplm.fd
 File: omlzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OML/zplm.
 )
-LaTeX Font Info:    Trying to load font information for OMS+zplm on input line 21.
+LaTeX Font Info:    Trying to load font information for OMS+zplm on input line 23.
  (/usr/share/texmf-dist/tex/latex/psnfss/omszplm.fd
 File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 )
-LaTeX Font Info:    Trying to load font information for OMX+zplm on input line 21.
+LaTeX Font Info:    Trying to load font information for OMX+zplm on input line 23.
  (/usr/share/texmf-dist/tex/latex/psnfss/omxzplm.fd
 File: omxzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMX/zplm.
 )
-LaTeX Font Info:    Trying to load font information for OT1+zplm on input line 21.
+LaTeX Font Info:    Trying to load font information for OT1+zplm on input line 23.
  (/usr/share/texmf-dist/tex/latex/psnfss/ot1zplm.fd
 File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 )
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 10.42007pt on input line 21.
+(Font)              scaled to size 10.42007pt on input line 23.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 7.91925pt on input line 21.
+(Font)              scaled to size 7.91925pt on input line 23.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 6.25204pt on input line 21.
+(Font)              scaled to size 6.25204pt on input line 23.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 10.42007pt on input line 21.
+(Font)              scaled to size 10.42007pt on input line 23.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 7.91925pt on input line 21.
+(Font)              scaled to size 7.91925pt on input line 23.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 6.25204pt on input line 21.
-<docs/../Figures/0.050.30.052500-2026-01-16-102953/finalConfigAssembly.png, id=60, 481.8pt x 361.35pt>
+(Font)              scaled to size 6.25204pt on input line 23.
+<docs/../Figures/0.050.30.052500-2026-01-16-102953/finalConfigAssembly.png, id=84, 481.8pt x 361.35pt>
 File: docs/../Figures/0.050.30.052500-2026-01-16-102953/finalConfigAssembly.png Graphic file (type png)
 <use docs/../Figures/0.050.30.052500-2026-01-16-102953/finalConfigAssembly.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.052500-2026-01-16-102953/finalConfigAssembly.png  used on input line 27.
+Package pdftex.def Info: docs/../Figures/0.050.30.052500-2026-01-16-102953/finalConfigAssembly.png  used on input line 29.
 (pdftex.def)             Requested size: 274.00395pt x 205.50298pt.
-LaTeX Font Info:    Trying to load font information for T1+fvm on input line 31.
+LaTeX Font Info:    Trying to load font information for T1+fvm on input line 33.
  (/usr/share/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 8.50006pt on input line 31.
+(Font)              scaled to size 8.50006pt on input line 33.
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 7.65005pt on input line 34.
+(Font)              scaled to size 7.65005pt on input line 36.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 8.33606pt on input line 52.
+(Font)              scaled to size 8.33606pt on input line 54.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 5.21004pt on input line 52.
+(Font)              scaled to size 5.21004pt on input line 54.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 8.33606pt on input line 52.
+(Font)              scaled to size 8.33606pt on input line 54.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 5.21004pt on input line 52.
+(Font)              scaled to size 5.21004pt on input line 54.
+
+Overfull \hbox (3.25198pt too wide) in paragraph at lines 47--55
+\T1/pplj/m/n/10 a-dos que en el se-gundo archivo. Esto por la forma que tiene LAMMPS
+ []
 
 
 LaTeX Warning: Marginpar on page 1 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-111704/temp-0.050.30.05500-2026-01-20-111704.png, id=62, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-111704/temp-0.050.30.05500-2026-01-20-111704.png, id=86, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-111704/temp-0.050.30.05500-2026-01-20-111704.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-111704/temp-0.050.30.05500-2026-01-20-111704.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/temp-0.050.30.05500-2026-01-20-111704.png  used on input line 57.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/temp-0.050.30.05500-2026-01-20-111704.png  used on input line 59.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
@@ -792,440 +796,437 @@ Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/temp-0
 
 LaTeX Warning: Marginpar on page 2 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-111704/eSys-0.050.30.05500-2026-01-20-111704.png, id=77, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-111704/eSys-0.050.30.05500-2026-01-20-111704.png, id=101, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-111704/eSys-0.050.30.05500-2026-01-20-111704.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-111704/eSys-0.050.30.05500-2026-01-20-111704.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/eSys-0.050.30.05500-2026-01-20-111704.png  used on input line 62.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/eSys-0.050.30.05500-2026-01-20-111704.png  used on input line 64.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 2 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-111704/eB-0.050.30.05500-2026-01-20-111704.png, id=78, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-111704/eB-0.050.30.05500-2026-01-20-111704.png, id=102, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-111704/eB-0.050.30.05500-2026-01-20-111704.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-111704/eB-0.050.30.05500-2026-01-20-111704.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/eB-0.050.30.05500-2026-01-20-111704.png  used on input line 67.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/eB-0.050.30.05500-2026-01-20-111704.png  used on input line 69.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 2 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-111704/epk-0.050.30.05500-2026-01-20-111704.png, id=79, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-111704/epk-0.050.30.05500-2026-01-20-111704.png, id=103, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-111704/epk-0.050.30.05500-2026-01-20-111704.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-111704/epk-0.050.30.05500-2026-01-20-111704.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/epk-0.050.30.05500-2026-01-20-111704.png  used on input line 72.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/epk-0.050.30.05500-2026-01-20-111704.png  used on input line 74.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 2 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-111704/triple.png, id=80, 481.8pt x 361.35pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-111704/triple.png, id=104, 481.8pt x 361.35pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-111704/triple.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-111704/triple.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/triple.png  used on input line 92.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-111704/triple.png  used on input line 94.
 (pdftex.def)             Requested size: 274.00395pt x 205.50298pt.
 
 
 [2 <./docs/../Figures/0.050.30.05500-2026-01-20-111704/temp-0.050.30.05500-2026-01-20-111704.png> <./docs/../Figures/0.050.30.05500-2026-01-20-111704/eSys-0.050.30.05500-2026-01-20-111704.png> <./docs/../Figures/0.050.30.05500-2026-01-20-111704/eB-0.050.30.05500-2026-01-20-111704.png> <./docs/../Figures/0.050.30.05500-2026-01-20-111704/epk-0.050.30.05500-2026-01-20-111704.png> <./docs/../Figures/0.050.30.05500-2026-01-20-111704/triple.png>]
-<docs/../Figures/0.050.30.05500-2026-01-20-121005/temp-0.050.30.05500-2026-01-20-121005.png, id=87, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-121005/temp-0.050.30.05500-2026-01-20-121005.png, id=111, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-121005/temp-0.050.30.05500-2026-01-20-121005.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-121005/temp-0.050.30.05500-2026-01-20-121005.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/temp-0.050.30.05500-2026-01-20-121005.png  used on input line 101.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/temp-0.050.30.05500-2026-01-20-121005.png  used on input line 103.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
 LaTeX Warning: Marginpar on page 3 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-121005/eSys-0.050.30.05500-2026-01-20-121005.png, id=88, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-121005/eSys-0.050.30.05500-2026-01-20-121005.png, id=112, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-121005/eSys-0.050.30.05500-2026-01-20-121005.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-121005/eSys-0.050.30.05500-2026-01-20-121005.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/eSys-0.050.30.05500-2026-01-20-121005.png  used on input line 106.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/eSys-0.050.30.05500-2026-01-20-121005.png  used on input line 108.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 3 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-121005/eB-0.050.30.05500-2026-01-20-121005.png, id=89, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-121005/eB-0.050.30.05500-2026-01-20-121005.png, id=113, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-121005/eB-0.050.30.05500-2026-01-20-121005.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-121005/eB-0.050.30.05500-2026-01-20-121005.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/eB-0.050.30.05500-2026-01-20-121005.png  used on input line 111.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/eB-0.050.30.05500-2026-01-20-121005.png  used on input line 113.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 3 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-121005/epk-0.050.30.05500-2026-01-20-121005.png, id=90, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-121005/epk-0.050.30.05500-2026-01-20-121005.png, id=114, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-121005/epk-0.050.30.05500-2026-01-20-121005.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-121005/epk-0.050.30.05500-2026-01-20-121005.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/epk-0.050.30.05500-2026-01-20-121005.png  used on input line 116.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/epk-0.050.30.05500-2026-01-20-121005.png  used on input line 118.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 3 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-121005/triple.png, id=91, 481.8pt x 361.35pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-121005/triple.png, id=115, 481.8pt x 361.35pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-121005/triple.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-121005/triple.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/triple.png  used on input line 123.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-121005/triple.png  used on input line 125.
 (pdftex.def)             Requested size: 274.00395pt x 205.50298pt.
 
 
 [3 <./docs/../Figures/0.050.30.05500-2026-01-20-121005/temp-0.050.30.05500-2026-01-20-121005.png> <./docs/../Figures/0.050.30.05500-2026-01-20-121005/eSys-0.050.30.05500-2026-01-20-121005.png> <./docs/../Figures/0.050.30.05500-2026-01-20-121005/eB-0.050.30.05500-2026-01-20-121005.png> <./docs/../Figures/0.050.30.05500-2026-01-20-121005/epk-0.050.30.05500-2026-01-20-121005.png> <./docs/../Figures/0.050.30.05500-2026-01-20-121005/triple.png>]
-<docs/../Figures/0.050.30.05500-2026-01-20-135923/temp-0.050.30.05500-2026-01-20-135923.png, id=98, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-135923/temp-0.050.30.05500-2026-01-20-135923.png, id=122, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-135923/temp-0.050.30.05500-2026-01-20-135923.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-135923/temp-0.050.30.05500-2026-01-20-135923.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/temp-0.050.30.05500-2026-01-20-135923.png  used on input line 134.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/temp-0.050.30.05500-2026-01-20-135923.png  used on input line 136.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
 LaTeX Warning: Marginpar on page 4 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-135923/eSys-0.050.30.05500-2026-01-20-135923.png, id=99, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-135923/eSys-0.050.30.05500-2026-01-20-135923.png, id=123, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-135923/eSys-0.050.30.05500-2026-01-20-135923.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-135923/eSys-0.050.30.05500-2026-01-20-135923.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/eSys-0.050.30.05500-2026-01-20-135923.png  used on input line 139.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/eSys-0.050.30.05500-2026-01-20-135923.png  used on input line 141.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 4 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-135923/eB-0.050.30.05500-2026-01-20-135923.png, id=100, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-135923/eB-0.050.30.05500-2026-01-20-135923.png, id=124, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-135923/eB-0.050.30.05500-2026-01-20-135923.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-135923/eB-0.050.30.05500-2026-01-20-135923.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/eB-0.050.30.05500-2026-01-20-135923.png  used on input line 144.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/eB-0.050.30.05500-2026-01-20-135923.png  used on input line 146.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 4 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-135923/epk-0.050.30.05500-2026-01-20-135923.png, id=101, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-135923/epk-0.050.30.05500-2026-01-20-135923.png, id=125, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-135923/epk-0.050.30.05500-2026-01-20-135923.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-135923/epk-0.050.30.05500-2026-01-20-135923.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/epk-0.050.30.05500-2026-01-20-135923.png  used on input line 149.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/epk-0.050.30.05500-2026-01-20-135923.png  used on input line 151.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 4 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-135923/triple.png, id=102, 481.8pt x 361.35pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-135923/triple.png, id=126, 481.8pt x 361.35pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-135923/triple.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-135923/triple.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/triple.png  used on input line 159.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-135923/triple.png  used on input line 161.
 (pdftex.def)             Requested size: 274.00395pt x 205.50298pt.
 
 
 [4 <./docs/../Figures/0.050.30.05500-2026-01-20-135923/temp-0.050.30.05500-2026-01-20-135923.png> <./docs/../Figures/0.050.30.05500-2026-01-20-135923/eSys-0.050.30.05500-2026-01-20-135923.png> <./docs/../Figures/0.050.30.05500-2026-01-20-135923/eB-0.050.30.05500-2026-01-20-135923.png> <./docs/../Figures/0.050.30.05500-2026-01-20-135923/epk-0.050.30.05500-2026-01-20-135923.png> <./docs/../Figures/0.050.30.05500-2026-01-20-135923/triple.png>]
-<docs/../Figures/0.050.30.05500-2026-01-20-143651/temp-0.050.30.05500-2026-01-20-143651.png, id=109, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-143651/temp-0.050.30.05500-2026-01-20-143651.png, id=133, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-143651/temp-0.050.30.05500-2026-01-20-143651.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-143651/temp-0.050.30.05500-2026-01-20-143651.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/temp-0.050.30.05500-2026-01-20-143651.png  used on input line 167.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/temp-0.050.30.05500-2026-01-20-143651.png  used on input line 169.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
 LaTeX Warning: Marginpar on page 5 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-143651/eSys-0.050.30.05500-2026-01-20-143651.png, id=110, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-143651/eSys-0.050.30.05500-2026-01-20-143651.png, id=134, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-143651/eSys-0.050.30.05500-2026-01-20-143651.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-143651/eSys-0.050.30.05500-2026-01-20-143651.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/eSys-0.050.30.05500-2026-01-20-143651.png  used on input line 172.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/eSys-0.050.30.05500-2026-01-20-143651.png  used on input line 174.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 5 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-143651/eB-0.050.30.05500-2026-01-20-143651.png, id=111, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-143651/eB-0.050.30.05500-2026-01-20-143651.png, id=135, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-143651/eB-0.050.30.05500-2026-01-20-143651.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-143651/eB-0.050.30.05500-2026-01-20-143651.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/eB-0.050.30.05500-2026-01-20-143651.png  used on input line 177.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/eB-0.050.30.05500-2026-01-20-143651.png  used on input line 179.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 5 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-143651/epk-0.050.30.05500-2026-01-20-143651.png, id=112, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-143651/epk-0.050.30.05500-2026-01-20-143651.png, id=136, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-143651/epk-0.050.30.05500-2026-01-20-143651.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-143651/epk-0.050.30.05500-2026-01-20-143651.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/epk-0.050.30.05500-2026-01-20-143651.png  used on input line 182.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/epk-0.050.30.05500-2026-01-20-143651.png  used on input line 184.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 5 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-143651/triple.png, id=113, 481.8pt x 361.35pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-143651/triple.png, id=137, 481.8pt x 361.35pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-143651/triple.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-143651/triple.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/triple.png  used on input line 193.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/triple.png  used on input line 195.
 (pdftex.def)             Requested size: 274.00395pt x 205.50298pt.
-<docs/../Figures/0.050.30.05500-2026-01-20-143651/cluster-patch-patch.png, id=114, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-143651/cluster-patch-patch.png, id=138, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-143651/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-143651/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/cluster-patch-patch.png  used on input line 205.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-143651/cluster-patch-patch.png  used on input line 207.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [5 <./docs/../Figures/0.050.30.05500-2026-01-20-143651/temp-0.050.30.05500-2026-01-20-143651.png> <./docs/../Figures/0.050.30.05500-2026-01-20-143651/eSys-0.050.30.05500-2026-01-20-143651.png> <./docs/../Figures/0.050.30.05500-2026-01-20-143651/eB-0.050.30.05500-2026-01-20-143651.png> <./docs/../Figures/0.050.30.05500-2026-01-20-143651/epk-0.050.30.05500-2026-01-20-143651.png> <./docs/../Figures/0.050.30.05500-2026-01-20-143651/triple.png> <./docs/../Figures/0.050.30.05500-2026-01-20-143651/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-20-151755/temp-0.050.30.05500-2026-01-20-151755.png, id=122, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-151755/temp-0.050.30.05500-2026-01-20-151755.png, id=146, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-151755/temp-0.050.30.05500-2026-01-20-151755.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-151755/temp-0.050.30.05500-2026-01-20-151755.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/temp-0.050.30.05500-2026-01-20-151755.png  used on input line 214.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/temp-0.050.30.05500-2026-01-20-151755.png  used on input line 216.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
 LaTeX Warning: Marginpar on page 6 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-151755/eSys-0.050.30.05500-2026-01-20-151755.png, id=123, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-151755/eSys-0.050.30.05500-2026-01-20-151755.png, id=147, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-151755/eSys-0.050.30.05500-2026-01-20-151755.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-151755/eSys-0.050.30.05500-2026-01-20-151755.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/eSys-0.050.30.05500-2026-01-20-151755.png  used on input line 219.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/eSys-0.050.30.05500-2026-01-20-151755.png  used on input line 221.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 6 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-151755/eB-0.050.30.05500-2026-01-20-151755.png, id=124, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-151755/eB-0.050.30.05500-2026-01-20-151755.png, id=148, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-151755/eB-0.050.30.05500-2026-01-20-151755.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-151755/eB-0.050.30.05500-2026-01-20-151755.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/eB-0.050.30.05500-2026-01-20-151755.png  used on input line 224.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/eB-0.050.30.05500-2026-01-20-151755.png  used on input line 226.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 6 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-151755/epk-0.050.30.05500-2026-01-20-151755.png, id=125, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-151755/epk-0.050.30.05500-2026-01-20-151755.png, id=149, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-151755/epk-0.050.30.05500-2026-01-20-151755.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-151755/epk-0.050.30.05500-2026-01-20-151755.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/epk-0.050.30.05500-2026-01-20-151755.png  used on input line 229.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/epk-0.050.30.05500-2026-01-20-151755.png  used on input line 231.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 6 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-20-151755/triple.png, id=126, 481.8pt x 361.35pt>
+<docs/../Figures/0.050.30.05500-2026-01-20-151755/triple.png, id=150, 481.8pt x 361.35pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-151755/triple.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-151755/triple.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/triple.png  used on input line 239.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/triple.png  used on input line 241.
 (pdftex.def)             Requested size: 274.00395pt x 205.50298pt.
 LaTeX Info: Symbol \textasciiacute not provided by
             font family pplj in TS1 encoding.
-            Default family used instead on input line 242.
+            Default family used instead on input line 244.
 LaTeX Info: Symbol \textasciiacute not provided by
             font family pplj in TS1 encoding.
-            Default family used instead on input line 242.
-<docs/../Figures/0.050.30.05500-2026-01-20-151755/cluster-patch-patch.png, id=127, 426.75435pt x 284.38245pt>
+            Default family used instead on input line 244.
+<docs/../Figures/0.050.30.05500-2026-01-20-151755/cluster-patch-patch.png, id=151, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-20-151755/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-20-151755/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/cluster-patch-patch.png  used on input line 246.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-20-151755/cluster-patch-patch.png  used on input line 248.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [6{/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc} <./docs/../Figures/0.050.30.05500-2026-01-20-151755/temp-0.050.30.05500-2026-01-20-151755.png> <./docs/../Figures/0.050.30.05500-2026-01-20-151755/eSys-0.050.30.05500-2026-01-20-151755.png> <./docs/../Figures/0.050.30.05500-2026-01-20-151755/eB-0.050.30.05500-2026-01-20-151755.png> <./docs/../Figures/0.050.30.05500-2026-01-20-151755/epk-0.050.30.05500-2026-01-20-151755.png> <./docs/../Figures/0.050.30.05500-2026-01-20-151755/triple.png> <./docs/../Figures/0.050.30.05500-2026-01-20-151755/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-21-133721/temp-0.050.30.05500-2026-01-21-133721.png, id=136, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-133721/temp-0.050.30.05500-2026-01-21-133721.png, id=160, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-133721/temp-0.050.30.05500-2026-01-21-133721.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-133721/temp-0.050.30.05500-2026-01-21-133721.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/temp-0.050.30.05500-2026-01-21-133721.png  used on input line 256.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/temp-0.050.30.05500-2026-01-21-133721.png  used on input line 258.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
 LaTeX Warning: Marginpar on page 7 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-21-133721/eSys-0.050.30.05500-2026-01-21-133721.png, id=137, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-133721/eSys-0.050.30.05500-2026-01-21-133721.png, id=161, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-133721/eSys-0.050.30.05500-2026-01-21-133721.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-133721/eSys-0.050.30.05500-2026-01-21-133721.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/eSys-0.050.30.05500-2026-01-21-133721.png  used on input line 261.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/eSys-0.050.30.05500-2026-01-21-133721.png  used on input line 263.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 7 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-21-133721/ePair-0.050.30.05500-2026-01-21-133721.png, id=138, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-133721/ePair-0.050.30.05500-2026-01-21-133721.png, id=162, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-133721/ePair-0.050.30.05500-2026-01-21-133721.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-133721/ePair-0.050.30.05500-2026-01-21-133721.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/ePair-0.050.30.05500-2026-01-21-133721.png  used on input line 266.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/ePair-0.050.30.05500-2026-01-21-133721.png  used on input line 268.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 7 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-21-133721/epk-0.050.30.05500-2026-01-21-133721.png, id=139, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-133721/epk-0.050.30.05500-2026-01-21-133721.png, id=163, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-133721/epk-0.050.30.05500-2026-01-21-133721.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-133721/epk-0.050.30.05500-2026-01-21-133721.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/epk-0.050.30.05500-2026-01-21-133721.png  used on input line 271.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/epk-0.050.30.05500-2026-01-21-133721.png  used on input line 273.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 7 moved.
 
 LaTeX Info: Symbol \textasciiacute not provided by
             font family pplj in TS1 encoding.
-            Default family used instead on input line 277.
+            Default family used instead on input line 279.
 LaTeX Info: Symbol \textasciiacute not provided by
             font family pplj in TS1 encoding.
-            Default family used instead on input line 277.
-<docs/../Figures/0.050.30.05500-2026-01-21-133721/triple.png, id=140, 481.8pt x 361.35pt>
+            Default family used instead on input line 279.
+<docs/../Figures/0.050.30.05500-2026-01-21-133721/triple.png, id=164, 481.8pt x 361.35pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-133721/triple.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-133721/triple.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/triple.png  used on input line 280.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/triple.png  used on input line 282.
 (pdftex.def)             Requested size: 274.00395pt x 205.50298pt.
-<docs/../Figures/0.050.30.05500-2026-01-21-133721/cluster-patch-patch.png, id=141, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-133721/cluster-patch-patch.png, id=165, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-133721/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-133721/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/cluster-patch-patch.png  used on input line 285.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-133721/cluster-patch-patch.png  used on input line 287.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [7 <./docs/../Figures/0.050.30.05500-2026-01-21-133721/temp-0.050.30.05500-2026-01-21-133721.png> <./docs/../Figures/0.050.30.05500-2026-01-21-133721/eSys-0.050.30.05500-2026-01-21-133721.png> <./docs/../Figures/0.050.30.05500-2026-01-21-133721/ePair-0.050.30.05500-2026-01-21-133721.png> <./docs/../Figures/0.050.30.05500-2026-01-21-133721/epk-0.050.30.05500-2026-01-21-133721.png> <./docs/../Figures/0.050.30.05500-2026-01-21-133721/triple.png> <./docs/../Figures/0.050.30.05500-2026-01-21-133721/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-21-161335/temp-0.050.30.05500-2026-01-21-161335.png, id=150, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-161335/temp-0.050.30.05500-2026-01-21-161335.png, id=174, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-161335/temp-0.050.30.05500-2026-01-21-161335.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-161335/temp-0.050.30.05500-2026-01-21-161335.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/temp-0.050.30.05500-2026-01-21-161335.png  used on input line 296.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/temp-0.050.30.05500-2026-01-21-161335.png  used on input line 298.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
 LaTeX Warning: Marginpar on page 8 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-21-161335/eSys-0.050.30.05500-2026-01-21-161335.png, id=151, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-161335/eSys-0.050.30.05500-2026-01-21-161335.png, id=175, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-161335/eSys-0.050.30.05500-2026-01-21-161335.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-161335/eSys-0.050.30.05500-2026-01-21-161335.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/eSys-0.050.30.05500-2026-01-21-161335.png  used on input line 301.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/eSys-0.050.30.05500-2026-01-21-161335.png  used on input line 303.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 8 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-21-161335/ePair-0.050.30.05500-2026-01-21-161335.png, id=152, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-161335/ePair-0.050.30.05500-2026-01-21-161335.png, id=176, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-161335/ePair-0.050.30.05500-2026-01-21-161335.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-161335/ePair-0.050.30.05500-2026-01-21-161335.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/ePair-0.050.30.05500-2026-01-21-161335.png  used on input line 306.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/ePair-0.050.30.05500-2026-01-21-161335.png  used on input line 308.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 8 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-21-161335/epk-0.050.30.05500-2026-01-21-161335.png, id=153, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-161335/epk-0.050.30.05500-2026-01-21-161335.png, id=177, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-161335/epk-0.050.30.05500-2026-01-21-161335.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-161335/epk-0.050.30.05500-2026-01-21-161335.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/epk-0.050.30.05500-2026-01-21-161335.png  used on input line 311.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/epk-0.050.30.05500-2026-01-21-161335.png  used on input line 313.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 8 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-21-161335/cluster-patch-patch.png, id=154, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-21-161335/cluster-patch-patch.png, id=178, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-21-161335/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-21-161335/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/cluster-patch-patch.png  used on input line 318.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-21-161335/cluster-patch-patch.png  used on input line 320.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [8 <./docs/../Figures/0.050.30.05500-2026-01-21-161335/temp-0.050.30.05500-2026-01-21-161335.png> <./docs/../Figures/0.050.30.05500-2026-01-21-161335/eSys-0.050.30.05500-2026-01-21-161335.png> <./docs/../Figures/0.050.30.05500-2026-01-21-161335/ePair-0.050.30.05500-2026-01-21-161335.png> <./docs/../Figures/0.050.30.05500-2026-01-21-161335/epk-0.050.30.05500-2026-01-21-161335.png> <./docs/../Figures/0.050.30.05500-2026-01-21-161335/cluster-patch-patch.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 328--328
-[]\T1/pplj/b/n/10 Parámetros \T1/pplj/b/it/10 im-por-tantes \T1/pplj/b/n/10 de la
- []
-
-<docs/../Figures/0.050.30.05500-2026-01-22-154929/temp-0.050.30.05500-2026-01-22-154929.png, id=161, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-154929/temp-0.050.30.05500-2026-01-22-154929.png, id=185, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-154929/temp-0.050.30.05500-2026-01-22-154929.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-154929/temp-0.050.30.05500-2026-01-22-154929.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/temp-0.050.30.05500-2026-01-22-154929.png  used on input line 333.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/temp-0.050.30.05500-2026-01-22-154929.png  used on input line 335.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
+
 
 LaTeX Warning: Marginpar on page 9 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-154929/eSys-0.050.30.05500-2026-01-22-154929.png, id=162, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-154929/eSys-0.050.30.05500-2026-01-22-154929.png, id=186, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-154929/eSys-0.050.30.05500-2026-01-22-154929.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-154929/eSys-0.050.30.05500-2026-01-22-154929.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/eSys-0.050.30.05500-2026-01-22-154929.png  used on input line 338.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/eSys-0.050.30.05500-2026-01-22-154929.png  used on input line 340.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 9 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-154929/ePair-0.050.30.05500-2026-01-22-154929.png, id=163, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-154929/ePair-0.050.30.05500-2026-01-22-154929.png, id=187, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-154929/ePair-0.050.30.05500-2026-01-22-154929.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-154929/ePair-0.050.30.05500-2026-01-22-154929.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/ePair-0.050.30.05500-2026-01-22-154929.png  used on input line 343.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/ePair-0.050.30.05500-2026-01-22-154929.png  used on input line 345.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 9 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-154929/epk-0.050.30.05500-2026-01-22-154929.png, id=164, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-154929/epk-0.050.30.05500-2026-01-22-154929.png, id=188, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-154929/epk-0.050.30.05500-2026-01-22-154929.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-154929/epk-0.050.30.05500-2026-01-22-154929.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/epk-0.050.30.05500-2026-01-22-154929.png  used on input line 348.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/epk-0.050.30.05500-2026-01-22-154929.png  used on input line 350.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 9 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-154929/cluster-patch-patch.png, id=165, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-154929/cluster-patch-patch.png, id=189, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-154929/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-154929/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/cluster-patch-patch.png  used on input line 355.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-154929/cluster-patch-patch.png  used on input line 357.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [9 <./docs/../Figures/0.050.30.05500-2026-01-22-154929/temp-0.050.30.05500-2026-01-22-154929.png> <./docs/../Figures/0.050.30.05500-2026-01-22-154929/eSys-0.050.30.05500-2026-01-22-154929.png> <./docs/../Figures/0.050.30.05500-2026-01-22-154929/ePair-0.050.30.05500-2026-01-22-154929.png> <./docs/../Figures/0.050.30.05500-2026-01-22-154929/epk-0.050.30.05500-2026-01-22-154929.png> <./docs/../Figures/0.050.30.05500-2026-01-22-154929/cluster-patch-patch.png>]
 
 [10]
-<docs/../Figures/0.050.30.05500-2026-01-22-163251/temp-0.050.30.05500-2026-01-22-163251.png, id=177, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-163251/temp-0.050.30.05500-2026-01-22-163251.png, id=201, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-163251/temp-0.050.30.05500-2026-01-22-163251.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-163251/temp-0.050.30.05500-2026-01-22-163251.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/temp-0.050.30.05500-2026-01-22-163251.png  used on input line 416.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/temp-0.050.30.05500-2026-01-22-163251.png  used on input line 418.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
 LaTeX Warning: Marginpar on page 11 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-163251/eSys-0.050.30.05500-2026-01-22-163251.png, id=178, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-163251/eSys-0.050.30.05500-2026-01-22-163251.png, id=202, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-163251/eSys-0.050.30.05500-2026-01-22-163251.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-163251/eSys-0.050.30.05500-2026-01-22-163251.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/eSys-0.050.30.05500-2026-01-22-163251.png  used on input line 421.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/eSys-0.050.30.05500-2026-01-22-163251.png  used on input line 423.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 11 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-163251/ePair-0.050.30.05500-2026-01-22-163251.png, id=179, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-163251/ePair-0.050.30.05500-2026-01-22-163251.png, id=203, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-163251/ePair-0.050.30.05500-2026-01-22-163251.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-163251/ePair-0.050.30.05500-2026-01-22-163251.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/ePair-0.050.30.05500-2026-01-22-163251.png  used on input line 426.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/ePair-0.050.30.05500-2026-01-22-163251.png  used on input line 428.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 11 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-163251/epk-0.050.30.05500-2026-01-22-163251.png, id=180, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-163251/epk-0.050.30.05500-2026-01-22-163251.png, id=204, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-163251/epk-0.050.30.05500-2026-01-22-163251.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-163251/epk-0.050.30.05500-2026-01-22-163251.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/epk-0.050.30.05500-2026-01-22-163251.png  used on input line 431.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/epk-0.050.30.05500-2026-01-22-163251.png  used on input line 433.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 11 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-163251/cluster-patch-patch.png, id=181, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-163251/cluster-patch-patch.png, id=205, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-163251/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-163251/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/cluster-patch-patch.png  used on input line 446.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-163251/cluster-patch-patch.png  used on input line 448.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [11 <./docs/../Figures/0.050.30.05500-2026-01-22-163251/temp-0.050.30.05500-2026-01-22-163251.png> <./docs/../Figures/0.050.30.05500-2026-01-22-163251/eSys-0.050.30.05500-2026-01-22-163251.png> <./docs/../Figures/0.050.30.05500-2026-01-22-163251/ePair-0.050.30.05500-2026-01-22-163251.png> <./docs/../Figures/0.050.30.05500-2026-01-22-163251/epk-0.050.30.05500-2026-01-22-163251.png> <./docs/../Figures/0.050.30.05500-2026-01-22-163251/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-22-165623/temp-0.050.30.05500-2026-01-22-165623.png, id=187, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-165623/temp-0.050.30.05500-2026-01-22-165623.png, id=211, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-165623/temp-0.050.30.05500-2026-01-22-165623.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-165623/temp-0.050.30.05500-2026-01-22-165623.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/temp-0.050.30.05500-2026-01-22-165623.png  used on input line 456.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/temp-0.050.30.05500-2026-01-22-165623.png  used on input line 458.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 
 LaTeX Warning: Marginpar on page 12 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-165623/eSys-0.050.30.05500-2026-01-22-165623.png, id=188, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-165623/eSys-0.050.30.05500-2026-01-22-165623.png, id=212, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-165623/eSys-0.050.30.05500-2026-01-22-165623.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-165623/eSys-0.050.30.05500-2026-01-22-165623.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/eSys-0.050.30.05500-2026-01-22-165623.png  used on input line 461.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/eSys-0.050.30.05500-2026-01-22-165623.png  used on input line 463.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 12 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-165623/ePair-0.050.30.05500-2026-01-22-165623.png, id=189, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-165623/ePair-0.050.30.05500-2026-01-22-165623.png, id=213, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-165623/ePair-0.050.30.05500-2026-01-22-165623.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-165623/ePair-0.050.30.05500-2026-01-22-165623.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/ePair-0.050.30.05500-2026-01-22-165623.png  used on input line 466.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/ePair-0.050.30.05500-2026-01-22-165623.png  used on input line 468.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 12 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-165623/epk-0.050.30.05500-2026-01-22-165623.png, id=190, 426.8748pt x 341.8371pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-165623/epk-0.050.30.05500-2026-01-22-165623.png, id=214, 426.8748pt x 341.8371pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-165623/epk-0.050.30.05500-2026-01-22-165623.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-165623/epk-0.050.30.05500-2026-01-22-165623.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/epk-0.050.30.05500-2026-01-22-165623.png  used on input line 471.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/epk-0.050.30.05500-2026-01-22-165623.png  used on input line 473.
 (pdftex.def)             Requested size: 140.55646pt x 112.55621pt.
 
 LaTeX Warning: Marginpar on page 12 moved.
 
-<docs/../Figures/0.050.30.05500-2026-01-22-165623/cluster-patch-patch.png, id=191, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-22-165623/cluster-patch-patch.png, id=215, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-22-165623/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-22-165623/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/cluster-patch-patch.png  used on input line 477.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-22-165623/cluster-patch-patch.png  used on input line 479.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [12 <./docs/../Figures/0.050.30.05500-2026-01-22-165623/temp-0.050.30.05500-2026-01-22-165623.png> <./docs/../Figures/0.050.30.05500-2026-01-22-165623/eSys-0.050.30.05500-2026-01-22-165623.png> <./docs/../Figures/0.050.30.05500-2026-01-22-165623/ePair-0.050.30.05500-2026-01-22-165623.png> <./docs/../Figures/0.050.30.05500-2026-01-22-165623/epk-0.050.30.05500-2026-01-22-165623.png> <./docs/../Figures/0.050.30.05500-2026-01-22-165623/cluster-patch-patch.png>]
-Overfull \hbox (32.98192pt too wide) detected at line 521
+Overfull \hbox (32.98192pt too wide) detected at line 523
 []
  []
 
@@ -1233,84 +1234,132 @@ Overfull \hbox (32.98192pt too wide) detected at line 521
 LaTeX Warning: Marginpar on page 13 moved.
 
 
-Overfull \hbox (88.16316pt too wide) detected at line 541
+Overfull \hbox (88.16316pt too wide) detected at line 543
 []
  []
 
 
 
 [13]
-<docs/../Figures/0.050.30.05500-2026-01-23-150058/cluster-patch-patch.png, id=206, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-23-150058/cluster-patch-patch.png, id=230, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-23-150058/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-23-150058/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-23-150058/cluster-patch-patch.png  used on input line 555.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-23-150058/cluster-patch-patch.png  used on input line 557.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [14 <./docs/../Figures/0.050.30.05500-2026-01-23-150058/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-23-152756/cluster-patch-patch.png, id=212, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-23-152756/cluster-patch-patch.png, id=237, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-23-152756/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-23-152756/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-23-152756/cluster-patch-patch.png  used on input line 589.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-23-152756/cluster-patch-patch.png  used on input line 591.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [15 <./docs/../Figures/0.050.30.05500-2026-01-23-152756/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png, id=218, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png, id=243, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png  used on input line 628.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png  used on input line 630.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [16 <./docs/../Figures/0.050.30.05500-2026-01-23-171941/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png, id=224, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png, id=249, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png  used on input line 640.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png  used on input line 642.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [17 <./docs/../Figures/0.050.30.05500-2026-01-23-174419/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png, id=231, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png, id=255, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png  used on input line 651.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png  used on input line 653.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [18 <./docs/../Figures/0.050.30.05500-2026-01-26-101526/cluster-patch-patch.png>]
+Overfull \hbox (4.68205pt too wide) in paragraph at lines 671--673
+\T1/pplj/m/n/10 mal los po-ten-ciales y derivadas[]. Es-tás rela-ciones no siguen la relación
+ []
+
 
 LaTeX Warning: Marginpar on page 19 moved.
 
 
 
 [19]
-<docs/../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png, id=243, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png, id=267, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png  used on input line 686.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png  used on input line 688.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [20 <./docs/../Figures/0.050.30.05500-2026-01-26-113021/cluster-patch-patch.png>]
-<docs/../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png, id=249, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png, id=273, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png  used on input line 697.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png  used on input line 699.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
 
 
 [21 <./docs/../Figures/0.050.30.05500-2026-01-26-120745/cluster-patch-patch.png>]
 
-Package hyperref Warning: Suppressing empty link on input line 705.
+Package hyperref Warning: Suppressing empty link on input line 707.
 
-<docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png, id=255, 426.75435pt x 284.38245pt>
+<docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png, id=279, 426.75435pt x 284.38245pt>
 File: docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png Graphic file (type png)
 <use docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png>
-Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png  used on input line 709.
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png  used on input line 711.
 (pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
-)
+
+
+[22 <./docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png>]
+
+[23]
+<docs/../Figures/0.050.30.05500-2026-01-27-100615/cluster-patch-patch.png, id=289, 426.75435pt x 284.38245pt>
+File: docs/../Figures/0.050.30.05500-2026-01-27-100615/cluster-patch-patch.png Graphic file (type png)
+<use docs/../Figures/0.050.30.05500-2026-01-27-100615/cluster-patch-patch.png>
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-27-100615/cluster-patch-patch.png  used on input line 753.
+(pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
+
+
+[24 <./docs/../Figures/0.050.30.05500-2026-01-27-100615/cluster-patch-patch.png>]
+<docs/../Figures/0.050.30.05500-2026-01-27-103039/cluster-patch-patch.png, id=295, 426.75435pt x 284.38245pt>
+File: docs/../Figures/0.050.30.05500-2026-01-27-103039/cluster-patch-patch.png Graphic file (type png)
+<use docs/../Figures/0.050.30.05500-2026-01-27-103039/cluster-patch-patch.png>
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-27-103039/cluster-patch-patch.png  used on input line 768.
+(pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
+
+
+[25 <./docs/../Figures/0.050.30.05500-2026-01-27-103039/cluster-patch-patch.png>]
+<docs/../Figures/0.050.30.05500-2026-01-27-111613/cluster-patch-patch.png, id=302, 426.75435pt x 284.38245pt>
+File: docs/../Figures/0.050.30.05500-2026-01-27-111613/cluster-patch-patch.png Graphic file (type png)
+<use docs/../Figures/0.050.30.05500-2026-01-27-111613/cluster-patch-patch.png>
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-27-111613/cluster-patch-patch.png  used on input line 782.
+(pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
+
+
+[26 <./docs/../Figures/0.050.30.05500-2026-01-27-111613/cluster-patch-patch.png>]
+<docs/../Figures/0.050.30.05500-2026-01-27-114603/cluster-patch-patch.png, id=308, 426.75435pt x 284.38245pt>
+File: docs/../Figures/0.050.30.05500-2026-01-27-114603/cluster-patch-patch.png Graphic file (type png)
+<use docs/../Figures/0.050.30.05500-2026-01-27-114603/cluster-patch-patch.png>
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-27-114603/cluster-patch-patch.png  used on input line 796.
+(pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
+
+
+[27 <./docs/../Figures/0.050.30.05500-2026-01-27-114603/cluster-patch-patch.png>]
+<docs/../Figures/0.050.30.05500-2026-01-27-121222/cluster-patch-patch.png, id=314, 426.75435pt x 284.38245pt>
+File: docs/../Figures/0.050.30.05500-2026-01-27-121222/cluster-patch-patch.png Graphic file (type png)
+<use docs/../Figures/0.050.30.05500-2026-01-27-121222/cluster-patch-patch.png>
+Package pdftex.def Info: docs/../Figures/0.050.30.05500-2026-01-27-121222/cluster-patch-patch.png  used on input line 807.
+(pdftex.def)             Requested size: 273.99443pt x 182.5856pt.
+
+
+[28 <./docs/../Figures/0.050.30.05500-2026-01-27-121222/cluster-patch-patch.png>])
 
 Package bibentry Warning: You have used \nobibliography* 
 (bibentry)                without a following \bibliography.
@@ -1318,27 +1367,34 @@ Package bibentry Warning: You have used \nobibliography*
 
 
 
-[22 <./docs/../Figures/0.050.30.05500-2026-01-26-134421/cluster-patch-patch.png>] (./main.aux)
+[29] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 6D5560493F3D7B419C19CE9E3FAB538B;3510.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: 38FB4E0BA05DACF87D85A2F238165F9A;5056
+(rerunfilecheck)             After:  6D214F3CFB67D9AC93A41D23CF670FC1;5320.
  ) 
 Here is how much of TeX's memory you used:
- 21518 strings out of 475171
- 431509 string characters out of 5767095
- 789319 words of memory out of 5000000
- 43990 multiletter control sequences out of 15000+600000
+ 21598 strings out of 475171
+ 435748 string characters out of 5767095
+ 789339 words of memory out of 5000000
+ 44046 multiletter control sequences out of 15000+600000
  628893 words of font info for 151 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 97i,13n,96p,541b,1280s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 97i,13n,96p,541b,1317s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplbi8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (22 pages, 7312504 bytes).
+Output written on main.pdf (29 pages, 7512659 bytes).
 PDF statistics:
- 331 PDF objects out of 1000 (max. 8388607)
- 195 compressed objects within 2 object streams
- 47 named destinations out of 1000 (max. 500000)
- 1447 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 399 PDF objects out of 1000 (max. 8388607)
+ 245 compressed objects within 3 object streams
+ 61 named destinations out of 1000 (max. 500000)
+ 1520 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -2,6 +2,8 @@
 
 \begin{document}
 
+\justifying
+
 \marginnote{
 \begin{itemize}
     \item etotal = pe + ke
@@ -710,5 +712,110 @@ Regrese a las definiciones de~\ref{subsec:tabpot}, pero sin el signo negativo.
 \end{figure}
 
 No entiendo que está pasando.
+
+\newpage
+
+\section{Acerca del potencial de 3 cuerpos}
+
+Mi intuición con el efecto del potencial está mal.
+Según yo, lo que hace el potencial es repeler, es introducir una fuerza que empuja a partículas que están fuera de un enlace entre dos partículas.
+Pero no es así.
+El potencial se swap reduce el pozo de potencial entre la interacción de patches, permitiendo que sea más fácil romper la interacción.
+Voy a probar cambiando el parámetro $w$, para que cuando se haga la suma de fuerzas, no cancelé por completo las interacciones.
+
+Viendo la documentación, hay una forma de guardar el vector de fuerza que se calcúla en cada partícula.
+Una forma de debuggear sería guardar esos vectores de fuerza para cada patch cada $N$ pasos y después hacer un script en julia que calculé la fuerza que debería estar asignado a ese patch y contrastar.
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-27-100615}
+
+Este es el código para evaluar las tablas:
+\begin{code}
+    th = deg2rad(th);
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+ 
+    f_i1=-w*eps_jk*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_ik,eps_ik,sig_p,r_ik) );
+    f_i2=-w*eps_jk*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_ik,eps_ik,sig_p,r_ik) );
+   
+    f_j1=-w*eps_ik*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_j2=-w*eps_ik*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
+
+    f_k1=-w*eps_ij*( DiffU3(eps_ik,eps_ik,sig_p,r_ik) * U3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_k2=-w*eps_ij*( U3(eps_ik,eps_ik,sig_p,r_ik) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
+\end{code}
+
+Cambié el parámetro $w$ de \num{1} a \num{0.9}.
+No funcionó.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-27-100615/cluster-patch-patch.png}
+\end{figure}
+
+Parece que empeoró la situación.
+Se redujo la cantidad de enlaces entre dos patches y aumento la cantidad de interacción entre 3 patches.
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-27-103039}
+
+Se cambió el parámetro $w$ a \num{1.5}.
+La temperatura se estabilizo en \num{0.1}, \num{0.05} unidades más de lo esperado.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-27-103039/cluster-patch-patch.png}
+\end{figure}
+
+Además quedó eso.
+Parece que tienen más energía para estar.
+
+\newpage 
+
+\section{Directory: 0.050.30.05500-2026-01-27-111613}
+
+Cambié de signo, mantuve $w=1.5$.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-27-111613/cluster-patch-patch.png}
+\end{figure}
+
+El signo si cambió mucho la configuración de la red.
+La temperatura se relajo a \num{0.05}, lo cuál es deseado.
+
+Se va a repetir el experimento con $w=0.9$, considerando que en la situación anterior se tenía elsigno negativo.
+
+\newpage 
+
+\section{Directory: 0.050.30.05500-2026-01-27-114603}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-27-114603/cluster-patch-patch.png}
+\end{figure}
+
+Se disminuyo la cantidad de clusters de 5, voy a reducir $w$ a \num{0.5} a ver que pasa.
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-27-121222}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-27-121222/cluster-patch-patch.png}
+\end{figure}
+
+Disminuyeron los clusters de 4.
+Los de 3 parece que siguen igual.
+
+Lo bajaré a \num{0.25} a ver que pasa, jaja.
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-27-123757}
+
+$w=0.25$
 
 \end{document}
