@@ -1,0 +1,89 @@
+# Input script to debug the threebody/table command
+# Initialization
+units lj
+dimension 3
+boundary p p p
+
+# Styles of atoms and that stuff
+atom_style atomic 
+pair_style hybrid/overlay 0.0 table/omp linear 5000000 threebody/table
+
+newton on
+
+# Create simulaiton box
+region simulation_box block -$L $L -$L $L -$L $L
+# N-atom-types region-ID keyword value Is necesesary the extra/special/per/atom (# of special neighbors per atom)
+create_box 4 simulation_box
+
+# Atom types
+mass 1 1.0      # PA 
+mass 2 1.0      # PB 
+
+# Coefficients
+include potential.in
+
+# Particles 
+include particles.in
+
+# COMPUTES
+
+# Compute global kinetic and potential energy and temperature
+compute t all temp
+compute p all pressure t
+compute ep all pe
+compute ek all ke
+variable eT equal etotal
+variable eB equal ebond
+variable eA equal eangle
+variable eM equal emol
+variable ec equal ecouple
+variable eC equal econserve
+
+# Potencial energy per pair-wise interaction
+compute patchPair all pair table/omp epair
+compute swapPair all pair threebody/table epair
+
+# Compute the pressure
+compute press all pressure t ke virial
+compute pressVirial all pressure t virial
+compute pressVirialMod all pressure t pair bond angle
+
+# Computes for the stress
+compute cstress all stress/atom t ke pair bond angle
+compute cstressVirial all stress/atom t virial
+compute cstressVirialMod all stress/atom t pair bond angle
+compute stress all reduce sum c_cstress[*]
+compute stressVirial all reduce sum c_cstressVirial[*]
+compute stressVirialMod all reduce sum c_cstressVirialMod[*]
+
+# DUMPS and FIXES
+
+thermo ${NsaveStress}
+
+# Save global energies and temperature
+fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
+
+# Save Pressure and Stress tensor
+fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+
+# RUN SIMULATION
+
+# Brownian Dynamics using Langevin Thermostat
+
+timestep ${tstep}
+
+fix VelVerlet all nve # Use Velocity Verlet integrator
+
+# First elevate the temperature
+fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
+run ${stepsheat}
+
+unfix ThermoLng
+
+# Now we let the system to create the polymeric network
+fix ThermoLng all langevin ${temp} ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
+run ${steps}
+
+# Write data for deformation
+
+write_restart ${Dir}/${file6_name}
