@@ -824,5 +824,41 @@ $w=0.25$
 
 Pues empeoró.
 
+\newpage
+
+\subsection{Acerca del potencial de 3 cuerpos}
+
+Me dí cuenta que no estaba bien definido el pinche grupo de atomos \emph{PB}.
+
+\begin{code}
+# Create patchy particles
+group CrossLinker type 1 3
+group Monomer type 2 4
+group Patches type 3 4
+group CL type 1
+group MO type 2
+group PA type 3
+group CM type 1 2
+\end{code}
+
+Esto es importante, porque el el potencial de tres cuerpos mapea los tipos de atomos que van a ser sujetos a este potencial a través de la siguiente línea:
+\begin{code}
+pair_coeff * * threebody/table swapMech.3b NULL NULL PA PB
+\end{code}
+
+Esto me indica que puede que el como los patches de los monomeros nunca eran sujetos a este poncial, por eso aún había interacciones de más de 3 patches.
+
+Voy a intentar con un valor de $w=\num{1}$.
+
+\newpage
+
+\section{Directory: 0.050.30.05500-2026-01-27-162300}
+
+\begin{figure}[h]
+    \centering
+%    \includegraphics[width=0.9\textwidth]{../Figures/0.050.30.05500-2026-01-27-162300/cluster-patch-patch.png}
+\end{figure}
+
+
 
 \end{document}

@@ -23,6 +23,7 @@ group Patches type 3 4
 group CL type 1
 group MO type 2
 group PA type 3
+group PB type 4 
 group CM type 1 2
 
 # Neighbor list

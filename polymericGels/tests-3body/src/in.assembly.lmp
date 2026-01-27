@@ -6,7 +6,7 @@ boundary p p p
 
 # Styles of atoms and that stuff
 atom_style atomic 
-pair_style hybrid/overlay 0.0 table/omp linear 5000000 threebody/table
+pair_style hybrid/overlay zero 0.0 table/omp linear 5000000 threebody/table
 
 newton on
 

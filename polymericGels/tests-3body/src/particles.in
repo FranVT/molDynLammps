@@ -1,0 +1,19 @@
+# Script with all molecule information and create groups for computes
+
+# Introduce the molecules
+# ID style args keyword arg
+region spawn_box block -$L $L -$L $L -$L $L
+
+# create_atoms type style args keyword values
+# style_random: N seed region-ID
+# keyword_mol: template-ID seed
+# keyword_overlap: overlap value = only insert if at least this distance from all existing atoms
+# keyword_maxtry: maxtry value = number of attempts to insert a particle before failure
+create_atoms 0 random ${NPA} ${seed1} spawn_box overlap 0.5 maxtry 5000
+create_atoms 0 random ${NPB} ${seed2} spawn_box overlap 0.5 maxtry 5000
+
+# Neighbor list
+neighbor 1.8 bin # extra-distance style
+#neigh_modify delay 0 every 1 check no
+#neigh_modify exclude molecule/intra CrossLinker
+#neigh_modify exclude molecule/intra Monomer
