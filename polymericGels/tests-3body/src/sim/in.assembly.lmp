@@ -56,6 +56,9 @@ compute stress all reduce sum c_cstress[*]
 compute stressVirial all reduce sum c_cstressVirial[*]
 compute stressVirialMod all reduce sum c_cstressVirialMod[*]
 
+# Compute potential energy per atom
+compute potAtom all pe/atom pair
+
 # DUMPS and FIXES
 
 thermo ${NsaveStress}
@@ -67,7 +70,7 @@ fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_patchPair c_swapPair c_ep c_ek
 fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
 
 # Save atom positions with cluster id
-dump dumpID all custom ${Ndump} ${Dir}/traj/${file5_name} id type x y z vx vy vz fx fy fz
+dump dumpID all custom ${Ndump} ${Dir}/traj/${file5_name} id type x y z vx vy vz fx fy fz c_potAtom
 dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
 
 # RUN SIMULATION

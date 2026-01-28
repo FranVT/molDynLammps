@@ -23,7 +23,7 @@ end
 
 
 
-function getDir(T,N_particles,phi,CL_con,date)
+function getDir(date)
 """
     To get the directory of the simulation
 """
@@ -35,19 +35,13 @@ DATA_DIR=joinpath(MAIN_DIR,"data");
 # Read the directory where data is stored
 sims=filter(isdir,readdir(DATA_DIR,join=true));
 
-# Creation of the id
-id=string(T,phi,CL_con,N_particles);
-
-# For this script, evetually we are going to get assembly averages
-id_c=string(T,phi,CL_con,N_particles,"-",date); # filter!(s->s==id_c,readdir(DATA_DIR))
-
 # Get the idex for the directory
-indx=findall(!isempty,findall.(id_c,sims));
+indx=findall(!isempty,findall.(date,sims));
 
 # Get the directory
 DIR=sims[indx];
 
-    return DIR, id_c
+    return DIR
 
 end
 
