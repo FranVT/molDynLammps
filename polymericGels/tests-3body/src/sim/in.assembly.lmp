@@ -66,6 +66,10 @@ fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_patchPair c_swapPair c_ep c_ek
 # Save Pressure and Stress tensor
 fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
 
+# Save atom positions with cluster id
+dump dumpID all custom ${Ndump} ${Dir}/traj/${file5_name} id type x y z vx vy vz fx fy fz
+dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
+
 # RUN SIMULATION
 
 # Brownian Dynamics using Langevin Thermostat
@@ -74,16 +78,5 @@ timestep ${tstep}
 
 fix VelVerlet all nve # Use Velocity Verlet integrator
 
-# First elevate the temperature
-fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
-run ${stepsheat}
-
-unfix ThermoLng
-
-# Now we let the system to create the polymeric network
-fix ThermoLng all langevin ${temp} ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
 run ${steps}
 
-# Write data for deformation
-
-write_restart ${Dir}/${file6_name}
