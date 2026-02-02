@@ -153,21 +153,21 @@ thermo 1
 fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
 fix Energy all ave/time 1 1 ${Nsave} c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
 fix Energy all ave/time 1 1 1 c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
-fix Energy all ave/time 1 1 1 c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-01-28-105503/${file1_name}
-fix Energy all ave/time 1 1 1 c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-01-28-105503/system_assembly.fixf
+fix Energy all ave/time 1 1 1 c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-02-02-155528/${file1_name}
+fix Energy all ave/time 1 1 1 c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-02-02-155528/system_assembly.fixf
 
 # Save Pressure and Stress tensor
 fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
 fix fixStress5 all ave/time 1 1 ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
 fix fixStress5 all ave/time 1 1 1 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
-fix fixStress5 all ave/time 1 1 1 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-01-28-105503/${file2_name}
-fix fixStress5 all ave/time 1 1 1 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-01-28-105503/stress_assembly.fixf
+fix fixStress5 all ave/time 1 1 1 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-02-02-155528/${file2_name}
+fix fixStress5 all ave/time 1 1 1 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-02-02-155528/stress_assembly.fixf
 
 # Save atom positions with cluster id
 dump dumpID all custom ${Ndump} ${Dir}/traj/${file5_name} id type x y z vx vy vz fx fy fz c_potAtom
 dump dumpID all custom 1 ${Dir}/traj/${file5_name} id type x y z vx vy vz fx fy fz c_potAtom
-dump dumpID all custom 1 /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-01-28-105503/traj/${file5_name} id type x y z vx vy vz fx fy fz c_potAtom
-dump dumpID all custom 1 /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-01-28-105503/traj/traj_assembly.*.dumpf id type x y z vx vy vz fx fy fz c_potAtom
+dump dumpID all custom 1 /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-02-02-155528/traj/${file5_name} id type x y z vx vy vz fx fy fz c_potAtom
+dump dumpID all custom 1 /home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data/2026-02-02-155528/traj/traj_assembly.*.dumpf id type x y z vx vy vz fx fy fz c_potAtom
 dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
 
 # RUN SIMULATION
@@ -2214,20 +2214,20 @@ Per MPI rank memory allocation (min/avg/max) = 9.61 | 10.52 | 11.42 Mbytes
       1998   0.2385408     -1.1513078      0             -0.88294943     0.73361079   
       1999   0.2477087     -1.1616253      0             -0.882953       0.70013762   
       2000   0.25655222    -1.1715776      0             -0.88295633     0.66600996   
-Loop time of 0.16907 on 2 procs for 2000 steps with 4 atoms
+Loop time of 0.200676 on 2 procs for 2000 steps with 4 atoms
 
-Performance: 1022063.975 tau/day, 11829.444 timesteps/s, 47.318 katom-step/s
-77.7% CPU use with 2 MPI tasks x 1 OpenMP threads
+Performance: 861090.380 tau/day, 9966.324 timesteps/s, 39.865 katom-step/s
+86.5% CPU use with 2 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.0062012  | 0.0064948  | 0.0067883  |   0.4 |  3.84
+Pair    | 0.007726   | 0.0083653  | 0.0090046  |   0.7 |  4.17
 Neigh   | 0          | 0          | 0          |   0.0 |  0.00
-Comm    | 0.0082196  | 0.0082621  | 0.0083045  |   0.0 |  4.89
-Output  | 0.083498   | 0.083982   | 0.084466   |   0.2 | 49.67
-Modify  | 0.052629   | 0.060713   | 0.068796   |   3.3 | 35.91
-Other   |            | 0.009618   |            |       |  5.69
+Comm    | 0.0090837  | 0.0095163  | 0.0099489  |   0.4 |  4.74
+Output  | 0.10092    | 0.10182    | 0.10273    |   0.3 | 50.74
+Modify  | 0.062171   | 0.071337   | 0.080502   |   3.4 | 35.55
+Other   |            | 0.009633   |            |       |  4.80
 
 Nlocal:              2 ave           4 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 1
@@ -2243,4 +2243,4 @@ Ave neighs/atom = 24.5
 Neighbor list builds = 0
 Dangerous builds = 0
 
-Total wall time: 0:00:12
+Total wall time: 0:00:18
