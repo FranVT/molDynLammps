@@ -8,7 +8,7 @@
 L=1;
 
 # Assign computational parameters
-dt=0.001;
+dt=0.00001;
 seed1=3234;
 seed2=6321;
 seed3=2010;

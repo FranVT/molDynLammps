@@ -12,14 +12,17 @@ using GLMakie, LaTeXStrings, Typst_jll
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-02-155528";
+date=;
+#"2026-02-03-170509";
+#"2026-02-03-164806";
+#"2026-02-02-155528";
 
 # Get the directory of the desire system
 DIR=getDir(date);
 DIR=DIR[1];
 
 # Activate extract info
-act=0;
+act=1;
 
 # Filename with the simulation data
 FILE_NAME="system_assembly.fixf";
@@ -59,11 +62,11 @@ l=reduce(vcat,DATA_dump);
 
 # Get the positions of one particle
 # Plot
-fig=Figure(size = (15cm, 12cm), fontsize = 12pt);
+fig_pos=Figure(size = (15cm, 12cm), fontsize = 12pt);
 
 clbr=:managua10;
 
-ax=Axis(fig[1:1,1:1],
+ax=Axis(fig_pos[1:1,1:1],
     title=latexstring("\\mathrm{Position~of~particles}"),
     #subtitle=latexstring(subtitle),
     xlabel=L"x~[x/D]",
@@ -81,13 +84,13 @@ ax=Axis(fig[1:1,1:1],
     #xticks=domain
    )
 
-scatter!(ax,l[l.id.==2.0,:].x,l[l.id.==2.0,:].y,label=L"2")
-scatter!(ax,l[l.id.==3.0,:].x,l[l.id.==3.0,:].y,label=L"3")
-scatter!(ax,l[l.id.==4.0,:].x,l[l.id.==4.0,:].y,label=L"4")
+scatterlines!(ax,l[l.id.==2.0,:].x,l[l.id.==2.0,:].y,label=L"2")
+scatterlines!(ax,l[l.id.==3.0,:].x,l[l.id.==3.0,:].y,label=L"3")
+scatterlines!(ax,l[l.id.==4.0,:].x,l[l.id.==4.0,:].y,label=L"4")
 
 #hlines!(ax,[T])
 
-Legend(fig[1,2],ax,
+Legend(fig_pos[1,2],ax,
       L"\mathrm{Legend}",
      labelsize=12pt)
 
@@ -97,11 +100,11 @@ fig=Figure(size = (15cm, 12cm), fontsize = 12pt);
 
 clbr=:managua10;
 
-ax=Axis(fig[1:1,1:1],
-    title=latexstring("\\mathrm{Position~of~particles}"),
+ax_1=Axis(fig[1,1],
+    title=latexstring("\\mathrm{Time~evolution~Position~of~particles}"),
     #subtitle=latexstring(subtitle),
-    xlabel=L"x~[x/D]",
-    ylabel=L"y~[y/D]",
+    ylabel=L"x|y~[r/D]",
+    xlabel=L"\mathrm{Time~step}",
     titlesize=24.0f0,
     subtitlesize=20.0f0,
     xticklabelsize=18.0f0,
@@ -115,17 +118,50 @@ ax=Axis(fig[1:1,1:1],
     #xticks=domain
    )
 
-scatter!(ax,l[l.id.==2.0,:].x,label=L"2.x",color=:red,marker=:rect)
-scatter!(ax,l[l.id.==2.0,:].y,label=L"2.y",color=:red,marker=:utriangle)
+ax_2=Axis(fig[2,1],
+    #subtitle=latexstring(subtitle),
+    ylabel=L"x|y~[r/D]",
+    xlabel=L"\mathrm{Time~step}",
+    titlesize=24.0f0,
+    subtitlesize=20.0f0,
+    xticklabelsize=18.0f0,
+    yticklabelsize=18.0f0,
+    xlabelsize=22.0f0,
+    ylabelsize=22.0f0,
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(nothing,nothing,nothing,nothing), 
+    #yticks = 0:0.01:1.5*T
+    #xticks=domain
+   )
 
-scatter!(ax,l[l.id.==3.0,:].x,label=L"3.x",color=:blue,marker=:rect)
-scatter!(ax,l[l.id.==3.0,:].y,label=L"3.y",color=:blue,marker=:utriangle)
+ax_3=Axis(fig[3,1],
+    #subtitle=latexstring(subtitle),
+    ylabel=L"x|y~[r/D]",
+    xlabel=L"\mathrm{Time~step}",
+    titlesize=24.0f0,
+    subtitlesize=20.0f0,
+    xticklabelsize=18.0f0,
+    yticklabelsize=18.0f0,
+    xlabelsize=22.0f0,
+    ylabelsize=22.0f0,
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(nothing,nothing,nothing,nothing), 
+    #yticks = 0:0.01:1.5*T
+    #xticks=domain
+   )
 
-scatter!(ax,l[l.id.==4.0,:].x,label=L"4.x",color=:black,marker=:rect)
-scatter!(ax,l[l.id.==4.0,:].y,label=L"4.y",color=:black,marker=:utriangle)
+scatterlines!(ax_1,l[l.id.==2.0,:].x,label=L"2.x",markersize=10)
+scatterlines!(ax_1,l[l.id.==2.0,:].y,label=L"2.y",markersize=10)
 
-Legend(fig[1,2],ax,
+scatterlines!(ax_2,l[l.id.==3.0,:].x,label=L"3.x",markersize=10)
+scatterlines!(ax_2,l[l.id.==3.0,:].y,label=L"3.y",markersize=10)
+
+scatterlines!(ax_3,l[l.id.==4.0,:].x,label=L"4.x",markersize=10)
+scatterlines!(ax_3,l[l.id.==4.0,:].y,label=L"4.y",markersize=10)
+
+Legend(fig[1:3,2],ax_3,
       L"\mathrm{Legend}",
      labelsize=12pt)
-
 
