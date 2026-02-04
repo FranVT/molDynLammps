@@ -12,7 +12,8 @@ using GLMakie, LaTeXStrings, Typst_jll
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-04-102545";
+date="2026-02-04-155132";
+#"2026-02-04-102545";
 #2026-02-04-123638
 #"2026-02-04-102545";
 #"2026-02-02-155528";
@@ -23,7 +24,7 @@ DIR=getDir(date);
 DIR=DIR[1];
 
 # Activate extract info
-act=0;
+act=1;
 
 # Filename with the simulation data
 FILE_NAME="system_assembly.fixf";
@@ -50,7 +51,7 @@ end
 
 
 # Parameters
-dt=0.00001;
+dt=0.001;
 
 """
     SANDBOX
@@ -74,7 +75,6 @@ time=dt.*DATA_fix.TimeStep;
 
 U_2=l[l.id.==2.0,:].c_potAtom;
 U_3=l[l.id.==3.0,:].c_potAtom;
-U_4=l[l.id.==4.0,:].c_potAtom;
 
 fig_U=Figure(size = (18.75cm, 15cm));
 
@@ -99,7 +99,6 @@ ax=Axis(fig_U[1:1,1:1],
 
 scatterlines!(ax,time,U_2,markersize=3,label=L"2")
 scatterlines!(ax,time,U_3,markersize=3,label=L"3")
-scatterlines!(ax,time,U_4,markersize=3,label=L"4")
 
 scatterlines!(ax,time,DATA_fix.c_patchPair,markersize=3,label=L"\mathrm{Patch}")
 scatterlines!(ax,time,DATA_fix.c_swapPair,markersize=3,label=L"\mathrm{Swap}")
@@ -160,6 +159,7 @@ Legend(fig_E[1,2],ax,
     Position
 """
 
+ms=5;
 
 # Get the positions of one particle
 # Plot
@@ -184,9 +184,9 @@ ax=Axis(fig_pos[1:1,1:1],
     #xticks=domain
    )
 
-scatterlines!(ax,l[l.id.==2.0,:].x,l[l.id.==2.0,:].y,markersize=3,label=L"2")
-scatterlines!(ax,l[l.id.==3.0,:].x,l[l.id.==3.0,:].y,markersize=3,label=L"3")
-scatterlines!(ax,l[l.id.==4.0,:].x,l[l.id.==4.0,:].y,markersize=3,label=L"4")
+scatterlines!(ax,l[l.id.==2.0,:].x,l[l.id.==2.0,:].y,markersize=ms,label=L"2")
+scatterlines!(ax,l[l.id.==3.0,:].x,l[l.id.==3.0,:].y,markersize=ms,label=L"3")
+scatterlines!(ax,l[l.id.==4.0,:].x,l[l.id.==4.0,:].y,markersize=ms,label=L"4")
 
 #hlines!(ax,[T])
 
@@ -214,7 +214,7 @@ ax_1=Axis(fig[1,1],
     ylabelsize=1cm,
     xminorticksvisible=true,
     xminorgridvisible=true,
-    limits=(nothing,nothing,-L,L), 
+    limits=(nothing,nothing,nothing,nothing), 
     #yticks = 0:0.01:1.5*T
     #xticks=domain
    )
@@ -230,7 +230,7 @@ ax_2=Axis(fig[2,1],
     ylabelsize=1cm,
     xminorticksvisible=true,
     xminorgridvisible=true,
-    limits=(nothing,nothing,-L,L), 
+    limits=(nothing,nothing,nothing,nothing), 
     #yticks = 0:0.01:1.5*T
     #xticks=domain
    )
@@ -243,15 +243,12 @@ linkxaxes!(ax_1,ax_2)
 #hidespines!(ax_1,:b)
 #hidespines!(ax_2,:b, :t)
 
-ms=3;
 
 scatterlines!(ax_1,time,l[l.id.==2.0,:].x,label=L"2",markersize=ms)
 scatterlines!(ax_1,time,l[l.id.==3.0,:].x,label=L"3",markersize=ms)
-scatterlines!(ax_1,time,l[l.id.==4.0,:].x,label=L"4",markersize=ms)
 
 scatterlines!(ax_2,time,l[l.id.==2.0,:].y,label=L"2",markersize=ms)
 scatterlines!(ax_2,time,l[l.id.==3.0,:].y,label=L"3",markersize=ms)
-scatterlines!(ax_2,time,l[l.id.==4.0,:].y,label=L"4",markersize=ms)
 
 
 
