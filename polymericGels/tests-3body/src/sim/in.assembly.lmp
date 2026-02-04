@@ -33,9 +33,6 @@ compute p all pressure t
 compute ep all pe
 compute ek all ke
 variable eT equal etotal
-variable eB equal ebond
-variable eA equal eangle
-variable eM equal emol
 variable ec equal ecouple
 variable eC equal econserve
 
@@ -64,7 +61,7 @@ compute potAtom all pe/atom pair
 thermo ${NsaveStress}
 
 # Save global energies and temperature
-fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
+fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p file ${Dir}/${file1_name}
 
 # Save Pressure and Stress tensor
 fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}

@@ -12,16 +12,18 @@ using GLMakie, LaTeXStrings, Typst_jll
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-02-155528";
+date="2026-02-04-102545";
+#2026-02-04-123638
 #"2026-02-04-102545";
 #"2026-02-02-155528";
+
 
 # Get the directory of the desire system
 DIR=getDir(date);
 DIR=DIR[1];
 
 # Activate extract info
-act=1;
+act=0;
 
 # Filename with the simulation data
 FILE_NAME="system_assembly.fixf";
@@ -48,7 +50,7 @@ end
 
 
 # Parameters
-dt=0.001;
+dt=0.00001;
 
 """
     SANDBOX
@@ -95,13 +97,13 @@ ax=Axis(fig_U[1:1,1:1],
     #xticks=domain
    )
 
-scatterlines!(ax,time,U_2,label=L"2")
-scatterlines!(ax,time,U_3,label=L"3")
-scatterlines!(ax,time,U_4,label=L"4")
+scatterlines!(ax,time,U_2,markersize=3,label=L"2")
+scatterlines!(ax,time,U_3,markersize=3,label=L"3")
+scatterlines!(ax,time,U_4,markersize=3,label=L"4")
 
-scatterlines!(ax,time,DATA_fix.c_patchPair,label=L"\mathrm{Patch}")
-scatterlines!(ax,time,DATA_fix.c_swapPair,label=L"\mathrm{Swap}")
-scatterlines!(ax,time,DATA_fix.c_ep,label=L"\mathrm{System}")
+scatterlines!(ax,time,DATA_fix.c_patchPair,markersize=3,label=L"\mathrm{Patch}")
+scatterlines!(ax,time,DATA_fix.c_swapPair,markersize=3,label=L"\mathrm{Swap}")
+scatterlines!(ax,time,DATA_fix.c_ep,markersize=3,label=L"\mathrm{System}")
 
 #hlines!(ax,[T])
 
@@ -110,6 +112,38 @@ Legend(fig_U[1,2],ax,
      labelsize=0.5cm)
 
 
+
+# Total Energy
+fig_E=Figure(size = (18.75cm, 15cm));
+
+clbr=:managua10;
+
+ax=Axis(fig_E[1:1,1:1],
+    title=latexstring("\\mathrm{Total~energy}"),
+    #subtitle=latexstring(subtitle),
+    xlabel=L"t~[\tau]",
+    ylabel=L"U~[J/\epsilon]",
+    titlesize=1cm,
+    xticklabelsize=0.5cm,
+    yticklabelsize=0.5cm,
+    xlabelsize=1cm,
+    ylabelsize=1cm,
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(nothing,nothing,nothing,nothing), 
+    #yticks = 0:0.01:1.5*T
+    #xticks=domain
+   )
+
+scatterlines!(ax,time,DATA_fix.c_ep .+ DATA_fix.c_ek,label=L"\mathrm{U} + \mathrm{K}",markersize=3)
+scatterlines!(ax,time,DATA_fix.c_ep,label=L"\mathrm{U}",markersize=3)
+scatterlines!(ax,time,DATA_fix.c_ek,label=L"\mathrm{K}",markersize=3)
+
+#hlines!(ax,mean(DATA_fix.c_ep .+ DATA_fix.c_ek))
+
+Legend(fig_E[1,2],ax,
+      L"\mathrm{Energy}",
+     labelsize=0.5cm)
 
 
 
@@ -150,9 +184,9 @@ ax=Axis(fig_pos[1:1,1:1],
     #xticks=domain
    )
 
-scatterlines!(ax,l[l.id.==2.0,:].x,l[l.id.==2.0,:].y,label=L"2")
-scatterlines!(ax,l[l.id.==3.0,:].x,l[l.id.==3.0,:].y,label=L"3")
-scatterlines!(ax,l[l.id.==4.0,:].x,l[l.id.==4.0,:].y,label=L"4")
+scatterlines!(ax,l[l.id.==2.0,:].x,l[l.id.==2.0,:].y,markersize=3,label=L"2")
+scatterlines!(ax,l[l.id.==3.0,:].x,l[l.id.==3.0,:].y,markersize=3,label=L"3")
+scatterlines!(ax,l[l.id.==4.0,:].x,l[l.id.==4.0,:].y,markersize=3,label=L"4")
 
 #hlines!(ax,[T])
 
@@ -209,7 +243,7 @@ linkxaxes!(ax_1,ax_2)
 #hidespines!(ax_1,:b)
 #hidespines!(ax_2,:b, :t)
 
-ms=5;
+ms=3;
 
 scatterlines!(ax_1,time,l[l.id.==2.0,:].x,label=L"2",markersize=ms)
 scatterlines!(ax_1,time,l[l.id.==3.0,:].x,label=L"3",markersize=ms)

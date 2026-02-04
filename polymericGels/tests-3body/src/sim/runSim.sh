@@ -8,12 +8,12 @@
 L=1;
 
 # Assign computational parameters
-dt=0.00001;
+dt=0.001;
 seed1=3234;
 seed2=6321;
 seed3=2010;
 
-steps=2000000;
+steps=2000;
 
 log_name="log-3btest.log";
 
