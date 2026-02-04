@@ -237,12 +237,6 @@ ax_2=Axis(fig[2,1],
 
 linkxaxes!(ax_1,ax_2)
 
-#hidedecorations!(ax_1,grid=false,ticklabels=false,ylabel=false)
-#hidedecorations!(ax_2,grid=false)
-
-#hidespines!(ax_1,:b)
-#hidespines!(ax_2,:b, :t)
-
 
 scatterlines!(ax_1,time,l[l.id.==2.0,:].x,label=L"2",markersize=ms)
 scatterlines!(ax_1,time,l[l.id.==3.0,:].x,label=L"3",markersize=ms)
