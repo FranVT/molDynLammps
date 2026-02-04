@@ -13,7 +13,7 @@ seed1=3234;
 seed2=6321;
 seed3=2010;
 
-steps=2000;
+steps=2000000;
 
 log_name="log-3btest.log";
 
