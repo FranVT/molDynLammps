@@ -1,3 +1,4 @@
 *.table
 *.dumpf
 *.fixf
+*.log
