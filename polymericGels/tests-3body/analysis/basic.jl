@@ -11,8 +11,23 @@ using GLMakie, LaTeXStrings, Typst_jll
 # Load the functions
 include("functions.jl")
 
+function Upatch(eps_pair,sig_p,r)
+"""
+    Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
+"""
+    if r < 1.5*sig_p 
+        return round(2*eps_pair*( ((sig_p^4)./((2).*r.^4)) .-1).*exp.((sig_p)./(r.-(1.5*sig_p)).+2),digits=2^7)
+    else
+        return 0.0
+    end
+end
+
+
+
 # Selection of an specific simulation
-date="2026-02-04-155132";
+date="2026-02-05-140904";
+#"2026-02-05-141402";
+#"2026-02-05-140904";
 #"2026-02-04-102545";
 #2026-02-04-123638
 #"2026-02-04-102545";
@@ -53,6 +68,18 @@ end
 # Parameters
 dt=0.001;
 
+
+"""
+    Reducing the DATA_dump
+"""
+
+DATA_dump_3= map(s->DATA_dump[s][DATA_dump[s].id.==3.0,:],eachindex(DATA_dump));
+
+
+
+
+
+
 """
     SANDBOX
 """
@@ -76,39 +103,122 @@ time=dt.*DATA_fix.TimeStep;
 U_2=l[l.id.==2.0,:].c_potAtom;
 U_3=l[l.id.==3.0,:].c_potAtom;
 
-fig_U=Figure(size = (18.75cm, 15cm));
+
+e_lim=2;
+
+fig_U=Figure(size = (15cm, 18.75cm));
+tl_sz=0.55cm;
+ot_sz=0.35cm;
 
 clbr=:managua10;
 
-ax=Axis(fig_U[1:1,1:1],
+ax1=Axis(fig_U[1,1],
     title=latexstring("\\mathrm{Potential~energy}"),
     #subtitle=latexstring(subtitle),
     xlabel=L"t~[\tau]",
     ylabel=L"U~[J/\epsilon]",
-    titlesize=1cm,
-    xticklabelsize=0.5cm,
-    yticklabelsize=0.5cm,
-    xlabelsize=1cm,
-    ylabelsize=1cm,
+    titlesize=tl_sz,
+    xticklabelsize=ot_sz,
+    yticklabelsize=ot_sz,
+    xlabelsize=tl_sz,
+    ylabelsize=tl_sz,
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(nothing,nothing,-e_lim,e_lim), 
+    #yticks = 0:0.01:1.5*T
+    #xticks=domain
+   )
+ax2=Axis(fig_U[2,1],
+    title=latexstring("\\mathrm{Distance~between~particles}"),
+    #subtitle=latexstring(subtitle),
+    xlabel=L"t~[\tau]",
+    ylabel=L"d~[x/D]",
+    titlesize=tl_sz,
+    xticklabelsize=ot_sz,
+    yticklabelsize=ot_sz,
+    xlabelsize=tl_sz,
+    ylabelsize=tl_sz,
     xminorticksvisible=true,
     xminorgridvisible=true,
     limits=(nothing,nothing,nothing,nothing), 
     #yticks = 0:0.01:1.5*T
     #xticks=domain
    )
+ax3=Axis(fig_U[3,1],
+    title=latexstring("\\mathrm{Potential~energy}"),
+    #subtitle=latexstring(subtitle),
+    xlabel=L"t~[\tau]",
+    ylabel=L"U~[J/\epsilon]",
+    titlesize=tl_sz,
+    xticklabelsize=ot_sz,
+    yticklabelsize=ot_sz,
+    xlabelsize=tl_sz,
+    ylabelsize=tl_sz,
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(nothing,nothing,-e_lim,e_lim), 
+    #yticks = 0:0.01:1.5*T
+    #xticks=domain
+   )
 
-scatterlines!(ax,time,U_2,markersize=3,label=L"2")
-scatterlines!(ax,time,U_3,markersize=3,label=L"3")
+dist = l[l.id.==2.0,:].x .- l[l.id.==3.0,:].x;
+scatterlines!(ax2,time,dist,markersize=3)
 
-scatterlines!(ax,time,DATA_fix.c_patchPair,markersize=3,label=L"\mathrm{Patch}")
-scatterlines!(ax,time,DATA_fix.c_swapPair,markersize=3,label=L"\mathrm{Swap}")
-scatterlines!(ax,time,DATA_fix.c_ep,markersize=3,label=L"\mathrm{System}")
+scatterlines!(ax1,time,U_2,markersize=3,label=L"2")
+scatterlines!(ax3,time,U_3,markersize=3,label=L"3")
+
+#scatterlines!(ax,time,DATA_fix.c_patchPair,markersize=3,label=L"\mathrm{Patch}")
+#scatterlines!(ax,time,DATA_fix.c_swapPair,markersize=3,label=L"\mathrm{Swap}")
+#scatterlines!(ax,time,DATA_fix.c_ep,markersize=3,label=L"\mathrm{System}")
 
 #hlines!(ax,[T])
 
-Legend(fig_U[1,2],ax,
+Legend(fig_U[1,2],ax1,
       L"\mathrm{id}",
      labelsize=0.5cm)
+Legend(fig_U[3,2],ax3,
+      L"\mathrm{id}",
+     labelsize=0.5cm)
+
+
+
+fig_Udist=Figure(size = (10cm, 8cm));
+
+clbr=:managua10;
+
+ax=Axis(fig_Udist[1,1],
+    title=latexstring("\\mathrm{Potential~energy}"),
+    #subtitle=latexstring(subtitle),
+    xlabel=L"d~[x/D]",
+    ylabel=L"U~[J/\epsilon]",
+    titlesize=tl_sz,
+    xticklabelsize=ot_sz,
+    yticklabelsize=ot_sz,
+    xlabelsize=tl_sz,
+    ylabelsize=tl_sz,
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(0.25,nothing,-e_lim,e_lim), 
+    #yticks = 0:0.01:1.5*T
+    #xticks=domain
+   )
+
+scatterlines!(ax,dist,U_3,markersize=3,label=L"U_{\mathrm{sim}}")
+scatterlines!(ax,dist,map(r->Upatch(1,0.4,r),dist),label=L"U_{\mathrm{eval}}")
+
+N=100;
+rmin = 0.4/1000;
+rmax = 2*0.4;
+r_dom = range(rmin,rmax,length=N);
+scatterlines!(ax,r_dom,map(r->Upatch(1,0.4,r),r_dom),label=L"U_{\mathrm{ref}}")
+
+
+
+Legend(fig_Udist[1,2],ax,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+
+
 
 
 
@@ -129,7 +239,7 @@ ax=Axis(fig_E[1:1,1:1],
     ylabelsize=1cm,
     xminorticksvisible=true,
     xminorgridvisible=true,
-    limits=(nothing,nothing,nothing,nothing), 
+    limits=(nothing,nothing,-e_lim,e_lim), 
     #yticks = 0:0.01:1.5*T
     #xticks=domain
    )
