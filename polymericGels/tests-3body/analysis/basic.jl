@@ -70,7 +70,7 @@ dt=0.001;
 
 
 """
-    Reducing the DATA_dump
+#    Reducing the DATA_dump
 """
 
 DATA_dump_3= map(s->DATA_dump[s][DATA_dump[s].id.==3.0,:],eachindex(DATA_dump));
@@ -81,7 +81,7 @@ DATA_dump_3= map(s->DATA_dump[s][DATA_dump[s].id.==3.0,:],eachindex(DATA_dump));
 
 
 """
-    SANDBOX
+#    SANDBOX
 """
 
 # these are relative to 1 CSS px
@@ -90,12 +90,12 @@ pt = 4/3;
 cm = inch / 2.54;
 
 # Concatenate the data frames into one
-l=reduce(vcat,DATA_dump);
+l=sort(reduce(vcat,DATA_dump),:TimeStep);
 
 L=1;
 
 """
-    Energy and that stuff
+#    Energy and that stuff
 """
 
 time=dt.*DATA_fix.TimeStep;
@@ -266,7 +266,7 @@ Legend(fig_E[1,2],ax,
 
 
 """
-    Position
+#    Position
 """
 
 ms=5;

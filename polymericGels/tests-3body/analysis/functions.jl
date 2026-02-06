@@ -6,11 +6,14 @@ function getDump(dir,file_name)
 """
     Get the data from a single dump file that stores one timeste information
 """
+    it=parse(Int64,split(file_name,'.')[2]);   
     data = split.(readlines(joinpath(dir,file_name))," ")[9:end];
     HEADERS=data[1][3:end];
     INFO=parse.(Float64,reduce(hcat,data[2:end]))';
+    df=DataFrame(INFO,HEADERS);
+    df.TimeStep .= it;
 
-    return DataFrame(INFO,HEADERS)
+    return df
 end
 
 function extractFixScalar(path_system,file_name)

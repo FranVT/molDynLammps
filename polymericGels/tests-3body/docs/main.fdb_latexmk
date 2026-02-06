@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1770328569.12996 "main.aux" "main.bbl" "main" 1770328569.17557 2
-  "main.aux" 1770328569.05078 2936 af46d3e3e578e4c6ee116dd059aa4e9d "pdflatex"
+["bibtex main"] 1770335827.24084 "main.aux" "main.bbl" "main" 1770335827.28495 2
+  "main.aux" 1770335827.16381 4396 ebbf9516c8c12a771a031a1e0f1ec0c6 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1770328567.38275 "main.tex" "main.pdf" "main" 1770328569.17573 0
+["pdflatex"] 1770335825.095 "main.tex" "main.pdf" "main" 1770335827.28506 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -162,16 +162,18 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1767555874 42087 b0f9697c952c8f5a8eede4134282cb0d ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1768251110 5306876 69c328245ae101f6bc10b01e1f2bf9d5 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1768253150 2008248 b250068cce02fd18fe464810a24808ac ""
+  "docs/../Figures/2026-02-05-140904/corr/fig_pot.png" 1770335182.96794 178500 ac01698a14207ffb2021b7a585831a8d ""
+  "docs/../Figures/2026-02-05-140904/corr/fig_potComp.png" 1770335178.05439 78633 39cad7dcb68a5fe0f181f4ade302209c ""
   "docs/../Figures/2026-02-05-140904/fig_comp.png" 1770324167.6956 136167 f554dc0426359712a115231401ecddd5 ""
   "docs/../Figures/2026-02-05-140904/fig_comp_zoom.png" 1770327046.72577 143892 bfcf2335436a7d01c6609597b21b93e7 ""
   "docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png" 1770327102.36144 110698 e21987f35c0c38804a058c8efa75d876 ""
   "docs/../Figures/2026-02-05-140904/fig_pot.png" 1770325906.39514 184217 a27dbd2a7c564c156dbae8818c99256a ""
   "docs/../Figures/2026-02-05-140904/fig_potComp.png" 1770326584.26089 202924 2a1c61d7a0405f4b0a039ab0b3ee9175 ""
-  "docs/tests.tex" 1770328565.84729 4034 1587cb81fc2335517f35dd2e10fa5e30 ""
-  "main.aux" 1770328569.05078 2936 af46d3e3e578e4c6ee116dd059aa4e9d "pdflatex"
-  "main.bbl" 1770328569.17078 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1770328569.05078 319 068e5a2fb8aa8fc2cdc0212badb35458 "pdflatex"
-  "main.tex" 1770323725.71802 2793 a7d10372579ea637f5bf13ad4b0d35d4 ""
+  "docs/tests.tex" 1770335823.63698 6163 b275b302952a27af62ae23318c467562 ""
+  "main.aux" 1770335827.16381 4396 ebbf9516c8c12a771a031a1e0f1ec0c6 "pdflatex"
+  "main.bbl" 1770335827.28048 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1770335827.16381 319 068e5a2fb8aa8fc2cdc0212badb35458 "pdflatex"
+  "main.tex" 1770335653.67244 3013 b75e29d4d127a26ec205e502576486d5 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)

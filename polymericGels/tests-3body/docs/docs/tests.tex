@@ -81,7 +81,43 @@ Lo peor de todo es que cuando analizo la información del \verb|dump| en ovito, 
 \end{marginfigure}
 
 Viendo con calma, el error está en cómo estoy procesando los archivos \verb|dump|.
+Al leer los archivos, la forma en como el sistema operativo ordena los archivos, se tiene un orden que no corresponde a las iteraciones temporales.
 
+\newpage
+
+\subsection{Resultados corregidos}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-05-140904/corr/fig_pot.png}
+    \caption{Evolución temporal de la energía potencial en cada partícula y la evolución temporal de la distancia entre partículas.
+    En el panel de arriba es la evolución temporal de la partícula qué está en el centro y en el panel de abajo es la evolución temporal de la energía potencial de la partícula que se está acercando.
+    En el panel de en medio es la evolución temporal de la distancia entre partículas.}\label{fig:2_Upotpartcor}
+\end{figure}
+
+
+%\begin{marginfigure}
+%    \includegraphics[width=\textwidth]{../Figures/2026-02-05-140904/corr/fig_comp.png}
+%    \caption{Evolución temporal de las componentes de la posición de cada una de las partículas.
+%    En el panel superior es la componente $x$ de cada partícula y en el panel inferior es la componente $y$ de cada partícula a lo largo de la simulación.}\label{fig:1_componentescor}
+%\end{marginfigure}
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-05-140904/corr/fig_potComp.png}
+    \caption{Comparación de la energía potencial entre la simulación y la forma algebráica.
+    \(U_{\mathrm{sim}}\) es la energía potencial que da LAMMPS.
+    \(U_{\mathrm{eval}}\) es la energía potencial que sale de evaluar el potencial con la distancia obtenida a través de los datos de la simulación.
+    \(U_{\mathrm{ref}}\) es el potencial de interacción evaluado con un dominio creado a parte.}\label{fig:3_UpotCompcor}
+\end{figure}
+
+\subsection{Análisis de datos corregidos}
+
+Pues funcionó la corrección.
+Agregé una columna al dataframe asociado a los dumps con el valor del \emph{TimeStep} y después se organizó la base de datos en orden descendiente.
+
+La principal diferencia con el potencial teórico es el mínimo del potencial (figura~\ref{fig:3_UpotCompcor}).
 
 
 \end{document}
