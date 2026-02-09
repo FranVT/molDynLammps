@@ -106,6 +106,8 @@ time=dt.*DATA_fix.TimeStep;
 U_2=l[l.id.==1.0,:].c_potAtom;
 U_3=l[l.id.==2.0,:].c_potAtom;
 
+F_x=l[l.id.==1.0,:].fx;
+
 
 e_lim=2;
 
