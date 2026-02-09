@@ -10,16 +10,7 @@ function Upatch(eps_pair,sig_p,r)
     Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
 """
     if r < 1.5*sig_p 
-        return round(2*eps_pair*( ((sig_p^4)./((2).*r.^4)) .-1).*exp.((sig_p)./(r.-(1.5*sig_p)).+2),digits=2^7)
-    else
-        return 0.0
-    end
-end
-
-function Fpatch(eps_pair,sig_p,r_c,r)
-    if r < r_c
-        return round(((eps_pair*sig_p)/(r^5*(r-r_c)^2))*(4*r_c^2*sig_p^3+sig_p^3*(sig_p-8*r_c).*r-2*r^5+4*r^2*sig_p^3).*exp.(((sig_p)./(r.-r_c)).+2),digits=2^7)
-#4*eps_pair*(sig_p^4/r^5)*exp.((sig_p)./(r.-(1.5*sig_p)).+2) + 2*eps*(sig_p/(r-1.5*sig_p)^2)*( ((sig_p^4)./((2).*r.^4)) .-1).*exp.((sig_p)./(r.-(1.5*sig_p)).+2)
+        return 2*eps_pair*( ((sig_p^4)./((2).*r.^4)) .-1).*exp.((sig_p)./(r.-(1.5*sig_p)).+2)
     else
         return 0.0
     end
@@ -38,11 +29,12 @@ end
 
 
 # Parameters
-N = 1000000;
+M=12;
+N = 2^M;
 sig = 0.4;
-eps = 2.5;
+eps = 1;
 rc=1.5*sig;
-rmin = sig/1000;
+rmin = sig/10;
 rmax = 2*sig;
 r_dom = range(rmin,rmax,length=N);
 
@@ -57,8 +49,13 @@ info = map(s->(s,r_dom[s],Upatch(eps,sig,r_dom[s]),-DiffEval(eps,sig,r_dom[s])),
 
     # Edit the file
     open(filename,"w") do f
-        write(f,"DATE: 2024-07-08 UNITS: lj CONTRIBUTOR: Fco.\n\n\n")
+        write(f,"DATE: 2025-02-09 UNITS: lj CONTRIBUTOR: Fco.\n\n\n")
         write(f,"POT\n")
-        write(f,string("N ",N,"\n\n"))
+        write(f,string("N ",N," RSQ ",rmin," ",rmax,"\n\n"))
         map(t->write(f,rstrip(join(map(s->s*" ",string.(info[t]))))*"\n" ),eachindex(info))
-    end
+    end;
+
+fig = Figure();
+ax = Axis(fig[1,1], limits=(nothing,nothing,-2,2));
+scatter!(ax, map(s->info[s][2],eachindex(info)),map(s->info[s][3],eachindex(info)) ,markersize=3);
+

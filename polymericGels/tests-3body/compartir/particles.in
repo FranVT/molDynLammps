@@ -13,7 +13,7 @@ region spawn_box block -$L $L -$L $L -$L $L
 #create_atoms 2 random ${NPB} ${seed2} spawn_box overlap 0.5 maxtry 5000
 
 # One PA
-#create_atoms 1 single 0.7 0.7 0.7
+create_atoms 1 single 0.7 0.7 0.7
 
 # Anothre PA
 #create_atoms 1 single 0.5 0.5 0.5

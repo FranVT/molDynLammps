@@ -16,7 +16,7 @@ function Upatch(eps_pair,sig_p,r)
     Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
 """
     if r < 1.5*sig_p 
-        return round(2*eps_pair*( ((sig_p^4)./((2).*r.^4)) .-1).*exp.((sig_p)./(r.-(1.5*sig_p)).+2),digits=2^7)
+        return 2*eps_pair*( ((sig_p^4)./((2).*r.^4)) .-1).*exp.((sig_p)./(r.-(1.5*sig_p)).+2)
     else
         return 0.0
     end
@@ -25,13 +25,16 @@ end
 
 
 # Selection of an specific simulation
-date="2026-02-05-140904";
-#"2026-02-05-141402";
+date="2026-02-09-154632";
+#  2026-02-09-154125
+# 2026-02-09-121017
+# 2026-02-09-120308
+# 2026-02-09-115723
+# 2026-02-09-115253
+#"2026-02-09-111008";
+# 2026-02-09-104056
 #"2026-02-05-140904";
-#"2026-02-04-102545";
-#2026-02-04-123638
-#"2026-02-04-102545";
-#"2026-02-02-155528";
+#2026-02-04-155132
 
 
 # Get the directory of the desire system
@@ -73,7 +76,7 @@ dt=0.001;
 #    Reducing the DATA_dump
 """
 
-DATA_dump_3= map(s->DATA_dump[s][DATA_dump[s].id.==3.0,:],eachindex(DATA_dump));
+DATA_dump_3= map(s->DATA_dump[s][DATA_dump[s].id.==2.0,:],eachindex(DATA_dump));
 
 
 
@@ -100,8 +103,8 @@ L=1;
 
 time=dt.*DATA_fix.TimeStep;
 
-U_2=l[l.id.==2.0,:].c_potAtom;
-U_3=l[l.id.==3.0,:].c_potAtom;
+U_2=l[l.id.==1.0,:].c_potAtom;
+U_3=l[l.id.==2.0,:].c_potAtom;
 
 
 e_lim=2;
@@ -161,7 +164,7 @@ ax3=Axis(fig_U[3,1],
     #xticks=domain
    )
 
-dist = l[l.id.==2.0,:].x .- l[l.id.==3.0,:].x;
+dist = l[l.id.==1.0,:].x .- l[l.id.==2.0,:].x;
 scatterlines!(ax2,time,dist,markersize=3)
 
 scatterlines!(ax1,time,U_2,markersize=3,label=L"2")
@@ -348,15 +351,20 @@ ax_2=Axis(fig[2,1],
 linkxaxes!(ax_1,ax_2)
 
 
-scatterlines!(ax_1,time,l[l.id.==2.0,:].x,label=L"2",markersize=ms)
-scatterlines!(ax_1,time,l[l.id.==3.0,:].x,label=L"3",markersize=ms)
+scatterlines!(ax_1,time,l[l.id.==1.0,:].x,label=L"2",markersize=ms)
+scatterlines!(ax_1,time,l[l.id.==2.0,:].x,label=L"3",markersize=ms)
 
-scatterlines!(ax_2,time,l[l.id.==2.0,:].y,label=L"2",markersize=ms)
-scatterlines!(ax_2,time,l[l.id.==3.0,:].y,label=L"3",markersize=ms)
+scatterlines!(ax_2,time,l[l.id.==1.0,:].y,label=L"2",markersize=ms)
+scatterlines!(ax_2,time,l[l.id.==2.0,:].y,label=L"3",markersize=ms)
 
 
 
 Legend(fig[1:2,2],ax_2,
       L"\mathrm{id}",
      labelsize=0.5cm)
+
+save("fig_comp.png", fig, px_per_unit = 300/inch)
+save("fig_pot.png", fig_U, px_per_unit = 300/inch)
+save("fig_potComp.png", fig_Udist, px_per_unit = 300/inch)
+#save("fig_dist_pot.png", fig_Udist, px_per_unit = 300/inch)
 

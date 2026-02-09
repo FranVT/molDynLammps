@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1770335827.24084 "main.aux" "main.bbl" "main" 1770335827.28495 2
-  "main.aux" 1770335827.16381 4396 ebbf9516c8c12a771a031a1e0f1ec0c6 "pdflatex"
+["bibtex main"] 1770660220.93444 "main.aux" "main.bbl" "main" 1770674344.50865 2
+  "main.aux" 1770674344.4234 13368 f25d36353a1deca5d7fd13fd7eb415c6 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1770335825.095 "main.tex" "main.pdf" "main" 1770335827.28506 0
+["pdflatex"] 1770674340.19663 "main.tex" "main.pdf" "main" 1770674344.50877 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -169,11 +169,23 @@
   "docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png" 1770327102.36144 110698 e21987f35c0c38804a058c8efa75d876 ""
   "docs/../Figures/2026-02-05-140904/fig_pot.png" 1770325906.39514 184217 a27dbd2a7c564c156dbae8818c99256a ""
   "docs/../Figures/2026-02-05-140904/fig_potComp.png" 1770326584.26089 202924 2a1c61d7a0405f4b0a039ab0b3ee9175 ""
-  "docs/tests.tex" 1770335823.63698 6163 b275b302952a27af62ae23318c467562 ""
-  "main.aux" 1770335827.16381 4396 ebbf9516c8c12a771a031a1e0f1ec0c6 "pdflatex"
-  "main.bbl" 1770335827.28048 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1770335827.16381 319 068e5a2fb8aa8fc2cdc0212badb35458 "pdflatex"
-  "main.tex" 1770335653.67244 3013 b75e29d4d127a26ec205e502576486d5 ""
+  "docs/../Figures/2026-02-09-104056/fig_comp.png" 1770655300.81618 125702 bb7e755b5f5a85e47e15bcb5fcd70683 ""
+  "docs/../Figures/2026-02-09-104056/fig_potComp.png" 1770655301.14617 79036 0a73b578d8e8b46d1073c4894b1f111f ""
+  "docs/../Figures/2026-02-09-111008/fig_comp.png" 1770657120.44455 125702 bb7e755b5f5a85e47e15bcb5fcd70683 ""
+  "docs/../Figures/2026-02-09-111008/fig_potComp.png" 1770657120.79124 79036 0a73b578d8e8b46d1073c4894b1f111f ""
+  "docs/../Figures/2026-02-09-113140/fig_comp.png" 1770658354.01095 125702 bb7e755b5f5a85e47e15bcb5fcd70683 ""
+  "docs/../Figures/2026-02-09-113140/fig_potComp.png" 1770658354.40431 82224 9f2e21e0610525f8af29cae9df4a22eb ""
+  "docs/../Figures/2026-02-09-114621/fig_comp.png" 1770659240.21897 125702 bb7e755b5f5a85e47e15bcb5fcd70683 ""
+  "docs/../Figures/2026-02-09-114621/fig_potComp.png" 1770659240.55564 82222 da0f2cb18dc13f24f5a903419468ddc7 ""
+  "docs/../Figures/2026-02-09-115253/fig_comp.png" 1770659674.35163 125702 bb7e755b5f5a85e47e15bcb5fcd70683 ""
+  "docs/../Figures/2026-02-09-115253/fig_potComp.png" 1770659674.83165 82219 acf1cf2971269aec6853f1f002e639ae ""
+  "docs/../Figures/2026-02-09-115723/fig_comp.png" 1770659933.65171 125702 bb7e755b5f5a85e47e15bcb5fcd70683 ""
+  "docs/../Figures/2026-02-09-115723/fig_potComp.png" 1770659933.99172 82534 a962930b69a30347754f09d70d177f91 ""
+  "docs/tests.tex" 1770674338.65313 18009 c73ba571dfc24cd1985e4a530021a2a7 ""
+  "main.aux" 1770674344.4234 13368 f25d36353a1deca5d7fd13fd7eb415c6 "pdflatex"
+  "main.bbl" 1770660220.97825 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1770674344.4234 1549 d3df49c6c81753b8af8095d6f635829b "pdflatex"
+  "main.tex" 1770656546.96914 3108 e78b0987807349dfafdfdf49c8ca07d4 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)

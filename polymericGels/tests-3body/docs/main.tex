@@ -19,7 +19,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[a4paper]{tufte-handout} % Use A4 paper by default, remove 'a4paper' for US letter
+\documentclass[a4paper,strict]{tufte-handout} % Use A4 paper by default, remove 'a4paper' for US letter
 
 \usepackage{graphicx} % Required for including images
 \setkeys{Gin}{width=\linewidth, totalheight=\textheight, keepaspectratio} % Default images settings
@@ -37,9 +37,22 @@
 \usepackage{fancyvrb}
 
 % Para evitar que se emplamen las captions
-%\usepackage{etoolbox}
-%\AtBeginEnvironment{figure}{\vspace{10pt}} % Espacio antes de cada figura
-%\AtEndEnvironment{figure}{\vspace{10pt}}   % Espacio después de cada figura
+\usepackage{etoolbox}
+
+
+%\makeatletter
+%\renewenvironment{figure}[1][htbp]{%
+%  \@tufte@orig@float{figure}[#1]%
+%}{%
+%  \@tufte@orig@endfloat
+%}
+
+%\renewenvironment{table}[1][htbp]{%
+%  \@tufte@orig@float{table}[#1]%
+%}{%
+%  \@tufte@orig@endfloat
+%}
+%\makeatother
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION

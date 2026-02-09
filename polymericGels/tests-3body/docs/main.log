@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  5 FEB 2026 17:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  9 FEB 2026 15:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -74,6 +74,7 @@ Package: ifxetex 2019/10/25 v0.7 ifxetex legacy package. Use iftex instead.
 \hw@wordcount=\count267
 \hw@maxprintline=\count268
  (|kpsewhich -var-value=max_print_line))
+Class tufte-handout Info: Passing strict to the `article' class.
 Class tufte-handout Info: Loading the base class `article'
  (/usr/share/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2024/06/29 v1.4n Standard LaTeX document class
@@ -616,29 +617,48 @@ Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
 \FV@StepNumber=\count346
 \FV@OutFile=\write3
 )
-Package translations Info: No language package found. I am going to use `english' as default language. on input line 63.
- (./main.aux)
+Package translations Info: No language package found. I am going to use `english' as default language. on input line 76.
+ (./main.aux
+
+LaTeX Warning: Label `fig:1_componentes' multiply defined.
+
+
+LaTeX Warning: Label `fig:1_componentes' multiply defined.
+
+
+LaTeX Warning: Label `fig:1_componentes' multiply defined.
+
+
+LaTeX Warning: Label `fig:1_componentes' multiply defined.
+
+
+LaTeX Warning: Label `fig:1_componentes' multiply defined.
+
+
+LaTeX Warning: Label `fig:1_componentes' multiply defined.
+
+)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-Package hyperref Info: Link coloring OFF on input line 63.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 76.
+LaTeX Font Info:    ... okay on input line 76.
+Package hyperref Info: Link coloring OFF on input line 76.
  (./main.out) (./main.out)
 \@outlinefile=\write4
 \openout4 = `main.out'.
@@ -712,7 +732,7 @@ Package siunitx Warning: Detected the "physics" package:
 (/usr/share/texmf-dist/tex/latex/translations/translations-basic-dictionary-english.trsl
 File: translations-basic-dictionary-english.trsl (english translation file `translations-basic-dictionary')
 )
-Package translations Info: loading dictionary `translations-basic-dictionary' for `english'. on input line 63.
+Package translations Info: loading dictionary `translations-basic-dictionary' for `english'. on input line 76.
 \c@lstlisting=\count353
  (./docs/tests.tex
 LaTeX Font Info:    Trying to load font information for OT1+pplx on input line 9.
@@ -753,7 +773,7 @@ File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
 (Font)              scaled to size 8.50006pt on input line 15.
-<docs/../Figures/2026-02-05-140904/fig_comp.png, id=12, 533.8344pt x 426.8748pt>
+<docs/../Figures/2026-02-05-140904/fig_comp.png, id=40, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-05-140904/fig_comp.png Graphic file (type png)
 <use docs/../Figures/2026-02-05-140904/fig_comp.png>
 Package pdftex.def Info: docs/../Figures/2026-02-05-140904/fig_comp.png  used on input line 23.
@@ -771,12 +791,12 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc} <./docs/../Figures/2026-02-05-140904/fig_comp.png>]
-<docs/../Figures/2026-02-05-140904/fig_pot.png, id=29, 426.8748pt x 533.8344pt>
+<docs/../Figures/2026-02-05-140904/fig_pot.png, id=57, 426.8748pt x 533.8344pt>
 File: docs/../Figures/2026-02-05-140904/fig_pot.png Graphic file (type png)
 <use docs/../Figures/2026-02-05-140904/fig_pot.png>
 Package pdftex.def Info: docs/../Figures/2026-02-05-140904/fig_pot.png  used on input line 32.
 (pdftex.def)             Requested size: 243.56216pt x 304.59015pt.
-<docs/../Figures/2026-02-05-140904/fig_potComp.png, id=30, 284.5029pt x 227.4096pt>
+<docs/../Figures/2026-02-05-140904/fig_potComp.png, id=58, 284.5029pt x 227.4096pt>
 File: docs/../Figures/2026-02-05-140904/fig_potComp.png Graphic file (type png)
 <use docs/../Figures/2026-02-05-140904/fig_potComp.png>
 Package pdftex.def Info: docs/../Figures/2026-02-05-140904/fig_potComp.png  used on input line 42.
@@ -784,14 +804,14 @@ Package pdftex.def Info: docs/../Figures/2026-02-05-140904/fig_potComp.png  used
 
 
 [2 <./docs/../Figures/2026-02-05-140904/fig_pot.png> <./docs/../Figures/2026-02-05-140904/fig_potComp.png>]
-<docs/../Figures/2026-02-05-140904/fig_comp_zoom.png, id=38, 1445.4pt x 813.0375pt>
+<docs/../Figures/2026-02-05-140904/fig_comp_zoom.png, id=66, 1445.4pt x 813.0375pt>
 File: docs/../Figures/2026-02-05-140904/fig_comp_zoom.png Graphic file (type png)
 <use docs/../Figures/2026-02-05-140904/fig_comp_zoom.png>
 Package pdftex.def Info: docs/../Figures/2026-02-05-140904/fig_comp_zoom.png  used on input line 63.
 (pdftex.def)             Requested size: 140.5565pt x 79.06303pt.
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
 (Font)              scaled to size 7.65005pt on input line 68.
-<docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png, id=43, 1445.4pt x 813.0375pt>
+<docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png, id=71, 1445.4pt x 813.0375pt>
 File: docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png Graphic file (type png)
 <use docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png>
 Package pdftex.def Info: docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png  used on input line 79.
@@ -799,17 +819,117 @@ Package pdftex.def Info: docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png  
 
 
 [3 <./docs/../Figures/2026-02-05-140904/fig_comp_zoom.png> <./docs/../Figures/2026-02-05-140904/fig_comp_zoom_2.png>]
-<docs/../Figures/2026-02-05-140904/corr/fig_pot.png, id=52, 426.8748pt x 533.8344pt>
+<docs/../Figures/2026-02-05-140904/corr/fig_pot.png, id=81, 426.8748pt x 533.8344pt>
 File: docs/../Figures/2026-02-05-140904/corr/fig_pot.png Graphic file (type png)
 <use docs/../Figures/2026-02-05-140904/corr/fig_pot.png>
 Package pdftex.def Info: docs/../Figures/2026-02-05-140904/corr/fig_pot.png  used on input line 92.
 (pdftex.def)             Requested size: 243.56216pt x 304.59015pt.
-<docs/../Figures/2026-02-05-140904/corr/fig_potComp.png, id=53, 284.5029pt x 227.4096pt>
+<docs/../Figures/2026-02-05-140904/corr/fig_potComp.png, id=82, 284.5029pt x 227.4096pt>
 File: docs/../Figures/2026-02-05-140904/corr/fig_potComp.png Graphic file (type png)
 <use docs/../Figures/2026-02-05-140904/corr/fig_potComp.png>
 Package pdftex.def Info: docs/../Figures/2026-02-05-140904/corr/fig_potComp.png  used on input line 108.
 (pdftex.def)             Requested size: 243.55638pt x 194.68011pt.
-)
+
+
+[4 <./docs/../Figures/2026-02-05-140904/corr/fig_pot.png> <./docs/../Figures/2026-02-05-140904/corr/fig_potComp.png>]
+<docs/../Figures/2026-02-09-104056/fig_potComp.png, id=90, 284.5029pt x 227.4096pt>
+File: docs/../Figures/2026-02-09-104056/fig_potComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-104056/fig_potComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-104056/fig_potComp.png  used on input line 140.
+(pdftex.def)             Requested size: 243.55638pt x 194.68011pt.
+<docs/../Figures/2026-02-09-104056/fig_comp.png, id=91, 533.8344pt x 426.8748pt>
+File: docs/../Figures/2026-02-09-104056/fig_comp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-104056/fig_comp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-104056/fig_comp.png  used on input line 149.
+(pdftex.def)             Requested size: 140.55312pt x 112.39175pt.
+
+Overfull \hbox (4.30467pt too wide) in paragraph at lines 156--159
+\T1/pplj/m/n/10 Cambié lo sigu-iente en el script de la tab-u-lación de LAMMPS: [][]\T1/fvm/m/n/10 eps=1.0
+ []
+
+
+Overfull \hbox (4.78429pt too wide) in paragraph at lines 160--163
+\T1/pplj/m/n/10 co-mando es-taba des-actualizado: [][]\T1/fvm/m/n/10 table/omp linear 5000000[]\T1/pplj/m/n/10 , cuando
+ []
+
+
+
+[5 <./docs/../Figures/2026-02-09-104056/fig_potComp.png> <./docs/../Figures/2026-02-09-104056/fig_comp.png>]
+<docs/../Figures/2026-02-09-111008/fig_potComp.png, id=100, 284.5029pt x 227.4096pt>
+File: docs/../Figures/2026-02-09-111008/fig_potComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-111008/fig_potComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-111008/fig_potComp.png  used on input line 182.
+(pdftex.def)             Requested size: 243.55638pt x 194.68011pt.
+<docs/../Figures/2026-02-09-111008/fig_comp.png, id=101, 533.8344pt x 426.8748pt>
+File: docs/../Figures/2026-02-09-111008/fig_comp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-111008/fig_comp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-111008/fig_comp.png  used on input line 191.
+(pdftex.def)             Requested size: 140.55312pt x 112.39175pt.
+
+
+[6 <./docs/../Figures/2026-02-09-111008/fig_potComp.png> <./docs/../Figures/2026-02-09-111008/fig_comp.png>]
+<docs/../Figures/2026-02-09-113140/fig_potComp.png, id=110, 284.5029pt x 227.4096pt>
+File: docs/../Figures/2026-02-09-113140/fig_potComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-113140/fig_potComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-113140/fig_potComp.png  used on input line 220.
+(pdftex.def)             Requested size: 243.55638pt x 194.68011pt.
+<docs/../Figures/2026-02-09-113140/fig_comp.png, id=111, 533.8344pt x 426.8748pt>
+File: docs/../Figures/2026-02-09-113140/fig_comp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-113140/fig_comp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-113140/fig_comp.png  used on input line 229.
+(pdftex.def)             Requested size: 140.55312pt x 112.39175pt.
+
+Overfull \hbox (11.29527pt too wide) in paragraph at lines 236--239
+[]\T1/pplj/m/n/10 Si mejoró la parte re-pul-siva, pero no en-tiendo porque hay una traslación
+ []
+
+
+
+[7 <./docs/../Figures/2026-02-09-113140/fig_potComp.png> <./docs/../Figures/2026-02-09-113140/fig_comp.png>]
+<docs/../Figures/2026-02-09-114621/fig_potComp.png, id=121, 284.5029pt x 227.4096pt>
+File: docs/../Figures/2026-02-09-114621/fig_potComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-114621/fig_potComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-114621/fig_potComp.png  used on input line 258.
+(pdftex.def)             Requested size: 243.55638pt x 194.68011pt.
+<docs/../Figures/2026-02-09-114621/fig_comp.png, id=122, 533.8344pt x 426.8748pt>
+File: docs/../Figures/2026-02-09-114621/fig_comp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-114621/fig_comp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-114621/fig_comp.png  used on input line 267.
+(pdftex.def)             Requested size: 140.55312pt x 112.39175pt.
+
+Overfull \hbox (138.04457pt too wide) in paragraph at lines 274--278
+\T1/pplj/m/n/10 Pues quedó igual. [][]\T1/fvm/m/n/10 pair_style hybrid/overlay zero 0.0 table/omp bitmap 20 threebody/table[]\T1/pplj/m/n/10 .
+ []
+
+
+
+[8 <./docs/../Figures/2026-02-09-114621/fig_potComp.png> <./docs/../Figures/2026-02-09-114621/fig_comp.png>]
+<docs/../Figures/2026-02-09-115253/fig_potComp.png, id=131, 284.5029pt x 227.4096pt>
+File: docs/../Figures/2026-02-09-115253/fig_potComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-115253/fig_potComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-115253/fig_potComp.png  used on input line 297.
+(pdftex.def)             Requested size: 243.55638pt x 194.68011pt.
+<docs/../Figures/2026-02-09-115253/fig_comp.png, id=132, 533.8344pt x 426.8748pt>
+File: docs/../Figures/2026-02-09-115253/fig_comp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-115253/fig_comp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-115253/fig_comp.png  used on input line 306.
+(pdftex.def)             Requested size: 140.55312pt x 112.39175pt.
+
+
+[9 <./docs/../Figures/2026-02-09-115253/fig_potComp.png> <./docs/../Figures/2026-02-09-115253/fig_comp.png>]
+<docs/../Figures/2026-02-09-115723/fig_potComp.png, id=141, 284.5029pt x 227.4096pt>
+File: docs/../Figures/2026-02-09-115723/fig_potComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-115723/fig_potComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-115723/fig_potComp.png  used on input line 336.
+(pdftex.def)             Requested size: 243.55638pt x 194.68011pt.
+<docs/../Figures/2026-02-09-115723/fig_comp.png, id=142, 533.8344pt x 426.8748pt>
+File: docs/../Figures/2026-02-09-115723/fig_comp.png Graphic file (type png)
+<use docs/../Figures/2026-02-09-115723/fig_comp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-09-115723/fig_comp.png  used on input line 345.
+(pdftex.def)             Requested size: 140.55312pt x 112.39175pt.
+
+
+[10 <./docs/../Figures/2026-02-09-115723/fig_potComp.png> <./docs/../Figures/2026-02-09-115723/fig_comp.png>])
 
 Package bibentry Warning: You have used \nobibliography* 
 (bibentry)                without a following \bibliography.
@@ -817,27 +937,31 @@ Package bibentry Warning: You have used \nobibliography*
 
 
 
-[4 <./docs/../Figures/2026-02-05-140904/corr/fig_pot.png> <./docs/../Figures/2026-02-05-140904/corr/fig_potComp.png>] (./main.aux)
+[11] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
+
+
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 068E5A2FB8AA8FC2CDC0212BADB35458;319.
+(rerunfilecheck)             Checksum: D3DF49C6C81753B8AF8095D6F635829B;1549.
  ) 
 Here is how much of TeX's memory you used:
- 20828 strings out of 475171
- 381484 string characters out of 5767095
- 770576 words of memory out of 5000000
- 43438 multiletter control sequences out of 15000+600000
- 610379 words of font info for 120 fonts, out of 8000000 for 9000
+ 21002 strings out of 475171
+ 388243 string characters out of 5767095
+ 772689 words of memory out of 5000000
+ 43559 multiletter control sequences out of 15000+600000
+ 611664 words of font info for 123 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 97i,11n,96p,560b,1192s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 97i,11n,96p,560b,1320s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (4 pages, 1062486 bytes).
+Output written on main.pdf (11 pages, 2236931 bytes).
 PDF statistics:
- 102 PDF objects out of 1000 (max. 8388607)
- 70 compressed objects within 1 object stream
- 13 named destinations out of 1000 (max. 500000)
- 1076 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 205 PDF objects out of 1000 (max. 8388607)
+ 153 compressed objects within 2 object streams
+ 51 named destinations out of 1000 (max. 500000)
+ 1192 words of extra memory for PDF output out of 10000 (max. 10000000)
 
