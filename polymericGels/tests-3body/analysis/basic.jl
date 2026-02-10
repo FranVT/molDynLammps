@@ -23,23 +23,36 @@ function Upatch(eps_pair,sig_p,r)
 end
 
 
+function getTable(dir,file_name)
+"""
+    Get the data from a single dump file that stores one timeste information
+"""
+    data=split.(readlines(joinpath(dir,file_name))," ")[7:end];
+    HEADERS=["n","r","u","f"];
+    INFO=reduce(hcat,map(s->parse.(Float64,s),data))';
+    df=DataFrame(INFO,HEADERS);
+
+    return df 
+end
+
+
+
+
 
 # Selection of an specific simulation
-date="2026-02-09-154632";
-#  2026-02-09-154125
-# 2026-02-09-121017
-# 2026-02-09-120308
-# 2026-02-09-115723
-# 2026-02-09-115253
-#"2026-02-09-111008";
+date="2026-02-10-114759";
+
 # 2026-02-09-104056
 #"2026-02-05-140904";
-#2026-02-04-155132
+
 
 
 # Get the directory of the desire system
 DIR=getDir(date);
 DIR=DIR[1];
+
+table1=getTable(DIR,"pachTab.table");
+
 
 # Activate extract info
 act=1;
@@ -76,12 +89,12 @@ dt=0.001;
 #    Reducing the DATA_dump
 """
 
-DATA_dump_3= map(s->DATA_dump[s][DATA_dump[s].id.==2.0,:],eachindex(DATA_dump));
+# Concatenate the data frames into one
+l=sort(reduce(vcat,DATA_dump),:TimeStep);
 
-
-
-
-
+# Create Individual data frames
+DATA_dump_1 = l[l.id.==1.0,:];
+DATA_dump_2 = l[l.id.==2.0,:];
 
 """
 #    SANDBOX
@@ -92,9 +105,6 @@ inch = 96;
 pt = 4/3;
 cm = inch / 2.54;
 
-# Concatenate the data frames into one
-l=sort(reduce(vcat,DATA_dump),:TimeStep);
-
 L=1;
 
 """
@@ -102,12 +112,6 @@ L=1;
 """
 
 time=dt.*DATA_fix.TimeStep;
-
-U_2=l[l.id.==1.0,:].c_potAtom;
-U_3=l[l.id.==2.0,:].c_potAtom;
-
-F_x=l[l.id.==1.0,:].fx;
-
 
 e_lim=2;
 
@@ -166,17 +170,11 @@ ax3=Axis(fig_U[3,1],
     #xticks=domain
    )
 
-dist = l[l.id.==1.0,:].x .- l[l.id.==2.0,:].x;
+dist = DATA_dump_1.x .- DATA_dump_2.x;
 scatterlines!(ax2,time,dist,markersize=3)
 
-scatterlines!(ax1,time,U_2,markersize=3,label=L"2")
-scatterlines!(ax3,time,U_3,markersize=3,label=L"3")
-
-#scatterlines!(ax,time,DATA_fix.c_patchPair,markersize=3,label=L"\mathrm{Patch}")
-#scatterlines!(ax,time,DATA_fix.c_swapPair,markersize=3,label=L"\mathrm{Swap}")
-#scatterlines!(ax,time,DATA_fix.c_ep,markersize=3,label=L"\mathrm{System}")
-
-#hlines!(ax,[T])
+scatterlines!(ax1,time,DATA_dump_1.c_potAtom,markersize=3,label=L"2")
+scatterlines!(ax3,time,DATA_dump_2.c_potAtom,markersize=3,label=L"3")
 
 Legend(fig_U[1,2],ax1,
       L"\mathrm{id}",
@@ -187,7 +185,7 @@ Legend(fig_U[3,2],ax3,
 
 
 
-fig_Udist=Figure(size = (10cm, 8cm));
+fig_Udist=Figure(size = (12cm, 10cm));
 
 clbr=:managua10;
 
@@ -208,16 +206,15 @@ ax=Axis(fig_Udist[1,1],
     #xticks=domain
    )
 
-scatterlines!(ax,dist,U_3,markersize=3,label=L"U_{\mathrm{sim}}")
-scatterlines!(ax,dist,map(r->Upatch(1,0.4,r),dist),label=L"U_{\mathrm{eval}}")
-
 N=100;
 rmin = 0.4/1000;
 rmax = 2*0.4;
 r_dom = range(rmin,rmax,length=N);
-scatterlines!(ax,r_dom,map(r->Upatch(1,0.4,r),r_dom),label=L"U_{\mathrm{ref}}")
+lines!(ax,r_dom,map(r->Upatch(1,0.4,r),r_dom),label=L"U_{\mathrm{patch}}",linestyle=:solid,color=:black)
+lines!(ax,table1.r,table1.u,label=L"U_{\mathrm{table}}",linewidth=5)
 
-
+lines!(ax,dist,DATA_dump_2.c_potAtom,label=L"U_{\mathrm{atom}}")
+lines!(ax,dist,DATA_fix.c_patchPair,label=L"U_{\mathrm{pe}}")
 
 Legend(fig_Udist[1,2],ax,
       L"\mathrm{Labels}",
@@ -268,52 +265,13 @@ Legend(fig_E[1,2],ax,
 
 
 
-
-
 """
-#    Position
+    Position
 """
-
-ms=5;
-
-# Get the positions of one particle
-# Plot
-fig_pos=Figure(size = (18.75cm, 15cm));
-
-clbr=:managua10;
-
-ax=Axis(fig_pos[1:1,1:1],
-    title=latexstring("\\mathrm{Position~of~particles}"),
-    #subtitle=latexstring(subtitle),
-    xlabel=L"x~[x/D]",
-    ylabel=L"y~[y/D]",
-    titlesize=1cm,
-    xticklabelsize=0.5cm,
-    yticklabelsize=0.5cm,
-    xlabelsize=1cm,
-    ylabelsize=1cm,
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(-L,L,-L,L), 
-    #yticks = 0:0.01:1.5*T
-    #xticks=domain
-   )
-
-scatterlines!(ax,l[l.id.==2.0,:].x,l[l.id.==2.0,:].y,markersize=ms,label=L"2")
-scatterlines!(ax,l[l.id.==3.0,:].x,l[l.id.==3.0,:].y,markersize=ms,label=L"3")
-scatterlines!(ax,l[l.id.==4.0,:].x,l[l.id.==4.0,:].y,markersize=ms,label=L"4")
-
-#hlines!(ax,[T])
-
-Legend(fig_pos[1,2],ax,
-      L"\mathrm{id}",
-     labelsize=0.5cm)
-
-# Time evolution of the components of the position of each particle
-# Plot
 
 fig=Figure(size = (18.75cm, 15cm));
 
+ms=3;
 
 clbr=:managua10;
 
@@ -367,6 +325,6 @@ Legend(fig[1:2,2],ax_2,
 
 save("fig_comp.png", fig, px_per_unit = 300/inch)
 save("fig_pot.png", fig_U, px_per_unit = 300/inch)
-save("fig_potComp.png", fig_Udist, px_per_unit = 300/inch)
+save("fig_potUComp.png", fig_Udist, px_per_unit = 300/inch)
 #save("fig_dist_pot.png", fig_Udist, px_per_unit = 300/inch)
 

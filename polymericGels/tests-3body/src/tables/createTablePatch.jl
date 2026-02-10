@@ -2,6 +2,8 @@
     Script to create the table filename parameter for Patch-PAtch interaction
 """
 
+using GLMakie, LaTeXStrings, Typst_jll
+
 filename = "pachTab.table";
 
 # Create the functions
@@ -51,11 +53,37 @@ info = map(s->(s,r_dom[s],Upatch(eps,sig,r_dom[s]),-DiffEval(eps,sig,r_dom[s])),
     open(filename,"w") do f
         write(f,"DATE: 2025-02-09 UNITS: lj CONTRIBUTOR: Fco.\n\n\n")
         write(f,"POT\n")
-        write(f,string("N ",N," RSQ ",rmin," ",rmax,"\n\n"))
+#        write(f,string("N ",N," RSQ ",rmin," ",rmax,"\n\n"))
+        write(f,string("N ",N,"\n\n"))
         map(t->write(f,rstrip(join(map(s->s*" ",string.(info[t]))))*"\n" ),eachindex(info))
     end;
 
+
+# these are relative to 1 CSS px
+inch = 96;
+pt = 4/3;
+cm = inch / 2.54;
+
+
+tl_sz=0.55cm;
+ot_sz=0.35cm;
+
 fig = Figure();
-ax = Axis(fig[1,1], limits=(nothing,nothing,-2,2));
+ax = Axis(fig[1,1],
+    title=latexstring("\\mathrm{Potential~energy}"),
+    #subtitle=latexstring(subtitle),
+    xlabel=L"r_{ij}~[r/D_p]",
+    ylabel=L"U~[J/\epsilon]",
+    titlesize=tl_sz,
+    xticklabelsize=ot_sz,
+    yticklabelsize=ot_sz,
+    xlabelsize=tl_sz,
+    ylabelsize=tl_sz,
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(0.2,0.9,-2*eps,2*eps), 
+    #yticks = 0:0.01:1.5*T
+    #xticks=domain
+   );
 scatter!(ax, map(s->info[s][2],eachindex(info)),map(s->info[s][3],eachindex(info)) ,markersize=3);
 
