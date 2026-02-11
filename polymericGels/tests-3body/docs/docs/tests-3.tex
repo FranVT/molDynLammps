@@ -1,0 +1,53 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\justifying
+
+\section{Ver energía potencial con tres partículas e interacción de dos cuerpos.}
+
+\paragraph{Objetivo} Observar el registro de la energía potencial en un sistema de 3 partículas.
+
+\subsection{Descripción de la simulación}
+
+Se coloca una partícula en el centro de la caja de simulación, \(\vec{r}_1 = (0,0,0)\).
+Se coloca una segunda partícula a una distancia de \num{0.75} de la partícula central, \(\vec{r}_2 = (-0.75,0,0)\).
+Se coloca una tercera partícula a una distancia de \num{0.75} de la partícula centra, \(\vec{r}_3 = (0.75,0,0)\). 
+
+Usando el comando \verb|fix move| se mueve la segunda partícula a velocidad constante de \num{0.1}, \(\vec{v}_2 = (0.1,0,0)\), hacia el centro de la caja.
+Al mismo tiempo y usando el mismo comando, se mueve la tercera partícula a velocidad constante de \num{0.1}, \(\vec{v}_3 = (-0.1,0,0)\), hacia el centro de la caja.
+
+El paso temporal es de \num{1d-3}.
+El número de pasos es \num{4500}, obteniendo una simulación de \num{4.5} unidades temporales.
+
+Cada interacción entre dos partículas, se le asigna el siguiente potencial
+\begin{gather}
+    U_{\mathrm{patch}} = 
+    \left\{
+    \begin{array}{lc}
+        2\epsilon_{ij}\left( \frac{1}{2}\left(\frac{D_p}{r_{ij}}\right)^{4}-1\right)\exp\left[\frac{D_{p}}{r_{ij}-r_{c}}+2\right]  & r_{ij}\in\qty[0,r_c] \\
+        0 & r_{ij}>r_c
+    \end{array}
+    \right.
+\end{gather}
+
+La distancia entre los centros de las partícula está representada por \(r_{ij}\).
+El parámetro \(\epsilon_{ij}\) controla el mínimo del potencial.
+\(D_p\) es el diámtero de las partículas\footnote{La distancia entre los centros de las partículas esféricas.}.
+El parámtero \(r_c\) es la distancia de corte definida en términos del diámetro de las partículas, \(r_c = 1.5 D_{p}\).
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/fig_Patchpot.png}
+    \caption{Grafica del potencial de interacción entre \emph{patches}.
+        \(\epsilon_{ij} = 1.0\), \( D_{p} = 0.4 \).
+    }\label{fig:UpatchTeo}
+\end{figure}
+
+En el script de LAMMPS se registra la energía potencial con los siguientes comandos, \verb|compute ep all pe| y \verb|potAtom all pe/atom pair|.
+
+\newpage
+
+
+
+\end{document}
