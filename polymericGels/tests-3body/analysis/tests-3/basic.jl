@@ -12,9 +12,10 @@ using GLMakie, LaTeXStrings, Typst_jll
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-11-130434";
+date="2026-02-11-102800";
+#"2026-02-11-130434";
 #"2026-02-11-125220";
-#"2026-02-11-102800";
+#
 
 # Get the directory of the desire system
 DIR=getDir(date);
@@ -246,10 +247,17 @@ ax1_eng=Axis(fig_Uf[1,1],
 time_fix=DATA_fix.TimeStep.*0.001;
 time_dump=DATA_dump_1.TimeStep.*0.001;
 
-lines!(ax1_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fix}}",color=1,colormap=:tab10,colorrange=(1,10))
+aux=combine(groupby(l, :TimeStep), :c_potAtom => sum => :suma_c_pot);
+
+scatter!(ax1_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fix}}",color=1,colormap=:tab10,colorrange=(1,10))
 lines!(ax1_eng,time_dump,DATA_dump_1.c_potAtom,label=L"U_{\mathrm{atom}1}",color=2,colormap=:tab10,colorrange=(1,10))
 lines!(ax1_eng,time_dump,DATA_dump_2.c_potAtom,label=L"U_{\mathrm{atom}2}",color=3,colormap=:tab10,colorrange=(1,10))
 lines!(ax1_eng,time_dump,DATA_dump_3.c_potAtom,label=L"U_{\mathrm{atom}3}",color=4,colormap=:tab10,colorrange=(1,10))
+lines!(ax1_eng,time_dump,aux.suma_c_pot,label=L"\sum U_{\mathrm{atom}}",color=:black)
+
+
+
+# jj = 
 
 Legend(fig_Uf[1,2],ax1_eng,
       L"\mathrm{Labels}",
@@ -292,10 +300,11 @@ ax2_dist=Axis(fig_UF[1,2],
 hidespines!(ax2_dist)
 hidexdecorations!(ax2_dist)
 
-lines!(ax2_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fix}}",color=7,colormap=:tab10,colorrange=(1,10))
+scatter!(ax2_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fix}}",color=7,colormap=:tab10,colorrange=(1,10))
 lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_12),label=L"U_{\mathrm{patch}}(d_{12})",color=4,colormap=:tab10,colorrange=(1,10))
 lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_13),label=L"U_{\mathrm{patch}}(d_{13})",color=5,colormap=:tab10,colorrange=(1,10))
 lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_23),label=L"U_{\mathrm{patch}}(d_{23})",color=6,colormap=:tab10,colorrange=(1,10))
+lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_12).+map(r->Upatch(1,0.4,r),dist_13).+map(r->Upatch(1,0.4,r),dist_23),label=L"\sum U_{\mathrm{patch}}(r_{ij})",color=:black)
 
 
 lines!(ax2_dist,time_dump,dist_12,color=1,colormap=:tab10,colorrange=(1,10),label=L"d_{12}")

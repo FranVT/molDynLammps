@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  11 FEB 2026 13:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  11 FEB 2026 16:32
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -618,17 +618,7 @@ Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
 \FV@OutFile=\write3
 )
 Package translations Info: No language package found. I am going to use `english' as default language. on input line 76.
- (./main.aux
-
-LaTeX Warning: Label `fig:Uatom1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Uatom-fix1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-)
+ (./main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 76.
@@ -794,62 +784,70 @@ Overfull \hbox (14.8039pt too wide) in paragraph at lines 46--47
 <docs/../Figures/2026-02-11-102800/fig_Uatom.png, id=32, 426.8748pt x 533.8344pt>
 File: docs/../Figures/2026-02-11-102800/fig_Uatom.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-102800/fig_Uatom.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-102800/fig_Uatom.png  used on input line 60.
+Package pdftex.def Info: docs/../Figures/2026-02-11-102800/fig_Uatom.png  used on input line 62.
 (pdftex.def)             Requested size: 243.56216pt x 304.59015pt.
-<docs/../Figures/2026-02-11-102800/fig_Uatom-fix.png, id=33, 533.8344pt x 426.8748pt>
+
+Overfull \hbox (13.1553pt too wide) in paragraph at lines 70--77
+[]\T1/pplj/m/n/10 Lo que in-ter-preto de los re-sul-ta-dos de la sim-u-lación, es que LAMMPS
+ []
+
+
+
+[2 <./docs/../Figures/2026-02-11-102800/fig_Uatom.png>]
+<docs/../Figures/2026-02-11-102800/fig_Uatom-fix.png, id=40, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-11-102800/fig_Uatom-fix.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-102800/fig_Uatom-fix.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-102800/fig_Uatom-fix.png  used on input line 69.
+Package pdftex.def Info: docs/../Figures/2026-02-11-102800/fig_Uatom-fix.png  used on input line 88.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
-[2 <./docs/../Figures/2026-02-11-102800/fig_Uatom.png> <./docs/../Figures/2026-02-11-102800/fig_Uatom-fix.png>]
-<docs/../Figures/2026-02-11-102800/fig_Ufix-func.png, id=40, 533.8344pt x 426.8748pt>
+[3 <./docs/../Figures/2026-02-11-102800/fig_Uatom-fix.png>]
+<docs/../Figures/2026-02-11-102800/fig_Ufix-func.png, id=48, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-11-102800/fig_Ufix-func.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-102800/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-102800/fig_Ufix-func.png  used on input line 78.
+Package pdftex.def Info: docs/../Figures/2026-02-11-102800/fig_Ufix-func.png  used on input line 106.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
-[3 <./docs/../Figures/2026-02-11-102800/fig_Ufix-func.png>]
-<docs/../Figures/2026-02-11-125220/fig_Uatom.png, id=45, 426.8748pt x 533.8344pt>
+[4 <./docs/../Figures/2026-02-11-102800/fig_Ufix-func.png>]
+<docs/../Figures/2026-02-11-125220/fig_Uatom.png, id=54, 426.8748pt x 533.8344pt>
 File: docs/../Figures/2026-02-11-125220/fig_Uatom.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-125220/fig_Uatom.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-125220/fig_Uatom.png  used on input line 103.
+Package pdftex.def Info: docs/../Figures/2026-02-11-125220/fig_Uatom.png  used on input line 136.
 (pdftex.def)             Requested size: 243.56216pt x 304.59015pt.
-<docs/../Figures/2026-02-11-125220/fig_Uatom-fix.png, id=46, 533.8344pt x 426.8748pt>
+<docs/../Figures/2026-02-11-125220/fig_Uatom-fix.png, id=55, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-11-125220/fig_Uatom-fix.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-125220/fig_Uatom-fix.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-125220/fig_Uatom-fix.png  used on input line 112.
+Package pdftex.def Info: docs/../Figures/2026-02-11-125220/fig_Uatom-fix.png  used on input line 145.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
-[4 <./docs/../Figures/2026-02-11-125220/fig_Uatom.png>]
-<docs/../Figures/2026-02-11-125220/fig_Ufix-func.png, id=52, 533.8344pt x 426.8748pt>
+[5 <./docs/../Figures/2026-02-11-125220/fig_Uatom.png>]
+<docs/../Figures/2026-02-11-125220/fig_Ufix-func.png, id=62, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-11-125220/fig_Ufix-func.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-125220/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-125220/fig_Ufix-func.png  used on input line 121.
+Package pdftex.def Info: docs/../Figures/2026-02-11-125220/fig_Ufix-func.png  used on input line 154.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
-[5 <./docs/../Figures/2026-02-11-125220/fig_Uatom-fix.png> <./docs/../Figures/2026-02-11-125220/fig_Ufix-func.png>]
-<docs/../Figures/2026-02-11-130434/fig_Uatom.png, id=57, 426.8748pt x 533.8344pt>
+[6 <./docs/../Figures/2026-02-11-125220/fig_Uatom-fix.png> <./docs/../Figures/2026-02-11-125220/fig_Ufix-func.png>]
+<docs/../Figures/2026-02-11-130434/fig_Uatom.png, id=67, 426.8748pt x 533.8344pt>
 File: docs/../Figures/2026-02-11-130434/fig_Uatom.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-130434/fig_Uatom.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-130434/fig_Uatom.png  used on input line 145.
+Package pdftex.def Info: docs/../Figures/2026-02-11-130434/fig_Uatom.png  used on input line 178.
 (pdftex.def)             Requested size: 243.56216pt x 304.59015pt.
-<docs/../Figures/2026-02-11-130434/fig_Uatom-fix.png, id=58, 533.8344pt x 426.8748pt>
+<docs/../Figures/2026-02-11-130434/fig_Uatom-fix.png, id=68, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-11-130434/fig_Uatom-fix.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-130434/fig_Uatom-fix.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-130434/fig_Uatom-fix.png  used on input line 154.
+Package pdftex.def Info: docs/../Figures/2026-02-11-130434/fig_Uatom-fix.png  used on input line 187.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
-[6 <./docs/../Figures/2026-02-11-130434/fig_Uatom.png> <./docs/../Figures/2026-02-11-130434/fig_Uatom-fix.png>]
-<docs/../Figures/2026-02-11-130434/fig_Ufix-func.png, id=65, 533.8344pt x 426.8748pt>
+[7 <./docs/../Figures/2026-02-11-130434/fig_Uatom.png> <./docs/../Figures/2026-02-11-130434/fig_Uatom-fix.png>]
+<docs/../Figures/2026-02-11-130434/fig_Ufix-func.png, id=76, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-11-130434/fig_Ufix-func.png Graphic file (type png)
 <use docs/../Figures/2026-02-11-130434/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-11-130434/fig_Ufix-func.png  used on input line 163.
+Package pdftex.def Info: docs/../Figures/2026-02-11-130434/fig_Ufix-func.png  used on input line 196.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 )
 
@@ -859,31 +857,31 @@ Package bibentry Warning: You have used \nobibliography*
 
 
 
-[7 <./docs/../Figures/2026-02-11-130434/fig_Ufix-func.png>] (./main.aux)
+[8 <./docs/../Figures/2026-02-11-130434/fig_Ufix-func.png>] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 
 
-LaTeX Warning: There were multiply-defined labels.
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 65E12993E534549C85B3F6C584E3E92D;625.
  ) 
 Here is how much of TeX's memory you used:
- 20880 strings out of 475171
- 383072 string characters out of 5767095
- 778595 words of memory out of 5000000
- 43470 multiletter control sequences out of 15000+600000
+ 20891 strings out of 475171
+ 383217 string characters out of 5767095
+ 778967 words of memory out of 5000000
+ 43477 multiletter control sequences out of 15000+600000
  621792 words of font info for 135 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 97i,17n,96p,541b,1218s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 97i,17n,96p,541b,1232s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (7 pages, 2019266 bytes).
+Output written on main.pdf (8 pages, 2074687 bytes).
 PDF statistics:
- 121 PDF objects out of 1000 (max. 8388607)
- 81 compressed objects within 1 object stream
- 18 named destinations out of 1000 (max. 500000)
+ 132 PDF objects out of 1000 (max. 8388607)
+ 91 compressed objects within 1 object stream
+ 22 named destinations out of 1000 (max. 500000)
  1091 words of extra memory for PDF output out of 10000 (max. 10000000)
 
