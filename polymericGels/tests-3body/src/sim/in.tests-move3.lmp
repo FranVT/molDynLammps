@@ -26,13 +26,13 @@ include potential.in
 region spawn_box block -$L $L -$L $L -$L $L
 
 # Patch B 
-create_atoms 2 single 0.75 0.0 0.0
+create_atoms 2 single 0.0 0.4 0.0
 
 # Patch B
 create_atoms 2 single 0.0 0.0 0.0
 
 # Patch B
-create_atoms 2 single -0.75 0.0 0.0
+create_atoms 2 single -0.4 -0.4 0.0
 
 
 
@@ -97,7 +97,7 @@ dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
 
 timestep ${tstep}
 
-fix moveP1 P1 move linear -0.1 0.0 0.0
+#fix moveP1 P1 move linear -0.1 0.0 0.0
 fix moveP3 P3 move linear 0.1 0.0 0.0
 
 run ${steps}

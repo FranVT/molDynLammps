@@ -21,6 +21,13 @@ El paso temporal es de \num{1d-3}.
 El número de pasos es \num{4500}, obteniendo una simulación de \num{4.5} unidades temporales.
 
 Cada interacción entre dos partículas, se le asigna el siguiente potencial
+\begin{marginfigure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/fig_Patchpot.png}
+    \caption{Grafica del potencial de interacción entre \emph{patches}.
+        \(\epsilon_{ij} = 1.0\), \( D_{p} = 0.4 \).
+    }\label{fig:UpatchTeo}
+\end{marginfigure}
 \begin{gather}
     U_{\mathrm{patch}} = 
     \left\{
@@ -36,17 +43,129 @@ El parámetro \(\epsilon_{ij}\) controla el mínimo del potencial.
 \(D_p\) es el diámtero de las partículas\footnote{La distancia entre los centros de las partículas esféricas.}.
 El parámtero \(r_c\) es la distancia de corte definida en términos del diámetro de las partículas, \(r_c = 1.5 D_{p}\).
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/fig_Patchpot.png}
-    \caption{Grafica del potencial de interacción entre \emph{patches}.
-        \(\epsilon_{ij} = 1.0\), \( D_{p} = 0.4 \).
-    }\label{fig:UpatchTeo}
-\end{figure}
-
 En el script de LAMMPS se registra la energía potencial con los siguientes comandos, \verb|compute ep all pe| y \verb|potAtom all pe/atom pair|.
 
 \newpage
+
+\section{Directory: 2026-02-11-102800}
+
+
+
+\subsection{Resultados}
+
+En la figura~\ref{fig:Uatom1} se muestra
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-102800/fig_Uatom.png}
+    \caption{Energía potencial registrada por pe/atom.}\label{fig:Uatom1}
+\end{figure}
+
+
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-102800/fig_Uatom-fix.png}
+    \caption{ Comparación de la energía potencial registrada por pe/atom con la energía registrada por pe.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-102800/fig_Ufix-func.png}
+    \caption{Comparación de la energía potencial registrada por pe con la energía potencial calculada usando las distancias de la simulación.
+    }\label{fig:Ufix-func1}
+\end{figure}
+
+
+\newpage
+
+\subsection{Directory: 2026-02-11-125220}
+
+\subsection{Descripción de la simulación}
+
+Se coloca una partícula en el centro de la caja de simulación, \(\vec{r}_1 = (0,0,0)\).
+Se coloca una segunda partícula en \(\vec{r}_2 = (-0.4,-0.4,0)\).
+Se coloca una tercera partícula en \(\vec{r}_3 = (0.4,0.4,0)\). 
+
+Usando el comando \verb|fix move| se mueve la segunda partícula a velocidad constante de \num{0.1}, \(\vec{v}_2 = (0.1,0,0)\), hacia el centro de la caja.
+Al mismo tiempo y usando el mismo comando, se mueve la tercera partícula a velocidad constante de \num{0.1}, \(\vec{v}_3 = (-0.1,0,0)\), hacia el centro de la caja.
+
+El paso temporal es de \num{1d-3}.
+El número de pasos es \num{8000}, obteniendo una simulación de \num{8} unidades temporales.
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-125220/fig_Uatom.png}
+    \caption{Energía potencial registrada por pe/atom.}\label{fig:Uatom1}
+\end{figure}
+
+
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-125220/fig_Uatom-fix.png}
+    \caption{ Comparación de la energía potencial registrada por pe/atom con la energía registrada por pe.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-125220/fig_Ufix-func.png}
+    \caption{Comparación de la energía potencial registrada por pe con la energía potencial calculada usando las distancias de la simulación.
+    }\label{fig:Ufix-func1}
+\end{figure}
+
+
+\newpage
+
+\subsection{Directory: 2026-02-11-130434}
+
+\subsection{Descripción de la simulación}
+
+Se coloca una partícula en el centro de la caja de simulación, \(\vec{r}_1 = (0,0,0)\).
+Se coloca una segunda partícula en \(\vec{r}_2 = (0.0,-0.4,0)\).
+Se coloca una tercera partícula en \(\vec{r}_3 = (0.4,0.4,0)\). 
+
+Usando el comando \verb|fix move| se mueve la tercera partícula a velocidad constante de \num{0.1}, \(\vec{v}_2 = (0.1,0,0)\), hacia el centro de la caja.
+
+El paso temporal es de \num{1d-3}.
+El número de pasos es \num{8000}, obteniendo una simulación de \num{8} unidades temporales.
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-130434/fig_Uatom.png}
+    \caption{Energía potencial registrada por pe/atom.}\label{fig:Uatom1}
+\end{figure}
+
+
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-130434/fig_Uatom-fix.png}
+    \caption{ Comparación de la energía potencial registrada por pe/atom con la energía registrada por pe.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-11-130434/fig_Ufix-func.png}
+    \caption{Comparación de la energía potencial registrada por pe con la energía potencial calculada usando las distancias de la simulación.
+    }\label{fig:Ufix-func1}
+\end{figure}
+
+
 
 
 

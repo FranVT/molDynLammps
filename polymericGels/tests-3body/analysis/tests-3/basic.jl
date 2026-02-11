@@ -11,47 +11,16 @@ using GLMakie, LaTeXStrings, Typst_jll
 # Load the functions
 include("functions.jl")
 
-function Upatch(eps_pair,sig_p,r)
-"""
-    Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
-"""
-    if r < 1.5*sig_p 
-        return 2*eps_pair*( ((sig_p^4)./((2).*r.^4)) .-1).*exp.((sig_p)./(r.-(1.5*sig_p)).+2)
-    else
-        return 0.0
-    end
-end
-
-
-function getTable(dir,file_name)
-"""
-    Get the data from a single dump file that stores one timeste information
-"""
-    data=split.(readlines(joinpath(dir,file_name))," ")[7:end];
-    HEADERS=["n","r","u","f"];
-    INFO=reduce(hcat,map(s->parse.(Float64,s),data))';
-    df=DataFrame(INFO,HEADERS);
-
-    return df 
-end
-
-
-
-
-
 # Selection of an specific simulation
-date="2026-02-10-114759";
-
-# 2026-02-09-104056
-#"2026-02-05-140904";
-
-
+date="2026-02-11-130434";
+#"2026-02-11-125220";
+#"2026-02-11-102800";
 
 # Get the directory of the desire system
 DIR=getDir(date);
 DIR=DIR[1];
 
-table1=getTable(DIR,"pachTab.table");
+#table1=getTable(DIR,"pachTab.table");
 
 
 # Activate extract info
@@ -95,6 +64,7 @@ l=sort(reduce(vcat,DATA_dump),:TimeStep);
 # Create Individual data frames
 DATA_dump_1 = l[l.id.==1.0,:];
 DATA_dump_2 = l[l.id.==2.0,:];
+DATA_dump_3 = l[l.id.==3.0,:];
 
 """
 #    SANDBOX
@@ -115,75 +85,234 @@ time=dt.*DATA_fix.TimeStep;
 
 e_lim=2;
 
-fig_U=Figure(size = (15cm, 18.75cm));
 tl_sz=0.55cm;
 ot_sz=0.35cm;
 
-clbr=:managua10;
 
-ax1=Axis(fig_U[1,1],
-    title=latexstring("\\mathrm{Potential~energy}"),
-    #subtitle=latexstring(subtitle),
-    xlabel=L"t~[\tau]",
-    ylabel=L"U~[J/\epsilon]",
-    titlesize=tl_sz,
-    xticklabelsize=ot_sz,
-    yticklabelsize=ot_sz,
-    xlabelsize=tl_sz,
-    ylabelsize=tl_sz,
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(nothing,nothing,-e_lim,e_lim), 
-    #yticks = 0:0.01:1.5*T
-    #xticks=domain
+
+fig_U=Figure(size = (15cm, 18.75cm));
+# Create twin axis: Energy and distance
+
+# First axis
+ax1_eng=Axis(fig_U[1,1],
+             title=latexstring("\\mathrm{Particle~1}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
    )
-ax2=Axis(fig_U[2,1],
-    title=latexstring("\\mathrm{Distance~between~particles}"),
-    #subtitle=latexstring(subtitle),
-    xlabel=L"t~[\tau]",
-    ylabel=L"d~[x/D]",
-    titlesize=tl_sz,
-    xticklabelsize=ot_sz,
-    yticklabelsize=ot_sz,
-    xlabelsize=tl_sz,
-    ylabelsize=tl_sz,
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(nothing,nothing,nothing,nothing), 
-    #yticks = 0:0.01:1.5*T
-    #xticks=domain
+ax1_dist=Axis(fig_U[1,1],
+             #title=latexstring("\\mathrm{Potential~energy}"),
+             #xlabel=L"t~[\tau]",
+             yticks = (0.0:0.2:2.0),
+             ylabel=L"d~[r/D_p]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true,
+             yaxisposition=:right
    )
-ax3=Axis(fig_U[3,1],
-    title=latexstring("\\mathrm{Potential~energy}"),
-    #subtitle=latexstring(subtitle),
-    xlabel=L"t~[\tau]",
-    ylabel=L"U~[J/\epsilon]",
-    titlesize=tl_sz,
-    xticklabelsize=ot_sz,
-    yticklabelsize=ot_sz,
-    xlabelsize=tl_sz,
-    ylabelsize=tl_sz,
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(nothing,nothing,-e_lim,e_lim), 
-    #yticks = 0:0.01:1.5*T
-    #xticks=domain
+hidespines!(ax1_dist)
+hidexdecorations!(ax1_dist)
+
+# Second axis
+ax2_eng=Axis(fig_U[2,1],
+             title=latexstring("\\mathrm{Particle~2}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
    )
+ax2_dist=Axis(fig_U[2,1],
+             #title=latexstring("\\mathrm{Potential~energy}"),
+             #xlabel=L"t~[\tau]",
+             yticks = (0.0:0.2:2.0),
+             ylabel=L"d~[r/D_p]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true,
+             yaxisposition=:right
+   )
+hidespines!(ax2_dist)
+hidexdecorations!(ax2_dist)
 
-dist = DATA_dump_1.x .- DATA_dump_2.x;
-scatterlines!(ax2,time,dist,markersize=3)
+# Third axis
+ax3_eng=Axis(fig_U[3,1],
+             title=latexstring("\\mathrm{Particle~3}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax3_dist=Axis(fig_U[3,1],
+             #title=latexstring("\\mathrm{Potential~energy}"),
+             #xlabel=L"t~[\tau]",
+             yticks = (0.0:0.2:2.0),
+             ylabel=L"d~[r/D_p]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true,
+             yaxisposition=:right
+   )
+hidespines!(ax3_dist)
+hidexdecorations!(ax3_dist)
 
-scatterlines!(ax1,time,DATA_dump_1.c_potAtom,markersize=3,label=L"2")
-scatterlines!(ax3,time,DATA_dump_2.c_potAtom,markersize=3,label=L"3")
 
-Legend(fig_U[1,2],ax1,
-      L"\mathrm{id}",
+dist_12=sqrt.((DATA_dump_1.x .- DATA_dump_2.x).^2 .+ (DATA_dump_1.y .- DATA_dump_2.y).^2);
+dist_13=sqrt.((DATA_dump_1.x .- DATA_dump_3.x).^2 .+ (DATA_dump_1.y .- DATA_dump_3.y).^2);
+dist_23=sqrt.((DATA_dump_2.x .- DATA_dump_3.x).^2 .+ (DATA_dump_2.y .- DATA_dump_3.y).^2);
+
+
+
+sl1_d12=scatterlines!(ax1_dist,time,dist_12,markersize=3,color=1,colormap=:tab10,colorrange=(1,10))
+sl1_d13=scatterlines!(ax1_dist,time,dist_13,markersize=3,color=2,colormap=:tab10,colorrange=(1,10))
+sl1_eg1=scatterlines!(ax1_eng,time,DATA_dump_1.c_potAtom,markersize=3,color=3, colormap=:tab10,colorrange=(1,10))
+
+sl2_d12=scatterlines!(ax2_dist,time,dist_12,markersize=3,color=1,colormap=:tab10,colorrange=(1,10))
+sl2_d23=scatterlines!(ax2_dist,time,dist_23,markersize=3,color=2,colormap=:tab10,colorrange=(1,10))
+sl2_eg2=scatterlines!(ax2_eng,time,DATA_dump_2.c_potAtom,markersize=3,color=3, colormap=:tab10,colorrange=(1,10))
+
+sl3_d12=scatterlines!(ax3_dist,time,dist_13,markersize=3,color=1,colormap=:tab10,colorrange=(1,10))
+sl3_d23=scatterlines!(ax3_dist,time,dist_23,markersize=3,color=2,colormap=:tab10,colorrange=(1,10))
+sl3_eg3=scatterlines!(ax3_eng,time,DATA_dump_3.c_potAtom,markersize=3,color=3, colormap=:tab10,colorrange=(1,10))
+
+
+Legend(fig_U[1,2],
+       [sl1_d12,sl1_d13,sl1_eg1],
+       [L"d_{12}", L"d_{13}", L"U_{\mathrm{atom}}"],
      labelsize=0.5cm)
-Legend(fig_U[3,2],ax3,
-      L"\mathrm{id}",
+
+Legend(fig_U[2,2],
+       [sl2_d12,sl2_d23,sl2_eg2],
+       [L"d_{21}", L"d_{23}", L"U_{\mathrm{atom}}"],
+     labelsize=0.5cm)
+
+Legend(fig_U[3,2],
+       [sl3_d12,sl3_d23,sl3_eg3],
+       [L"d_{31}", L"d_{32}", L"U_{\mathrm{atom}}"],
      labelsize=0.5cm)
 
 
+save("fig_Uatom.png", fig_U, px_per_unit = 300/inch)
+
+
+"""
+    Energy of the fix
+"""
+
+fig_Uf=Figure(size = (18.75cm, 15cm));
+# Create twin axis: Energy and distance
+
+# First axis
+ax1_eng=Axis(fig_Uf[1,1],
+             title=latexstring("\\mathrm{Potential~energy}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+time_fix=DATA_fix.TimeStep.*0.001;
+time_dump=DATA_dump_1.TimeStep.*0.001;
+
+lines!(ax1_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fix}}",color=1,colormap=:tab10,colorrange=(1,10))
+lines!(ax1_eng,time_dump,DATA_dump_1.c_potAtom,label=L"U_{\mathrm{atom}1}",color=2,colormap=:tab10,colorrange=(1,10))
+lines!(ax1_eng,time_dump,DATA_dump_2.c_potAtom,label=L"U_{\mathrm{atom}2}",color=3,colormap=:tab10,colorrange=(1,10))
+lines!(ax1_eng,time_dump,DATA_dump_3.c_potAtom,label=L"U_{\mathrm{atom}3}",color=4,colormap=:tab10,colorrange=(1,10))
+
+Legend(fig_Uf[1,2],ax1_eng,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+
+save("fig_Uatom-fix.png", fig_Uf, px_per_unit = 300/inch)
+
+
+"""
+    Energy from function evaluated at the distances given by the simulation 
+"""
+fig_UF=Figure(size = (18.75cm, 15cm));
+# Create twin axis: Energy and distance
+ax2_eng=Axis(fig_UF[1,2],
+             title=latexstring("\\mathrm{Comparisson~of~fix~and~function}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2_dist=Axis(fig_UF[1,2],
+             #title=latexstring("\\mathrm{Potential~energy}"),
+             #xlabel=L"t~[\tau]",
+             yticks = (0.0:0.2:2.0),
+             ylabel=L"d~[r/D_p]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true,
+             yaxisposition=:right
+   )
+hidespines!(ax2_dist)
+hidexdecorations!(ax2_dist)
+
+lines!(ax2_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fix}}",color=7,colormap=:tab10,colorrange=(1,10))
+lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_12),label=L"U_{\mathrm{patch}}(d_{12})",color=4,colormap=:tab10,colorrange=(1,10))
+lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_13),label=L"U_{\mathrm{patch}}(d_{13})",color=5,colormap=:tab10,colorrange=(1,10))
+lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_23),label=L"U_{\mathrm{patch}}(d_{23})",color=6,colormap=:tab10,colorrange=(1,10))
+
+
+lines!(ax2_dist,time_dump,dist_12,color=1,colormap=:tab10,colorrange=(1,10),label=L"d_{12}")
+lines!(ax2_dist,time_dump,dist_13,color=2,colormap=:tab10,colorrange=(1,10),label=L"d_{13}")
+lines!(ax2_dist,time_dump,dist_23,color=3,colormap=:tab10,colorrange=(1,10),label=L"d_{23}")
+
+Legend(fig_UF[1,1],ax2_eng,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+Legend(fig_UF[1,3],ax2_dist,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+
+save("fig_Ufix-func.png", fig_UF, px_per_unit = 300/inch)
+
+
+#=
 
 fig_Udist=Figure(size = (12cm, 10cm));
 
@@ -327,4 +456,4 @@ save("fig_comp.png", fig, px_per_unit = 300/inch)
 save("fig_pot.png", fig_U, px_per_unit = 300/inch)
 save("fig_potUComp.png", fig_Udist, px_per_unit = 300/inch)
 #save("fig_dist_pot.png", fig_Udist, px_per_unit = 300/inch)
-
+=#
