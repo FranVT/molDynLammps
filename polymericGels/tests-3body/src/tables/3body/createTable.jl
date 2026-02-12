@@ -28,7 +28,7 @@ function Upatch(eps_pair,sig_p,r)
     Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
 """
     if r < 1.5*sig_p 
-        return round(2*eps_pair*( (1/2)*(sig_p/r)^4 - 1 )*exp( sig_p/(r-1.5*sig_p) + 2 ),digits=2^7)
+        return 2*eps_pair*( (1/2)*(sig_p/r)^4 - 1 )*exp( sig_p/(r-1.5*sig_p) + 2 )
     else
         return 0.0
     end
@@ -51,7 +51,7 @@ function SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik)
 """
     Potential for the swap mechanism
 """
-    return round(w.*eps_jk.*U3(eps_ij,eps_jk,sig_p,r_ij).*U3(eps_ik,eps_jk,sig_p,r_ik),digits=2^7)
+    return w.*eps_jk.*U3(eps_ij,eps_jk,sig_p,r_ij).*U3(eps_ik,eps_jk,sig_p,r_ik)
 end
 
 function DiffU3(eps_pair,eps_3,sig_p,r)
@@ -69,18 +69,19 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     Compute the scalars for the proyection of the forces
 """
     th = deg2rad(th);
-    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
+    #r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
  
-    f_i1=w*eps_jk*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_ik,eps_ik,sig_p,r_ik) );
-    f_i2=w*eps_jk*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_ik,eps_ik,sig_p,r_ik) );
+    f_i1=0; #w*eps_jk*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_ik,eps_ik,sig_p,r_ik) );
+    f_i2=0; #w*eps_jk*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_ik,eps_ik,sig_p,r_ik) );
    
-    f_j1=w*eps_ik*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_jk,eps_jk,sig_p,r_jk) );
-    f_j2=w*eps_ik*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_j1=0; #w*eps_ik*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_j2=0; #w*eps_ik*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
 
-    f_k1=w*eps_ij*( DiffU3(eps_ik,eps_ik,sig_p,r_ik) * U3(eps_jk,eps_jk,sig_p,r_jk) );
-    f_k2=w*eps_ij*( U3(eps_ik,eps_ik,sig_p,r_ik) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_k1=0; #w*eps_ij*( DiffU3(eps_ik,eps_ik,sig_p,r_ik) * U3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_k2=0; #w*eps_ij*( U3(eps_ik,eps_ik,sig_p,r_ik) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
 
-    eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
+    eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) 
+    #+ SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
     eng=round(eng/3,digits=2^7)
 
     return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
@@ -98,11 +99,11 @@ eps_ik = 1.0;
 eps_jk = 1.0;
 sig = 0.4;
 rc = 1.5*sig;
-rmin = sig/1000;
+rmin = sig/10;
 rmax = 2*sig;
 thi = 180/(4*N)
 thf = 180 - thi;
-w=0;
+w=1;
 
 filename1 = string("swapMechTab1_w",w,".table");
 filename2 = string("swapMechTab2_w",w,".table");
@@ -116,6 +117,8 @@ doms2 = reduce(vcat,map(s-> reshape(reverse.(Iterators.product(th_dom,r_dom[s:en
 
 # Create tuples with the information
 # For Patch_j = Patch_k
+
+# For different spicies
 docs1 =  map(eachindex(doms1)) do s
             (
                  s,
@@ -124,6 +127,7 @@ docs1 =  map(eachindex(doms1)) do s
             )
         end;
 
+# For identical species
 docs2 =  map(eachindex(doms2)) do s
             (
                  s,

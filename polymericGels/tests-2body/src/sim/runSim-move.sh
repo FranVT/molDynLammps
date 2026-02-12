@@ -26,7 +26,7 @@ NsaveStress=1; #${NsaveStress%.*};
 Ndump=1; #${Ndump%.*};
 
 # Assign values to file management variables
-dir_data="/home/franvt/GitRepos/molDynLammps/polymericGels/tests-3body/data";
+dir_data="/home/franvt/GitRepos/molDynLammps/polymericGels/tests-2body/data";
 id="$(date +%F-%H%M%S)";
 dir_save="$dir_data/$id";
 mkdir "$dir_save";

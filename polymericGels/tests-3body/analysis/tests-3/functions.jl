@@ -13,6 +13,37 @@ function Upatch(eps_pair,sig_p,r)
     end
 end
 
+function U3(eps_pair,eps_3,sig_p,r)
+"""
+    Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
+"""
+    if r <= sig_p 
+        return 1.0
+    elseif r >= 1.5*sig_p
+        return 0.0 
+    else 
+        return -(1/eps_3)*Upatch(eps_pair,sig_p,r)
+    end
+end
+
+function SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik)
+"""
+    Potential for the swap mechanism
+"""
+    return w.*eps_jk.*U3(eps_ij,eps_jk,sig_p,r_ij).*U3(eps_ik,eps_jk,sig_p,r_ik)
+end
+
+function getTable3b(dir,file_name)
+"""
+    Get the data from the table file of two particle interaction. 
+"""
+    data=split.(readlines(joinpath(dir,file_name))," ")[4:end];
+    HEADERS=["n","r_ij","r_ik","theta","f_i1","f_i2","f_j1","f_j2","f_k1","f_k2","e"];
+    INFO=reduce(hcat,map(s->parse.(Float64,s),data))';
+    df=DataFrame(INFO,HEADERS);
+
+    return df 
+end
 
 function getTable(dir,file_name)
 """
