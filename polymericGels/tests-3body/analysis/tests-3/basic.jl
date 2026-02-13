@@ -21,8 +21,96 @@ date="2026-02-12-155912";
 DIR=getDir(date);
 DIR=DIR[1];
 
+#=
 tableSwap=getTable3b(DIR,"swapMechTab2_w1.table");
 swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
+
+# Obtener la evolución de r_ik
+id=1:200:nrow(tableSwap) #first.(Iterators.partition(1:1:length(tableSwap.theta),200)|>collect);
+
+# Obtener cada rango de r_ik
+table_pot1=tableSwap[id, [:r_ij, :r_ik, :e]];
+
+# Separa los rangos de r_ik por cada valor de r_ij
+table_pot1=groupby(table_pot1, :r_ij);
+=#
+
+"""
+    Plot the threebody potential
+"""
+
+tl_sz=0.55cm;
+ot_sz=0.35cm;
+
+# Definir un mapa de color (puedes cambiarlo, ej: :thermal, :plasma, etc.)
+cmap = :tokyo
+
+
+fig_swapPot=Figure(size = (17cm, 18.75cm));
+ax1_eng=Axis(fig_swapPot[1,1],
+             title=latexstring("\\mathrm{Swap~potential~from~table}"),
+             xlabel=L"r_{ik}~[r/D_p]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+ax2_eng=Axis(fig_swapPot[2,1],
+             title=latexstring("\\mathrm{Swap~potential~from~function}"),
+             xlabel=L"r_{ik}~[r/D_p]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+
+#map(s->lines!(ax1_eng,table_pot1[s].r_ik,table_pot1[s].e),1:1:length(table_pot1))
+
+r_ij_values=unique(tableSwap.r_ij);
+r_min, r_max = extrema(r_ij_values)
+
+for (idx, df) in enumerate(table_pot1)
+    r_val = r_ij_values[idx]
+    # Normalizar el valor de r_ij al intervalo [0,1] para el mapeo de color
+    color_norm = (r_val - r_min) / (r_max - r_min)
+    println(color_norm)
+    lines!(ax1_eng, df.r_ik, df.e,
+           color = color_norm,
+           colormap = cmap,
+           colorrange = (0,1),
+           linewidth = 2)
+    potTeo=map(s->SwapU(1,1,1,1,0.4,r_val,s),df.r_ik)
+
+    scatterlines!(ax2_eng,df.r_ik,potTeo,
+           color = color_norm,
+           colormap = cmap,
+           colorrange = (0,1)
+            )
+end
+
+# Añadir la barra de color (leyenda) a la derecha del eje
+Colorbar(fig_swapPot[1,2],
+         limits = (r_min, r_max),
+         colormap = cmap,
+         label = L"r_{ij}")   # etiqueta de la barra
+
+# Añadir la barra de color (leyenda) a la derecha del eje
+Colorbar(fig_swapPot[2,2],
+         limits = (r_min, r_max),
+         colormap = cmap,
+         label = L"r_{ij}")   # etiqueta de la barra
+
+#aux=combine(groupby(l, :TimeStep), :c_potAtom => sum => :suma_c_pot);
 
 # Activate extract info
 act=1;
@@ -45,11 +133,6 @@ DIR=joinpath(DIR,"traj");
 if act == 1
     DATA_dump=map(s->getDump(DIR,s),readdir(DIR));
 end
-
-# Select parameters to filter dataframe (patches)
-# type 3: PA
-# type 4: PB
-
 
 # Parameters
 dt=0.001;
@@ -79,26 +162,6 @@ cm = inch / 2.54;
 L=1;
 
 
-"""
-    Plot the threebody potential
-"""
-
-fig_swapPot=Figure(size = (15cm, 18.75cm));
-ax1_eng=Axis(fig_swapPot[1,1],
-             title=latexstring("\\mathrm{Swap~potential~from~table}"),
-             xlabel=L"r_{ij}~[r/D_p]",
-             ylabel=L"U~[J/\epsilon]",
-             titlesize=tl_sz,
-             xticklabelsize=ot_sz,
-             yticklabelsize=ot_sz,
-             xlabelsize=tl_sz,
-             ylabelsize=tl_sz,
-             xminorticksvisible=true,
-             xminorgridvisible=true
-   )
-map(s->lines!(ax1_eng,s),swapTabPlot)
-
-
 
 """
 #    Energy and that stuff
@@ -107,9 +170,6 @@ map(s->lines!(ax1_eng,s),swapTabPlot)
 time=dt.*DATA_fix.TimeStep;
 
 e_lim=2;
-
-tl_sz=0.55cm;
-ot_sz=0.35cm;
 
 
 
