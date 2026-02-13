@@ -2,6 +2,16 @@
     Functions 
 """
 
+function ForcePatch_fd(eps_pair,sig_p,r)
+"""
+    Get the central finite difference given the value of the position and the function.
+"""
+    dh=1e-6;
+    fo=Upatch(eps_pair,sig_p,r+dh)
+    ff=Upatch(eps_pair,sig_p,r-dh)
+    return -(1/(2*dh))*( fo - ff );
+end
+
 function Upatch(eps_pair,sig_p,r)
 """
     Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction

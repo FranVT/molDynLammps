@@ -8,11 +8,20 @@ using DataFrames, CSV
 using Statistics
 using GLMakie, LaTeXStrings, Typst_jll
 
+# these are relative to 1 CSS px
+inch = 96;
+pt = 4/3;
+cm = inch / 2.54;
+
+
+
 # Load the functions
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-13-124253";
+date="2026-02-13-152655";
+#"2026-02-13-124253";
+
 #"2026-02-12-155912";
 #"2026-02-12-154430";
 #"2026-02-12-152030";
@@ -36,7 +45,7 @@ if act == 1
     DATA_fix=DataFrame(data[2]',data[1]);
 
     # Get table
-    tableSwap=getTable3b(DIR,"swapMechTab2_w1.table");
+    tableSwap=getTable3b(DIR,"swapMechTab2_w0.table");
     swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
 
     # Obtener la evolución de r_ik
@@ -52,7 +61,166 @@ if act == 1
     DIR=joinpath(DIR,"traj");
     DATA_dump=map(s->getDump(DIR,s),readdir(DIR));
 
+"""
+#    Reducing the DATA_dump
+"""
+
+# Concatenate the data frames into one
+l=sort(reduce(vcat,DATA_dump),:TimeStep);
+
+# Create Individual data frames
+DATA_dump_1 = l[l.id.==1.0,:];
+DATA_dump_2 = l[l.id.==2.0,:];
+DATA_dump_3 = l[l.id.==3.0,:];
+
+
+
 end
+
+"""
+    Usefull stuff for the graphs
+"""
+
+time_fix=DATA_fix.TimeStep.*0.001;
+time_dump=DATA_dump_1.TimeStep.*0.001;
+
+
+dist_12=sqrt.((DATA_dump_1.x .- DATA_dump_2.x).^2 .+ (DATA_dump_1.y .- DATA_dump_2.y).^2);
+dist_13=sqrt.((DATA_dump_1.x .- DATA_dump_3.x).^2 .+ (DATA_dump_1.y .- DATA_dump_3.y).^2);
+dist_23=sqrt.((DATA_dump_2.x .- DATA_dump_3.x).^2 .+ (DATA_dump_2.y .- DATA_dump_3.y).^2);
+
+
+DATA_dump_1[!, :norma_f] = sqrt.(DATA_dump_1.fx.^2 .+ DATA_dump_1.fy.^2 .+ DATA_dump_1.fz.^2)
+DATA_dump_2[!, :norma_f] = sqrt.(DATA_dump_2.fx.^2 .+ DATA_dump_2.fy.^2 .+ DATA_dump_2.fz.^2)
+DATA_dump_3[!, :norma_f] = sqrt.(DATA_dump_3.fx.^2 .+ DATA_dump_3.fy.^2 .+ DATA_dump_3.fz.^2)
+
+
+
+
+"""
+    Plot the components
+"""
+fig_F=Figure(size = (17cm, 18.75cm));
+ax1_F=Axis(fig_F[1,1],
+             title=latexstring("\\mathrm{Force~components~Particl~1}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2_F=Axis(fig_F[2,1],
+             title=latexstring("\\mathrm{Force~components~Particl~2}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax3_F=Axis(fig_F[3,1],
+             title=latexstring("\\mathrm{Force~components~Particl~3}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+linkyaxes!(ax1_F, ax2_F, ax3_F)
+
+f_func12=map(r->ForcePatch_fd(1.0,0.4,r),dist_12);
+f_func13=map(r->ForcePatch_fd(1.0,0.4,r),dist_13);
+f_func1=f_func12 .+ f_func13;
+
+#f_func12=map(r->ForcePatch_fd(1.0,0.4,r),dist_12);
+f_func23=map(r->ForcePatch_fd(1.0,0.4,r),dist_23);
+f_func2=f_func12 .+ f_func23;
+
+#f_func12=map(r->ForcePatch_fd(1.0,0.4,r),dist_12);
+#f_func13=map(r->ForcePatch_fd(1.0,0.4,r),dist_13);
+f_func3=f_func13 .+ f_func23;
+
+
+
+
+lines!(ax1_F,time_dump,DATA_dump_1.fx,linestyle=:dot,label=L"f_x")
+lines!(ax1_F,time_dump,DATA_dump_1.fy,linestyle=:dot,label=L"f_y")
+lines!(ax1_F,time_dump,DATA_dump_1.norma_f,linestyle=:dot,label=L"|f|")
+
+lines!(ax1_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)")
+lines!(ax1_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)")
+lines!(ax1_F,time_dump,f_func1,linestyle=:solid,label=L"\sum f_{1i}(r)")
+
+Legend(fig_F[1,2],ax1_F,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+
+
+lines!(ax2_F,time_dump,DATA_dump_2.fx,linestyle=:dot,label=L"f_x")
+lines!(ax2_F,time_dump,DATA_dump_2.fy,linestyle=:dot,label=L"f_y")
+lines!(ax2_F,time_dump,DATA_dump_2.norma_f,linestyle=:dot,label=L"|f|")
+
+lines!(ax2_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)")
+lines!(ax2_F,time_dump,f_func23,linestyle=:solid,label=L"f_{23}(r)")
+lines!(ax2_F,time_dump,f_func2,linestyle=:solid,label=L"\sum f_{2i}(r)")
+
+Legend(fig_F[2,2],ax2_F,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+
+
+lines!(ax3_F,time_dump,DATA_dump_3.fx,linestyle=:dot,label=L"f_x")
+lines!(ax3_F,time_dump,DATA_dump_3.fy,linestyle=:dot,label=L"f_y")
+lines!(ax3_F,time_dump,DATA_dump_3.norma_f,linestyle=:dot,label=L"|f|")
+
+lines!(ax3_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)")
+lines!(ax3_F,time_dump,f_func23,linestyle=:solid,label=L"f_{23}(r)")
+lines!(ax3_F,time_dump,f_func3,linestyle=:solid,label=L"\sum f_{3i}(r)")
+
+Legend(fig_F[3,2],ax3_F,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+
+
+
+"""
+    Plot the Forces
+"""
+fig_Force=Figure(size = (17cm, 18.75cm));
+ax1_F=Axis(fig_Force[1,1],
+             title=latexstring("\\mathrm{Vectors}"),
+             xlabel=L"x~[r/D_p]",
+             ylabel=L"y~[r/D_p]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+
+lines!(ax1_F,DATA_dump_1.x,DATA_dump_1.y)
+lines!(ax1_F,DATA_dump_2.x,DATA_dump_2.y)
+lines!(ax1_F,DATA_dump_3.x,DATA_dump_3.y)
+
+arrows2d!(ax1_F,DATA_dump_1.x,DATA_dump_1.y,DATA_dump_1.fx./DATA_dump_1.norma_f,DATA_dump_1.fy./DATA_dump_1.norma_f,lengthscale=0.2)
+arrows2d!(ax1_F,DATA_dump_2.x,DATA_dump_2.y,DATA_dump_2.fx./DATA_dump_2.norma_f,DATA_dump_2.fy./DATA_dump_2.norma_f,lengthscale=0.2)
+arrows2d!(ax1_F,DATA_dump_3.x,DATA_dump_3.y,DATA_dump_3.fx./DATA_dump_3.norma_f,DATA_dump_3.fy./DATA_dump_3.norma_f,lengthscale=0.2)
+
+
 
 """
     Plot the threebody potential
@@ -102,7 +270,6 @@ for (idx, df) in enumerate(table_pot1)
     r_val = r_ij_values[idx]
     # Normalizar el valor de r_ij al intervalo [0,1] para el mapeo de color
     color_norm = (r_val - r_min) / (r_max - r_min)
-    println(color_norm)
     lines!(ax1_eng, df.r_ik, df.e,
            color = color_norm,
            colormap = cmap,
@@ -138,25 +305,8 @@ dt=0.001;
 
 
 """
-#    Reducing the DATA_dump
-"""
-
-# Concatenate the data frames into one
-l=sort(reduce(vcat,DATA_dump),:TimeStep);
-
-# Create Individual data frames
-DATA_dump_1 = l[l.id.==1.0,:];
-DATA_dump_2 = l[l.id.==2.0,:];
-DATA_dump_3 = l[l.id.==3.0,:];
-
-"""
 #    SANDBOX
 """
-
-# these are relative to 1 CSS px
-inch = 96;
-pt = 4/3;
-cm = inch / 2.54;
 
 L=1;
 
@@ -266,10 +416,6 @@ hidespines!(ax3_dist)
 hidexdecorations!(ax3_dist)
 
 
-dist_12=sqrt.((DATA_dump_1.x .- DATA_dump_2.x).^2 .+ (DATA_dump_1.y .- DATA_dump_2.y).^2);
-dist_13=sqrt.((DATA_dump_1.x .- DATA_dump_3.x).^2 .+ (DATA_dump_1.y .- DATA_dump_3.y).^2);
-dist_23=sqrt.((DATA_dump_2.x .- DATA_dump_3.x).^2 .+ (DATA_dump_2.y .- DATA_dump_3.y).^2);
-
 
 
 sl1_d12=lines!(ax1_dist,time,dist_12,linestyle=:dash,color=1,colormap=:tab10,colorrange=(1,10))
@@ -324,9 +470,6 @@ ax1_eng=Axis(fig_Uf[1,1],
              xminorticksvisible=true,
              xminorgridvisible=true
    )
-
-time_fix=DATA_fix.TimeStep.*0.001;
-time_dump=DATA_dump_1.TimeStep.*0.001;
 
 aux=combine(groupby(l, :TimeStep), :c_potAtom => sum => :suma_c_pot);
 
@@ -432,149 +575,3 @@ Legend(fig_UF[1,3],ax2_dist,
 
 save("fig_Ufix-func.png", fig_UF, px_per_unit = 300/inch)
 
-
-#=
-
-fig_Udist=Figure(size = (12cm, 10cm));
-
-clbr=:managua10;
-
-ax=Axis(fig_Udist[1,1],
-    title=latexstring("\\mathrm{Potential~energy}"),
-    #subtitle=latexstring(subtitle),
-    xlabel=L"d~[x/D]",
-    ylabel=L"U~[J/\epsilon]",
-    titlesize=tl_sz,
-    xticklabelsize=ot_sz,
-    yticklabelsize=ot_sz,
-    xlabelsize=tl_sz,
-    ylabelsize=tl_sz,
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(0.25,nothing,-e_lim,e_lim), 
-    #yticks = 0:0.01:1.5*T
-    #xticks=domain
-   )
-
-N=100;
-rmin = 0.4/1000;
-rmax = 2*0.4;
-r_dom = range(rmin,rmax,length=N);
-lines!(ax,r_dom,map(r->Upatch(1,0.4,r),r_dom),label=L"U_{\mathrm{patch}}",linestyle=:solid,color=:black)
-lines!(ax,table1.r,table1.u,label=L"U_{\mathrm{table}}",linewidth=5)
-
-lines!(ax,dist,DATA_dump_2.c_potAtom,label=L"U_{\mathrm{atom}}")
-lines!(ax,dist,DATA_fix.c_patchPair,label=L"U_{\mathrm{pe}}")
-
-Legend(fig_Udist[1,2],ax,
-      L"\mathrm{Labels}",
-     labelsize=0.5cm)
-
-
-
-
-
-# Total Energy
-fig_E=Figure(size = (18.75cm, 15cm));
-
-clbr=:managua10;
-
-ax=Axis(fig_E[1:1,1:1],
-    title=latexstring("\\mathrm{Total~energy}"),
-    #subtitle=latexstring(subtitle),
-    xlabel=L"t~[\tau]",
-    ylabel=L"U~[J/\epsilon]",
-    titlesize=1cm,
-    xticklabelsize=0.5cm,
-    yticklabelsize=0.5cm,
-    xlabelsize=1cm,
-    ylabelsize=1cm,
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(nothing,nothing,-e_lim,e_lim), 
-    #yticks = 0:0.01:1.5*T
-    #xticks=domain
-   )
-
-scatterlines!(ax,time,DATA_fix.c_ep .+ DATA_fix.c_ek,label=L"\mathrm{U} + \mathrm{K}",markersize=3)
-scatterlines!(ax,time,DATA_fix.c_ep,label=L"\mathrm{U}",markersize=3)
-scatterlines!(ax,time,DATA_fix.c_ek,label=L"\mathrm{K}",markersize=3)
-
-#hlines!(ax,mean(DATA_fix.c_ep .+ DATA_fix.c_ek))
-
-Legend(fig_E[1,2],ax,
-      L"\mathrm{Energy}",
-     labelsize=0.5cm)
-
-
-
-
-
-
-
-
-
-
-"""
-    Position
-"""
-
-fig=Figure(size = (18.75cm, 15cm));
-
-ms=3;
-
-clbr=:managua10;
-
-ax_1=Axis(fig[1,1],
-    title=latexstring("\\mathrm{Time~evolution}"),
-    #subtitle=latexstring(subtitle),
-    ylabel=L"x~[r/D]",
-#    xlabel=L"\mathrm{Time~step}",
-    titlesize=1cm,
-    xticklabelsize=0.5cm,
-    yticklabelsize=0.5cm,
-    xlabelsize=1cm,
-    ylabelsize=1cm,
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(nothing,nothing,nothing,nothing), 
-    #yticks = 0:0.01:1.5*T
-    #xticks=domain
-   )
-
-ax_2=Axis(fig[2,1],
-    #subtitle=latexstring(subtitle),
-    ylabel=L"y~[r/D]",
-    xlabel=L"t~[\tau]",
-    titlesize=1cm,
-    xticklabelsize=0.5cm,
-    yticklabelsize=0.5cm,
-    xlabelsize=1cm,
-    ylabelsize=1cm,
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(nothing,nothing,nothing,nothing), 
-    #yticks = 0:0.01:1.5*T
-    #xticks=domain
-   )
-
-linkxaxes!(ax_1,ax_2)
-
-
-scatterlines!(ax_1,time,l[l.id.==1.0,:].x,label=L"2",markersize=ms)
-scatterlines!(ax_1,time,l[l.id.==2.0,:].x,label=L"3",markersize=ms)
-
-scatterlines!(ax_2,time,l[l.id.==1.0,:].y,label=L"2",markersize=ms)
-scatterlines!(ax_2,time,l[l.id.==2.0,:].y,label=L"3",markersize=ms)
-
-
-
-Legend(fig[1:2,2],ax_2,
-      L"\mathrm{id}",
-     labelsize=0.5cm)
-
-save("fig_comp.png", fig, px_per_unit = 300/inch)
-save("fig_pot.png", fig_U, px_per_unit = 300/inch)
-save("fig_potUComp.png", fig_Udist, px_per_unit = 300/inch)
-#save("fig_dist_pot.png", fig_Udist, px_per_unit = 300/inch)
-=#
