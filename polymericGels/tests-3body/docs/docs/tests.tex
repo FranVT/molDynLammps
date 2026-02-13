@@ -18,6 +18,24 @@ Primero se mueve la partícula 2 hacia la partícula central con velocidad \(\ve
 Cuando la segunda partícula llegué a \(0.35,0.2,0.0\) se detiene el movimiento (\num{4500} pasos).
 Posteriormente se mueve la tercera partícula con velocidad \(\vec{v}_3=(0.35,-0.2,0)\) hasta qu llegué a la posición \(0.4,-0.4,0\) (\num{4500} pasos).
 
+\section{Acerca de la tabulación del potencial de tres cuerpos.}
+
+El potencial de tres cuerpos, o potencial de swap, está definido por la siguiente función
+\begin{gather}
+    U_{\mathrm{swap}}\qty(r_{i,j},r_{i,k}) = w \sum_{i,j,k}\epsilon_{j,k} U_{3}\qty(r_{i,j})U_{3}\qty(r_{i,k}).
+\end{gather}
+En donde,
+\begin{gather}
+    U_{3}\qty(r) =
+    \left\{
+    \begin{array}{ll}
+        1 & r\in\qty[0,r_{\min}] \\
+        -\dfrac{U_{\mathrm{patch}}(r)}{\epsilon_{j,k}} & r\in\qty[r_{\min},r_c]
+    \end{array}
+    \right.
+\end{gather}
+
+
 
 \newpage
 
@@ -47,24 +65,79 @@ Posteriormente se mueve la tercera partícula con velocidad \(\vec{v}_3=(0.35,-0
 
 Estas gráficas serán las gráficas de referencia para ver el efecto del potencial de tres cuerpos.
 
-\newpage 
+\newpage
 
-\section{Acerca de la tabulación del potencial de tres cuerpos.}
+\section{Directory: 2026-02-12-155912}
 
-El potencial de tres cuerpos, o potencial de swap, está definido por la siguiente función
-\begin{gather}
-    U_{\mathrm{swap}}\qty(r_{i,j},r_{i,k}) = w \sum_{i,j,k}\epsilon_{j,k} U_{3}\qty(r_{i,j})U_{3}\qty(r_{i,k}).
-\end{gather}
-En donde,
-\begin{gather}
-    U_{3}\qty(r) =
-    \left\{
-    \begin{array}{ll}
-        1 & r\in\qty[0,r_{\min}] \\
-        -\dfrac{U_{\mathrm{patch}}(r)}{\epsilon_{j,k}} & r\in\qty[r_{\min},r_c]
-    \end{array}
-    \right.
-\end{gather}
+\begin{marginfigure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-12-155912/fig_Uatom.png}
+    \caption{Energía potencial registrada por pe/atom.}\label{fig:Uatom1}
+\end{marginfigure}
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-12-155912/fig_swapPotTable.png}
+    \caption{Energía potencial de la tabla en el archivo vs el potencial usando la función y la distancias usadas en la tabulación del archivo.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-12-155912/fig_Uatom-fix.png}
+    \caption{ Comparación de la energía potencial registrada por pe/atom con la energía registrada por pe.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-12-155912/fig_Ufix-func.png}
+    \caption{Comparación de la energía potencial registrada por pe con la energía potencial calculada usando las distancias de la simulación.
+    }\label{fig:Ufix-func1}
+\end{figure}
+
+Estaba dividiendo entre tres la energía, por vestigios.
+
+\newpage
+
+\section{Directory: 2026-02-13-124253}
+
+\begin{marginfigure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Uatom.png}
+    \caption{Energía potencial registrada por pe/atom.}\label{fig:Uatom1}
+\end{marginfigure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_swapPotTable.png}
+    \caption{Energía potencial de la tabla en el archivo vs el potencial usando la función y la distancias usadas en la tabulación del archivo.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Uatom-fix.png}
+    \caption{ Comparación de la energía potencial registrada por pe/atom con la energía registrada por pe.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Ufix-func.png}
+    \caption{Comparación de la energía potencial registrada por pe con la energía potencial calculada usando las distancias de la simulación.
+    }\label{fig:Ufix-func1}
+\end{figure}
+
+\subsection{Discusión/Comentarios}
+
+La tabulación de la energía potencial es correcta.
+No entiendo porque las discontinuidades.
+
+Falta analizar las fuerzas.
 
 \end{document}

@@ -12,7 +12,8 @@ using GLMakie, LaTeXStrings, Typst_jll
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-12-155912";
+date="2026-02-13-124253";
+#"2026-02-12-155912";
 #"2026-02-12-154430";
 #"2026-02-12-152030";
 #"2026-02-12-145030";
@@ -21,19 +22,37 @@ date="2026-02-12-155912";
 DIR=getDir(date);
 DIR=DIR[1];
 
-#=
-tableSwap=getTable3b(DIR,"swapMechTab2_w1.table");
-swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
 
-# Obtener la evolución de r_ik
-id=1:200:nrow(tableSwap) #first.(Iterators.partition(1:1:length(tableSwap.theta),200)|>collect);
+# Activate extract info
+act=0;
 
-# Obtener cada rango de r_ik
-table_pot1=tableSwap[id, [:r_ij, :r_ik, :e]];
+# Filename with the simulation data
+FILE_NAME="system_assembly.fixf";
 
-# Separa los rangos de r_ik por cada valor de r_ij
-table_pot1=groupby(table_pot1, :r_ij);
-=#
+# Extract the data from the file
+if act == 1
+    data=extractFixScalar(DIR,"system_assembly.fixf");
+    # Convert the array into a DataFrame
+    DATA_fix=DataFrame(data[2]',data[1]);
+
+    # Get table
+    tableSwap=getTable3b(DIR,"swapMechTab2_w1.table");
+    swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
+
+    # Obtener la evolución de r_ik
+    id=1:200:nrow(tableSwap) #first.(Iterators.partition(1:1:length(tableSwap.theta),200)|>collect);
+
+    # Obtener cada rango de r_ik
+    table_pot1=tableSwap[id, [:r_ij, :r_ik, :e]];
+
+    # Separa los rangos de r_ik por cada valor de r_ij
+    table_pot1=groupby(table_pot1, :r_ij);
+
+    # Get the directory of the desire system
+    DIR=joinpath(DIR,"traj");
+    DATA_dump=map(s->getDump(DIR,s),readdir(DIR));
+
+end
 
 """
     Plot the threebody potential
@@ -110,32 +129,12 @@ Colorbar(fig_swapPot[2,2],
          colormap = cmap,
          label = L"r_{ij}")   # etiqueta de la barra
 
-#aux=combine(groupby(l, :TimeStep), :c_potAtom => sum => :suma_c_pot);
+ save("fig_swapPotTable.png", fig_swapPot, px_per_unit = 300/inch)
 
-# Activate extract info
-act=1;
-
-# Filename with the simulation data
-FILE_NAME="system_assembly.fixf";
-
-# Extract the data from the file
-if act == 1
-    data=extractFixScalar(DIR,FILE_NAME);
-end
-
-# Convert the array into a DataFrame
-DATA_fix=DataFrame(data[2]',data[1]);
-
-# Get the directory of the desire system
-DIR=joinpath(DIR,"traj");
-
-# Get data
-if act == 1
-    DATA_dump=map(s->getDump(DIR,s),readdir(DIR));
-end
 
 # Parameters
 dt=0.001;
+
 
 
 """
@@ -394,7 +393,7 @@ swapEval3=map(s->SwapU(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),eachindex(time
 
 swapEvalsum=swapEval1 .+ swapEval2 .+ swapEval3;
 
-swapEvalsum23=swapEval2 .+ swapEval3;
+#swapEvalsum23=swapEval2 .+ swapEval3;
 
 
 
@@ -409,7 +408,7 @@ lines!(ax2_eng,time_fix,swapEval1,label=L"U_{\mathrm{swap1}}",color=1,colormap=:
 lines!(ax2_eng,time_fix,swapEval2,label=L"U_{\mathrm{swap2}}",color=2,colormap=:darkrainbow,colorrange=(1,5))
 lines!(ax2_eng,time_fix,swapEval3,label=L"U_{\mathrm{swap3}}",color=3,colormap=:darkrainbow,colorrange=(1,5))
 lines!(ax2_eng,time_fix,swapEvalsum,label=L"\sum U_{\mathrm{swap}}",color=4,colormap=:darkrainbow,colorrange=(1,5))
-lines!(ax2_eng,time_fix,swapEvalsum,label=L"\sum U_{\mathrm{swap}2,3}",color=5,colormap=:darkrainbow,colorrange=(1,5))
+#lines!(ax2_eng,time_fix,swapEvalsum,label=L"\sum U_{\mathrm{swap}2,3}",color=5,colormap=:darkrainbow,colorrange=(1,5))
 
 
 

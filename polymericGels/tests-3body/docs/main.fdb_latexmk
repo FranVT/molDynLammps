@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1770930075.9015 "main.aux" "main.bbl" "main" 1770930667.35467 2
-  "main.aux" 1770930667.27985 1714 e1805e776b9a949e9deedc0ec2cc5240 "pdflatex"
+["bibtex main"] 1771008821.72153 "main.aux" "main.bbl" "main" 1771008821.76156 2
+  "main.aux" 1771008821.63997 4515 08495ee0f3cf38509dd652b657c80051 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1770930665.74015 "main.tex" "main.pdf" "main" 1770930667.3548 0
+["pdflatex"] 1771008817.50081 "main.tex" "main.pdf" "main" 1771008821.76172 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -165,11 +165,19 @@
   "docs/../Figures/2026-02-12-145030/fig_Uatom-fix.png" 1770929527.04889 168976 f4fcfe8af7c3687f2d984174eb133a31 ""
   "docs/../Figures/2026-02-12-145030/fig_Uatom.png" 1770929523.60184 255039 7beec939a8e5339de9d798df5a8c1b40 ""
   "docs/../Figures/2026-02-12-145030/fig_Ufix-func.png" 1770929529.83253 262057 e12324d03b9e6e09c7ef23c5e2ffa989 ""
-  "docs/tests.tex" 1770930665.12305 2360 6e408b04b4786c4c03ac82264c4289bb ""
-  "main.aux" 1770930667.27985 1714 e1805e776b9a949e9deedc0ec2cc5240 "pdflatex"
-  "main.bbl" 1770930075.93767 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1770930667.27985 803 5d1964673e8e9b7a20627f501e20e6b4 "pdflatex"
-  "main.tex" 1770927197.66873 3110 458f1bfc6bb18efbeb7b0fdded086e45 ""
+  "docs/../Figures/2026-02-12-155912/fig_Uatom-fix.png" 1771007760.55546 164580 6c3cd518df9f1c7500706f15a510d2a1 ""
+  "docs/../Figures/2026-02-12-155912/fig_Uatom.png" 1771007760.25211 266675 421d4acd0e60a9ebf009cc4e1d424cf6 ""
+  "docs/../Figures/2026-02-12-155912/fig_Ufix-func.png" 1771007761.56551 283094 cbeeb7a9eb5add6741406b043546952d ""
+  "docs/../Figures/2026-02-12-155912/fig_swapPotTable.png" 1771007759.42208 245272 583dafc7880e8b12effa8a0568a39796 ""
+  "docs/../Figures/2026-02-13-124253/fig_Uatom-fix.png" 1771008653.3817 156719 f1dfa8be3762974c5d95f1e2e19acd35 ""
+  "docs/../Figures/2026-02-13-124253/fig_Uatom.png" 1771008653.06835 279269 4f5cd3fdce97ab745fcb8e9280dbf26a ""
+  "docs/../Figures/2026-02-13-124253/fig_Ufix-func.png" 1771008654.53509 282111 4da542b09d522909c193116f5b45e33f ""
+  "docs/../Figures/2026-02-13-124253/fig_swapPotTable.png" 1771008652.21498 238804 353ed28f1d8900083046288305b892fc ""
+  "docs/tests.tex" 1771008816.72307 4936 e851c05d64de0c66ce3665f528220acb ""
+  "main.aux" 1771008821.63997 4515 08495ee0f3cf38509dd652b657c80051 "pdflatex"
+  "main.bbl" 1771008821.75331 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1771008821.63997 1177 97d10b7ffe76b5d6a242df61c84237ac "pdflatex"
+  "main.tex" 1770936627.66673 3110 458f1bfc6bb18efbeb7b0fdded086e45 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
