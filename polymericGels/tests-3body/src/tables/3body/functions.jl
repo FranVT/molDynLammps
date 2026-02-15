@@ -40,7 +40,7 @@ function U3(eps_jk,eps,Dp,r)
     r_c=1.5*Dp;
     if r>=0 && r<=r_min
         return 1.0
-    elseif r>r_min && r<=r_c
+    elseif r>r_min && r<r_c
         return -Upatch(eps,Dp,r)/eps_jk
     else
         return 0.0
@@ -104,8 +104,8 @@ function forceSwap(w,eps_jk,eps_ij,eps_ik,Dp,r_ij,r_ik)
     comp_ik - ik component of the force
     mag ----- The norm of the force
 """
-        comp_ij=w*eps_jk*U3(eps_jk,eps_ik,Dp,r_ik)*forcePatch(eps_ij,Dp,r_ij)
-        comp_ik=w*eps_jk*U3(eps_jk,eps_ij,Dp,r_ij)*forcePatch(eps_ik,Dp,r_ik)
-        mag=sqrt( comp_ij^2 + comp_ik^2 )
-        return (comp_ij,comp_ik,mag)
+    comp_ij=w*eps_jk*U3(eps_jk,eps_ik,Dp,r_ik)*first(forcePatch(eps_ij,Dp,r_ij))
+    comp_ik=w*eps_jk*U3(eps_jk,eps_ij,Dp,r_ij)*first(forcePatch(eps_ik,Dp,r_ik))
+    mag=sqrt( comp_ij^2 + comp_ik^2 )
+    return [comp_ij comp_ik mag]
 end

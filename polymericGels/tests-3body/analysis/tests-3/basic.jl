@@ -232,7 +232,6 @@ ot_sz=0.35cm;
 # Definir un mapa de color (puedes cambiarlo, ej: :thermal, :plasma, etc.)
 cmap = :tokyo
 
-
 fig_swapPot=Figure(size = (17cm, 18.75cm));
 ax1_eng=Axis(fig_swapPot[1,1],
              title=latexstring("\\mathrm{Swap~potential~from~table}"),
@@ -259,9 +258,6 @@ ax2_eng=Axis(fig_swapPot[2,1],
              xminorticksvisible=true,
              xminorgridvisible=true
    )
-
-
-#map(s->lines!(ax1_eng,table_pot1[s].r_ik,table_pot1[s].e),1:1:length(table_pot1))
 
 r_ij_values=unique(tableSwap.r_ij);
 r_min, r_max = extrema(r_ij_values)
