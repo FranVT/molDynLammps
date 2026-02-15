@@ -115,7 +115,11 @@ Entonces obtenemos la siguiente función para la fuerza,
 \left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}(r_{ij})\hat{r}_{ij}\label{eqn:Fpatch} 
 \end{align*}
 En donde \(\hat{r}_{ij}\) es el vector unitario en dirección a la partícula $j$ desde la partícula $i$.
-
+Para futura notación, se realiza la siguiente simplificación, \(f_{\mathrm{patch}}(r_{ij}) = \left[
+    \dfrac{1}{r_{ij}}-\dfrac{2\epsilon_{ij}}{r_{ij}}\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]
+    -
+\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}(r_{ij})\),
+mientrás que \(\vec{F}_{\mathrm{patch}}(r_{ij}) = f_{\mathrm{patch}}(r_{ij})\hat{r}_{ij}\).
 
 \paragraph{Fuerza swap} Ya que tenemos la fuerza de interacción entre dos partículas, ahora calcularemos la fuerza de interacción debido al potencial de 3 cuerpos.
 Primero, obtenemos la derivada del potencial \(U_3(r)\)\eqref{eqn:U3}.
@@ -123,7 +127,7 @@ Primero, obtenemos la derivada del potencial \(U_3(r)\)\eqref{eqn:U3}.
     \dv{U_{3}\qty(r)}{r} =
     \left\{
     \begin{array}{ll}
-        0\hat{r} & r\in\qty[0,r_{\min}] \\
+        0~\hat{r} & r\in\qty[0,r_{\min}] \\
         -\dfrac{1}{\epsilon_{j,k}}\dv{U_{\mathrm{patch}}(r)}{r} & r\in\qty[r_{\min},r_c]
     \end{array}
     \right.
@@ -135,17 +139,27 @@ Entonces, la fuerza que es modelada por el potencial \(U_3\) es,
     \vec{F}_{3}(r) =
     \left\{
     \begin{array}{ll}
-        0 & r\in\qty[0,r_{\min}] \\
-        -\dfrac{1}{\epsilon_{j,k}}\vec{F}_{\mathrm{patch}}(r) & r\in\qty[r_{\min},r_c]
+        0~\hat{r} & r\in\qty[0,r_{\min}] \\
+        -\dfrac{1}{\epsilon_{j,k}}f_{\mathrm{patch}}(r)\hat{r} & r\in\qty[r_{\min},r_c]
     \end{array}
     \right.
 \end{gather*}
+En donde \(\hat{r}\) es un vector unitario en dirección hacia \(\vec{r}_2\) desde \(\vec{r}_1\).
 
-Entonces, la fuerza definida por el potencial de tres cuerpos en el dominio \(r\in\qty[r_{\min},r_c]\) es,
+Ahora, se obtendrá la fuerza obtenida por el potencial de 3 cuerpos en el dominio en el que el potencial no es constante, \(r\in\qty[r_{\min},r_c]\).
+Calculando el gradiente en el potencial,
 \begin{align*}
-    \dv{r}U_{\mathrm{swap}}\qty(r_{ij},r_{ik}) = w\sum_{ijk}\epsilon_{jk}\dv{r}\left[U_3(r_{ij})U_3(r_{jk})\right]
+    \dv{r}U_{\mathrm{swap}}\qty(r_{ij},r_{ik}) &= w\sum_{ijk}\epsilon_{jk}\dv{r}\left[U_3(r_{ij})U_3(r_{jk})\right] \\
+                                               &= w\sum_{ijk}\epsilon_{jk}\left[\dv{U_3(r_{ij})}{r_{ij}}U_3(r_{jk}) + U_3(r_{ij})\dv{U_3(r_{jk})}{r_{jk}}\right]
 \end{align*}
-
+Al introducir el signo, para obtener la fuerza, se obtiene que,
+\begin{align*}
+    \vec{F}_{\mathrm{swap}}\qty(r_{ij},r_{ik}) &= -w\sum_{ijk}\epsilon_{jk}\left[\dv{U_3(r_{ij})}{r_{ij}}U_3(r_{jk}) + U_3(r_{ij})\dv{U_3(r_{jk})}{r_{jk}}\right] \\
+                                               &= w\sum_{ijk}\epsilon_{jk}\left[\left(-\dv{U_3(r_{ij})}{r_{ij}}\right)U_3(r_{jk}) + U_3(r_{ij})\left(-\dv{U_3(r_{jk})}{r_{jk}}\right)\right] \\
+                                               &= w\sum_{ijk}\epsilon_{jk}\left[\left(\vec{F}_3\qty(r_{ij})\hat{r}_{ij}\right)U_3(r_{jk}) + U_3(r_{ij})\left(\vec{F}_3\qty(r_{jk})\hat{r}_{jk}\right)\right] \\
+                                               &= w\sum_{ijk}\epsilon_{jk}\left[U_3(r_{jk})\vec{F}_3\qty(r_{ij})\hat{r}_{ij} + U_3(r_{ij})\vec{F}_3\qty(r_{jk})\hat{r}_{jk}\right].
+\end{align*}
+En donde \(\hat{r}_{ij}\) es un vector unitario en dirección hacia la partícula $j$ desde la partícula $i$ y \(\hat{r}_{ik}\) es el vector unitario en dirección hacia la partícula $k$ desde la partícula $i$.
 
 \newpage
 

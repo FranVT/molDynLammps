@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1771108413.77462 "main.aux" "main.bbl" "main" 1771108754.03843 2
-  "main.aux" 1771108753.92009 5216 fd147c4f2952ddff08597226ac97c7ad "pdflatex"
+["bibtex main"] 1771172861.65352 "main.aux" "main.bbl" "main" 1771175158.86033 2
+  "main.aux" 1771175158.7275 5216 99ddcd94cd054d50f8f51364877d2e28 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1771108747.32792 "main.tex" "main.pdf" "main" 1771108754.03858 0
+["pdflatex"] 1771175152.12321 "main.tex" "main.pdf" "main" 1771175158.86051 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1767555874 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
@@ -174,11 +174,11 @@
   "docs/../Figures/2026-02-13-124253/fig_Uatom.png" 1771103721.36403 279269 4f5cd3fdce97ab745fcb8e9280dbf26a ""
   "docs/../Figures/2026-02-13-124253/fig_Ufix-func.png" 1771103721.36603 282111 4da542b09d522909c193116f5b45e33f ""
   "docs/../Figures/2026-02-13-124253/fig_swapPotTable.png" 1771103721.36703 238804 353ed28f1d8900083046288305b892fc ""
-  "docs/tests.tex" 1771108745.88809 9710 d05b996183982aff025ea892ad8cef8d ""
-  "main.aux" 1771108753.92009 5216 fd147c4f2952ddff08597226ac97c7ad "pdflatex"
-  "main.bbl" 1771108413.86816 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1771108753.92151 1179 6b2121bdd28f0e4d6fa8586d920ea900 "pdflatex"
-  "main.tex" 1771103721.38503 3110 458f1bfc6bb18efbeb7b0fdded086e45 ""
+  "docs/tests.tex" 1771175150.50947 11504 9ecfe05828046f8c46ddb3ada735ee4b ""
+  "main.aux" 1771175158.7275 5216 99ddcd94cd054d50f8f51364877d2e28 "pdflatex"
+  "main.bbl" 1771172861.78095 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1771175158.72911 1179 6b2121bdd28f0e4d6fa8586d920ea900 "pdflatex"
+  "main.tex" 1771108864.27909 3110 458f1bfc6bb18efbeb7b0fdded086e45 ""
   "tufte-common.def" 1771103721.38987 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1771103721.39007 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)

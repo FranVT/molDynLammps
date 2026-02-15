@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.9)  14 FEB 2026 16:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.9)  15 FEB 2026 11:05
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -803,19 +803,29 @@ Overfull \hbox (3.11414pt too wide) detected at line 116
  []
 
 
-Overfull \hbox (9.21538pt too wide) in paragraph at lines 120--122
+Overfull \hbox (41.76273pt too wide) in paragraph at lines 116--123
+\T1/pplj/m/n/10 cación, $\OML/zplm/m/it/10 f[]\OT1/zplm/m/n/10 (\OML/zplm/m/it/10 r[]\OT1/zplm/m/n/10 ) = [] \OML/zplm/m/it/10 U[]\OT1/zplm/m/n/10 (\OML/zplm/m/it/10 r[]\OT1/zplm/m/n/10 )$\T1/pplj/m/n/10 ,
+ []
+
+
+Overfull \hbox (9.21538pt too wide) in paragraph at lines 124--126
 [] []\T1/pplj/m/it/10 Fuerza swap[] \T1/pplj/m/n/10 Ya que ten-emos la fuerza de in-ter-ac-ción en-tre dos partícu-
  []
 
 
 
 [2]
+Overfull \hbox (17.66536pt too wide) detected at line 161
+[]
+ []
+
+
 
 [3]
 <docs/../Figures/2026-02-12-145030/fig_Uatom.png, id=56, 426.8748pt x 533.8344pt>
 File: docs/../Figures/2026-02-12-145030/fig_Uatom.png Graphic file (type png)
 <use docs/../Figures/2026-02-12-145030/fig_Uatom.png>
-Package pdftex.def Info: docs/../Figures/2026-02-12-145030/fig_Uatom.png  used on input line 158.
+Package pdftex.def Info: docs/../Figures/2026-02-12-145030/fig_Uatom.png  used on input line 172.
 (pdftex.def)             Requested size: 112.44386pt x 140.61829pt.
 
 
@@ -824,12 +834,12 @@ LaTeX Warning: Marginpar on page 4 moved.
 <docs/../Figures/2026-02-12-145030/fig_Uatom-fix.png, id=57, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-12-145030/fig_Uatom-fix.png Graphic file (type png)
 <use docs/../Figures/2026-02-12-145030/fig_Uatom-fix.png>
-Package pdftex.def Info: docs/../Figures/2026-02-12-145030/fig_Uatom-fix.png  used on input line 164.
+Package pdftex.def Info: docs/../Figures/2026-02-12-145030/fig_Uatom-fix.png  used on input line 178.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 <docs/../Figures/2026-02-12-145030/fig_Ufix-func.png, id=58, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-12-145030/fig_Ufix-func.png Graphic file (type png)
 <use docs/../Figures/2026-02-12-145030/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-12-145030/fig_Ufix-func.png  used on input line 171.
+Package pdftex.def Info: docs/../Figures/2026-02-12-145030/fig_Ufix-func.png  used on input line 185.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
@@ -837,7 +847,7 @@ Package pdftex.def Info: docs/../Figures/2026-02-12-145030/fig_Ufix-func.png  us
 <docs/../Figures/2026-02-12-155912/fig_Uatom.png, id=64, 426.8748pt x 533.8344pt>
 File: docs/../Figures/2026-02-12-155912/fig_Uatom.png Graphic file (type png)
 <use docs/../Figures/2026-02-12-155912/fig_Uatom.png>
-Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_Uatom.png  used on input line 184.
+Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_Uatom.png  used on input line 198.
 (pdftex.def)             Requested size: 112.44386pt x 140.61829pt.
 
 
@@ -846,12 +856,12 @@ LaTeX Warning: Marginpar on page 5 moved.
 <docs/../Figures/2026-02-12-155912/fig_swapPotTable.png, id=65, 483.9681pt x 533.8344pt>
 File: docs/../Figures/2026-02-12-155912/fig_swapPotTable.png Graphic file (type png)
 <use docs/../Figures/2026-02-12-155912/fig_swapPotTable.png>
-Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_swapPotTable.png  used on input line 190.
+Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_swapPotTable.png  used on input line 204.
 (pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
 <docs/../Figures/2026-02-12-155912/fig_Uatom-fix.png, id=66, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-12-155912/fig_Uatom-fix.png Graphic file (type png)
 <use docs/../Figures/2026-02-12-155912/fig_Uatom-fix.png>
-Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_Uatom-fix.png  used on input line 197.
+Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_Uatom-fix.png  used on input line 211.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
@@ -859,7 +869,7 @@ Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_Uatom-fix.png  us
 <docs/../Figures/2026-02-12-155912/fig_Ufix-func.png, id=71, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-12-155912/fig_Ufix-func.png Graphic file (type png)
 <use docs/../Figures/2026-02-12-155912/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_Ufix-func.png  used on input line 206.
+Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_Ufix-func.png  used on input line 220.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
@@ -867,7 +877,7 @@ Package pdftex.def Info: docs/../Figures/2026-02-12-155912/fig_Ufix-func.png  us
 <docs/../Figures/2026-02-13-124253/fig_Uatom.png, id=76, 426.8748pt x 533.8344pt>
 File: docs/../Figures/2026-02-13-124253/fig_Uatom.png Graphic file (type png)
 <use docs/../Figures/2026-02-13-124253/fig_Uatom.png>
-Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_Uatom.png  used on input line 219.
+Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_Uatom.png  used on input line 233.
 (pdftex.def)             Requested size: 112.44386pt x 140.61829pt.
 
 
@@ -876,12 +886,12 @@ LaTeX Warning: Marginpar on page 7 moved.
 <docs/../Figures/2026-02-13-124253/fig_swapPotTable.png, id=77, 483.9681pt x 533.8344pt>
 File: docs/../Figures/2026-02-13-124253/fig_swapPotTable.png Graphic file (type png)
 <use docs/../Figures/2026-02-13-124253/fig_swapPotTable.png>
-Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_swapPotTable.png  used on input line 225.
+Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_swapPotTable.png  used on input line 239.
 (pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
 <docs/../Figures/2026-02-13-124253/fig_Uatom-fix.png, id=78, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-13-124253/fig_Uatom-fix.png Graphic file (type png)
 <use docs/../Figures/2026-02-13-124253/fig_Uatom-fix.png>
-Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_Uatom-fix.png  used on input line 232.
+Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_Uatom-fix.png  used on input line 246.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 
 
@@ -889,7 +899,7 @@ Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_Uatom-fix.png  us
 <docs/../Figures/2026-02-13-124253/fig_Ufix-func.png, id=84, 533.8344pt x 426.8748pt>
 File: docs/../Figures/2026-02-13-124253/fig_Ufix-func.png Graphic file (type png)
 <use docs/../Figures/2026-02-13-124253/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_Ufix-func.png  used on input line 241.
+Package pdftex.def Info: docs/../Figures/2026-02-13-124253/fig_Ufix-func.png  used on input line 255.
 (pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
 )
 
@@ -914,13 +924,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  20880 strings out of 475068
  383650 string characters out of 5764375
- 790095 words of memory out of 5000000
+ 791095 words of memory out of 5000000
  43480 multiletter control sequences out of 15000+600000
  621084 words of font info for 138 fonts, out of 8000000 for 9000
  62 hyphenation exceptions out of 8191
  97i,17n,96p,541b,1226s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmr.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (8 pages, 2491386 bytes).
+Output written on main.pdf (8 pages, 2493219 bytes).
 PDF statistics:
  141 PDF objects out of 1000 (max. 8388607)
  99 compressed objects within 1 object stream
