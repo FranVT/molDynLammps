@@ -51,6 +51,8 @@ El parámetro \(\epsilon_{ij}\) controla el mínimo del potencial.
 El parámtero \(r_c\) es la distancia de corte definida en términos del diámetro de las partículas, \(r_c = 1.5 D_{p}\).
 El parámetro \(w\) controla la probabilidad de que ocurra un \emph{swap} cuando \(w\approx1\).
 
+La sumatoria considera todos los tripletes de partículas enlazadas, es decir, partícula $i$ enlazada con $k$ y $j$.
+
 \subsection{Cálculo de derivadas para las tabulaciones}
 
 Considerando que las interacciones entre las partículas son conservativas, podemos encontrar la fuerza a través el gradiente del potencial, \(\vec{F} = -\nabla U(r)\).
@@ -149,15 +151,15 @@ En donde \(\hat{r}\) es un vector unitario en dirección hacia \(\vec{r}_2\) des
 Ahora, se obtendrá la fuerza obtenida por el potencial de 3 cuerpos en el dominio en el que el potencial no es constante, \(r\in\qty[r_{\min},r_c]\).
 Calculando el gradiente en el potencial,
 \begin{align*}
-    \dv{r}U_{\mathrm{swap}}\qty(r_{ij},r_{ik}) &= w\sum_{ijk}\epsilon_{jk}\dv{r}\left[U_3(r_{ij})U_3(r_{jk})\right] \\
-                                               &= w\sum_{ijk}\epsilon_{jk}\left[\dv{U_3(r_{ij})}{r_{ij}}U_3(r_{jk}) + U_3(r_{ij})\dv{U_3(r_{jk})}{r_{jk}}\right]
+    \dv{r}U_{\mathrm{swap}}\qty(r_{ij},r_{ik}) &= w\sum_{ijk}\epsilon_{jk}\dv{r}\left[U_3(r_{ij})U_3(r_{ik})\right] \\
+                                               &= w\sum_{ijk}\epsilon_{jk}\left[\dv{U_3(r_{ij})}{r_{ij}}U_3(r_{ik}) + U_3(r_{ij})\dv{U_3(r_{ik})}{r_{ik}}\right]
 \end{align*}
 Al introducir el signo, para obtener la fuerza, se obtiene que,
 \begin{align*}
-    \vec{F}_{\mathrm{swap}}\qty(r_{ij},r_{ik}) &= -w\sum_{ijk}\epsilon_{jk}\left[\dv{U_3(r_{ij})}{r_{ij}}U_3(r_{jk}) + U_3(r_{ij})\dv{U_3(r_{jk})}{r_{jk}}\right] \\
-                                               &= w\sum_{ijk}\epsilon_{jk}\left[\left(-\dv{U_3(r_{ij})}{r_{ij}}\right)U_3(r_{jk}) + U_3(r_{ij})\left(-\dv{U_3(r_{jk})}{r_{jk}}\right)\right] \\
-                                               &= w\sum_{ijk}\epsilon_{jk}\left[\left(\vec{F}_3\qty(r_{ij})\hat{r}_{ij}\right)U_3(r_{jk}) + U_3(r_{ij})\left(\vec{F}_3\qty(r_{jk})\hat{r}_{jk}\right)\right] \\
-                                               &= w\sum_{ijk}\epsilon_{jk}\left[U_3(r_{jk})\vec{F}_3\qty(r_{ij})\hat{r}_{ij} + U_3(r_{ij})\vec{F}_3\qty(r_{jk})\hat{r}_{jk}\right].
+    \vec{F}_{\mathrm{swap}}\qty(r_{ij},r_{ik}) &= -w\sum_{ijk}\epsilon_{jk}\left[\dv{U_3(r_{ij})}{r_{ij}}U_3(r_{ik}) + U_3(r_{ij})\dv{U_3(r_{ik})}{r_{ik}}\right] \\
+                                               &= w\sum_{ijk}\epsilon_{jk}\left[\left(-\dv{U_3(r_{ij})}{r_{ij}}\right)U_3(r_{ik}) + U_3(r_{ij})\left(-\dv{U_3(r_{ik})}{r_{ik}}\right)\right] \\
+                                               &= w\sum_{ijk}\epsilon_{jk}\left[\left(\vec{F}_3\qty(r_{ij})\hat{r}_{ij}\right)U_3(r_{ik}) + U_3(r_{ij})\left(\vec{F}_3\qty(r_{ik})\hat{r}_{ik}\right)\right] \\
+                                               &= w\sum_{ijk}\epsilon_{jk}\left[U_3(r_{ik})\vec{F}_3\qty(r_{ij})\hat{r}_{ij} + U_3(r_{ij})\vec{F}_3\qty(r_{ik})\hat{r}_{ik}\right].
 \end{align*}
 En donde \(\hat{r}_{ij}\) es un vector unitario en dirección hacia la partícula $j$ desde la partícula $i$ y \(\hat{r}_{ik}\) es el vector unitario en dirección hacia la partícula $k$ desde la partícula $i$.
 
