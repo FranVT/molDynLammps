@@ -22,7 +22,7 @@ Posteriormente se mueve la tercera partícula con velocidad \(\vec{v}_3=(0.35,-0
 
 El potencial de tres cuerpos, o potencial de swap, está definido por la siguiente función
 \begin{gather}
-    U_{\mathrm{swap}}\qty(r_{i,j},r_{i,k}) = w \sum_{i,j,k}\epsilon_{j,k} U_{3}\qty(r_{i,j})U_{3}\qty(r_{i,k}).
+    U_{\mathrm{swap}}\qty(r_{i,j},r_{i,k}) = w \sum_{i,j,k}\epsilon_{j,k} U_{3}\qty(r_{i,j})U_{3}\qty(r_{i,k}).\label{eqn:Uswap}
 \end{gather}
 En donde,
 \begin{gather}
@@ -32,9 +32,119 @@ En donde,
         1 & r\in\qty[0,r_{\min}] \\
         -\dfrac{U_{\mathrm{patch}}(r)}{\epsilon_{j,k}} & r\in\qty[r_{\min},r_c]
     \end{array}
-    \right.
+    \right.\label{eqn:U3}
+\end{gather}
+y
+\begin{gather}
+    U_{\mathrm{patch}} = 
+    \left\{
+    \begin{array}{lc}
+        2\epsilon_{ij}\left( \frac{1}{2}\left(\frac{D_p}{r_{ij}}\right)^{4}-1\right)\exp\left[\frac{D_{p}}{r_{ij}-r_{c}}+2\right]  & r_{ij}\in\qty[0,r_c] \\
+        0 & r_{ij}>r_c
+    \end{array}
+    \right.\label{eqn:Upatch}
 \end{gather}
 
+La distancia entre los centros de las partícula está representada por \(r_{ij}\).
+El parámetro \(\epsilon_{ij}\) controla el mínimo del potencial.
+\(D_p\) es el diámtero de las partículas\footnote{La distancia entre los centros de las partículas esféricas.}.
+El parámtero \(r_c\) es la distancia de corte definida en términos del diámetro de las partículas, \(r_c = 1.5 D_{p}\).
+El parámetro \(w\) controla la probabilidad de que ocurra un \emph{swap} cuando \(w\approx1\).
+
+\subsection{Cálculo de derivadas para las tabulaciones}
+
+Considerando que las interacciones entre las partículas son conservativas, podemos encontrar la fuerza a través el gradiente del potencial, \(\vec{F} = -\nabla U(r)\).
+Observando que todos los potenciales solamenten tienen dependencia radial, el gradiente simplemente se simplifica a la componente radial.
+
+\paragraph{Fuerza patch} Iniciando con la fuerza de interacción entre partículas,
+\begin{gather*}
+    \pdv{r_{ij}}U_{\mathrm{patch}} = \dv{u}{r_{ij}}v + u\dv{v}{r_{ij}}.
+\end{gather*}
+En donde \(u = 2\epsilon_{ij}\left( \frac{1}{2}\left(\dfrac{D_p}{r_{ij}}\right)^{4}-1\right)\) y \( v= \exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\).
+\marginnote{
+    \begin{align*}
+        \dv{u}{r_{ij}} &= -\frac{\epsilon_{ij}}{r_{ij}}\left(\dfrac{D_p}{r_{ij}}\right)^{4} = -\dfrac{u+2\epsilon_{ij}}{r_{ij}} \\
+        \dv{v}{r_{ij}} &= \exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right) \\
+                  &= v\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)
+    \end{align*}
+}
+Obteniendo la siguiente expresión para la fuerza:
+\begin{multline*}
+    \pdv{U_{\mathrm{patch}}}{r_{ij}} = 
+    \left[-\frac{\epsilon_{ij}}{r}\left(\dfrac{D_p}{r_{ij}}\right)^{4}\right]
+    \left[\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\right]
+    \\
+    +
+    \left[2\epsilon_{ij}\left( \frac{1}{2}\left(\dfrac{D_p}{r_{ij}}\right)^{4}-1\right)\right]
+    \left[\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]
+\end{multline*}
+
+
+\begin{align*}
+    \pdv{U_{\mathrm{patch}}}{r_{ij}} &= 
+    \left[-\dfrac{u+2\epsilon_{ij}}{r}\right]
+    v
+    +
+    u
+    \left[v\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right] \\
+    &=
+    -\dfrac{uv+2\epsilon_{ij}v}{r}
+    +
+    uv\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right) \\
+    &=
+    -\dfrac{U_{\mathrm{patch}}+2\epsilon_{ij}v}{r_{ij}}
+    +
+    U_{\mathrm{patch}}\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right) \\
+    &=
+    \left[
+    -\dfrac{1+2\epsilon_{ij}v}{r_{ij}}
+    +
+    \left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}\\
+    &=
+    \left[
+    -\dfrac{1}{r_{ij}}+\dfrac{2\epsilon_{ij}}{r_{ij}}\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]
+    +
+    \left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}\\
+\end{align*}
+
+Entonces obtenemos la siguiente función para la fuerza,
+\begin{align*}
+    \vec{F}_{\mathrm{patch}ij} = \left[
+    \dfrac{1}{r_{ij}}-\dfrac{2\epsilon_{ij}}{r_{ij}}\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]
+    -
+\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}(r_{ij})\hat{r}_{ij}\label{eqn:Fpatch} 
+\end{align*}
+En donde \(\hat{r}_{ij}\) es el vector unitario en dirección a la partícula $j$ desde la partícula $i$.
+
+
+\paragraph{Fuerza swap} Ya que tenemos la fuerza de interacción entre dos partículas, ahora calcularemos la fuerza de interacción debido al potencial de 3 cuerpos.
+Primero, obtenemos la derivada del potencial \(U_3(r)\)\eqref{eqn:U3}.
+\begin{gather*}
+    \dv{U_{3}\qty(r)}{r} =
+    \left\{
+    \begin{array}{ll}
+        0\hat{r} & r\in\qty[0,r_{\min}] \\
+        -\dfrac{1}{\epsilon_{j,k}}\dv{U_{\mathrm{patch}}(r)}{r} & r\in\qty[r_{\min},r_c]
+    \end{array}
+    \right.
+\end{gather*}
+en donde \(\hat{r}\) es la dirección de la distancia.
+
+Entonces, la fuerza que es modelada por el potencial \(U_3\) es,
+\begin{gather*}
+    \vec{F}_{3}(r) =
+    \left\{
+    \begin{array}{ll}
+        0 & r\in\qty[0,r_{\min}] \\
+        -\dfrac{1}{\epsilon_{j,k}}\vec{F}_{\mathrm{patch}}(r) & r\in\qty[r_{\min},r_c]
+    \end{array}
+    \right.
+\end{gather*}
+
+Entonces, la fuerza definida por el potencial de tres cuerpos en el dominio \(r\in\qty[r_{\min},r_c]\) es,
+\begin{align*}
+    \dv{r}U_{\mathrm{swap}}\qty(r_{ij},r_{ik}) = w\sum_{ijk}\epsilon_{jk}\dv{r}\left[U_3(r_{ij})U_3(r_{jk})\right]
+\end{align*}
 
 
 \newpage
