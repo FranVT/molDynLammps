@@ -49,14 +49,13 @@ Fswap_eval=reduce.(vcat,Fswap_eval);
 """
     Script to create the graphics/figures
 """
-tl_sz=0.55cm;
-ot_sz=0.35cm;
+tl_sz=0.6cm;
+ot_sz=0.4cm;
 
-# Patch
-fig_Patch=Figure(size = (17cm, 18.75cm));
-ax1_U=Axis(fig_Patch[1,1],
-             title=latexstring("\\mathrm{Patch-Patch~Interaction}"),
-             xlabel=L"r~[r/Dp]",
+fig_Comp=Figure(size = (18.75cm, 15cm));
+ax1=Axis(fig_Comp[1,1],
+             title=latexstring("\\mathrm{Potentials}"),
+             xlabel=L"r_{ik}~[r/Dp]",
              ylabel=L"U~[J/\epsilon]",
              titlesize=tl_sz,
              xticklabelsize=ot_sz,
@@ -64,35 +63,13 @@ ax1_U=Axis(fig_Patch[1,1],
              xlabelsize=tl_sz,
              ylabelsize=tl_sz,
              xminorticksvisible=true,
-             xminorgridvisible=true
+             xminorgridvisible=true,
+             limits=(nothing,nothing,-1.5,1.5)
    )
-ax1_F=Axis(fig_Patch[1,1],
-             yaxisposition = :right, 
-             ylabel=L"F~[N^*]",
-             limits=(nothing,nothing,-2,20)
-   )
-hidespines!(ax1_F)
-hidexdecorations!(ax1_F)
-
-linkyaxes!(ax1_U, ax1_F)
-
-pot=lines!(ax1_U,r_ij,Upatch_ij,color=:black)
-
-f_comp=lines!(ax1_F,r_ij,Fpatch_ijComp)
-f_mag=lines!(ax1_F,r_ij,Fpatch_ijMag)
-
-Legend(fig_Patch[1,2],
-       [pot,f_comp,f_mag],
-       [L"U_{\mathrm{patch}}(r_{ij})", L"f_{\mathrm{patch}}(r_{ij})\hat{r}_{ij}", L"|\vec{F}_{\mathrm{patch}}(r_{ij})|"],
-     labelsize=0.5cm)
-
-
-# Swap interaction
-fig_Swap=Figure(size = (17cm, 18.75cm));
-ax1_U=Axis(fig_Swap[1,1],
-             title=latexstring("\\mathrm{Swap~Interaction}"),
-             xlabel=L"r~[r_{ik}/Dp]",
-             ylabel=L"U_{\mathrm{swap}}(r_{ij},r_{ik})~[J/\epsilon]",
+ax2=Axis(fig_Comp[2,1],
+             title=latexstring("\\mathrm{Magnitude~of~the~forces}"),
+             xlabel=L"r_{ik}~[r/Dp]",
+             ylabel=L"|\vec{F}|~[N^*]",
              titlesize=tl_sz,
              xticklabelsize=ot_sz,
              yticklabelsize=ot_sz,
@@ -100,22 +77,12 @@ ax1_U=Axis(fig_Swap[1,1],
              ylabelsize=tl_sz,
              xminorticksvisible=true,
              xminorgridvisible=true,
-             limits=(nothing,nothing,-0.5,1.5)
-   )
-ax1_F=Axis(fig_Swap[1,1],
-             yaxisposition = :right, 
-             ylabel=L"F~[N^*]",
-             limits=(nothing,nothing,-0.5,20)
+             limits=(nothing,nothing,-1,20)
    )
 
-ax1_Fc=Axis(fig_Swap[2,1],
-             yaxisposition = :right, 
-             ylabel=L"F~[N^*]",
-             limits=(nothing,nothing,-50,50)
-   )
-linkyaxes!(ax1_U, ax1_F)
+# Potentials
 
-
+pot_patch=scatterlines!(ax1,r_ij,Upatch_ij,label=L"\mathrm{Patch}")
 
 # Definir un mapa de color (puedes cambiarlo, ej: :thermal, :plasma, etc.)
 cmap = :thermal
@@ -124,19 +91,16 @@ for (idx, g_eval) in enumerate(Uswap_eval)
     r_val = r_ij[r_ijVal[idx]]
     # Normalizar el valor de r_ij al intervalo [0,1] para el mapeo de color
     color_norm = (r_val - r_min) / (r_max - r_min)
-    lines!(ax1_U, r_ik, g_eval,
+    lines!(ax1, r_ik, g_eval,
            color = color_norm,
            colormap = cmap,
            colorrange = (0,1),
-           linewidth = 1)
+           linewidth = 1, label=L"\mathrm{Swap}")
 end
 
-Colorbar(fig_Swap[1:2,2],
-         limits = (r_min, r_max),
-         colormap = cmap,
-         label = L"r_{ij}")   # etiqueta de la barra
+# Forces
 
-#cmap=:viridis
+f_mag=scatterlines!(ax2,r_ij,Fpatch_ijMag,label=L"\mathrm{Patch}")
 
 for (idx, g_eval) in enumerate(Fswap_eval)
     r_val = r_ij[r_ijVal[idx]]
@@ -146,29 +110,29 @@ for (idx, g_eval) in enumerate(Fswap_eval)
     g_ik=g_eval[:,2]
     g_mag=g_eval[:,3]
 
-    lines!(ax1_F, r_ik, g_mag,
+    lines!(ax2, r_ik, g_mag,
            color = color_norm,
            colormap = cmap,
-           colorrange = (0,1),
-           linestyle=:dash
-          )
-
-    lines!(ax1_Fc, r_ik, g_ij,
-           color = color_norm,
-           colormap = cmap,
-           colorrange = (0,1),
-           linestyle=:dash
-          )
-
-    lines!(ax1_Fc, r_ik, g_ik,
-           color = color_norm,
-           colormap = cmap,
-           colorrange = (0,1),
-           linestyle=:dot
+           colorrange = (0,1), label=L"\mathrm{Swap}"
           )
 end
 
+Colorbar(fig_Comp[1:2,2],
+         limits = (r_min, r_max),
+         colormap = cmap,
+         label = L"r_{ij}")   # etiqueta de la barra
+
+axislegend(ax1,
+       merge = true, 
+       unique = true,
+       labelsize=0.5cm,position=:rb)
+
+axislegend(ax2,
+       merge = true, 
+       unique = true,
+       labelsize=0.5cm,position=:rt)
 
 
-
+#axislegend(ax, [sc1, sc2], ["One", "Two"], "Selected Dots", position = :rb,
+#    orientation = :horizontal)
 

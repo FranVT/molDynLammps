@@ -15,7 +15,7 @@ function Upatch(eps,Dp,r)
     r_c ---- Cut-off distance
 """
     r_c=1.5*Dp;
-    if r<= r_c
+    if r<r_c
         return 2*eps*( (1/2)*(Dp/r)^4 - 1 )*exp( (Dp/(r-r_c)) + 2 )
     else
         return 0.0
@@ -38,7 +38,7 @@ function U3(eps_jk,eps,Dp,r)
 """
     r_min=Dp;
     r_c=1.5*Dp;
-    if r>=0 && r<=r_min
+    if r>0 && r<=r_min
         return 1.0
     elseif r>r_min && r<r_c
         return -Upatch(eps,Dp,r)/eps_jk
@@ -81,7 +81,11 @@ function forcePatch(eps,Dp,r)
 
 """
     r_c=1.5*Dp;
-    comp=(1/r - 2*(eps/r)*exp( Dp/(r-r_c) + 2 ) - ( Dp/(r-r_c)^2 ) )*Upatch(eps,Dp,r)
+    if r>=r_c
+        comp=0;
+    else
+        comp=(1/r - 2*(eps/r)*exp( Dp/(r-r_c) + 2 ) - ( Dp/(r-r_c)^2 ) )*Upatch(eps,Dp,r)
+    end
     mag=sqrt(comp^2)
     return (comp,mag) 
 end
