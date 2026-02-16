@@ -2,46 +2,118 @@
     Functions 
 """
 
-function ForcePatch_fd(eps_pair,sig_p,r)
+function Upatch(eps,Dp,r)
 """
-    Get the central finite difference given the value of the position and the function.
-"""
-    dh=1e-6;
-    fo=Upatch(eps_pair,sig_p,r+dh)
-    ff=Upatch(eps_pair,sig_p,r-dh)
-    return -(1/(2*dh))*( fo - ff );
-end
+    Interaction between patches
 
-function Upatch(eps_pair,sig_p,r)
+    Input parameters
+    eps ---- Energy of the interaction
+    Dp ----- Patch diameter
+    r ------ Distance between patches
+
+    Derived parameters:
+    r_c ---- Cut-off distance
 """
-    Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
-"""
-    if r < 1.5*sig_p 
-        return 2*eps_pair*( ((sig_p^4)./((2).*r.^4)) .-1).*exp.((sig_p)./(r.-(1.5*sig_p)).+2)
+    r_c=1.5*Dp;
+    if r<r_c
+        return 2*eps*( (1/2)*(Dp/r)^4 - 1 )*exp( (Dp/(r-r_c)) + 2 )
     else
         return 0.0
     end
 end
 
-function U3(eps_pair,eps_3,sig_p,r)
+function U3(eps_jk,eps,Dp,r)
 """
-    Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
+    Potencial U3, which is an auxiliary function for the swap potential
+
+    Input parameters
+    eps_jk -- Interaction energy between particle j and particle k
+    eps ----- Interaction energy between particle i and particle j/k
+    Dp ------ Patch diameter
+    r ------- Distance between patches
+
+    Derived parameters
+    r_min --- Distance such that Upatch(eps,Dp,r_min) = -eps
+    r_c ----- Cut-off distance of Upatch
 """
-    if r <= sig_p 
+    r_min=Dp;
+    r_c=1.5*Dp;
+    if r>0 && r<=r_min
         return 1.0
-    elseif r >= 1.5*sig_p
-        return 0.0 
-    else 
-        return -(1/eps_3)*Upatch(eps_pair,sig_p,r)
+    elseif r>r_min && r<r_c
+        return -Upatch(eps,Dp,r)/eps_jk
+    else
+        return 0.0
     end
 end
 
-function SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik)
+function Uswap(w,eps_jk,eps_ij,eps_ik,Dp,r_ij,r_ik)
 """
-    Potential for the swap mechanism
+    Swap potential of 3 body interactions
+
+    Input parameters
+    w ------- Interpolate the limits of swapping (w=1 swap, w>>1 no swap)
+    eps_jk -- Interaction energy between particle j and particle k
+    eps_ik -- Interaction energy between particle i and particle k
+    eps_ij -- Interaction energy between particle i and particle j
+    Dp ------ Patch diameter
+    r_ij ---- Distance between patch i and patch j
+    r_ik ---- Distance between patch i and patch k
 """
-    return w.*eps_jk.*U3(eps_ij,eps_jk,sig_p,r_ij).*U3(eps_ik,eps_jk,sig_p,r_ik)
+    return w*eps_jk*U3(eps_jk,eps_ij,Dp,r_ij)*U3(eps_jk,eps_ik,Dp,r_ik)
 end
+
+function forcePatch(eps,Dp,r)
+"""
+    Magnitude and components of the force given by the patch-patch interaction potential
+
+    Input parameters
+    eps ---- Energy of the interaction
+    Dp ----- Patch diameter
+    r ------ Distance between patches
+
+    Derived parameters:
+    r_c ---- Cut-off distance
+
+    Output
+    comp --- Component of the force
+    map ---- Magnitude of the force
+
+"""
+    r_c=1.5*Dp;
+    if r>=r_c
+        comp=0;
+    else
+        comp=(1/r - 2*(eps/r)*exp( Dp/(r-r_c) + 2 ) - ( Dp/(r-r_c)^2 ) )*Upatch(eps,Dp,r)
+    end
+    mag=sqrt(comp^2)
+    return (comp,mag) 
+end
+
+function forceSwap(w,eps_jk,eps_ij,eps_ik,Dp,r_ij,r_ik)
+"""
+    Magnitude and components of the force given by the swap 3 body interaction potential
+
+    Input parameters
+    w ------- Interpolate the limits of swapping (w=1 swap, w>>1 no swap)
+    eps_jk -- Interaction energy between particle j and particle k
+    eps_ik -- Interaction energy between particle i and particle k
+    eps_ij -- Interaction energy between particle i and particle j
+    Dp ------ Patch diameter
+    r_ij ---- Distance between patch i and patch j
+    r_ik ---- Distance between patch i and patch k
+
+    Output
+    comp_ij - ij component of the force
+    comp_ik - ik component of the force
+    mag ----- The norm of the force
+"""
+    comp_ij=w*eps_jk*U3(eps_jk,eps_ik,Dp,r_ik)*first(forcePatch(eps_ij,Dp,r_ij))
+    comp_ik=w*eps_jk*U3(eps_jk,eps_ij,Dp,r_ij)*first(forcePatch(eps_ik,Dp,r_ik))
+    mag=sqrt( comp_ij^2 + comp_ik^2 )
+    return [comp_ij comp_ik mag]
+end
+
 
 function getTable3b(dir,file_name)
 """
@@ -89,7 +161,6 @@ function extractFixScalar(path_system,file_name)
     aux=split.(readlines(joinpath(path_system,file_name))," ");
     return (aux[2][2:end],reduce(hcat,map(s->parse.(Float64,s),aux[3:end])));
 end
-
 
 
 function getDir(date)

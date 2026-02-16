@@ -2,6 +2,8 @@
     Script to tabulate the table of the 3body potential
 """
 
+include("functions.jl")
+
 function createTable(N,rmin,rmax,info,filename)
 """
     Create the table for threebody/table filename input as follows:
@@ -23,62 +25,24 @@ function createTable(N,rmin,rmax,info,filename)
     nothing
 end
 
-function Upatch(eps_pair,sig_p,r)
-"""
-    Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
-"""
-    if r < 1.5*sig_p 
-        return 2*eps_pair*( (1/2)*(sig_p/r)^4 - 1 )*exp( sig_p/(r-1.5*sig_p) + 2 )
-    else
-        return 0.0
-    end
-end
-
-function U3(eps_pair,eps_3,sig_p,r)
-"""
-    Auxiliary potential to create Swap Mechanism based in Patch-Patch interaction
-"""
-    if r <= sig_p 
-        return 1.0
-    elseif r >= 1.5*sig_p
-        return 0.0 
-    else 
-        return -(1/eps_3)*Upatch(eps_pair,sig_p,r)
-    end
-end
-
-function SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik)
-"""
-    Potential for the swap mechanism
-"""
-    return w.*eps_jk.*U3(eps_ij,eps_jk,sig_p,r_ij).*U3(eps_ik,eps_jk,sig_p,r_ik)
-end
-
-function DiffU3(eps_pair,eps_3,sig_p,r)
-"""
-    Get the central finite difference given the value of the position and the function.
-"""
-    dh=1e-6;
-    fo=U3(eps_pair,eps_3,sig_p,r+dh);
-    ff=U3(eps_pair,eps_3,sig_p,r-dh);
-     return (1/(2*dh))*( fo - ff );
-end
-
 function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
 """
     Compute the scalars for the proyection of the forces
 """
     th = deg2rad(th);
+    force=forceSwap(w,eps_jk,eps_ij,eps_ik,Dp,r_ij,r_ik);
+    f_ij=force[1];
+    f_ik=force[2];
     #r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
  
-    f_i1=0; #w*eps_jk*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_ik,eps_ik,sig_p,r_ik) );
-    f_i2=0; #w*eps_jk*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_ik,eps_ik,sig_p,r_ik) );
+    f_i1=f_ij; 
+    f_i2=f_ik; 
    
-    f_j1=0; #w*eps_ik*( DiffU3(eps_ij,eps_ij,sig_p,r_ij) * U3(eps_jk,eps_jk,sig_p,r_jk) );
-    f_j2=0; #w*eps_ik*( U3(eps_ij,eps_ij,sig_p,r_ij) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_j1=-f_i1; 
+    f_j2=0; 
 
-    f_k1=0; #w*eps_ij*( DiffU3(eps_ik,eps_ik,sig_p,r_ik) * U3(eps_jk,eps_jk,sig_p,r_jk) );
-    f_k2=0; #w*eps_ij*( U3(eps_ik,eps_ik,sig_p,r_ik) * DiffU3(eps_jk,eps_jk,sig_p,r_jk) );
+    f_k1=-f_i2; 
+    f_k2=-f_j2; 
 
     eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) 
     #+ SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)

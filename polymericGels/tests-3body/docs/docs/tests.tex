@@ -10,6 +10,21 @@
 
 \subsection{Descripción de la simulación}
 
+\begin{marginfigure}
+    \caption{\(t=0\)}
+    \includegraphics{../Figures/2026-02-12-145030/triangle-1.png}
+\end{marginfigure}
+\begin{marginfigure}
+    \caption{\(t=4.5\)}
+    \includegraphics{../Figures/2026-02-12-145030/triangle-2.png}
+\end{marginfigure}
+\begin{marginfigure}
+    \caption{\(t=9\)}
+    \includegraphics{../Figures/2026-02-12-145030/triangle-3.png}
+\end{marginfigure}
+
+
+
 Se colocan 3 partículas.
 Una partícula en el centro \(\vec{r}_1 = (0,0,0)\).
 Una segunda partícula en \(\vec{r}_2 = (0.35,0.65,0)\).
@@ -17,6 +32,8 @@ Una tercera partícula en \(\vec{r}_3 = (0.35,-0.65,0)\).
 Primero se mueve la partícula 2 hacia la partícula central con velocidad \(\vec{v}_2=(0,-0.1,0)\).
 Cuando la segunda partícula llegué a \(0.35,0.2,0.0\) se detiene el movimiento (\num{4500} pasos).
 Posteriormente se mueve la tercera partícula con velocidad \(\vec{v}_3=(0.35,-0.2,0)\) hasta qu llegué a la posición \(0.4,-0.4,0\) (\num{4500} pasos).
+
+Enlace para ver el video de la simulación: \href{https://youtu.be/UOpRIhUzqHw}{https://youtu.be/UOpRIhUzqHw}.
 
 \section{Acerca de la tabulación del potencial de tres cuerpos.}
 
@@ -176,11 +193,13 @@ En donde \(\hat{r}_{ij}\) es un vector unitario en dirección hacia la partícul
 
 \subsection{Resultados}
 
+\begin{comment}
 \begin{marginfigure}
     \centering
     \includegraphics[width=0.8\textwidth]{../Figures/2026-02-12-145030/fig_Uatom.png}
     \caption{Energía potencial registrada por pe/atom.}\label{fig:Uatom1}
 \end{marginfigure}
+\end{comment}
 
 \begin{figure}[!ht]
     \centering
@@ -199,6 +218,62 @@ En donde \(\hat{r}_{ij}\) es un vector unitario en dirección hacia la partícul
 Estas gráficas serán las gráficas de referencia para ver el efecto del potencial de tres cuerpos.
 
 \newpage
+
+
+\section{Directory: 2026-02-13-124253}
+
+Se usa el comando \verb|threebody/table| con valores nulos para la fuerza.
+
+\begin{comment}
+\begin{marginfigure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Uatom.png}
+    \caption{Energía potencial registrada por pe/atom.}\label{fig:Uatom1}
+\end{marginfigure}
+\end{comment}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_swapPotTable.png}
+    \caption{Energía potencial de la tabla en el archivo vs el potencial usando la función y la distancias usadas en la tabulación del archivo.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Uatom-fix.png}
+    \caption{ Comparación de la energía potencial registrada por pe/atom con la energía registrada por pe.
+    }\label{fig:Uatom-fix1}
+\end{figure}
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Ufix-func.png}
+    \caption{Comparación de la energía potencial registrada por pe con la energía potencial calculada usando las distancias de la simulación.
+    }\label{fig:Ufix-func1}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Force.png}
+    \caption{Fuerza en cada partícula.
+    }\label{fig:Ufix-func1}
+\end{figure}
+
+
+
+
+\subsection{Discusión/Comentarios}
+
+La tabulación de la energía potencial es correcta.
+No entiendo porque las discontinuidades.
+
+Falta analizar las fuerzas.
+
+
+\begin{comment}
 
 \section{Directory: 2026-02-12-155912}
 
@@ -235,42 +310,7 @@ Estaba dividiendo entre tres la energía, por vestigios.
 
 \newpage
 
-\section{Directory: 2026-02-13-124253}
+\end{comment}
 
-\begin{marginfigure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Uatom.png}
-    \caption{Energía potencial registrada por pe/atom.}\label{fig:Uatom1}
-\end{marginfigure}
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_swapPotTable.png}
-    \caption{Energía potencial de la tabla en el archivo vs el potencial usando la función y la distancias usadas en la tabulación del archivo.
-    }\label{fig:Uatom-fix1}
-\end{figure}
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Uatom-fix.png}
-    \caption{ Comparación de la energía potencial registrada por pe/atom con la energía registrada por pe.
-    }\label{fig:Uatom-fix1}
-\end{figure}
-
-\newpage
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-13-124253/fig_Ufix-func.png}
-    \caption{Comparación de la energía potencial registrada por pe con la energía potencial calculada usando las distancias de la simulación.
-    }\label{fig:Ufix-func1}
-\end{figure}
-
-\subsection{Discusión/Comentarios}
-
-La tabulación de la energía potencial es correcta.
-No entiendo porque las discontinuidades.
-
-Falta analizar las fuerzas.
 
 \end{document}

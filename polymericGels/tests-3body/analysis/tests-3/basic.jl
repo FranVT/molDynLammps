@@ -19,8 +19,9 @@ cm = inch / 2.54;
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-13-152655";
-#"2026-02-13-124253";
+date="2026-02-13-124253";
+#"2026-02-13-152655";
+#
 
 #"2026-02-12-155912";
 #"2026-02-12-154430";
@@ -45,7 +46,7 @@ if act == 1
     DATA_fix=DataFrame(data[2]',data[1]);
 
     # Get table
-    tableSwap=getTable3b(DIR,"swapMechTab2_w0.table");
+    tableSwap=getTable3b(DIR,"swapMechTab2_w1.table");
     swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
 
     # Obtener la evolución de r_ik
@@ -100,9 +101,12 @@ DATA_dump_3[!, :norma_f] = sqrt.(DATA_dump_3.fx.^2 .+ DATA_dump_3.fy.^2 .+ DATA_
 """
     Plot the components
 """
+tl_sz=0.55cm;
+ot_sz=0.35cm;
+
 fig_F=Figure(size = (17cm, 18.75cm));
 ax1_F=Axis(fig_F[1,1],
-             title=latexstring("\\mathrm{Force~components~Particl~1}"),
+             title=latexstring("\\mathrm{Force~components~Particle~1}"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -114,7 +118,7 @@ ax1_F=Axis(fig_F[1,1],
              xminorgridvisible=true
    )
 ax2_F=Axis(fig_F[2,1],
-             title=latexstring("\\mathrm{Force~components~Particl~2}"),
+             title=latexstring("\\mathrm{Force~components~Particle~2}"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -126,7 +130,7 @@ ax2_F=Axis(fig_F[2,1],
              xminorgridvisible=true
    )
 ax3_F=Axis(fig_F[3,1],
-             title=latexstring("\\mathrm{Force~components~Particl~3}"),
+             title=latexstring("\\mathrm{Force~components~Particle~3}"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -139,12 +143,12 @@ ax3_F=Axis(fig_F[3,1],
    )
 linkyaxes!(ax1_F, ax2_F, ax3_F)
 
-f_func12=map(r->ForcePatch_fd(1.0,0.4,r),dist_12);
-f_func13=map(r->ForcePatch_fd(1.0,0.4,r),dist_13);
+f_func12=map(r->last(forcePatch(1.0,0.4,r)),dist_12);
+f_func13=map(r->last(forcePatch(1.0,0.4,r)),dist_13);
 f_func1=f_func12 .+ f_func13;
 
 #f_func12=map(r->ForcePatch_fd(1.0,0.4,r),dist_12);
-f_func23=map(r->ForcePatch_fd(1.0,0.4,r),dist_23);
+f_func23=map(r->last(forcePatch(1.0,0.4,r)),dist_23);
 f_func2=f_func12 .+ f_func23;
 
 #f_func12=map(r->ForcePatch_fd(1.0,0.4,r),dist_12);
@@ -154,8 +158,8 @@ f_func3=f_func13 .+ f_func23;
 
 
 
-lines!(ax1_F,time_dump,DATA_dump_1.fx,linestyle=:dot,label=L"f_x")
-lines!(ax1_F,time_dump,DATA_dump_1.fy,linestyle=:dot,label=L"f_y")
+#lines!(ax1_F,time_dump,DATA_dump_1.fx,linestyle=:dot,label=L"f_x")
+#lines!(ax1_F,time_dump,DATA_dump_1.fy,linestyle=:dot,label=L"f_y")
 lines!(ax1_F,time_dump,DATA_dump_1.norma_f,linestyle=:dot,label=L"|f|")
 
 lines!(ax1_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)")
@@ -167,8 +171,8 @@ Legend(fig_F[1,2],ax1_F,
      labelsize=0.5cm)
 
 
-lines!(ax2_F,time_dump,DATA_dump_2.fx,linestyle=:dot,label=L"f_x")
-lines!(ax2_F,time_dump,DATA_dump_2.fy,linestyle=:dot,label=L"f_y")
+#lines!(ax2_F,time_dump,DATA_dump_2.fx,linestyle=:dot,label=L"f_x")
+#lines!(ax2_F,time_dump,DATA_dump_2.fy,linestyle=:dot,label=L"f_y")
 lines!(ax2_F,time_dump,DATA_dump_2.norma_f,linestyle=:dot,label=L"|f|")
 
 lines!(ax2_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)")
@@ -180,8 +184,8 @@ Legend(fig_F[2,2],ax2_F,
      labelsize=0.5cm)
 
 
-lines!(ax3_F,time_dump,DATA_dump_3.fx,linestyle=:dot,label=L"f_x")
-lines!(ax3_F,time_dump,DATA_dump_3.fy,linestyle=:dot,label=L"f_y")
+#lines!(ax3_F,time_dump,DATA_dump_3.fx,linestyle=:dot,label=L"f_x")
+#lines!(ax3_F,time_dump,DATA_dump_3.fy,linestyle=:dot,label=L"f_y")
 lines!(ax3_F,time_dump,DATA_dump_3.norma_f,linestyle=:dot,label=L"|f|")
 
 lines!(ax3_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)")
@@ -192,8 +196,9 @@ Legend(fig_F[3,2],ax3_F,
       L"\mathrm{Labels}",
      labelsize=0.5cm)
 
+save("fig_Force.png", fig_F, px_per_unit = 300/inch)
 
-
+#=
 """
     Plot the Forces
 """
@@ -219,15 +224,12 @@ lines!(ax1_F,DATA_dump_3.x,DATA_dump_3.y)
 arrows2d!(ax1_F,DATA_dump_1.x,DATA_dump_1.y,DATA_dump_1.fx./DATA_dump_1.norma_f,DATA_dump_1.fy./DATA_dump_1.norma_f,lengthscale=0.2)
 arrows2d!(ax1_F,DATA_dump_2.x,DATA_dump_2.y,DATA_dump_2.fx./DATA_dump_2.norma_f,DATA_dump_2.fy./DATA_dump_2.norma_f,lengthscale=0.2)
 arrows2d!(ax1_F,DATA_dump_3.x,DATA_dump_3.y,DATA_dump_3.fx./DATA_dump_3.norma_f,DATA_dump_3.fy./DATA_dump_3.norma_f,lengthscale=0.2)
-
+=#
 
 
 """
     Plot the threebody potential
 """
-
-tl_sz=0.55cm;
-ot_sz=0.35cm;
 
 # Definir un mapa de color (puedes cambiarlo, ej: :thermal, :plasma, etc.)
 cmap = :tokyo
@@ -271,7 +273,7 @@ for (idx, df) in enumerate(table_pot1)
            colormap = cmap,
            colorrange = (0,1),
            linewidth = 2)
-    potTeo=map(s->SwapU(1,1,1,1,0.4,r_val,s),df.r_ik)
+    potTeo=map(s->Uswap(1,1,1,1,0.4,r_val,s),df.r_ik)
 
     scatterlines!(ax2_eng,df.r_ik,potTeo,
            color = color_norm,
@@ -292,7 +294,7 @@ Colorbar(fig_swapPot[2,2],
          colormap = cmap,
          label = L"r_{ij}")   # etiqueta de la barra
 
- save("fig_swapPotTable.png", fig_swapPot, px_per_unit = 300/inch)
+save("fig_swapPotTable.png", fig_swapPot, px_per_unit = 300/inch)
 
 
 # Parameters
@@ -470,13 +472,14 @@ ax1_eng=Axis(fig_Uf[1,1],
 aux=combine(groupby(l, :TimeStep), :c_potAtom => sum => :suma_c_pot);
 
 scatter!(ax1_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fixPatch}}",color=1,colormap=:tab10,colorrange=(1,10))
-
 scatter!(ax1_eng,time_fix,DATA_fix.c_swapPair,label=L"U_{\mathrm{swap}}",color=2,colormap=:tab10,colorrange=(1,10))
+scatter!(ax1_eng,time_fix,DATA_fix.c_ep,label=L"U_{\mathrm{ep}}",color=3,colormap=:tab10,colorrange=(1,10))
 
-lines!(ax1_eng,time_dump,DATA_dump_1.c_potAtom,label=L"U_{\mathrm{atom}1}",color=3,colormap=:tab10,colorrange=(1,10))
-lines!(ax1_eng,time_dump,DATA_dump_2.c_potAtom,label=L"U_{\mathrm{atom}2}",color=4,colormap=:tab10,colorrange=(1,10))
-lines!(ax1_eng,time_dump,DATA_dump_3.c_potAtom,label=L"U_{\mathrm{atom}3}",color=5,colormap=:tab10,colorrange=(1,10))
-lines!(ax1_eng,time_dump,aux.suma_c_pot,label=L"\sum U_{\mathrm{atom}}",color=:black)
+
+lines!(ax1_eng,time_dump,DATA_dump_1.c_potAtom,label=L"U_{\mathrm{atom}1}",color=2,colormap=:viridis,colorrange=(1,10),linestyle=:dash)
+lines!(ax1_eng,time_dump,DATA_dump_2.c_potAtom,label=L"U_{\mathrm{atom}2}",color=4,colormap=:viridis,colorrange=(1,10),linestyle=:dash)
+lines!(ax1_eng,time_dump,DATA_dump_3.c_potAtom,label=L"U_{\mathrm{atom}3}",color=6,colormap=:viridis,colorrange=(1,10),linestyle=:dash)
+lines!(ax1_eng,time_dump,aux.suma_c_pot,label=L"\sum U_{\mathrm{atom}}",color=:black,linestyle=:dash)
 
 
 
@@ -494,7 +497,7 @@ save("fig_Uatom-fix.png", fig_Uf, px_per_unit = 300/inch)
 """
 fig_UF=Figure(size = (18.75cm, 15cm));
 # Create twin axis: Energy and distance
-ax2_eng=Axis(fig_UF[1,2],
+ax2_eng=Axis(fig_UF[1,1],
              title=latexstring("\\mathrm{Comparisson~of~fix~and~function}"),
              xlabel=L"t~[\tau]",
              ylabel=L"U~[J/\epsilon]",
@@ -506,66 +509,45 @@ ax2_eng=Axis(fig_UF[1,2],
              xminorticksvisible=true,
              xminorgridvisible=true
    )
-ax2_dist=Axis(fig_UF[1,2],
-             #title=latexstring("\\mathrm{Potential~energy}"),
-             #xlabel=L"t~[\tau]",
-             yticks = (0.0:0.2:2.0),
-             ylabel=L"d~[r/D_p]",
-             titlesize=tl_sz,
-             xticklabelsize=ot_sz,
-             yticklabelsize=ot_sz,
-             xlabelsize=tl_sz,
-             ylabelsize=tl_sz,
-             xminorticksvisible=true,
-             xminorgridvisible=true,
-             yaxisposition=:right
-   )
-hidespines!(ax2_dist)
-hidexdecorations!(ax2_dist)
 
 """
     Evaluate the swap potential
 """
-swapEval1=map(s->SwapU(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),eachindex(time_fix));
-swapEval2=map(s->SwapU(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),eachindex(time_fix));
-swapEval3=map(s->SwapU(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),eachindex(time_fix));
+swapEval1=map(s->Uswap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),eachindex(time_fix));
+swapEval2=map(s->Uswap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),eachindex(time_fix));
+swapEval3=map(s->Uswap(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),eachindex(time_fix));
 
 swapEvalsum=swapEval1 .+ swapEval2 .+ swapEval3;
 
-#swapEvalsum23=swapEval2 .+ swapEval3;
+patchEval1=map(r->Upatch(1,0.4,r),dist_12);
+patchEval2=map(r->Upatch(1,0.4,r),dist_13);
+patchEval3=map(r->Upatch(1,0.4,r),dist_23);
+
+patchEvalsum= patchEval1 .+ patchEval2 .+ patchEval3
+
+scatter!(ax2_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fixPatch}}",color=1,colormap=:tab10,colorrange=(1,10))
+scatter!(ax2_eng,time_fix,DATA_fix.c_swapPair,label=L"U_{\mathrm{swap}}",color=2,colormap=:tab10,colorrange=(1,10))
+scatter!(ax2_eng,time_fix,DATA_fix.c_ep,label=L"U_{\mathrm{ep}}",color=3,colormap=:tab10,colorrange=(1,10))
 
 
 
-scatter!(ax2_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fixPatch}}",color=7,colormap=:tab10,colorrange=(1,10))
-scatter!(ax2_eng,time_fix,DATA_fix.c_swapPair,label=L"U_{\mathrm{swap}}",color=8,colormap=:tab10,colorrange=(1,10))
-
-lines!(ax2_eng,time_fix,DATA_fix.c_ep,label=L"U_{\mathrm{ep}}",color=:black,linestyle=:dash)
-
-
-
-lines!(ax2_eng,time_fix,swapEval1,label=L"U_{\mathrm{swap1}}",color=1,colormap=:darkrainbow,colorrange=(1,5))
-lines!(ax2_eng,time_fix,swapEval2,label=L"U_{\mathrm{swap2}}",color=2,colormap=:darkrainbow,colorrange=(1,5))
-lines!(ax2_eng,time_fix,swapEval3,label=L"U_{\mathrm{swap3}}",color=3,colormap=:darkrainbow,colorrange=(1,5))
-lines!(ax2_eng,time_fix,swapEvalsum,label=L"\sum U_{\mathrm{swap}}",color=4,colormap=:darkrainbow,colorrange=(1,5))
+#lines!(ax2_eng,time_fix,swapEval1,label=L"U_{\mathrm{swap1}}",color=1,colormap=:darkrainbow,colorrange=(1,5))
+#lines!(ax2_eng,time_fix,swapEval2,label=L"U_{\mathrm{swap2}}",color=2,colormap=:darkrainbow,colorrange=(1,5))
+#lines!(ax2_eng,time_fix,swapEval3,label=L"U_{\mathrm{swap3}}",color=3,colormap=:darkrainbow,colorrange=(1,5))
 #lines!(ax2_eng,time_fix,swapEvalsum,label=L"\sum U_{\mathrm{swap}2,3}",color=5,colormap=:darkrainbow,colorrange=(1,5))
 
+#lines!(ax2_eng,time_dump,,label=L"U_{\mathrm{patch}}(d_{12})",color=4,colormap=:tab10,colorrange=(1,10))
+#lines!(ax2_eng,time_dump,,label=L"U_{\mathrm{patch}}(d_{13})",color=5,colormap=:tab10,colorrange=(1,10))
+#lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_23),label=L"U_{\mathrm{patch}}(d_{23})",color=6,colormap=:tab10,colorrange=(1,10))
+
+lines!(ax2_eng,time_fix,swapEvalsum,label=L"\sum U_{\mathrm{swap}}",color=:black,linestyle=:dash)
+lines!(ax2_eng,time_dump,patchEvalsum,label=L"\sum U_{\mathrm{patch}}",color=:black,linestyle=:dot)
+lines!(ax2_eng,time_dump,patchEvalsum .+ swapEvalsum,label=L"\sum U_{\mathrm{patch}} + \sum U_{\mathrm{swap}}",color=:black)
 
 
 
-lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_12),label=L"U_{\mathrm{patch}}(d_{12})",color=4,colormap=:tab10,colorrange=(1,10))
-lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_13),label=L"U_{\mathrm{patch}}(d_{13})",color=5,colormap=:tab10,colorrange=(1,10))
-lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_23),label=L"U_{\mathrm{patch}}(d_{23})",color=6,colormap=:tab10,colorrange=(1,10))
-lines!(ax2_eng,time_dump,map(r->Upatch(1,0.4,r),dist_12).+map(r->Upatch(1,0.4,r),dist_13).+map(r->Upatch(1,0.4,r),dist_23),label=L"\sum U_{\mathrm{patch}}(r_{ij})",color=:black)
 
-
-lines!(ax2_dist,time_dump,dist_12,color=1,colormap=:tab10,colorrange=(1,10),label=L"d_{12}",linestyle=:dash)
-lines!(ax2_dist,time_dump,dist_13,color=2,colormap=:tab10,colorrange=(1,10),label=L"d_{13}",linestyle=:dash)
-lines!(ax2_dist,time_dump,dist_23,color=3,colormap=:tab10,colorrange=(1,10),label=L"d_{23}",linestyle=:dash)
-
-Legend(fig_UF[1,1],ax2_eng,
-      L"\mathrm{Labels}",
-     labelsize=0.5cm)
-Legend(fig_UF[1,3],ax2_dist,
+Legend(fig_UF[1,2],ax2_eng,
       L"\mathrm{Labels}",
      labelsize=0.5cm)
 
