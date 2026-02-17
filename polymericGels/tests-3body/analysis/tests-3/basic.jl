@@ -64,19 +64,17 @@ if act == 1
     DIR=joinpath(DIR,"traj");
     DATA_dump=map(s->getDump(DIR,s),readdir(DIR));
 
-"""
-#    Reducing the DATA_dump
-"""
+    """
+        Reducing the DATA_dump
+    """
 
-# Concatenate the data frames into one
-l=sort(reduce(vcat,DATA_dump),:TimeStep);
+    # Concatenate the data frames into one
+    l=sort(reduce(vcat,DATA_dump),:TimeStep);
 
-# Create Individual data frames
-DATA_dump_1 = l[l.id.==1.0,:];
-DATA_dump_2 = l[l.id.==2.0,:];
-DATA_dump_3 = l[l.id.==3.0,:];
-
-
+    # Create Individual data frames
+    DATA_dump_1 = l[l.id.==1.0,:];
+    DATA_dump_2 = l[l.id.==2.0,:];
+    DATA_dump_3 = l[l.id.==3.0,:];
 
 end
 
@@ -88,11 +86,29 @@ time_fix=DATA_fix.TimeStep.*0.001;
 time_dump=DATA_dump_1.TimeStep.*0.001;
 
 
-dist_12=sqrt.((DATA_dump_1.x .- DATA_dump_2.x).^2 .+ (DATA_dump_1.y .- DATA_dump_2.y).^2);
-dist_13=sqrt.((DATA_dump_1.x .- DATA_dump_3.x).^2 .+ (DATA_dump_1.y .- DATA_dump_3.y).^2);
-dist_23=sqrt.((DATA_dump_2.x .- DATA_dump_3.x).^2 .+ (DATA_dump_2.y .- DATA_dump_3.y).^2);
+# Compute the unitary vectors r_ik and r_jk and express them in the cartisian basis
 
+# The components of the vectors in terms of x,y,z basis
+deltaX_12=DATA_dump_2.x .- DATA_dump_1.x;
+deltaY_12=DATA_dump_2.y .- DATA_dump_1.y;
 
+deltaX_13=DATA_dump_3.x .- DATA_dump_1.x;
+deltaY_13=DATA_dump_3.y .- DATA_dump_1.y;
+
+deltaX_23=DATA_dump_3.x .- DATA_dump_2.x;
+deltaY_23=DATA_dump_3.y .- DATA_dump_2.y;
+
+# The norms
+dist_12=sqrt.(deltaX_12.^2 .+ deltaY_12.^2);
+dist_13=sqrt.(deltaX_13.^2 .+ deltaY_13.^2);
+dist_23=sqrt.(deltaX_23.^2 .+ deltaY_23.^2);
+
+# Unitary vectors
+vr_12=[deltaX_12 deltaY_12]./dist_12;
+vr_13=[deltaX_13 deltaY_13]./dist_13;
+vr_23=[deltaX_23 deltaY_23]./dist_23;
+
+# Compute the magnitude of the force
 DATA_dump_1[!, :norma_f] = sqrt.(DATA_dump_1.fx.^2 .+ DATA_dump_1.fy.^2 .+ DATA_dump_1.fz.^2)
 DATA_dump_2[!, :norma_f] = sqrt.(DATA_dump_2.fx.^2 .+ DATA_dump_2.fy.^2 .+ DATA_dump_2.fz.^2)
 DATA_dump_3[!, :norma_f] = sqrt.(DATA_dump_3.fx.^2 .+ DATA_dump_3.fy.^2 .+ DATA_dump_3.fz.^2)
@@ -103,9 +119,38 @@ DATA_dump_3[!, :norma_f] = sqrt.(DATA_dump_3.fx.^2 .+ DATA_dump_3.fy.^2 .+ DATA_
 """
     Plot the components
 """
+
+# Evaluation and projection of the forces from the theorical definition
+f_patch12=map(r->last(forcePatch(1.0,0.4,r)),dist_12);
+f_patch13=map(r->last(forcePatch(1.0,0.4,r)),dist_13);
+f_patch23=map(r->last(forcePatch(1.0,0.4,r)),dist_23);
+
+f_patch12xy=f_patch12.*vr_12;
+f_patch13xy=f_patch13.*vr_13; 
+f_patch23xy=f_patch23.*vr_23; 
+
+# Evaluate the Swap function
+f_swap1=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),vcat,1:1:nrow(DATA_dump_1));
+f_swap2=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_2));
+f_swap3=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_3));
+
+# Project the forces into the x,y basis
+f_swap1xy=f_swap1[:,1].*vr_12 .+ f_swap1[:,2].*vr_13;
+f_swap2xy=f_swap2[:,1].*(-vr_12) .+ f_swap2[:,2].*vr_23;
+f_swap3xy=f_swap3[:,1].*(-vr_13) .+ f_swap2[:,2].*(-vr_23);
+
+
+f_part1=f_patch12xy .+ f_patch13xy .+ f_swap1xy;
+f_part2=-f_patch12xy .+ f_patch23xy .+ f_swap2xy;
+f_part3=-f_patch13xy .- f_patch23xy .+ f_swap3xy;
+
+
+# Graphics
+
 tl_sz=0.55cm;
 ot_sz=0.35cm;
 
+#=
 fig_F=Figure(size = (17cm, 18.75cm));
 ax1_F=Axis(fig_F[1,1],
              title=latexstring("\\mathrm{Force~Particle~1}"),
@@ -144,22 +189,6 @@ ax3_F=Axis(fig_F[3,1],
              xminorgridvisible=true
    )
 linkyaxes!(ax1_F, ax2_F, ax3_F)
-
-f_func12=map(r->last(forcePatch(1.0,0.4,r)),dist_12);
-f_func13=map(r->last(forcePatch(1.0,0.4,r)),dist_13);
-
-f_func23=map(r->last(forcePatch(1.0,0.4,r)),dist_23);
-
-
-# Evaluate the Swap function
-f_swap1=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),vcat,1:1:nrow(DATA_dump_1));
-f_swap2=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_2));
-f_swap3=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_3));
-
-
-f_func1=f_func12 .+ f_func13 .+ f_swap1[:,3];
-f_func2=f_func12 .+ f_func23 .+ f_swap2[:,3];
-f_func3=f_func13 .+ f_func23 .+ f_swap3[:,3];
 
 
 #lines!(ax1_F,time_dump,DATA_dump_1.fx,linestyle=:dot,label=L"f_x")
@@ -205,6 +234,7 @@ Legend(fig_F[3,2],ax3_F,
      labelsize=0.5cm)
 
 save("fig_Force.png", fig_F, px_per_unit = 300/inch)
+=#
 
 # Components of the force
 fig_Fcomp=Figure(size = (17cm, 18.75cm));
@@ -246,24 +276,93 @@ ax3_F=Axis(fig_Fcomp[3,1],
    )
 linkyaxes!(ax1_F, ax2_F, ax3_F)
 
-lines!(ax1_F,time_dump,f_func1,linestyle=:dash,label=L"\sum f_{1i}(r)",linewidth=4,alpha=0.5,color=:black)
-lines!(ax1_F,time_dump,DATA_dump_1.fx,label=L"f_x")
-lines!(ax1_F,time_dump,DATA_dump_1.fy,label=L"f_y")
-lines!(ax1_F,time_dump,f_swap1[:,1],label=L"f_{ij}")
-lines!(ax1_F,time_dump,f_swap1[:,2],label=L"f_{ik}")
 
-lines!(ax2_F,time_dump,f_func2,linestyle=:dash,label=L"\sum f_{2i}(r)",linewidth=4,alpha=0.5,color=:black)
-lines!(ax2_F,time_dump,DATA_dump_2.fx,label=L"f_x")
-lines!(ax2_F,time_dump,DATA_dump_2.fy,label=L"f_y")
-lines!(ax2_F,time_dump,f_swap2[:,1],label=L"f_{ij}")
-lines!(ax2_F,time_dump,f_swap2[:,2],label=L"f_{ik}")
+#lines!(ax1_F,time_dump,f_func1,linestyle=:dash,label=L"\sum f_{1i}(r)",linewidth=4,alpha=0.5,color=:black)
+lines!(ax1_F,time_dump,f_part1[:,1],label=L"f_{xt}",
+        linewidth=5,
+        color=1,
+        colormap=:viridis,
+        colorrange=(1,10)
+       )
+lines!(ax1_F,time_dump,f_part1[:,2],label=L"f_{xt}",
+       linewidth=5,
+       color=2,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+lines!(ax1_F,time_dump,DATA_dump_1.fx,label=L"f_x",
+       linewidth=2.5,
+       linestyle=:dash,
+       color=10,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+lines!(ax1_F,time_dump,DATA_dump_1.fy,label=L"f_y",
+       linewidth=2.5,
+       linestyle=:dash,
+       color=9,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+
+#lines!(ax2_F,time_dump,f_func2,linestyle=:dash,label=L"\sum f_{2i}(r)",linewidth=4,alpha=0.5,color=:black)
+lines!(ax2_F,time_dump,f_part2[:,1],label=L"f_{xt}",
+       linewidth=5,
+       color=1,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+lines!(ax2_F,time_dump,f_part2[:,2],label=L"f_{xt}",
+       linewidth=5,
+       color=2,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+lines!(ax2_F,time_dump,DATA_dump_2.fx,label=L"f_x",
+       linewidth=2.5,
+       linestyle=:dash,
+       color=10,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+lines!(ax2_F,time_dump,DATA_dump_2.fy,label=L"f_y",
+       linewidth=2.5,
+       linestyle=:dash,
+       color=9,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
 
 
-lines!(ax3_F,time_dump,f_func3,linestyle=:dash,label=L"\sum f_{3i}(r)",linewidth=4,alpha=0.5,color=:black)
-lines!(ax3_F,time_dump,DATA_dump_3.fx,label=L"f_x")
-lines!(ax3_F,time_dump,DATA_dump_3.fy,label=L"f_y")
-lines!(ax3_F,time_dump,f_swap3[:,1],label=L"f_{ij}")
-lines!(ax3_F,time_dump,f_swap3[:,2],label=L"f_{ik}")
+
+#lines!(ax3_F,time_dump,f_func3,linestyle=:dash,label=L"\sum f_{3i}(r)",linewidth=4,alpha=0.5,color=:black)
+lines!(ax3_F,time_dump,f_part3[:,1],label=L"f_{xt}",
+       linewidth=5,
+       color=1,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+lines!(ax3_F,time_dump,f_part3[:,2],label=L"f_{yt}",
+       linewidth=5,
+       color=2,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+lines!(ax3_F,time_dump,DATA_dump_3.fx,label=L"f_x",
+       linewidth=2.5,
+       linestyle=:dash,
+       color=10,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+lines!(ax3_F,time_dump,DATA_dump_3.fy,label=L"f_y",
+       linewidth=2.5,
+       linestyle=:dash,
+       color=9,
+       colormap=:viridis,
+       colorrange=(1,10)
+      )
+
 
 
 Legend(fig_Fcomp[1,2],ax1_F,
