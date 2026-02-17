@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1771367302.77552 "main.aux" "main.bbl" "main" 1771367492.23282 2
-  "main.aux" 1771367492.14864 5876 29ea27bd19438219e0f648a5b736cbb0 "pdflatex"
+["bibtex main"] 1771367302.77552 "main.aux" "main.bbl" "main" 1771367803.34734 2
+  "main.aux" 1771367803.26337 5876 29ea27bd19438219e0f648a5b736cbb0 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1771367487.53731 "main.tex" "main.pdf" "main" 1771367492.23293 0
+["pdflatex"] 1771367798.70438 "main.tex" "main.pdf" "main" 1771367803.34746 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -178,10 +178,10 @@
   "docs/../Figures/tests2/t_0.png" 1771348590.41993 43876 b9e5c5758af9d78df0e66bf9b01d06d2 ""
   "docs/../Figures/tests2/t_2.png" 1771348580.77598 43929 582b0a9d02e267164b49de90d934ccee ""
   "docs/../Figures/tests2/t_4.png" 1771348598.49045 43686 6e4a2031c4f4306017563a533a8b4f23 ""
-  "docs/tests-2.tex" 1771367439.23103 12700 6b83426dab7df202dc3a521aa6fb2bc7 ""
-  "main.aux" 1771367492.14864 5876 29ea27bd19438219e0f648a5b736cbb0 "pdflatex"
+  "docs/tests-2.tex" 1771367797.94305 12789 b7215994d88c7957bc56d680046a4ca4 ""
+  "main.aux" 1771367803.26337 5876 29ea27bd19438219e0f648a5b736cbb0 "pdflatex"
   "main.bbl" 1771367302.81214 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1771367492.14864 1179 45d9fe136d8812b4b68a885e6514cf88 "pdflatex"
+  "main.out" 1771367803.26337 1179 45d9fe136d8812b4b68a885e6514cf88 "pdflatex"
   "main.tex" 1771348089.60498 3130 5e21cbd3415040424505a92b768e9bdb ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
