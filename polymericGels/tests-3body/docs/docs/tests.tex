@@ -83,8 +83,8 @@ En donde \(u = 2\epsilon_{ij}\left( \frac{1}{2}\left(\dfrac{D_p}{r_{ij}}\right)^
 \marginnote{
     \begin{align*}
         \dv{u}{r_{ij}} &= -\frac{\epsilon_{ij}}{r_{ij}}\left(\dfrac{D_p}{r_{ij}}\right)^{4} = -\dfrac{u+2\epsilon_{ij}}{r_{ij}} \\
-        \dv{v}{r_{ij}} &= \exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right) \\
-                  &= v\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)
+        \dv{v}{r_{ij}} &= -\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right) \\
+                  &= -v\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)
     \end{align*}
 }
 Obteniendo la siguiente expresión para la fuerza:
@@ -93,7 +93,7 @@ Obteniendo la siguiente expresión para la fuerza:
     \left[-\frac{\epsilon_{ij}}{r}\left(\dfrac{D_p}{r_{ij}}\right)^{4}\right]
     \left[\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\right]
     \\
-    +
+    -
     \left[2\epsilon_{ij}\left( \frac{1}{2}\left(\dfrac{D_p}{r_{ij}}\right)^{4}-1\right)\right]
     \left[\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]
 \end{multline*}
@@ -105,24 +105,24 @@ Obteniendo la siguiente expresión para la fuerza:
     v
     +
     u
-    \left[v\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right] \\
+    \left[-v\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right] \\
     &=
     -\dfrac{uv+2\epsilon_{ij}v}{r}
-    +
+   - 
     uv\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right) \\
     &=
     -\dfrac{U_{\mathrm{patch}}+2\epsilon_{ij}v}{r_{ij}}
-    +
+    -
     U_{\mathrm{patch}}\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right) \\
     &=
     \left[
     -\dfrac{1+2\epsilon_{ij}v}{r_{ij}}
-    +
+    -
     \left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}\\
     &=
     \left[
     -\dfrac{1}{r_{ij}}+\dfrac{2\epsilon_{ij}}{r_{ij}}\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]
-    +
+    -
     \left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}\\
 \end{align*}
 
@@ -130,13 +130,13 @@ Entonces obtenemos la siguiente función para la fuerza,
 \begin{align*}
     \vec{F}_{\mathrm{patch}ij} = \left[
     \dfrac{1}{r_{ij}}-\dfrac{2\epsilon_{ij}}{r_{ij}}\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]
-    -
+    +
 \left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}(r_{ij})\hat{r}_{ij}\label{eqn:Fpatch} 
 \end{align*}
 En donde \(\hat{r}_{ij}\) es el vector unitario en dirección a la partícula $j$ desde la partícula $i$.
 Para futura notación, se realiza la siguiente simplificación, \(f_{\mathrm{patch}}(r_{ij}) = \left[
     \dfrac{1}{r_{ij}}-\dfrac{2\epsilon_{ij}}{r_{ij}}\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]
-    -
+    + 
 \left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)\right]U_{\mathrm{patch}}(r_{ij})\),
 mientrás que \(\vec{F}_{\mathrm{patch}}(r_{ij}) = f_{\mathrm{patch}}(r_{ij})\hat{r}_{ij}\).
 

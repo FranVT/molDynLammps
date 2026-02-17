@@ -64,7 +64,8 @@ ax1=Axis(fig_Comp[1,1],
              ylabelsize=tl_sz,
              xminorticksvisible=true,
              xminorgridvisible=true,
-             limits=(nothing,nothing,-1.5,1.5)
+             limits=(nothing,nothing,-1.5,1.5),
+             xticks = r_min:0.2:r_max
    )
 ax2=Axis(fig_Comp[2,1],
              title=latexstring("\\mathrm{Magnitude~of~the~forces}"),
@@ -77,7 +78,8 @@ ax2=Axis(fig_Comp[2,1],
              ylabelsize=tl_sz,
              xminorticksvisible=true,
              xminorgridvisible=true,
-             limits=(nothing,nothing,-1,20)
+             limits=(nothing,nothing,-1,20),
+             xticks = r_min:0.2:r_max
    )
 
 # Potentials
@@ -135,4 +137,4 @@ axislegend(ax2,
 
 #axislegend(ax, [sc1, sc2], ["One", "Two"], "Selected Dots", position = :rb,
 #    orientation = :horizontal)
-
+save("fig_Comp.png", fig_Comp, px_per_unit = 300/inch)
