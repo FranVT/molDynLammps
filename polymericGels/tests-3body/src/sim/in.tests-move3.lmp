@@ -28,10 +28,10 @@ region spawn_box block -$L $L -$L $L -$L $L
 create_atoms 2 single 0.0 0.0 0.0
 
 # Patch B
-create_atoms 2 single 0.35 0.65 0.0
+create_atoms 2 single 0.0 0.6 0.0
 
 # Patch B
-create_atoms 2 single 0.35 -0.65 0.0
+create_atoms 2 single 0.0 -0.6 0.0
 
 # Create groups 
 group PA type 1
@@ -97,13 +97,13 @@ timestep ${tstep}
 
 # Mover the second particles 
 fix moveP2 P2 move linear 0.0 -0.1 0.0
-run 4500 
+run 2000 
 
 # Dejar de mover la particula 2
 unfix moveP2
 
 # Mover la tercera partícula
 fix moveP3 P3 move linear  0.0 0.1 0.0
-run 4500
+run 2000
 
 

@@ -84,7 +84,8 @@ function forcePatch(eps,Dp,r)
     if r>=r_c
         comp=0;
     else
-        comp=(1/r - 2*(eps/r)*exp( Dp/(r-r_c) + 2 ) - ( Dp/(r-r_c)^2 ) )*Upatch(eps,Dp,r)
+        #comp=(1/r + 2*(eps/r)*exp( Dp/(r-r_c) + 2 ) + ( Dp/(r-r_c)^2 ) )*Upatch(eps,Dp,r)
+        comp=(4*Dp^4*eps)/(r^5)*exp( (Dp/(r-r_c)) + 2 ) + ((2*Dp*eps)/(r-r_c)^2)*exp( (Dp/(r-r_c)) + 2 )*( (1/2)*(Dp/r)^4 - 1 )
     end
     mag=sqrt(comp^2)
     return (comp,mag) 

@@ -19,7 +19,10 @@ cm = inch / 2.54;
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-13-124253";
+date="2026-02-17-120748";
+#"2026-02-17-111013";
+
+#"2026-02-13-124253";
 #"2026-02-13-152655";
 #
 
@@ -106,7 +109,7 @@ ot_sz=0.35cm;
 
 fig_F=Figure(size = (17cm, 18.75cm));
 ax1_F=Axis(fig_F[1,1],
-             title=latexstring("\\mathrm{Force~components~Particle~1}"),
+             title=latexstring("\\mathrm{Force~Particle~1}"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -118,7 +121,7 @@ ax1_F=Axis(fig_F[1,1],
              xminorgridvisible=true
    )
 ax2_F=Axis(fig_F[2,1],
-             title=latexstring("\\mathrm{Force~components~Particle~2}"),
+             title=latexstring("\\mathrm{Force~Particle~2}"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -130,7 +133,7 @@ ax2_F=Axis(fig_F[2,1],
              xminorgridvisible=true
    )
 ax3_F=Axis(fig_F[3,1],
-             title=latexstring("\\mathrm{Force~components~Particle~3}"),
+             title=latexstring("\\mathrm{Force~Particle~3}"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -155,16 +158,13 @@ f_func2=f_func12 .+ f_func23;
 #f_func13=map(r->ForcePatch_fd(1.0,0.4,r),dist_13);
 f_func3=f_func13 .+ f_func23;
 
-
-
-
 #lines!(ax1_F,time_dump,DATA_dump_1.fx,linestyle=:dot,label=L"f_x")
 #lines!(ax1_F,time_dump,DATA_dump_1.fy,linestyle=:dot,label=L"f_y")
-lines!(ax1_F,time_dump,DATA_dump_1.norma_f,linestyle=:dot,label=L"|f|")
-
 lines!(ax1_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)")
 lines!(ax1_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)")
-lines!(ax1_F,time_dump,f_func1,linestyle=:solid,label=L"\sum f_{1i}(r)")
+lines!(ax1_F,time_dump,f_func1,linestyle=:solid,label=L"\sum f_{1i}(r)",linewidth=4)
+
+lines!(ax1_F,time_dump,DATA_dump_1.norma_f,label=L"|f|",linewidth=1.5,color=:black)
 
 Legend(fig_F[1,2],ax1_F,
       L"\mathrm{Labels}",
@@ -173,30 +173,91 @@ Legend(fig_F[1,2],ax1_F,
 
 #lines!(ax2_F,time_dump,DATA_dump_2.fx,linestyle=:dot,label=L"f_x")
 #lines!(ax2_F,time_dump,DATA_dump_2.fy,linestyle=:dot,label=L"f_y")
-lines!(ax2_F,time_dump,DATA_dump_2.norma_f,linestyle=:dot,label=L"|f|")
 
 lines!(ax2_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)")
 lines!(ax2_F,time_dump,f_func23,linestyle=:solid,label=L"f_{23}(r)")
-lines!(ax2_F,time_dump,f_func2,linestyle=:solid,label=L"\sum f_{2i}(r)")
+lines!(ax2_F,time_dump,f_func2,linestyle=:solid,label=L"\sum f_{2i}(r)",linewidth=4)
+
+lines!(ax2_F,time_dump,DATA_dump_2.norma_f,label=L"|f|",linewidth=1.5,color=:black)
 
 Legend(fig_F[2,2],ax2_F,
       L"\mathrm{Labels}",
      labelsize=0.5cm)
 
-
 #lines!(ax3_F,time_dump,DATA_dump_3.fx,linestyle=:dot,label=L"f_x")
 #lines!(ax3_F,time_dump,DATA_dump_3.fy,linestyle=:dot,label=L"f_y")
-lines!(ax3_F,time_dump,DATA_dump_3.norma_f,linestyle=:dot,label=L"|f|")
+
 
 lines!(ax3_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)")
 lines!(ax3_F,time_dump,f_func23,linestyle=:solid,label=L"f_{23}(r)")
-lines!(ax3_F,time_dump,f_func3,linestyle=:solid,label=L"\sum f_{3i}(r)")
+lines!(ax3_F,time_dump,f_func3,linestyle=:solid,label=L"\sum f_{3i}(r)",linewidth=4)
+
+lines!(ax3_F,time_dump,DATA_dump_3.norma_f,label=L"|f|",linewidth=1.5,color=:black)
 
 Legend(fig_F[3,2],ax3_F,
       L"\mathrm{Labels}",
      labelsize=0.5cm)
 
 save("fig_Force.png", fig_F, px_per_unit = 300/inch)
+
+# Components of the force
+fig_Fcomp=Figure(size = (17cm, 18.75cm));
+ax1_F=Axis(fig_Fcomp[1,1],
+             title=latexstring("\\mathrm{Force~components~Particle~1}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2_F=Axis(fig_Fcomp[2,1],
+             title=latexstring("\\mathrm{Force~components~Particle~2}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax3_F=Axis(fig_Fcomp[3,1],
+             title=latexstring("\\mathrm{Force~components~Particle~3}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+linkyaxes!(ax1_F, ax2_F, ax3_F)
+
+lines!(ax1_F,time_dump,f_func1,linestyle=:dash,label=L"\sum f_{1i}(r)",linewidth=4,alpha=0.5,color=:black)
+lines!(ax1_F,time_dump,DATA_dump_1.fx,label=L"f_x")
+lines!(ax1_F,time_dump,DATA_dump_1.fy,label=L"f_y")
+
+lines!(ax2_F,time_dump,f_func2,linestyle=:dash,label=L"\sum f_{2i}(r)",linewidth=4,alpha=0.5,color=:black)
+lines!(ax2_F,time_dump,DATA_dump_2.fx,label=L"f_x")
+lines!(ax2_F,time_dump,DATA_dump_2.fy,label=L"f_y")
+
+lines!(ax3_F,time_dump,f_func3,linestyle=:dash,label=L"\sum f_{3i}(r)",linewidth=4,alpha=0.5,color=:black)
+lines!(ax3_F,time_dump,DATA_dump_3.fx,label=L"f_x")
+lines!(ax3_F,time_dump,DATA_dump_3.fy,label=L"f_y")
+
+Legend(fig_Fcomp[1:3,2],ax1_F,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+
+save("fig_ForceComp.png", fig_Fcomp, px_per_unit = 300/inch)
+
 
 #=
 """
