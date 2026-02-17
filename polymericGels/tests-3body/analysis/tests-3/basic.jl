@@ -13,18 +13,17 @@ inch = 96;
 pt = 4/3;
 cm = inch / 2.54;
 
-
-
 # Load the functions
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-17-120748";
+date="2026-02-17-121845";
+
+#"2026-02-17-120748";
 #"2026-02-17-111013";
 
 #"2026-02-13-124253";
 #"2026-02-13-152655";
-#
 
 #"2026-02-12-155912";
 #"2026-02-12-154430";
@@ -37,7 +36,7 @@ DIR=DIR[1];
 
 
 # Activate extract info
-act=0;
+act=1;
 
 # Filename with the simulation data
 FILE_NAME="system_assembly.fixf";
@@ -49,7 +48,7 @@ if act == 1
     DATA_fix=DataFrame(data[2]',data[1]);
 
     # Get table
-    tableSwap=getTable3b(DIR,"swapMechTab2_w1.table");
+    tableSwap=getTable3b(DIR,"swapMechTab2new_w1.table");
     swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
 
     # Obtener la evolución de r_ik
@@ -148,23 +147,30 @@ linkyaxes!(ax1_F, ax2_F, ax3_F)
 
 f_func12=map(r->last(forcePatch(1.0,0.4,r)),dist_12);
 f_func13=map(r->last(forcePatch(1.0,0.4,r)),dist_13);
-f_func1=f_func12 .+ f_func13;
 
-#f_func12=map(r->ForcePatch_fd(1.0,0.4,r),dist_12);
 f_func23=map(r->last(forcePatch(1.0,0.4,r)),dist_23);
-f_func2=f_func12 .+ f_func23;
 
-#f_func12=map(r->ForcePatch_fd(1.0,0.4,r),dist_12);
-#f_func13=map(r->ForcePatch_fd(1.0,0.4,r),dist_13);
-f_func3=f_func13 .+ f_func23;
+
+# Evaluate the Swap function
+f_swap1=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),vcat,1:1:nrow(DATA_dump_1));
+f_swap2=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_2));
+f_swap3=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_3));
+
+
+f_func1=f_func12 .+ f_func13 .+ f_swap1[:,3];
+f_func2=f_func12 .+ f_func23 .+ f_swap2[:,3];
+f_func3=f_func13 .+ f_func23 .+ f_swap3[:,3];
+
 
 #lines!(ax1_F,time_dump,DATA_dump_1.fx,linestyle=:dot,label=L"f_x")
 #lines!(ax1_F,time_dump,DATA_dump_1.fy,linestyle=:dot,label=L"f_y")
-lines!(ax1_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)")
-lines!(ax1_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)")
-lines!(ax1_F,time_dump,f_func1,linestyle=:solid,label=L"\sum f_{1i}(r)",linewidth=4)
+lines!(ax1_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)",color=1,colormap=:tab10,colorrange=(1,10))
+lines!(ax1_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)",color=2,colormap=:tab10,colorrange=(1,10))
+lines!(ax1_F,time_dump,f_swap1[:,3],linestyle=:solid,label=L"f_{\mathrm{swap}}(r)",color=3,colormap=:tab10,colorrange=(1,10))
 
-lines!(ax1_F,time_dump,DATA_dump_1.norma_f,label=L"|f|",linewidth=1.5,color=:black)
+lines!(ax1_F,time_dump,f_func1,linestyle=:solid,label=L"\sum f_{1i}(r)",color=4,colormap=:tab10,colorrange=(1,10),linewidth=4)
+
+lines!(ax1_F,time_dump,DATA_dump_1.norma_f,label=L"|f_{\mathrm{dump}}|",linewidth=1.5,color=:black)
 
 Legend(fig_F[1,2],ax1_F,
       L"\mathrm{Labels}",
@@ -243,18 +249,34 @@ linkyaxes!(ax1_F, ax2_F, ax3_F)
 lines!(ax1_F,time_dump,f_func1,linestyle=:dash,label=L"\sum f_{1i}(r)",linewidth=4,alpha=0.5,color=:black)
 lines!(ax1_F,time_dump,DATA_dump_1.fx,label=L"f_x")
 lines!(ax1_F,time_dump,DATA_dump_1.fy,label=L"f_y")
+lines!(ax1_F,time_dump,f_swap1[:,1],label=L"f_{ij}")
+lines!(ax1_F,time_dump,f_swap1[:,2],label=L"f_{ik}")
 
 lines!(ax2_F,time_dump,f_func2,linestyle=:dash,label=L"\sum f_{2i}(r)",linewidth=4,alpha=0.5,color=:black)
 lines!(ax2_F,time_dump,DATA_dump_2.fx,label=L"f_x")
 lines!(ax2_F,time_dump,DATA_dump_2.fy,label=L"f_y")
+lines!(ax2_F,time_dump,f_swap2[:,1],label=L"f_{ij}")
+lines!(ax2_F,time_dump,f_swap2[:,2],label=L"f_{ik}")
+
 
 lines!(ax3_F,time_dump,f_func3,linestyle=:dash,label=L"\sum f_{3i}(r)",linewidth=4,alpha=0.5,color=:black)
 lines!(ax3_F,time_dump,DATA_dump_3.fx,label=L"f_x")
 lines!(ax3_F,time_dump,DATA_dump_3.fy,label=L"f_y")
+lines!(ax3_F,time_dump,f_swap3[:,1],label=L"f_{ij}")
+lines!(ax3_F,time_dump,f_swap3[:,2],label=L"f_{ik}")
 
-Legend(fig_Fcomp[1:3,2],ax1_F,
+
+Legend(fig_Fcomp[1,2],ax1_F,
       L"\mathrm{Labels}",
      labelsize=0.5cm)
+Legend(fig_Fcomp[2,2],ax2_F,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+Legend(fig_Fcomp[3,2],ax3_F,
+      L"\mathrm{Labels}",
+     labelsize=0.5cm)
+
+
 
 save("fig_ForceComp.png", fig_Fcomp, px_per_unit = 300/inch)
 

@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1771351597.51663 "main.aux" "main.bbl" "main" 1771351597.55742 2
-  "main.aux" 1771351597.43319 3514 092c32a6a3cb626a60ef4ac6412ccb4c "pdflatex"
+["bibtex main"] 1771352100.50283 "main.aux" "main.bbl" "main" 1771352100.54448 2
+  "main.aux" 1771352100.41815 5154 35df1e0f1f433eff0e36142fd7f32739 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1771351595.03546 "main.tex" "main.pdf" "main" 1771351597.55757 0
+["pdflatex"] 1771352096.76114 "main.tex" "main.pdf" "main" 1771352100.54464 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -167,14 +167,18 @@
   "docs/../Figures/2026-02-17-111013/fig_ForceComp.png" 1771351410.64059 237679 05fdae12e17042495de636d66f30597b ""
   "docs/../Figures/2026-02-17-111013/fig_Ufix-func.png" 1771351413.09071 156914 2810acbe015fa7fe176a9af508437b67 ""
   "docs/../Figures/2026-02-17-111013/fig_swapPotTable.png" 1771351411.29062 205812 4452470906c3b163cabc07631af6d284 ""
+  "docs/../Figures/2026-02-17-120748/fig_Force.png" 1771351833.40491 299222 c862cdfea9b5b93526496517d94aa18f ""
+  "docs/../Figures/2026-02-17-120748/fig_ForceComp.png" 1771351834.80164 237679 05fdae12e17042495de636d66f30597b ""
+  "docs/../Figures/2026-02-17-120748/fig_Ufix-func.png" 1771351837.94513 170449 bce278a32cc4c454357448ca18c58e2b ""
+  "docs/../Figures/2026-02-17-120748/fig_swapPotTable.png" 1771351835.56168 238790 26f7f10a8c8ee2eaacbf2cc723271c21 ""
   "docs/../Figures/fig_Comp.png" 1771342285.4542 414032 dd2672c8664eb258512d7bfb19feba70 ""
   "docs/../Figures/tests2/t_0.png" 1771348590.41993 43876 b9e5c5758af9d78df0e66bf9b01d06d2 ""
   "docs/../Figures/tests2/t_2.png" 1771348580.77598 43929 582b0a9d02e267164b49de90d934ccee ""
   "docs/../Figures/tests2/t_4.png" 1771348598.49045 43686 6e4a2031c4f4306017563a533a8b4f23 ""
-  "docs/tests-2.tex" 1771351593.26299 10272 b05198eef8f5b9aa7b1de3e3deec87d1 ""
-  "main.aux" 1771351597.43319 3514 092c32a6a3cb626a60ef4ac6412ccb4c "pdflatex"
-  "main.bbl" 1771351597.54987 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1771351597.43319 991 c4e651d08dd47fd0d16c863b78c21fca "pdflatex"
+  "docs/tests-2.tex" 1771352096.17128 11436 4d8e19992e3c2d9209bf367e0afdfbef ""
+  "main.aux" 1771352100.41815 5154 35df1e0f1f433eff0e36142fd7f32739 "pdflatex"
+  "main.bbl" 1771352100.54149 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1771352100.41815 1094 d0920e0a52eaa81e274f856725ce5842 "pdflatex"
   "main.tex" 1771348089.60498 3130 5e21cbd3415040424505a92b768e9bdb ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""

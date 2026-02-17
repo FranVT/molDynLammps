@@ -30,7 +30,7 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     Compute the scalars for the proyection of the forces
 """
     th = deg2rad(th);
-    force=forceSwap(w,eps_jk,eps_ij,eps_ik,Dp,r_ij,r_ik);
+    force=forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
     f_ij=force[1];
     f_ik=force[2];
     #r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
@@ -44,7 +44,7 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     f_k1=-f_i2; 
     f_k2=-f_j2; 
 
-    eng=SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) 
+    eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) 
     #+ SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
     #eng=round(eng/3,digits=2^7)
 
@@ -69,8 +69,8 @@ thi = 180/(4*N)
 thf = 180 - thi;
 w=1;
 
-filename1 = string("swapMechTab1_w",w,".table");
-filename2 = string("swapMechTab2_w",w,".table");
+filename1 = string("swapMechTab1new_w",w,".table");
+filename2 = string("swapMechTab2new_w",w,".table");
 
 # Create the domains of evaluation according filename nessetities
 th_dom = range(thi,thf,2*N);
