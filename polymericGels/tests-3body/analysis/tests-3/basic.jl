@@ -17,9 +17,10 @@ cm = inch / 2.54;
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-17-121845";
+date="2026-02-17-120748";
+#"2026-02-17-121845";
 
-#"2026-02-17-120748";
+#
 #"2026-02-17-111013";
 
 #"2026-02-13-124253";
@@ -48,7 +49,7 @@ if act == 1
     DATA_fix=DataFrame(data[2]',data[1]);
 
     # Get table
-    tableSwap=getTable3b(DIR,"swapMechTab2new_w1.table");
+    tableSwap=getTable3b(DIR,"swapMechTab2_w1.table");
     swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
 
     # Obtener la evolución de r_ik
@@ -113,12 +114,9 @@ DATA_dump_1[!, :norma_f] = sqrt.(DATA_dump_1.fx.^2 .+ DATA_dump_1.fy.^2 .+ DATA_
 DATA_dump_2[!, :norma_f] = sqrt.(DATA_dump_2.fx.^2 .+ DATA_dump_2.fy.^2 .+ DATA_dump_2.fz.^2)
 DATA_dump_3[!, :norma_f] = sqrt.(DATA_dump_3.fx.^2 .+ DATA_dump_3.fy.^2 .+ DATA_dump_3.fz.^2)
 
+F_systemL=DATA_dump_1.norma_f .+ DATA_dump_2.norma_f .+DATA_dump_3.norma_f;
 
-
-
-"""
-    Plot the components
-"""
+# Evaluate the forces
 
 # Evaluation and projection of the forces from the theorical definition
 f_patch12=map(r->last(forcePatch(1.0,0.4,r)),dist_12);
@@ -144,16 +142,27 @@ f_part1=f_patch12xy .+ f_patch13xy .+ f_swap1xy;
 f_part2=-f_patch12xy .+ f_patch23xy .+ f_swap2xy;
 f_part3=-f_patch13xy .- f_patch23xy .+ f_swap3xy;
 
+f_part1N=sqrt.(reduce(vcat,sum(f_part1.^2,dims=2)));
+f_part2N=sqrt.(reduce(vcat,sum(f_part2.^2,dims=2)));
+f_part3N=sqrt.(reduce(vcat,sum(f_part3.^2,dims=2)));
+
+F_systemA=f_part1N .+ f_part2N .+ f_part3N;
+
+"""
+    Plot the components
+"""
+
 
 # Graphics
 
 tl_sz=0.55cm;
 ot_sz=0.35cm;
 
-#=
 fig_F=Figure(size = (17cm, 18.75cm));
+
+# LAMMPS
 ax1_F=Axis(fig_F[1,1],
-             title=latexstring("\\mathrm{Force~Particle~1}"),
+             title=latexstring("\\mathrm{LAMMPS}~f_x"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -165,7 +174,7 @@ ax1_F=Axis(fig_F[1,1],
              xminorgridvisible=true
    )
 ax2_F=Axis(fig_F[2,1],
-             title=latexstring("\\mathrm{Force~Particle~2}"),
+             title=latexstring("f_y"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -177,7 +186,7 @@ ax2_F=Axis(fig_F[2,1],
              xminorgridvisible=true
    )
 ax3_F=Axis(fig_F[3,1],
-             title=latexstring("\\mathrm{Force~Particle~3}"),
+             title=latexstring("|f|"),
              xlabel=L"t~[\tau]",
              ylabel=L"F~[N^*]",
              titlesize=tl_sz,
@@ -188,8 +197,187 @@ ax3_F=Axis(fig_F[3,1],
              xminorticksvisible=true,
              xminorgridvisible=true
    )
-linkyaxes!(ax1_F, ax2_F, ax3_F)
+ax4_F=Axis(fig_F[4,1],
+           title=latexstring("\\sum|f_{i}|"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
 
+
+
+# ANALITICAL 
+ax1_Fa=Axis(fig_F[1,2],
+             title=latexstring("\\mathrm{Analytical}~f_x"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2_Fa=Axis(fig_F[2,2],
+             title=latexstring("f_y"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax3_Fa=Axis(fig_F[3,2],
+             title=latexstring("|f|"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax4_Fa=Axis(fig_F[4,2],
+           title=latexstring("\\sum|f_{i}|"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+
+linkyaxes!(ax1_F, ax2_F, ax3_F, ax1_Fa, ax2_Fa, ax3_Fa)
+linkyaxes!(ax4_F, ax4_Fa)
+
+lines!(ax1_F,time_dump,DATA_dump_1.fx,
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax1_F,time_dump,DATA_dump_2.fx,
+       color=2,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+lines!(ax1_F,time_dump,DATA_dump_3.fx,
+       color=3,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+
+# y component
+lines!(ax2_F,time_dump,DATA_dump_1.fy,
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax2_F,time_dump,DATA_dump_2.fy,
+       color=2,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+lines!(ax2_F,time_dump,DATA_dump_3.fy,
+       color=3,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+
+# Norm 
+lines!(ax3_F,time_dump,DATA_dump_1.norma_f,
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax3_F,time_dump,DATA_dump_2.norma_f,
+       color=2,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+lines!(ax3_F,time_dump,DATA_dump_3.norma_f,
+       color=3,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+
+# Norm 
+lines!(ax4_F,time_dump,F_systemL,
+        color=:black
+       )
+
+# ANALITICAL
+lines!(ax1_Fa,time_dump,f_part1[:,1],
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax1_Fa,time_dump,f_part2[:,1],
+       color=2,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+lines!(ax1_Fa,time_dump,f_part3[:,1],
+       color=3,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+
+# y component
+lines!(ax2_Fa,time_dump,f_part1[:,2],
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax2_Fa,time_dump,f_part2[:,2],
+       color=2,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+lines!(ax2_Fa,time_dump,f_part3[:,2],
+       color=3,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+
+# Norm
+lines!(ax3_Fa,time_dump,f_part1N,
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax3_Fa,time_dump,f_part2N,
+       color=2,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+lines!(ax3_Fa,time_dump,f_part3N,
+       color=3,
+       colormap=:tab10,
+       colorrange=(1,10)
+      )
+
+# Force system
+lines!(ax4_Fa,time_dump,F_systemA,
+        color=:black
+       )
+
+#=
 
 #lines!(ax1_F,time_dump,DATA_dump_1.fx,linestyle=:dot,label=L"f_x")
 #lines!(ax1_F,time_dump,DATA_dump_1.fy,linestyle=:dot,label=L"f_y")
