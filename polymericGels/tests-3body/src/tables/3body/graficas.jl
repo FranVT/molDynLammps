@@ -138,3 +138,76 @@ axislegend(ax2,
 #axislegend(ax, [sc1, sc2], ["One", "Two"], "Selected Dots", position = :rb,
 #    orientation = :horizontal)
 save("fig_Comp.png", fig_Comp, px_per_unit = 300/inch)
+
+"""
+    Components of the swap potencial
+"""
+
+fig_comp=Figure(size = (18.75cm, 15cm));
+ax1=Axis(fig_comp[1,1],
+             title=latexstring("\\hat{r}_{ij}"),
+             xlabel=L"r_{ik}~[r/Dp]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true,
+             limits=(nothing,nothing,-20,20),
+             xticks = r_min:0.2:r_max
+   )
+ax2=Axis(fig_comp[2,1],
+             title=latexstring("\\hat{r}_{ik}"),
+             xlabel=L"r_{ik}~[r/Dp]",
+             ylabel=L"|\vec{F}|~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true,
+             limits=(nothing,nothing,-20,20),
+             xticks = r_min:0.2:r_max
+   )
+
+for (idx, g_eval) in enumerate(Fswap_eval)
+    r_val = r_ij[r_ijVal[idx]]
+    # Normalizar el valor de r_ij al intervalo [0,1] para el mapeo de color
+    color_norm = (r_val - r_min) / (r_max - r_min)
+    g_ij=g_eval[:,1]
+    g_ik=g_eval[:,2]
+    g_mag=g_eval[:,3]
+
+    lines!(ax1, r_ik, g_ij,
+           color = color_norm,
+           colormap = cmap,
+           colorrange = (0,1)#, label=L"\mathrm{Swap}"
+          )
+end
+
+for (idx, g_eval) in enumerate(Fswap_eval)
+    r_val = r_ij[r_ijVal[idx]]
+    # Normalizar el valor de r_ij al intervalo [0,1] para el mapeo de color
+    color_norm = (r_val - r_min) / (r_max - r_min)
+    g_ij=g_eval[:,1]
+    g_ik=g_eval[:,2]
+    g_mag=g_eval[:,3]
+
+    lines!(ax2, r_ik, g_ik,
+           color = color_norm,
+           colormap = cmap,
+           colorrange = (0,1)#, label=L"\mathrm{Swap}"
+          )
+end
+
+Colorbar(fig_comp[1:2,2],
+         limits = (r_min, r_max),
+         colormap = cmap,
+         label = L"r_{ij}")   # etiqueta de la barra
+
+save("fig_comp.png", fig_comp, px_per_unit = 300/inch)
+
+

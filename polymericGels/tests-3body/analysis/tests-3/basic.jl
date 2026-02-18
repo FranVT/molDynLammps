@@ -17,10 +17,10 @@ cm = inch / 2.54;
 include("functions.jl")
 
 # Selection of an specific simulation
-date="2026-02-17-120748";
+date="2026-02-17-121845";
 #"2026-02-17-121845";
 
-#
+#"2026-02-17-120748";
 #"2026-02-17-111013";
 
 #"2026-02-13-124253";
@@ -49,7 +49,7 @@ if act == 1
     DATA_fix=DataFrame(data[2]',data[1]);
 
     # Get table
-    tableSwap=getTable3b(DIR,"swapMechTab2_w1.table");
+    tableSwap=getTable3b(DIR,"swapMechTab2new_w1.table");
     swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
 
     # Obtener la evolución de r_ik
@@ -148,16 +148,139 @@ f_part3N=sqrt.(reduce(vcat,sum(f_part3.^2,dims=2)));
 
 F_systemA=f_part1N .+ f_part2N .+ f_part3N;
 
-"""
-    Plot the components
-"""
-
-
 # Graphics
 
 tl_sz=0.55cm;
 ot_sz=0.35cm;
 
+"""
+    Full components of the swap force analitical
+"""
+
+fig_Fswap=Figure(size=(18.75cm,18.75cm));
+ax1_F=Axis(fig_Fswap[1,1],
+             title=latexstring("U_{\\mathrm{swap}}\\hat{r}_{ij}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2_F=Axis(fig_Fswap[2,1],
+             title=latexstring("U_{\\mathrm{swap}}\\hat{r}_{ik}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+ax1_Fxy=Axis(fig_Fswap[1,2],
+             title=latexstring("U_{\\mathrm{swap}}\\hat{x}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2_Fxy=Axis(fig_Fswap[2,2],
+             title=latexstring("U_{\\mathrm{swap}}\\hat{y}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+linkyaxes!(ax1_F, ax2_F, ax1_Fxy, ax2_Fxy) #, ax3_F, ax1_Fa, ax2_Fa, ax3_Fa)
+
+lines!(ax1_F,time_dump,f_swap1[:,1],
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax1_F,time_dump,f_swap2[:,1],
+        color=2,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax1_F,time_dump,f_swap3[:,1],
+        color=3,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+
+
+lines!(ax2_F,time_dump,f_swap1[:,2],
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax2_F,time_dump,f_swap2[:,2],
+        color=2,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax2_F,time_dump,f_swap3[:,2],
+        color=3,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+
+
+lines!(ax1_Fxy,time_dump,f_swap1xy[:,1],
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax1_Fxy,time_dump,f_swap2xy[:,1],
+        color=2,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax1_Fxy,time_dump,f_swap3xy[:,1],
+        color=3,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+
+lines!(ax2_Fxy,time_dump,f_swap1xy[:,2],
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax2_Fxy,time_dump,f_swap2xy[:,2],
+        color=2,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax2_Fxy,time_dump,f_swap3xy[:,2],
+        color=3,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+
+save("fig_ForceSwapcomp.png", fig_Fswap, px_per_unit = 300/inch)
+
+"""
+    Plot the components
+"""
 fig_F=Figure(size = (17cm, 18.75cm));
 
 # LAMMPS
@@ -376,53 +499,6 @@ lines!(ax3_Fa,time_dump,f_part3N,
 lines!(ax4_Fa,time_dump,F_systemA,
         color=:black
        )
-
-#=
-
-#lines!(ax1_F,time_dump,DATA_dump_1.fx,linestyle=:dot,label=L"f_x")
-#lines!(ax1_F,time_dump,DATA_dump_1.fy,linestyle=:dot,label=L"f_y")
-lines!(ax1_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)",color=1,colormap=:tab10,colorrange=(1,10))
-lines!(ax1_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)",color=2,colormap=:tab10,colorrange=(1,10))
-lines!(ax1_F,time_dump,f_swap1[:,3],linestyle=:solid,label=L"f_{\mathrm{swap}}(r)",color=3,colormap=:tab10,colorrange=(1,10))
-
-lines!(ax1_F,time_dump,f_func1,linestyle=:solid,label=L"\sum f_{1i}(r)",color=4,colormap=:tab10,colorrange=(1,10),linewidth=4)
-
-lines!(ax1_F,time_dump,DATA_dump_1.norma_f,label=L"|f_{\mathrm{dump}}|",linewidth=1.5,color=:black)
-
-Legend(fig_F[1,2],ax1_F,
-      L"\mathrm{Labels}",
-     labelsize=0.5cm)
-
-
-#lines!(ax2_F,time_dump,DATA_dump_2.fx,linestyle=:dot,label=L"f_x")
-#lines!(ax2_F,time_dump,DATA_dump_2.fy,linestyle=:dot,label=L"f_y")
-
-lines!(ax2_F,time_dump,f_func12,linestyle=:solid,label=L"f_{12}(r)")
-lines!(ax2_F,time_dump,f_func23,linestyle=:solid,label=L"f_{23}(r)")
-lines!(ax2_F,time_dump,f_func2,linestyle=:solid,label=L"\sum f_{2i}(r)",linewidth=4)
-
-lines!(ax2_F,time_dump,DATA_dump_2.norma_f,label=L"|f|",linewidth=1.5,color=:black)
-
-Legend(fig_F[2,2],ax2_F,
-      L"\mathrm{Labels}",
-     labelsize=0.5cm)
-
-#lines!(ax3_F,time_dump,DATA_dump_3.fx,linestyle=:dot,label=L"f_x")
-#lines!(ax3_F,time_dump,DATA_dump_3.fy,linestyle=:dot,label=L"f_y")
-
-
-lines!(ax3_F,time_dump,f_func13,linestyle=:solid,label=L"f_{13}(r)")
-lines!(ax3_F,time_dump,f_func23,linestyle=:solid,label=L"f_{23}(r)")
-lines!(ax3_F,time_dump,f_func3,linestyle=:solid,label=L"\sum f_{3i}(r)",linewidth=4)
-
-lines!(ax3_F,time_dump,DATA_dump_3.norma_f,label=L"|f|",linewidth=1.5,color=:black)
-
-Legend(fig_F[3,2],ax3_F,
-      L"\mathrm{Labels}",
-     labelsize=0.5cm)
-
-save("fig_Force.png", fig_F, px_per_unit = 300/inch)
-=#
 
 # Components of the force
 fig_Fcomp=Figure(size = (17cm, 18.75cm));

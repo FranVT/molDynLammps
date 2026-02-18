@@ -258,14 +258,14 @@ En donde \(\hat{r}_{ij}\) es un vector unitario en dirección hacia la partícul
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-120748/fig_Force.png}
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-120748/fig_ForceComp.png}
     \caption{Fuerza en cada partícula.
     }\label{fig:Ufix-func1}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-120748/fig_ForceComp.png}
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-120748/fig_FComp.png}
     \caption{Fuerza en cada partícula.
     }\label{fig:Ufix-func1}
 \end{figure}
@@ -307,8 +307,78 @@ En donde \(\hat{r}_{ij}\) es un vector unitario en dirección hacia la partícul
     }\label{fig:Ufix-func1}
 \end{figure}
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-121845/fig_FComp.png}
+    \caption{Fuerza en cada partícula.
+    }\label{fig:Ufix-func1}
+\end{figure}
+
+
 
 No entiendo la forma en cómo LAMMPS calcula la fuerza para el potencial de tres cuerpos.
+
+\newpage
+
+\section{Acerca de los resultados de los potenciales de 3 cuerpos.}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-120748/fig_FComp.png}
+    \caption{Fuerza en cada partícula.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verda: partícula verde.
+    }\label{fig:Force3bodyNoforce}
+\end{figure}
+
+\hfill
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-121845/fig_FComp.png}
+    \caption{Fuerza en cada partícula.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verda: partícula verde.
+    }\label{fig:Force3bodyWithforce}
+\end{figure}
+
+\newpage
+
+En la figura~\ref{fig:Force3bodyWithforce} se muestrá cómo en LAMMPS se procurá que se tengan interacciones recíprocas.
+En el panel del segundo renglón, se observa cómo el segundo \num{2.5} empieza la interacción recíproca entre la partícula 1 y 3.
+Mientrás que en el mismo renglón, pero segunda columna, se observa que solamente aparece una fuerza actuando en la tercera partícula, pero no aparece en la primera partícula.
+
+Mi intución es que hace nunca he considerado la sumatoria que aparece en el definición del potencial de ters cuerpos~\eqref{eqn:Uswap}.
+Está intución o inferencia, la fortalecí al graficar las componentes de la fuerza analítica que proviene del potencial de tres cuerpos.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-120748/fig_ForceSwapcomp.png}
+    \caption{Fuerza en cada partícula.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verda: partícula verde.
+    }\label{fig:ForceSwapComponents1}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-17-121845/fig_ForceSwapcomp.png}
+    \caption{Fuerza en cada partícula.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verda: partícula verde.
+    }\label{fig:ForceSwapComponentsNew}
+\end{figure}
+
+\newpage
+
+Con esas imágenes, podemos observar que solamente la partícula 1 experimenta una fuerza.
+Ninguna de las otras partículas experimenta una fuerza.
+Se esperaría que la partícula 3 experimentará una fuerza debido a la interacción con la partícula 1.
+La intución es que al considerar la sumatoria, está fuerza también aparecería en la partícula 3.
 
 
 \end{document}
