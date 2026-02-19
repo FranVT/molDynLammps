@@ -380,5 +380,42 @@ Ninguna de las otras partículas experimenta una fuerza.
 Se esperaría que la partícula 3 experimentará una fuerza debido a la interacción con la partícula 1.
 La intución es que al considerar la sumatoria, está fuerza también aparecería en la partícula 3.
 
+\newpage
+
+\section{Fuerza por el potencial de 3 cuerpos.}
+
+Aquí se iniciará el análisis de los efectos de la sumatoria que aparece en el potencial swap,
+\begin{gather*}
+    U_{\mathrm{swap}}(r_{ij},r_{ik})=w\sum_{ijk}\epsilon_{ij}U_3(r_{ij})U_3(r_{ik}).
+\end{gather*}
+Considerando que la sumatoria considera todos los tripletes de partículas enlazadas, es decir, partícula $i$ enlazada con $k$ y $j$, para el caso específico de está simulación, tenemos que,
+partícula 1 enlazada con partícula 2 y 3.
+Sustituyendo los índices:
+\begin{gather*}
+    U_{\mathrm{swap}}(r_{1,2},r_{1,3})=w\sum_{1,2,3}\epsilon_{2,3}U_3(r_{1,2})U_3(r_{1,3}).
+\end{gather*}
+No entiendo que hace la sumatoria.
+
+Leyendo el artículo de Sciortino, se dice que \emph{The basic idea of the method consists in the addition to the system potential energy of a repulsive three-body potential \(V_{\mathrm{threebody}}\) defined as\ldots.}
+Entonces, lo que hace la sumatoria, es considerar la energía potencial de \underlines{todo el sistema}.
+Entonces,
+\begin{gather*}
+    U_{\mathrm{swap-sys}}=w\left[U_{\mathrm{swap}}(r_{1,2},r_{1,3}) + U_{\mathrm{swap}}(r_{2,1},r_{2,3}) + U_{\mathrm{swap}}(r_{3,1},r_{3,2})\right].
+\end{gather*}
+
+Tomando en cuenta que la sumatoria es para obtener la energía del sistema y no de cada partícula, se hará la misma interpretación de la sumatoria que aparece en la fuerza debido a este potencial.
+Eso índica lo siguiente,
+\begin{align*}
+    \vec{F}_{\mathrm{swap}-1} &= w\epsilon_{2,3}\left[
+            U_3(r_{1,3})f_3(r_{1,2})\hat{r}_{1,2} + U_3(r_{1,2})f_3(r_{1,3})\hat{r}_{1,3}
+    \right] \\
+    \vec{F}_{\mathrm{swap}-2} &= w\epsilon_{1,3}\left[
+            U_3(r_{2,3})f_3(r_{2,1})\hat{r}_{2,1} + U_3(r_{2,1})f_3(r_{2,3})\hat{r}_{2,3}
+    \right] \\
+    \vec{F}_{\mathrm{swap}-3} &= w\epsilon_{1,2}\left[
+            U_3(r_{3,2})f_3(r_{3,1})\hat{r}_{3,1} + U_3(r_{3,1})f_3(r_{3,2})\hat{r}_{3,2}
+    \right]
+\end{align*}
+
 
 \end{document}
