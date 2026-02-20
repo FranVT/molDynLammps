@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1771521624.5226 "main.aux" "main.bbl" "main" 1771525748.25162 2
-  "main.aux" 1771525748.16033 7975 c3353a6210f6a4f75635ed248f1898be "pdflatex"
+["bibtex main"] 1771606859.13223 "main.aux" "main.bbl" "main" 1771607873.55256 2
+  "main.aux" 1771607873.43017 8098 ca78007b973cf9f70736f098d926f6c4 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1771525741.24602 "main.tex" "main.pdf" "main" 1771525748.25174 2
+["pdflatex"] 1771607864.34295 "main.tex" "main.pdf" "main" 1771607873.55271 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1767555874 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
@@ -182,11 +182,11 @@
   "docs/../Figures/tests2/t_0.png" 1771521126.79338 43876 b9e5c5758af9d78df0e66bf9b01d06d2 ""
   "docs/../Figures/tests2/t_2.png" 1771521126.79441 43929 582b0a9d02e267164b49de90d934ccee ""
   "docs/../Figures/tests2/t_4.png" 1771521126.79441 43686 6e4a2031c4f4306017563a533a8b4f23 ""
-  "docs/tests-2.tex" 1771525739.88831 17483 ca2f823ba0bc7c4ec051ed3f044563b9 ""
-  "main.aux" 1771525748.16033 7975 c3353a6210f6a4f75635ed248f1898be "pdflatex"
-  "main.bbl" 1771521624.59424 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1771525748.16151 1784 164e285d7d1c00e7f5bd6ca1f2740d93 "pdflatex"
-  "main.tex" 1771521126.80138 3130 5e21cbd3415040424505a92b768e9bdb ""
+  "docs/tests-2.tex" 1771607864.26318 17703 bfab599f5828a0b5f3d011aaaa6fffe2 ""
+  "main.aux" 1771607873.43017 8098 ca78007b973cf9f70736f098d926f6c4 "pdflatex"
+  "main.bbl" 1771606859.24734 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1771607873.43117 1784 164e285d7d1c00e7f5bd6ca1f2740d93 "pdflatex"
+  "main.tex" 1771525897.38595 3130 5e21cbd3415040424505a92b768e9bdb ""
   "tufte-common.def" 1771103721.38987 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1771103721.39007 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)

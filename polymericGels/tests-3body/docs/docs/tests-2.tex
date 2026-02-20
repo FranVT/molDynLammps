@@ -80,7 +80,7 @@ Observando que todos los potenciales solamenten tienen dependencia radial, el gr
 En donde \(u = 2\epsilon_{ij}\left( \frac{1}{2}\left(\dfrac{D_p}{r_{ij}}\right)^{4}-1\right)\) y \( v= \exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\).
 \marginnote{
     \begin{align*}
-        \dv{u}{r_{ij}} &= -\frac{\epsilon_{ij}}{r_{ij}}\left(\dfrac{D_p}{r_{ij}}\right)^{4} \\ %= -\dfrac{u+2\epsilon_{ij}}{r_{ij}}
+        \dv{u}{r_{ij}} &= -\frac{4\epsilon_{ij}}{r_{ij}}\left(\dfrac{D_p}{r_{ij}}\right)^{4} \\ %= -\dfrac{u+2\epsilon_{ij}}{r_{ij}}
         \dv{v}{r_{ij}} &= -\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right) %\\
                   %&= -v\left(\dfrac{D_{p}}{\qty(r_{ij}-r_{c})^{2}}\right)
     \end{align*}
@@ -88,7 +88,7 @@ En donde \(u = 2\epsilon_{ij}\left( \frac{1}{2}\left(\dfrac{D_p}{r_{ij}}\right)^
 Obteniendo la siguiente expresión para la fuerza:
 \begin{multline*}
     \pdv{U_{\mathrm{patch}}}{r_{ij}} = 
-    \left[-\frac{\epsilon_{ij}}{r}\left(\dfrac{D_p}{r_{ij}}\right)^{4}\right]
+    \left[-\frac{4\epsilon_{ij}}{r_{ij}}\left(\dfrac{D_p}{r_{ij}}\right)^{4}\right]
     \left[\exp\left[\dfrac{D_{p}}{r_{ij}-r_{c}}+2\right]\right]
     \\
     -
@@ -397,7 +397,7 @@ Sustituyendo los índices:
 No entiendo que hace la sumatoria.
 
 Leyendo el artículo de Sciortino, se dice que \emph{The basic idea of the method consists in the addition to the system potential energy of a repulsive three-body potential \(V_{\mathrm{threebody}}\) defined as\ldots.}
-Entonces, lo que hace la sumatoria, es considerar la energía potencial de \underlines{todo el sistema}.
+Entonces, lo que hace la sumatoria, es considerar la energía potencial de \underline{todo el sistema}.
 Entonces,
 \begin{gather*}
     U_{\mathrm{swap-sys}}=w\left[U_{\mathrm{swap}}(r_{1,2},r_{1,3}) + U_{\mathrm{swap}}(r_{2,1},r_{2,3}) + U_{\mathrm{swap}}(r_{3,1},r_{3,2})\right].
@@ -416,6 +416,10 @@ Eso índica lo siguiente,
             U_3(r_{3,2})f_3(r_{3,1})\hat{r}_{3,1} + U_3(r_{3,1})f_3(r_{3,2})\hat{r}_{3,2}
     \right]
 \end{align*}
+
+\paragraph{Analizar las fuerzas cuando $t>2$.}
+Cuando \(t=2\) la distancia \(r_{1,2}=0.4\).
+Esto indica que \(U_{\mathrm{patch}}(r_{1,2}) = -1\rightarrow U_3(r_{1,2}) =1\rightarrow f_{\mathrm{patch}}(r_{1,2})=0\)
 
 
 \end{document}

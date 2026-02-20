@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.9)  19 FEB 2026 12:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.9)  20 FEB 2026 11:17
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -972,14 +972,10 @@ Overfull \hbox (8.98532pt too wide) in paragraph at lines 390--394
 \T1/pplj/m/n/10 Considerando que la suma-to-ria con-sid-era to-dos los tripletes de partícu-
  []
 
-./docs/tests-2.tex:400: Undefined control sequence.
-l.400 ...erar la energÃ­a potencial de \underlines
-                                                  {todo el sistema}.
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
+
+Overfull \hbox (3.24626pt too wide) in paragraph at lines 421--423
+\OT1/pplx/m/n/10 0.4$\T1/pplj/m/n/10 . Esto in-dica que $\OML/zplm/m/it/10 U[]\OT1/zplm/m/n/10 (\OML/zplm/m/it/10 r[]\OT1/zplm/m/n/10 ) = \OMS/zplm/m/n/10 ^^@\OT1/pplx/m/n/10 1 \OMS/zplm/m/n/10 ! \OML/zplm/m/it/10 U[]\OT1/zplm/m/n/10 (\OML/zplm/m/it/10 r[]\OT1/zplm/m/n/10 ) = \OT1/pplx/m/n/10 1 \OMS/zplm/m/n/10 ! \OML/zplm/m/it/10 f[]\OT1/zplm/m/n/10 (\OML/zplm/m/it/10 r[]\OT1/zplm/m/n/10 ) =
+ []
 
 )
 
@@ -1002,18 +998,18 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 164E285D7D1C00E7F5BD6CA1F2740D93;1784.
  ) 
 Here is how much of TeX's memory you used:
- 21028 strings out of 475068
- 387926 string characters out of 5764375
+ 21029 strings out of 475068
+ 387939 string characters out of 5764375
  790407 words of memory out of 5000000
  43606 multiletter control sequences out of 15000+600000
  621084 words of font info for 138 fonts, out of 8000000 for 9000
  62 hyphenation exceptions out of 8191
  97i,17n,96p,541b,1244s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmr.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (13 pages, 3729722 bytes).
+Output written on main.pdf (13 pages, 3730097 bytes).
 PDF statistics:
- 188 PDF objects out of 1000 (max. 8388607)
- 130 compressed objects within 2 object streams
- 32 named destinations out of 1000 (max. 500000)
+ 189 PDF objects out of 1000 (max. 8388607)
+ 131 compressed objects within 2 object streams
+ 33 named destinations out of 1000 (max. 500000)
  1171 words of extra memory for PDF output out of 10000 (max. 10000000)
 
