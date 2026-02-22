@@ -492,6 +492,11 @@ INPUT ./docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png
 INPUT docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png
 INPUT ./docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png
 INPUT ./docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png
+INPUT /usr/share/texmf-dist/tex/latex/psnfss/ts1pplj.fd
+INPUT /usr/share/texmf-dist/tex/latex/psnfss/ts1pplj.fd
+INPUT /usr/share/texmf-dist/tex/latex/psnfss/ts1pplj.fd
+INPUT /usr/share/texmf-dist/tex/latex/psnfss/ts1pplj.fd
+INPUT /usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9c.tfm
 INPUT main.aux
 INPUT ./main.out
 INPUT ./main.out

@@ -469,5 +469,32 @@ Es decir, que el efecto es una fuerza atractiva y no repulsiva, fomentando las i
 Esto indica un error en la tabulación.
 Por otro lado, desde este análisis funcional, parece ser que está configuración no sigue la tercera ley de Newton.
 
+\paragraph{Restricciones del potencial de 3 cuerpos.}
+Al estar pensando en la simulación, me percaté qué para que el potencial de 3 cuerpos funcione correctamente, las tres distancias deben de estar en el dominio $r\in[0,r_c]$\footnote{También es importante mencionar que la distancia de corte es de $0.8$ para ese archivo. Se tiene realizar un cambio para que no exista potencial de interacción de tres cuerpos a esas distancias.}.
+Sí en dado caso, una de las distancias quedá fuera de ese dominio, se tiene el problema que el potencial no cumplirá con la tercera ley de Newton.
+Esto impone una restricción en la posición de los patches de las partículas.
+
+
+
+Analizando está restricción, usaremos la ley de cosenos,
+\begin{gather*}
+    r_{jk}^2 = r_{ij}^2 + r_{ik}^2 - 2r_{ij} r_{ik}\cos(\gamma)
+\end{gather*}
+donde \(\gamma\) es el ángulo formado por las distancias \(r_{ij},~r_{ik}\).
+Sabiendo que las distancias máximas entre partículas es \(1.5 D_p\), podemos realizar el siguiente cambio de variable \(r_{ij} = n D_p,~r_{ik} = m D_p,~r_{jk} = l D_p,~\{n,m,l\}\in[0,1.5]\) para anlizar el ángulo y así poder definir en que punto colocar el centro de las partículas patchy.
+
+\begin{align*}
+    l^2D_p^2 &= n^2D_p^2 + m^2D_p^2 - 2nmD_p^2\cos(\gamma) \\
+    l^2 &= n^2 + m^2 - 2nm\cos(\gamma) \\
+    \frac{n^2 + m^2 - l^2}{2nm} &= \cos(\gamma)
+\end{align*}
+
+Para el caso en que $n=m=l$, se tiene que es un triángulo equilátero con \(\gamma=\acos(1/2)=60^°\)
+Para el caso en que la partícula $i$ está enlazada con la partícula $j$, $n=1$ y dejando libre la distancia $i_{ik}$ se tiene que,
+\begin{align*}
+    \frac{1 + m^2 - l^2}{2m} = \cos(\gamma)
+\end{align*}
+
+
 
 \end{document}

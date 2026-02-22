@@ -1,14 +1,15 @@
 # Fdb version 4
-["bibtex main"] 1771625153.90831 "main.aux" "main.bbl" "main" 1771626473.41097 2
-  "main.aux" 1771626473.28247 8098 303b1599926800f5e89c8d697d89e610 "pdflatex"
+["bibtex main"] 1771790943.93384 "main.aux" "main.bbl" "main" 1771791532.25663 2
+  "main.aux" 1771791531.79642 8228 37dc1a61a176a7d356fb4006764623fd "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1771626463.79596 "main.tex" "main.pdf" "main" 1771626473.41116 0
+["pdflatex"] 1771791516.19992 "main.tex" "main.pdf" "main" 1771791532.25696 2
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1767555874 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
+  "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9c.tfm" 1767555874 1348 f4174868edc712ccb6079f0b57dbcfdf ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9t.tfm" 1767555874 2284 861e5309a3e09d74071777f716a582cc ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplrc8r.tfm" 1767555874 3528 0711c6c96865155bce7256fa14ac59b1 ""
@@ -140,6 +141,7 @@
   "/usr/share/texmf-dist/tex/latex/psnfss/ot1pplx.fd" 1767555874 869 d5724c6202887be8690c71fe9df2f441 ""
   "/usr/share/texmf-dist/tex/latex/psnfss/ot1zplm.fd" 1767555874 436 5e7baa1a259bab50a2bdffad6426f38c ""
   "/usr/share/texmf-dist/tex/latex/psnfss/t1pplj.fd" 1767555874 678 8409322997570775faae75e749c76dbf ""
+  "/usr/share/texmf-dist/tex/latex/psnfss/ts1pplj.fd" 1767555874 634 e14923a81338a5c5b4606ab2ca590f5e ""
   "/usr/share/texmf-dist/tex/latex/ragged2e/ragged2e.sty" 1767555874 10085 3dececaeed388e31285c366e124c0c4e ""
   "/usr/share/texmf-dist/tex/latex/refcount/refcount.sty" 1767555874 9878 9e94e8fa600d95f9c7731bb21dfb67a4 ""
   "/usr/share/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1767555874 9714 ba3194bd52c8499b3f1e3eb91d409670 ""
@@ -183,11 +185,11 @@
   "docs/../Figures/tests2/t_0.png" 1771521126.79338 43876 b9e5c5758af9d78df0e66bf9b01d06d2 ""
   "docs/../Figures/tests2/t_2.png" 1771521126.79441 43929 582b0a9d02e267164b49de90d934ccee ""
   "docs/../Figures/tests2/t_4.png" 1771521126.79441 43686 6e4a2031c4f4306017563a533a8b4f23 ""
-  "docs/tests-2.tex" 1771626462.33148 20123 1950ede7d871d54f43ef805fbbeb58e7 ""
-  "main.aux" 1771626473.28247 8098 303b1599926800f5e89c8d697d89e610 "pdflatex"
+  "docs/tests-2.tex" 1771791514.23936 21813 067920ca1f1526a8f37220ffa25f4308 ""
+  "main.aux" 1771791531.79642 8228 37dc1a61a176a7d356fb4006764623fd "pdflatex"
   "main.bbl" 1771625153.99118 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1771626473.2845 1784 164e285d7d1c00e7f5bd6ca1f2740d93 "pdflatex"
-  "main.tex" 1771611229.57699 3130 5e21cbd3415040424505a92b768e9bdb ""
+  "main.out" 1771791531.79842 1784 164e285d7d1c00e7f5bd6ca1f2740d93 "pdflatex"
+  "main.tex" 1771626549.98842 3130 5e21cbd3415040424505a92b768e9bdb ""
   "tufte-common.def" 1771103721.38987 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1771103721.39007 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
