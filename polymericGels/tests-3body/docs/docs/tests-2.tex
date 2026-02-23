@@ -489,13 +489,33 @@ Sabiendo que las distancias máximas entre partículas es \(1.5 D_p\), podemos r
     \frac{n^2 + m^2 - l^2}{2nm} &= \cos(\gamma)
 \end{align*}
 
-Para el caso en que $n=m=l$, se tiene que es un triángulo equilátero con \(\gamma=\acos(1/2)=60^°\)
+Para el caso en que $n=m=l$, se tiene que es un triángulo equilátero con \(\gamma=\acos(1/2)=60\)
 Para el caso en que la partícula $i$ está enlazada con la partícula $j$, $n=1$ y dejando libre la distancia $i_{ik}$ se tiene que,
 \begin{align*}
     \frac{1 + m^2 - l^2}{2m} = \cos(\gamma)
 \end{align*}
 
 \marginnote{Será conveniente agregar una atracción repulsiva entre los patches y las partíulas centrales?}
+
+\newpage
+
+\section{Directory: 2026-02-23-111821}
+
+Antes de cambiar la configuración, cambiaré el cutoff de la tabla, para observar que sea 0 en LAMMPS.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-23-111821/fig_FComp.png}
+    \caption{Fuerza en cada partícula.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verda: partícula verde.
+    }\label{fig:ForceSwapComponentsNew}
+\end{figure}
+
+Pues hice el cambio en el cutoff y no hizo cambio.
+Está bien, porque indica que no afectó a los resultados anteriores.
+Se esperaba que la fuerza entre la partícula 1 y 3 se viera reflejado, porque si están dentro del dominio.
 
 
 \end{document}

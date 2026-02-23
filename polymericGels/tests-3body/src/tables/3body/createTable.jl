@@ -52,8 +52,6 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
 
 end
 
-
-
 ## Parameters for the file
 
 N = 100;
@@ -64,7 +62,7 @@ eps_jk = 1.0;
 sig = 0.4;
 rc = 1.5*sig;
 rmin = sig/10;
-rmax = 2*sig;
+rmax = rc;
 thi = 180/(4*N)
 thf = 180 - thi;
 w=1;
