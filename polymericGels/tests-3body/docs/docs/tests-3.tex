@@ -15,11 +15,11 @@
     \includegraphics{../Figures/tests2/t_0.png}
 \end{marginfigure}
 \begin{marginfigure}
-    \caption{\(t=4.5\)}
+    \caption{\(t=2\)}
     \includegraphics{../Figures/tests2/t_2.png}
 \end{marginfigure}
 \begin{marginfigure}
-    \caption{\(t=9\)}
+    \caption{\(t=4\)}
     \includegraphics{../Figures/tests2/t_4.png}
 \end{marginfigure}
 
@@ -37,30 +37,93 @@ Posteriormente se mueve la tercera partícula con velocidad \(\vec{v}_3=(0,0.1,0
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-23-111821/fig_FComp.png}
-    \caption{Fuerza en cada partícula.
+    \includegraphics[width=\textwidth]{../Figures/2026-02-23-111821/fig_ForceSwapcomp.png}
+    \caption{Análisis de fuerzas analíticas en cada partícula.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
         Línea azul: particula central.
         Línea naranja: partícula superior.
-        Línea verda: partícula verde.
-    }\label{fig:ForceSwapComponentsNew}
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-Analitico}
 \end{figure}
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-23-111821/fig_ForceSwapcomp.png}
-    \caption{Fuerza en cada partícula.
-        Línea azul: particula central.
-        Línea naranja: partícula superior.
-        Línea verda: partícula verde.
-    }\label{fig:ForceSwapComponentsNew}
-\end{figure}
+Al observar la primera columna de la figura~\ref{fig:Config1-Analitico} se puede confirmar que el potencial \emph{patch}  es conscistente con la tercera ley de newton.
+Además, si se suman todas las fuerzas de la primera columna, la fuerzas debido a ese pontencial generarn un sistema en equilibrio.
 
+Por otro lado, al observar la segunda columna, se observa que no se cumple la tercera ley de newton.
+Solo la primera partícula tiene una fuerza.
+En consecuencia, el potencial de 3 cuerpos, para está configuración, modela un sistema fuera del equilibrio.
 
-
+Por último, en la tercera columna, observamos la fuerza total en cada partícula.
+El potencial de 3 cuerpos, anula la interacción de la partícula 3 con la partícula 1.
+Sin embargo, cómo el potencial de 3 cuerpos no es conscistente con la tercera ley de newton, la partícula 3 tiene una fuerza atractiva hacia la partícula 1.
 
 \newpage
 
-\section{Ver que onda el potencial de tres cuerpos.}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-23-111821/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-LAMMPS}
+\end{figure}
+
+En la figura~\ref{fig:Config1-LAMMPS} se compará las fuerzas de cada partícula que registra LAMMPS durante la simulación, con las furezas en cada partícula obtenidas analíticamente.
+Lo primero que se observa, es que en las fuerzas registradas por LAMMPS, las fuerzas son conscistentes con la tercera ley de newton durante toda la simulación.
+Además, el sistema está en equilibrio.
+Lo cuál contrasta con los resultados analíticos.
+Sin embargo, al sumar la magnitud de las fuerzas del sistema, se observa que ambos casos son conscistentes.
+
+\begin{marginfigure}
+    \caption{\(t=2\)}
+    \includegraphics{../Figures/tests2/t_2.png}
+\end{marginfigure}
+
+\paragraph{Analizar las fuerzas cuando $t>2$.}
+Cuando \(t=2\) la distancia \(r_{1,2}=0.4\).
+Esto indica que \(U_{\mathrm{patch}}(r_{1,2}) = -1\rightarrow U_3(r_{1,2}) =1\rightarrow f_{\mathrm{patch}}(r_{1,2})=0\rightarrow f_{3}(r_{1,2})=0\).
+También, al considerar que \(\hat{r}_{1,2}=-\hat{r}_{2,1}.\quad\hat{r}_{1,3}=-\hat{r}_{3,1},\quad\hat{r}_{2,3}=-\hat{r}_{3,2}\), las expresiones de la fuerza por partícula se reducen a,
+
+\begin{align*}
+    \vec{F}_{\mathrm{swap}-1} &= w\epsilon_{2,3}\left[
+        U_3(r_{1,3})\cancelto{0}{f_3(r_{1,2})}\hat{r}_{1,2} + \cancelto{1}{U_3(r_{1,2})}f_3(r_{1,3})\hat{r}_{1,3}
+    \right] \\
+    \vec{F}_{\mathrm{swap}-2} &= w\epsilon_{1,3}\left[
+        -U_3(r_{2,3})\cancelto{0}{f_3(r_{2,1})}\hat{r}_{1,2} + \cancelto{1}{U_3(r_{2,1})}f_3(r_{2,3})\hat{r}_{2,3}
+    \right] \\
+    \vec{F}_{\mathrm{swap}-3} &= w\epsilon_{1,2}\left[
+            -U_3(r_{3,2})f_3(r_{3,1})\hat{r}_{1,3} - U_3(r_{3,1})f_3(r_{3,2})\hat{r}_{2,3}
+    \right]
+\end{align*}
+Simplificando,
+\begin{align*}
+    \vec{F}_{\mathrm{swap}-1} &= w\epsilon_{2,3}
+        f_3(r_{1,3})\hat{r}_{1,3}
+     \\
+    \vec{F}_{\mathrm{swap}-2} &= w\epsilon_{1,3}
+        f_3(r_{2,3})\hat{r}_{2,3}
+     \\
+    \vec{F}_{\mathrm{swap}-3} &= w\epsilon_{1,2}\left[
+            -U_3(r_{3,2})f_3(r_{3,1})\hat{r}_{1,3} - U_3(r_{3,1})f_3(r_{3,2})\hat{r}_{2,3}
+    \right]
+\end{align*}
+
+Considerando que el valor mínimo que puede obtener la distancia \(r_{2,3}\), por el diseño del experimento, es\(2D_p\), entonces, \(U_3(r_{3,2}) = 0\rightarrow f_3(r_{3,2})=0,\quad\forall t\)
+\begin{align*}
+    \vec{F}_{\mathrm{swap}-1} &= w\epsilon_{2,3}
+        f_3(r_{1,3})\hat{r}_{1,3}
+     \\
+    \vec{F}_{\mathrm{swap}-2} &= 0\hat{r}_{2,3}
+     \\
+    \vec{F}_{\mathrm{swap}-3} &= -0\hat{r}_{1,3}-0\hat{r}_{2,3}
+\end{align*}
+
+Este resultado indica que no todas las configuraciones de 3 cuerpos es válida para el potencial de 3 cuerpos.
+A continuación se motrará otra configuración que se pensaba que era válida, pero no lo es.
+
+\section{Explorar configuraciones válidas para el potencial de 3 cuerpos.}
 
 \paragraph{Objetivo:}  Ver las configuraciones en las que el pontencial de 3 cuerpos funciona.
 
@@ -91,28 +154,116 @@ Posteriormente se mueve la tercera partícula con velocidad \(\vec{v}_3=(-0.1,0,
 
 \section{Directory: 2026-02-23-112958}
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-23-112958/fig_ForceSwapcomp.png}
+    \caption{Análisis de fuerzas analíticas en cada partícula.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config2-Analitico}
+\end{figure}
+
+Las fuerzas que se muestran en la figura~\ref{fig:Config2-LAMMPS} son similares a las observadas por la configuración pasada, figura~\ref{fig:Config1-LAMMPS}.
+La diferencia es que la interacción entre la partícula 1 y 3 es en la componente $x$ en vez de la componente $y$.
+
+\newpage
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-23-112958/fig_FComp.png}
-    \caption{Fuerza en cada partícula.
+    \includegraphics[width=\textwidth]{../Figures/2026-02-23-112958/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
         Línea azul: particula central.
-        Línea naranja: partícula superior.
-        Línea verda: partícula verde.
-    }\label{fig:ForceSwapComponentsNew}
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config2-LAMMPS}
 \end{figure}
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-23-112958/fig_ForceSwapcomp.png}
-    \caption{Fuerza en cada partícula.
-        Línea azul: particula central.
-        Línea naranja: partícula superior.
-        Línea verda: partícula verde.
-    }\label{fig:ForceSwapComponentsNew}
-\end{figure}
+Además, en la comparación de fuerzas de está configuración, figura~\ref{fig:Config2-Analitico} se observan las mismas características descritas por la configuración pasada, figura~\ref{fig:Config1-Analitico}.
+Esto indica que ambas configuraciones son equivalentes.
+Es decir, ambas configuraciones no son válidas para el potencial de 3 cuerpos.
 
+A continuación se realizará una exploración para buscar una forma de parametrizar las configuraciones válidas para el potencial de 3 cuerpos.
 
+\section{Restricciones del potencial de 3 cuerpos.}
+Al estar pensando en la simulación, me percaté qué para que el potencial de 3 cuerpos funcione correctamente, las tres distancias deben de estar en el dominio $r\in[0,r_c]$
+Sí en dado caso, una de las distancias quedá fuera de ese dominio, el potencial no cumplirá con la tercera ley de Newton.
+Esto impone una restricción en la posición de los patches de las partículas.
+
+Cómo el potencial está en términos de distancia entre partículas, podemos usar la ley de cosenos para definir una restricción,
+\begin{gather*}
+    r_{jk}^2 = r_{ij}^2 + r_{ik}^2 - 2r_{ij} r_{ik}\cos(\gamma)
+\end{gather*}
+donde \(\gamma\) es el ángulo formado por las distancias \(r_{ij},~r_{ik}\).
+
+Sabiendo que las distancias máximas entre partículas es \(1.5 D_p\), podemos realizar el siguiente cambio de variable \(r_{ij} = n D_p,~r_{ik} = m D_p,~r_{jk} = l D_p,~\{n,m,l\}\in[1,1.5]\), con la idea de imponer la restricción en el ángulo,
+
+\begin{align*}
+    l^2D_p^2 &= n^2D_p^2 + m^2D_p^2 - 2nmD_p^2\cos(\gamma) \\
+    l^2 &= n^2 + m^2 - 2nm\cos(\gamma) \\
+    \frac{n^2 + m^2 - l^2}{2nm} &= \cos(\gamma)
+\end{align*}
+
+Para el caso en que $n=m=l$, se tiene que es un triángulo equilátero con \(\gamma=\acos(1/2)=\SI{60}{\degree}\).
+
+Para el caso en que la partícula $i$ está enlazada con la partícula $j$, $n=1$, la ecuación se reduce a,
+\begin{align*}
+    \frac{1 + m^2 - l^2}{2m} = \cos(\gamma).
+\end{align*}
+Al resolver para el ángulo \(\gamma\),
+\begin{align*}
+    \gamma = \acos\left[\frac{1 + m^2 - l^2}{2m}\right].
+\end{align*}
+Recordando qué el dominio de \(\acos(x)\) es \(x\in\qty[-1,1]\), podemos encontrar los límites inferiores y superiores con las siguientes ecuaciones,
+\begin{gather*}
+    \frac{1 + m^2 - l^2}{2m} = \pm 1.
+\end{gather*}
+Ahora se usará este planteamiento para analizar las configuraciones anteriores.
+
+\paragraph{Configuración 1} 
+En está configuración, en el tiempo $t>2$, se tiene que \(n=1\) y \(\gamma=\pi\).
+La ley de cosenos se reduce a,
+\begin{align*}
+    l^2 &= m^2 -2m + 1 \\
+    l &= \sqrt{m^2 -2m + 1}.
+\end{align*}
+Para que $l$ sea un valor perteneciente al conjunto de los reales, se tiene que cumplir que $m^2 -2m + 1\leq0$.
+Obteniendo el valor mínimo de $m$ para que $l$ pueda ser real, se tiene que \(m=1\).
+Para este valor de $m$, se interpreta que la distancia entre la partícula $i$ y $k$ es $D_p$, es decir en el pozo de potencial.
+Por lo tanto, \(l=\sqrt{1^2 -2\cdot1+1} = 0\).
+Es decir, que la partícula $k$ debe de estar en el mismo lugar que la partícula $i$, lo cuál no es posible.
+
+Por otro lado, el valor mínimo que puede tener $l$ es \num{1}, entonces \(1^2=m^2-2m+1\to m=2\).
+Lo cuál tampoco es posible, ya que la distancia entre la partícula $i-k$ está afuera del dominio.
+Finalmente, el valor máximo que puede tener $l$ es \(3/2\), entonces \(9/4=m^2-2m+1\to m=\{-0.5,5/2\}\).
+Cómo $m$ debe de ser positivo, entonces \(m=5/2\), pero \(5/2>3/2\), por lo que no puede ser considerado cómo solución.
+
+Al observar que no hay forma en la qué se cumplan las restricciones en los dominios de las distancias, está configuración no es deseable.
+
+\paragraph{Configuración 2}
+En esta configuración, en el tiempo \(t>2\) se tiene que \(n=1\) y \(\gamma=\pi/2\).
+La ley de cosenos se reduce a
+\begin{align*}
+    l^2 - m^2 = 1.
+\end{align*}
+Sabiendo que el valor mínimo que puede tomar $l$ es \num{1}, entonces \(m=0\).
+Lo cuál indica que la partícula $k$ está en la misma posición que la partícula $i$.
+Por otro lado, el valor máximo que puede tomar $l$ es \(3/2\), entonces \(m=\sqrt{5}/2\).
+Cómo \(\sqrt{5}/2<3/2\), se encontró un valor máximo para está configuración.
+
+Ahora, considerando que el valor mínimo de \(m\) es \num{1}, entonces \(l=\sqrt{2}\).
+Por otro lado, el valor máximo de \(m\) es \num{1.5}, entonces \(l=\sqrt{13}/2\), lo cuál es mayor que \(3/2\).
+
+Con esta configuración obtenemos que,
+\begin{align*}
+    l^2 - m^2 &= 1,\quad m\in\qty[1,\sqrt{5}/2]\wedge l\in\qty[\sqrt{2},3/2]. \\
+    l^2 - m^2 &= 1,\quad m\in\qty[1,1.118033]\wedge l\in\qty[1.414213,1.5].
+\end{align*}
+Al observar que los dominios son muy pequeños, está configuración queda descartada cómo válida para el potencial de 3 cuerpos. 
+
+Para analizar una configuración en la que la restricción sea facilmente cumplida, se analizará el caso de un triángulo equilátero,\(\gamma=\pi/3=\SI{60}{\degree}\).
 
 %Cómo podemos observar, esta configuración no es válida para el potencial de 3 cuerpos, porqué el ángulo formado entre las partículas $i-j$, $i-k$ es mayor que \(\acos(\dfrac{1}{3})\)
 
@@ -153,36 +304,43 @@ Posteriormente se mueve la tercera partícula con velocidad \(\vec{v}_3=(0,-0.1,
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-23-120646/fig_FComp.png}
-    \caption{Fuerza en cada partícula.
-        Línea azul: particula central.
-        Línea naranja: partícula superior.
-        Línea verda: partícula verde.
-        Línea sólid: $x$,
-        Línea punteada: $y$.
-    }\label{fig:ForceSwapComponentsNew}
-\end{figure}
-
-
-\begin{figure}[!ht]
-    \centering
     \includegraphics[width=0.8\textwidth]{../Figures/2026-02-23-120646/fig_ForceSwapcomp.png}
-    \caption{Fuerza en cada partícula.
+    \caption{Análisis de fuerzas analíticas en cada partícula.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
         Línea azul: particula central.
-        Línea naranja: partícula superior.
-        Línea verda: partícula verde.
-        Línea sólid: $x$,
-        Línea punteada: $y$.
-    }\label{fig:ForceSwapComponentsNew}
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-Analitico}
 \end{figure}
+
+En la figura~\ref{fig:Config3-Analitico} se muestran la fuerza de cada partícula debido a cada potencial y la suma de fuerzas en cada partícula.
+En la primera columna observamos lo equivalente a las dos configuraciones anteriores.
+Por otro lado, en la segunda columna, podemos observar qué está vez si se cumple la tercera ley de newton con las fuerzas modeladas por el potencial de 3 cuerpos.
+Además, si se suman las componentes $x$ de esa columna, podemos observar que las fuerzas están en equilibrio.
+Por otro lado, las componentes $y$ tiene un valor negativo, inidicando que el sistema estará fuera de equilibrio, obteniendo un desplazamiento hacia $-\hat{y}$.
+Finalmente, en la tercera columna, podemos observar resultados similares a la configuraciones anteriores.
+Pero en esta condifuración, podemos observar que la fuerza de atracción en la partícula \(3\) es la mitad de lo que debería de estar experimentando.
 
 \newpage
 
-Estos experimentos indican que las fuerzas en el sistema obtenidas analíticamente y por LAMMPS son conscistentes.
-Por otro lado, podemos observar, analisando la descripción analítica, que las dos primeras configuraciones no siguen la tercera ley de Newton.
-Por otro lado, LAMMPS realiza los ajustes adecuados para que la tercera ley de newton se cumpla en cada partícula para todas las configuraciones.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-23-120646/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS}
+\end{figure}
 
+En la figura~\ref{fig:Config3-LAMMPS} se compara la fuerza de cada partícula registrada por LAMMPS con la fuerza calculada analíticamente.
+En este caso podemos observar cómo se ve reflejado las fuerzas del potencial de 3 cuerpos en las fuerzas registradas por LAMMPS en cada partícula.
+En contraste con las dos configuraciones anteriores, en donde solamente las partículas $1$ y $3$ tenían registrado la interacción.
+Además, la sumatoria de la magnitud de fuerzas de sistema es conscistente entre ambos casos.
 
+Aún no me quedá muy claro qué es lo que hace LAMMPS para calcular las fuerzas para cada partícula.
+En verdad esperaba que la fuerza total en cada partícula coincidera con lo registrado por LAMMPS.
 
 
 \end{document}

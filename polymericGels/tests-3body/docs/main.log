@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  23 FEB 2026 16:15
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  24 FEB 2026 16:04
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -620,56 +620,7 @@ Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
 \CommentStream=\write4
  Excluding comment 'comment')
 Package translations Info: No language package found. I am going to use `english' as default language. on input line 76.
- (./main.aux
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Uatom-fix1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-
-LaTeX Warning: Label `fig:Ufix-func1' multiply defined.
-
-
-LaTeX Warning: Label `fig:ForceSwapComponentsNew' multiply defined.
-
-
-LaTeX Warning: Label `fig:ForceSwapComponentsNew' multiply defined.
-
-
-LaTeX Warning: Label `fig:ForceSwapComponentsNew' multiply defined.
-
-
-LaTeX Warning: Label `fig:ForceSwapComponentsNew' multiply defined.
-
-
-LaTeX Warning: Label `fig:ForceSwapComponentsNew' multiply defined.
-
-
-LaTeX Warning: Label `fig:ForceSwapComponentsNew' multiply defined.
-
-
-LaTeX Warning: Label `fig:ForceSwapComponentsNew' multiply defined.
-
-)
+ (./main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 76.
@@ -766,7 +717,7 @@ File: translations-basic-dictionary-english.trsl (english translation file `tran
 )
 Package translations Info: loading dictionary `translations-basic-dictionary' for `english'. on input line 76.
 \c@lstlisting=\count353
- (./docs/tests-2.tex
+ (./docs/tests-3.tex
 LaTeX Font Info:    Trying to load font information for OT1+pplx on input line 14.
  (/usr/share/texmf-dist/tex/latex/psnfss/ot1pplx.fd
 File: ot1pplx.fd 2004/09/06 font definitions for OT1/pplx.
@@ -799,7 +750,7 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 6.25204pt on input line 14.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 5.21004pt on input line 14.
-<docs/../Figures/tests2/t_0.png, id=60, 770.88pt x 578.16pt>
+<docs/../Figures/tests2/t_0.png, id=32, 770.88pt x 578.16pt>
 File: docs/../Figures/tests2/t_0.png Graphic file (type png)
 <use docs/../Figures/tests2/t_0.png>
 Package pdftex.def Info: docs/../Figures/tests2/t_0.png  used on input line 15.
@@ -817,7 +768,7 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 10.42007pt on input line 16.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 7.91925pt on input line 16.
-<docs/../Figures/tests2/t_2.png, id=62, 770.88pt x 578.16pt>
+<docs/../Figures/tests2/t_2.png, id=34, 770.88pt x 578.16pt>
 File: docs/../Figures/tests2/t_2.png Graphic file (type png)
 <use docs/../Figures/tests2/t_2.png>
 Package pdftex.def Info: docs/../Figures/tests2/t_2.png  used on input line 19.
@@ -830,7 +781,7 @@ Overfull \hbox (5.9955pt too wide) in paragraph at lines 19--20
 
 LaTeX Warning: Marginpar on page 1 moved.
 
-<docs/../Figures/tests2/t_4.png, id=63, 770.88pt x 578.16pt>
+<docs/../Figures/tests2/t_4.png, id=35, 770.88pt x 578.16pt>
 File: docs/../Figures/tests2/t_4.png Graphic file (type png)
 <use docs/../Figures/tests2/t_4.png>
 Package pdftex.def Info: docs/../Figures/tests2/t_4.png  used on input line 23.
@@ -838,14 +789,6 @@ Package pdftex.def Info: docs/../Figures/tests2/t_4.png  used on input line 23.
 
 Overfull \hbox (5.9955pt too wide) in paragraph at lines 23--24
 [][]  
- []
-
-
-LaTeX Warning: Marginpar on page 1 moved.
-
-
-Overfull \hbox (48.92535pt too wide) in paragraph at lines 34--35
-[]\T1/pplj/m/n/10 Enlace para ver el video de la sim-u-lación: []https://youtu.be/UOpRIhUzqHw[]. 
  []
 
 
@@ -856,320 +799,158 @@ LaTeX Warning: Marginpar on page 1 moved.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc} <./docs/../Figures/tests2/t_0.png> <./docs/../Figures/tests2/t_2.png> <./docs/../Figures/tests2/t_4.png>]
-Overfull \hbox (8.86934pt too wide) detected at line 87
-[]
+<docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png, id=53, 533.8344pt x 533.8344pt>
+File: docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png Graphic file (type png)
+<use docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png  used on input line 40.
+(pdftex.def)             Requested size: 304.45168pt x 304.45168pt.
+
+
+[2 <./docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png>]
+<docs/../Figures/2026-02-23-111821/fig_FComp.png, id=59, 483.9681pt x 533.8344pt>
+File: docs/../Figures/2026-02-23-111821/fig_FComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-23-111821/fig_FComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-23-111821/fig_FComp.png  used on input line 64.
+(pdftex.def)             Requested size: 304.45842pt x 335.8287pt.
+File: docs/../Figures/tests2/t_2.png Graphic file (type png)
+<use docs/../Figures/tests2/t_2.png>
+Package pdftex.def Info: docs/../Figures/tests2/t_2.png  used on input line 81.
+(pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
+
+Overfull \hbox (5.9955pt too wide) in paragraph at lines 81--82
+[][]  
  []
 
 
-LaTeX Warning: Marginpar on page 2 moved.
-
-Excluding 'comment' comment.
-Overfull \hbox (9.21538pt too wide) in paragraph at lines 143--145
-[] []\T1/pplj/m/it/10 Fuerza swap[] \T1/pplj/m/n/10 Ya que ten-emos la fuerza de in-ter-ac-ción en-tre dos partícu-
- []
-
-
-Overfull \hbox (16.03316pt too wide) detected at line 180
-[]
- []
-
-
-
-[2]
-<docs/../Figures/fig_Comp.png, id=96, 533.8344pt x 426.8748pt>
-File: docs/../Figures/fig_Comp.png Graphic file (type png)
-<use docs/../Figures/fig_Comp.png>
-Package pdftex.def Info: docs/../Figures/fig_Comp.png  used on input line 187.
-(pdftex.def)             Requested size: 304.45168pt x 243.45143pt.
-
-
-[3 <./docs/../Figures/fig_Comp.png>]
-<docs/../Figures/2026-02-17-111013/fig_swapPotTable.png, id=101, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-111013/fig_swapPotTable.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-111013/fig_swapPotTable.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-111013/fig_swapPotTable.png  used on input line 198.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
- Excluding 'comment' comment.
-<docs/../Figures/2026-02-17-111013/fig_Ufix-func.png, id=102, 533.8344pt x 426.8748pt>
-File: docs/../Figures/2026-02-17-111013/fig_Ufix-func.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-111013/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-111013/fig_Ufix-func.png  used on input line 216.
-(pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
-
-
-[4 <./docs/../Figures/2026-02-17-111013/fig_swapPotTable.png> <./docs/../Figures/2026-02-17-111013/fig_Ufix-func.png>]
-<docs/../Figures/2026-02-17-111013/fig_Force.png, id=108, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-111013/fig_Force.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-111013/fig_Force.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-111013/fig_Force.png  used on input line 225.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-02-17-111013/fig_ForceComp.png, id=109, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-111013/fig_ForceComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-111013/fig_ForceComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-111013/fig_ForceComp.png  used on input line 232.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-
-
-[5 <./docs/../Figures/2026-02-17-111013/fig_Force.png> <./docs/../Figures/2026-02-17-111013/fig_ForceComp.png>]
-<docs/../Figures/2026-02-17-120748/fig_swapPotTable.png, id=114, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-120748/fig_swapPotTable.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-120748/fig_swapPotTable.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-120748/fig_swapPotTable.png  used on input line 245.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-02-17-120748/fig_Ufix-func.png, id=115, 533.8344pt x 426.8748pt>
-File: docs/../Figures/2026-02-17-120748/fig_Ufix-func.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-120748/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-120748/fig_Ufix-func.png  used on input line 252.
-(pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
-
-
-[6 <./docs/../Figures/2026-02-17-120748/fig_swapPotTable.png> <./docs/../Figures/2026-02-17-120748/fig_Ufix-func.png>]
-<docs/../Figures/2026-02-17-120748/fig_ForceComp.png, id=121, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-120748/fig_ForceComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-120748/fig_ForceComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-120748/fig_ForceComp.png  used on input line 261.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-02-17-120748/fig_FComp.png, id=122, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-120748/fig_FComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-120748/fig_FComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-120748/fig_FComp.png  used on input line 268.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-
-
-[7 <./docs/../Figures/2026-02-17-120748/fig_ForceComp.png> <./docs/../Figures/2026-02-17-120748/fig_FComp.png>]
-<docs/../Figures/2026-02-17-121845/fig_swapPotTable.png, id=128, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-121845/fig_swapPotTable.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-121845/fig_swapPotTable.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-121845/fig_swapPotTable.png  used on input line 289.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-02-17-121845/fig_Ufix-func.png, id=129, 533.8344pt x 426.8748pt>
-File: docs/../Figures/2026-02-17-121845/fig_Ufix-func.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-121845/fig_Ufix-func.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-121845/fig_Ufix-func.png  used on input line 296.
-(pdftex.def)             Requested size: 243.55482pt x 194.75594pt.
-
-
-[8 <./docs/../Figures/2026-02-17-121845/fig_swapPotTable.png> <./docs/../Figures/2026-02-17-121845/fig_Ufix-func.png>]
-<docs/../Figures/2026-02-17-121845/fig_ForceComp.png, id=135, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-121845/fig_ForceComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-121845/fig_ForceComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-121845/fig_ForceComp.png  used on input line 305.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-02-17-121845/fig_FComp.png, id=136, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-121845/fig_FComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-121845/fig_FComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-121845/fig_FComp.png  used on input line 312.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-
-
-[9 <./docs/../Figures/2026-02-17-121845/fig_ForceComp.png> <./docs/../Figures/2026-02-17-121845/fig_FComp.png>]
-File: docs/../Figures/2026-02-17-120748/fig_FComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-120748/fig_FComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-120748/fig_FComp.png  used on input line 327.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-File: docs/../Figures/2026-02-17-121845/fig_FComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-121845/fig_FComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-121845/fig_FComp.png  used on input line 339.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-
-
-[10]
-<docs/../Figures/2026-02-17-120748/fig_ForceSwapcomp.png, id=147, 533.8344pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-120748/fig_ForceSwapcomp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-120748/fig_ForceSwapcomp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-120748/fig_ForceSwapcomp.png  used on input line 358.
-(pdftex.def)             Requested size: 243.55482pt x 243.55482pt.
-<docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png, id=148, 533.8344pt x 533.8344pt>
-File: docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png Graphic file (type png)
-<use docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png  used on input line 368.
-(pdftex.def)             Requested size: 243.55482pt x 243.55482pt.
-
-
-[11 <./docs/../Figures/2026-02-17-120748/fig_ForceSwapcomp.png> <./docs/../Figures/2026-02-17-121845/fig_ForceSwapcomp.png>]
-
-[12]
-Overfull \hbox (8.98532pt too wide) in paragraph at lines 390--394
-\T1/pplj/m/n/10 Considerando que la suma-to-ria con-sid-era to-dos los tripletes de partícu-
- []
-
-
-Overfull \hbox (3.24626pt too wide) in paragraph at lines 421--424
+Overfull \hbox (3.24626pt too wide) in paragraph at lines 85--88
 \OT1/pplx/m/n/10 0.4$\T1/pplj/m/n/10 . Esto in-dica que $\OML/zplm/m/it/10 U[]\OT1/zplm/m/n/10 (\OML/zplm/m/it/10 r[]\OT1/zplm/m/n/10 ) = \OMS/zplm/m/n/10 ^^@\OT1/pplx/m/n/10 1 \OMS/zplm/m/n/10 ! \OML/zplm/m/it/10 U[]\OT1/zplm/m/n/10 (\OML/zplm/m/it/10 r[]\OT1/zplm/m/n/10 ) = \OT1/pplx/m/n/10 1 \OMS/zplm/m/n/10 ! \OML/zplm/m/it/10 f[]\OT1/zplm/m/n/10 (\OML/zplm/m/it/10 r[]\OT1/zplm/m/n/10 ) =
  []
 
 
 
-[13]
-
-LaTeX Warning: Marginpar on page 14 moved.
-
-
-LaTeX Warning: Marginpar on page 14 moved.
-
-
-
-[14]
-<docs/../Figures/2026-02-23-111821/fig_FComp.png, id=170, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-23-111821/fig_FComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-23-111821/fig_FComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-23-111821/fig_FComp.png  used on input line 508.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-)
-
-[15 <./docs/../Figures/2026-02-23-111821/fig_FComp.png>] (./docs/tests-3.tex
-File: docs/../Figures/tests2/t_0.png Graphic file (type png)
-<use docs/../Figures/tests2/t_0.png>
-Package pdftex.def Info: docs/../Figures/tests2/t_0.png  used on input line 15.
-(pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
-
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 15--16
-[][]  
- []
-
-File: docs/../Figures/tests2/t_2.png Graphic file (type png)
-<use docs/../Figures/tests2/t_2.png>
-Package pdftex.def Info: docs/../Figures/tests2/t_2.png  used on input line 19.
-(pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
-
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 19--20
-[][]  
- []
-
-
-LaTeX Warning: Marginpar on page 16 moved.
-
-File: docs/../Figures/tests2/t_4.png Graphic file (type png)
-<use docs/../Figures/tests2/t_4.png>
-Package pdftex.def Info: docs/../Figures/tests2/t_4.png  used on input line 23.
-(pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
-
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 23--24
-[][]  
- []
-
-
-LaTeX Warning: Marginpar on page 16 moved.
-
-
-
-[16]
-File: docs/../Figures/2026-02-23-111821/fig_FComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-23-111821/fig_FComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-23-111821/fig_FComp.png  used on input line 40.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png, id=182, 533.8344pt x 533.8344pt>
-File: docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png Graphic file (type png)
-<use docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png  used on input line 50.
-(pdftex.def)             Requested size: 243.55482pt x 243.55482pt.
-
-
-[17 <./docs/../Figures/2026-02-23-111821/fig_ForceSwapcomp.png>]
-<docs/../Figures/test3/triangle-1.png, id=187, 770.88pt x 578.16pt>
+[3 <./docs/../Figures/2026-02-23-111821/fig_FComp.png>]
+<docs/../Figures/test3/triangle-1.png, id=69, 770.88pt x 578.16pt>
 File: docs/../Figures/test3/triangle-1.png Graphic file (type png)
 <use docs/../Figures/test3/triangle-1.png>
-Package pdftex.def Info: docs/../Figures/test3/triangle-1.png  used on input line 71.
+Package pdftex.def Info: docs/../Figures/test3/triangle-1.png  used on input line 134.
 (pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
 
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 71--72
+Overfull \hbox (5.9955pt too wide) in paragraph at lines 134--135
 [][]  
  []
 
-<docs/../Figures/test3/triangle-2.png, id=188, 770.88pt x 578.16pt>
+<docs/../Figures/test3/triangle-2.png, id=70, 770.88pt x 578.16pt>
 File: docs/../Figures/test3/triangle-2.png Graphic file (type png)
 <use docs/../Figures/test3/triangle-2.png>
-Package pdftex.def Info: docs/../Figures/test3/triangle-2.png  used on input line 75.
+Package pdftex.def Info: docs/../Figures/test3/triangle-2.png  used on input line 138.
 (pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
 
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 75--76
+Overfull \hbox (5.9955pt too wide) in paragraph at lines 138--139
 [][]  
  []
 
 
-LaTeX Warning: Marginpar on page 18 moved.
+LaTeX Warning: Marginpar on page 4 moved.
 
-<docs/../Figures/test3/triangle-3.png, id=189, 770.88pt x 578.16pt>
+<docs/../Figures/test3/triangle-3.png, id=71, 770.88pt x 578.16pt>
 File: docs/../Figures/test3/triangle-3.png Graphic file (type png)
 <use docs/../Figures/test3/triangle-3.png>
-Package pdftex.def Info: docs/../Figures/test3/triangle-3.png  used on input line 79.
+Package pdftex.def Info: docs/../Figures/test3/triangle-3.png  used on input line 142.
 (pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
 
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 79--80
+Overfull \hbox (5.9955pt too wide) in paragraph at lines 142--143
 [][]  
  []
 
 
-LaTeX Warning: Marginpar on page 18 moved.
+LaTeX Warning: Marginpar on page 4 moved.
 
 
 
-[18 <./docs/../Figures/test3/triangle-1.png> <./docs/../Figures/test3/triangle-2.png> <./docs/../Figures/test3/triangle-3.png>]
-<docs/../Figures/2026-02-23-112958/fig_FComp.png, id=199, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-23-112958/fig_FComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-23-112958/fig_FComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-23-112958/fig_FComp.png  used on input line 97.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-02-23-112958/fig_ForceSwapcomp.png, id=200, 533.8344pt x 533.8344pt>
+[4 <./docs/../Figures/test3/triangle-1.png> <./docs/../Figures/test3/triangle-2.png> <./docs/../Figures/test3/triangle-3.png>]
+<docs/../Figures/2026-02-23-112958/fig_ForceSwapcomp.png, id=81, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-02-23-112958/fig_ForceSwapcomp.png Graphic file (type png)
 <use docs/../Figures/2026-02-23-112958/fig_ForceSwapcomp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-23-112958/fig_ForceSwapcomp.png  used on input line 107.
-(pdftex.def)             Requested size: 243.55482pt x 243.55482pt.
+Package pdftex.def Info: docs/../Figures/2026-02-23-112958/fig_ForceSwapcomp.png  used on input line 159.
+(pdftex.def)             Requested size: 304.45168pt x 304.45168pt.
 
 
-[19 <./docs/../Figures/2026-02-23-112958/fig_FComp.png> <./docs/../Figures/2026-02-23-112958/fig_ForceSwapcomp.png>]
-<docs/../Figures/test3_a/triangle-1.png, id=206, 770.88pt x 578.16pt>
+[5 <./docs/../Figures/2026-02-23-112958/fig_ForceSwapcomp.png>]
+<docs/../Figures/2026-02-23-112958/fig_FComp.png, id=88, 483.9681pt x 533.8344pt>
+File: docs/../Figures/2026-02-23-112958/fig_FComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-23-112958/fig_FComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-23-112958/fig_FComp.png  used on input line 175.
+(pdftex.def)             Requested size: 304.45842pt x 335.8287pt.
+
+Overfull \hbox (16.48538pt too wide) in paragraph at lines 184--187
+[]\T1/pplj/m/n/10 Además, en la com-para-ción de fuerzas de está con-fig-u-ración, figura []10[]
+ []
+
+
+Overfull \hbox (1.58469pt too wide) in paragraph at lines 188--189
+[]\T1/pplj/m/n/10 A con-tin-uación se re-alizará una ex-plo-ración para bus-car una forma
+ []
+
+
+
+[6 <./docs/../Figures/2026-02-23-112958/fig_FComp.png>]
+
+[7]
+
+[8]
+<docs/../Figures/test3_a/triangle-1.png, id=106, 770.88pt x 578.16pt>
 File: docs/../Figures/test3_a/triangle-1.png Graphic file (type png)
 <use docs/../Figures/test3_a/triangle-1.png>
-Package pdftex.def Info: docs/../Figures/test3_a/triangle-1.png  used on input line 131.
+Package pdftex.def Info: docs/../Figures/test3_a/triangle-1.png  used on input line 282.
 (pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
 
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 131--132
+Overfull \hbox (5.9955pt too wide) in paragraph at lines 282--283
 [][]  
  []
 
-<docs/../Figures/test3_a/triangle-2.png, id=207, 770.88pt x 578.16pt>
+<docs/../Figures/test3_a/triangle-2.png, id=107, 770.88pt x 578.16pt>
 File: docs/../Figures/test3_a/triangle-2.png Graphic file (type png)
 <use docs/../Figures/test3_a/triangle-2.png>
-Package pdftex.def Info: docs/../Figures/test3_a/triangle-2.png  used on input line 135.
+Package pdftex.def Info: docs/../Figures/test3_a/triangle-2.png  used on input line 286.
 (pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
 
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 135--136
+Overfull \hbox (5.9955pt too wide) in paragraph at lines 286--287
 [][]  
  []
 
 
-LaTeX Warning: Marginpar on page 20 moved.
+LaTeX Warning: Marginpar on page 9 moved.
 
-<docs/../Figures/test3_a/triangle-3.png, id=208, 770.88pt x 578.16pt>
+<docs/../Figures/test3_a/triangle-3.png, id=108, 770.88pt x 578.16pt>
 File: docs/../Figures/test3_a/triangle-3.png Graphic file (type png)
 <use docs/../Figures/test3_a/triangle-3.png>
-Package pdftex.def Info: docs/../Figures/test3_a/triangle-3.png  used on input line 139.
+Package pdftex.def Info: docs/../Figures/test3_a/triangle-3.png  used on input line 290.
 (pdftex.def)             Requested size: 140.5521pt x 105.41406pt.
 
-Overfull \hbox (5.9955pt too wide) in paragraph at lines 139--140
+Overfull \hbox (5.9955pt too wide) in paragraph at lines 290--291
 [][]  
  []
 
 
-LaTeX Warning: Marginpar on page 20 moved.
+LaTeX Warning: Marginpar on page 9 moved.
 
 
 
-[20 <./docs/../Figures/test3_a/triangle-1.png> <./docs/../Figures/test3_a/triangle-2.png> <./docs/../Figures/test3_a/triangle-3.png>]
-<docs/../Figures/2026-02-23-120646/fig_FComp.png, id=218, 483.9681pt x 533.8344pt>
-File: docs/../Figures/2026-02-23-120646/fig_FComp.png Graphic file (type png)
-<use docs/../Figures/2026-02-23-120646/fig_FComp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-23-120646/fig_FComp.png  used on input line 156.
-(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-02-23-120646/fig_ForceSwapcomp.png, id=219, 533.8344pt x 533.8344pt>
+[9 <./docs/../Figures/test3_a/triangle-1.png> <./docs/../Figures/test3_a/triangle-2.png> <./docs/../Figures/test3_a/triangle-3.png>]
+<docs/../Figures/2026-02-23-120646/fig_ForceSwapcomp.png, id=118, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-02-23-120646/fig_ForceSwapcomp.png Graphic file (type png)
 <use docs/../Figures/2026-02-23-120646/fig_ForceSwapcomp.png>
-Package pdftex.def Info: docs/../Figures/2026-02-23-120646/fig_ForceSwapcomp.png  used on input line 169.
+Package pdftex.def Info: docs/../Figures/2026-02-23-120646/fig_ForceSwapcomp.png  used on input line 307.
 (pdftex.def)             Requested size: 243.55482pt x 243.55482pt.
 
 
-[21 <./docs/../Figures/2026-02-23-120646/fig_FComp.png> <./docs/../Figures/2026-02-23-120646/fig_ForceSwapcomp.png>])
+[10 <./docs/../Figures/2026-02-23-120646/fig_ForceSwapcomp.png>]
+<docs/../Figures/2026-02-23-120646/fig_FComp.png, id=124, 483.9681pt x 533.8344pt>
+File: docs/../Figures/2026-02-23-120646/fig_FComp.png Graphic file (type png)
+<use docs/../Figures/2026-02-23-120646/fig_FComp.png>
+Package pdftex.def Info: docs/../Figures/2026-02-23-120646/fig_FComp.png  used on input line 328.
+(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
+)
 
 Package bibentry Warning: You have used \nobibliography* 
 (bibentry)                without a following \bibliography.
@@ -1177,31 +958,27 @@ Package bibentry Warning: You have used \nobibliography*
 
 
 
-[22] (./main.aux)
+[11 <./docs/../Figures/2026-02-23-120646/fig_FComp.png>] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-
-
-LaTeX Warning: There were multiply-defined labels.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: DE3EC50D9EC387EB8404D6BC4ABC0ECC;3369.
+(rerunfilecheck)             Checksum: 4CAD57BE14D2B8A6EF235CCA39E182DC;1769.
  ) 
 Here is how much of TeX's memory you used:
- 21193 strings out of 475171
- 394123 string characters out of 5767095
- 790118 words of memory out of 5000000
- 43716 multiletter control sequences out of 15000+600000
- 621084 words of font info for 138 fonts, out of 8000000 for 9000
+ 20956 strings out of 475171
+ 385330 string characters out of 5767095
+ 778602 words of memory out of 5000000
+ 43537 multiletter control sequences out of 15000+600000
+ 610497 words of font info for 121 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 97i,19n,96p,541b,1261s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmr.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/latxfont/line10.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (22 pages, 5714209 bytes).
+ 97i,19n,96p,541b,1230s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/latxfont/line10.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
+Output written on main.pdf (11 pages, 2289305 bytes).
 PDF statistics:
- 292 PDF objects out of 1000 (max. 8388607)
- 204 compressed objects within 3 object streams
- 56 named destinations out of 1000 (max. 500000)
- 1287 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 183 PDF objects out of 1000 (max. 8388607)
+ 124 compressed objects within 2 object streams
+ 28 named destinations out of 1000 (max. 500000)
+ 1156 words of extra memory for PDF output out of 10000 (max. 10000000)
 
