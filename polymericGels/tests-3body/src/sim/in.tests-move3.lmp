@@ -34,8 +34,8 @@ create_atoms 2 single 0.4 0.0 0.0
 create_atoms 2 single 0.0 0.646410 0.0
 
 # Create groups 
-group PA type 1
-group PB type 2
+group PA type 2
+group PB type 1 
 
 # Groups for the fix move
 group P1 id 1

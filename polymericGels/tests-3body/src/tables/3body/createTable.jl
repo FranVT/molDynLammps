@@ -29,22 +29,43 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
 """
     Compute the scalars for the proyection of the forces
 """
+    r_c=1.5*sig_p;
+
     th = deg2rad(th);
-    force=forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
-    f_ij=force[1];
-    f_ik=force[2];
-    #r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
- 
-    f_i1=f_ij; 
-    f_i2=f_ik; 
-   
-    f_j1=-f_i1; 
-    f_j2=0; 
+    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
 
-    f_k1=-f_i2; 
-    f_k2=-f_j2; 
+    if r_ij<=r_c && r_ik<=r_c && r_jk<=r_c 
+        f_1=3*forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
+        #f_2=forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
+        #f_3=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
 
-    eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) 
+        #a=; b=-f_2[1]; c=a+b;
+        f_i1=f_1[1];
+        
+        #a=; b=-f_3[1]; c=a+b;
+        f_i2=f_1[2];
+    
+        f_j1=-f_i1; 
+
+        #a=f_2[2]; b=-f_3[2]; c=a+b;
+        f_j2=0; 
+
+        f_k1=-f_i2; 
+        f_k2=-f_j2; 
+
+        eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) 
+    else
+        f_i1=0;
+        f_i2=0;
+    
+        f_j1=0; 
+        f_j2=0; 
+
+        f_k1=0; 
+        f_k2=0; 
+
+        eng=0
+    end
     #+ SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
     #eng=round(eng/3,digits=2^7)
 
@@ -54,7 +75,7 @@ end
 
 ## Parameters for the file
 
-N = 100;
+N = 2^7; # N=100=2^6.643856
 
 eps_ij = 1.0;
 eps_ik = 1.0;

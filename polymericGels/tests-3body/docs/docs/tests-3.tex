@@ -342,5 +342,221 @@ Además, la sumatoria de la magnitud de fuerzas de sistema es conscistente entre
 Aún no me quedá muy claro qué es lo que hace LAMMPS para calcular las fuerzas para cada partícula.
 En verdad esperaba que la fuerza total en cada partícula coincidera con lo registrado por LAMMPS.
 
+\newpage
+
+\section{Tabulación del potencial de 3 cuerpos}
+
+Leyendo la documentación y observando la ecuación que tiene para proyectar las fuerzas,
+\begin{gather}
+    \begin{pmatrix}
+        \vec{f}_i \\ \vec{f}_j \\\vec{f}_k 
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        f_{i1} & f_{i2} & 0 \\
+        f_{j1} & 0 & f_{j2} \\
+        0 & f_{k1} & f_{k2}
+    \end{pmatrix}
+    \begin{pmatrix}
+        \vec{r}_{ij} \\ \vec{r}_{ik} \\\vec{r}_{jk} 
+    \end{pmatrix}
+    \label{eqn:lammps3body}
+\end{gather}
+
+Quiero modificar el script de tabulación para que sea cero cuando las distancias no cumplen con la restricción dada por las distancias y todo sea cero, energía y fuerza.
+
+También tengo curiosidad de la constante $f_{j2}$.
+Claro, la partícula \(1\) no siente una fuerza de interacción debido a la interacción entre la partícula \(2\) y \(3\).
+Pero la partícula \(2\) si tiene un efecto por la interacción con la partícula \(3\), cómo se observó en los análisis de las configuraciones anteriores.
+
+Pienso que cómo ahorita solo se está tabulando la fuerza en la partícula 1, eso es lo que explica la discrepancia entre lo que registra lammps, con la parte analítica. 
+
+Comparando la ecuación~\eqref{eqn:lammps3body} con las fuerzas obtenidas durante el análsis de las configuraciones, 
+\begin{align*}
+    \vec{F}_{\mathrm{swap}-1} &= w\epsilon_{2,3}\left[
+        U_3(r_{1,3})f_3(r_{1,2})\hat{r}_{1,2} + U_3(r_{1,2})f_3(r_{1,3})\hat{r}_{1,3}
+    \right] \\
+    \vec{F}_{\mathrm{swap}-2} &= w\epsilon_{1,3}\left[
+        -U_3(r_{2,3})f_3(r_{2,1})\hat{r}_{1,2} + U_3(r_{2,1})f_3(r_{2,3})\hat{r}_{2,3}
+    \right] \\
+    \vec{F}_{\mathrm{swap}-3} &= w\epsilon_{1,2}\left[
+            -U_3(r_{3,2})f_3(r_{3,1})\hat{r}_{1,3} - U_3(r_{3,1})f_3(r_{3,2})\hat{r}_{2,3}
+    \right]
+\end{align*}
+obtenemos la siguiente relación,
+\begin{align*}
+    f_{i1} &= w\epsilon_{2,3}U_3(r_{1,3})f_3(r_{1,2}) \\
+    f_{i2} &= w\epsilon_{2,3}U_3(r_{1,2})f_3(r_{1,3}) \\
+    f_{j1} &= -w\epsilon_{1,3}U_3(r_{2,3})f_3(r_{2,1}) \\
+    f_{j2} &= w\epsilon_{1,3}U_3(r_{2,1})f_3(r_{2,3}) \\
+    f_{k1} &= -w\epsilon_{1,2}U_3(r_{3,2})f_3(r_{3,1}) \\
+    f_{k2} &= -w\epsilon_{1,2}U_3(r_{3,1})f_3(r_{3,2})
+\end{align*}
+Al realizar estos cambios en la tabulación se obtienen lo siguiente resultados,
+\newpage
+
+\section{Directory: 2026-02-25-115459}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-25-115459/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab}
+\end{figure}
+
+Este cambio hizo que la fuerza en la tercera partícula se pareciera un poco más a la teórica con respecto a la magnitud, sin embargo, al final de la simulación se obtiene un comportamiento no esperado.
+Por otro lado, las fuerzas en las partículas 1 y 2, tienen los signos volteados con respecto a la simulación de configuración 3~\ref{fig:Config3-LAMMPS}.
+Aunque esos signos corresponden a la dirección de la fuerza del potencial de 3 cuerpos en la figura\ref{fig:Config3-Analitico}
+
+
+\paragraph{Acerca de la discrepancia de la partícula 1 y 2}
+Al observar con detenimiento los valores de la matriz, estos no necesariamente cumplen la suposición que realiza LAMMPS: \(f_{i1}=-f_{j1}\), \(f_{i2}=-f_{k1}\) y \(f_{j2}=-f_{k2}\).
+
+\begin{align*}
+    f_{i1}+f_{j1} &= w\epsilon_{2,3}U_3(r_{1,3})f_3(r_{1,2}) - w\epsilon_{1,3}U_3(r_{2,3})f_3(r_{2,1}) \\
+    f_{i2}+f_{k1} &= w\epsilon_{2,3}U_3(r_{1,2})f_3(r_{1,3}) -w\epsilon_{1,2}U_3(r_{3,2})f_3(r_{3,1}) \\
+    f_{j2}+f_{k2} &= w\epsilon_{1,3}U_3(r_{2,1})f_3(r_{2,3}) -w\epsilon_{1,2}U_3(r_{3,1})f_3(r_{3,2})
+\end{align*}
+
+Considerando que para estas simulaciones \(\epsilon_{l,m}=1\) y \(w=1\),
+\begin{align*}
+    f_{i1}+f_{j1} &= \left(U_3(r_{1,3}) - U_3(r_{2,3})\right)f_3(r_{1,2}) \\
+    f_{i2}+f_{k1} &= \left(U_3(r_{1,2}) - U_3(r_{3,2})\right)f_3(r_{1,3}) \\
+    f_{j2}+f_{k2} &= \left(U_3(r_{2,1}) - U_3(r_{3,1})\right)f_3(r_{2,3})
+\end{align*}
+Para que la condición de lammps se cumpla, implica que los patches siempre estarán en un triángulo equilatero, ya que para que la diferencia de potenciales se haga cero, se necesita que \(r_{1,3} = r_{2,3},~r_{1,2}=r_{2,3},~r_{1,2}=r_{1,3}\).
+En está simulación, esas condiciones no se cumplen hasta el final de la simulación.
+Al inicio y por gran parte de la simulación, las distancias entre las partículas forman un triángulo isoceles, \(r_{1,3}=r_{2,3}\).
+
+Si pongo la opción de \verb|newton off| LAMMPS no ejecuta el script, porque obliga a usar \verb|newton on| para ahorar tiempo de computo, al usar la tercera ley de newton para calcular las fuerzas.
+
+Lo mejor que se me ocurre para arreglar esto es lo siguiente.
+Considerando que se busca que \(a+b=0\), pero obtenemos \(a+b=c\), entonces restamos \(c/2\) en ambos términos, obteniendo \(\qty(a-c/2) + \qty(b-c/2) = 0\).
+En donde \(a\) es \(f_{i1}\) y \(b\) es \(f_{j1}\).
+Y así sucesivamente.
+Implementado estos cambios, se obtuvo,
+
+\newpage
+
+\section{Directory: 2026-02-25-132053}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-25-132053/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab2}
+\end{figure}
+
+Lo cuál es una mejora para las partículas 1 y 2.
+Pero se emporó las fuerzas en la partícula 3.
+
+\paragraph{Más cerca de la restricción de simetría en las fuerzas.}
+Lo que estoy observando, es que LAMMPS exigué que las fuerzas en el potencial de tres cuerpos sea conscistente con un sistema en equilibrio.
+En la las sumatoria de las componentes de la fuerza sea igual a \(0\).
+Al observar que la sumatoria de las componentes de la fuerza no necesariamente da \(0\) para este potencial, inidica que esté potencial genera sistemas fuera del equilibrio.
+
+\section{Directory: 2026-02-25-135336}
+
+Quite los signos, solo me fije en la magnitud, a ver que onda\footnote{Ya no se que más hacer}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-25-135336/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab3}
+\end{figure}
+
+La partícula 3 es más parecida a la analítica, con respecto a las partículas 1 y 2.
+Haré un cambio de signos que solo afecte a las partículas 1 y 2.
+
+\newpage
+
+\section{Directory: 2026-02-25-135928}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-25-135928/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab3}
+\end{figure}
+
+No entiendo. 
+
+\newpage 
+
+\section{Directory: 2026-02-25-142453}
+
+Ya, no se, lo que hice para esta prueba es asignar \(c/2\) respectivamente a \(f_{i1},~f_{i2},~f_{j2}\).
+Considerando que sería asignar la sumatoria de fuerzas entre partículas.
+No me convence, pero a ver que pasa.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-25-142453/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab4}
+\end{figure}
+
+Noup, eso fue peor.
+
+\newpage 
+
+\section{Directory: 2026-02-25-143337}
+
+Pues\ldots cambie la tambulación considerando que \(f_{i} = f_{i1}\hat{r}_{ij} + f_{i2}\hat{ik}\), \(f_{j} = -f_{i1}\hat{r}_{ij}\) y \(f_{k} = -f_{i2}\hat{r}_{ik}\).
+Regresando a la tabulación original.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-25-143337/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab5}
+\end{figure}
+
+No se LAMMPS aplique este potencial para cada una de las partículas o si simplemente asigna un tercio de la fuerza a cada partícula.
+Voy a agregar un factor de 3 en las componentes a ver que pasa.
+
+\newpage
+
+\section{Directory: 2026-02-25-144129}
+
+Se agregó un factor de $3$ a cada las componentes.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-25-144129/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab6}
+\end{figure}
+
+
 
 \end{document}

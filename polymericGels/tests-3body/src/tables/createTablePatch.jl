@@ -37,7 +37,7 @@ sig = 0.4;
 eps = 1;
 rc=1.5*sig;
 rmin = sig/10;
-rmax = 2*sig;
+rmax = 1.5*sig;
 r_dom = range(rmin,rmax,length=N);
 
 # Create the table
