@@ -20,7 +20,13 @@ include("functions.jl")
 # 2026-02-23-112958
 
 # Selection of an specific simulation
-date="2026-02-23-112958";
+date="2026-02-26-142919";
+#"2026-02-26-142254";
+#"2026-02-26-123205";
+#"2026-02-26-122533";
+
+
+#"2026-02-23-112958";
 #"2026-02-26-110302";
 
 #"2026-02-25-144129";
@@ -156,6 +162,19 @@ f_patch13xy=f_patch13.*vr_13;
 f_patch23xy=f_patch23.*vr_23; 
 
 # Evaluate the Swap function
+
+
+function evaluateFswap(r12,r13,r23)
+    r_c=1.5*0.4;
+
+    if r12<r_c && r13<r_c && r23<r_c
+        f_1=forceSwap(1.0,1.0,1.0,1.0,0.4,r12,r13)
+        f_2=forceSwap(1.0,1.0,1.0,1.0,0.4,r12,r23)
+        f_3=forceSwap(1.0,1.0,1.0,1.0,0.4,r12,r13)
+end
+end
+
+
 f_swap1=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),vcat,1:1:nrow(DATA_dump_1));
 f_swap2=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_2));
 f_swap3=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_3));

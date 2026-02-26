@@ -463,6 +463,8 @@ Lo que estoy observando, es que LAMMPS exigué que las fuerzas en el potencial d
 En la las sumatoria de las componentes de la fuerza sea igual a \(0\).
 Al observar que la sumatoria de las componentes de la fuerza no necesariamente da \(0\) para este potencial, inidica que esté potencial genera sistemas fuera del equilibrio.
 
+\newpage
+
 \section{Directory: 2026-02-25-135336}
 
 Quite los signos, solo me fije en la magnitud, a ver que onda\footnote{Ya no se que más hacer}.
@@ -711,6 +713,33 @@ Con este resultado, ya tengo sospechas que mi interpretación de las configuraci
 Porque hice la interpretación de figuras mal graficadas.
 Voy a volver a hacer las gráficas con la corrección de las graficas analíticas.
 
+\paragraph{Re-hace el análisis.}
+Para el caso en que \(r_{1,2}=D_p\) y \(r_{2,3}>r_c\), entonces
+\(U_{3}(r_{1,2}) = U_{3}(r_{2,1}) = 1,~U_{3}(r_{2,3})=U_{3}(r_{2,3})=0\) y \(f_3(r_{1,2}) = f_3(r_{2,1}) = f_3(r_{2,3}) = f_3(r_{3,2}) =0\), por lo tanto,
+
+\begin{align*}
+    f_{12s} &= w\epsilon_{2,3}U_3(r_{1,3})\cancelto{0}{f_3(r_{1,2})} = 0  \\
+    f_{13s} &= w\epsilon_{2,3}\cancelto{1}{U_3(r_{1,2})}f_3(r_{1,3}) = f_3(r_{1,3}) \\
+    f_{21s} &= w\epsilon_{1,3}\cancelto{0}{U_3(r_{2,3})}\cancelto{0}{f_3(r_{2,1})} = 0 \\
+    f_{23s} &= w\epsilon_{1,3}\cancelto{1}{U_3(r_{2,1})}\cancelto{0}{f_3(r_{2,3})} = 0 \\
+    f_{31s} &= w\epsilon_{1,2}\cancelto{0}{U_3(r_{3,2})}f_3(r_{3,1}) = 0 \\
+    f_{32s} &= w\epsilon_{1,2}U_3(r_{3,1})\cancelto{0}{f_3(r_{3,2})} = 0
+\end{align*}
+Sustituyendo estos resultados en la fuerzas para cada partícula,
+\begin{align*}
+    \vec{F}_1 &= \qty(0 - 0)\hat{r}_{12} + \qty(f_3(r_{1,3}) - 0)\hat{r}_{13} \\
+    \vec{F}_2 &= \qty(0 - 0)\hat{r}_{21} + \qty(0 - 0)\hat{r}_{23} \\
+    \vec{F}_3 &= \qty(0 - f_3(r_{1,3}))\hat{r}_{31} + \qty(0 - 0)\hat{r}_{32}
+\end{align*}
+simplificando,
+\begin{align*}
+    \vec{F}_1 &= f_3(r_{1,3})\hat{r}_{13} \\
+    \vec{F}_2 &= 0\hat{r}_{21} + 0\hat{r}_{23} \\
+    \vec{F}_3 &= - f_3(r_{1,3})\hat{r}_{31}
+\end{align*}
+
+Ahora podemos observar que las fuerzas son concistentes con la tercera Ley de Newton. 
+En las siguientes páginas se muestrán las gráficas de las configuraciones 1, 2 y 3 con la corrección en la parte analítica.
 
 \newpage
 
@@ -719,7 +748,7 @@ Voy a volver a hacer las gráficas con la corrección de las graficas analítica
 \paragraph{Resumen}
 La observación/derivación/argumentación realizada en la sección~\ref{sec:Tabulacion3Cuerpos}, acerca de cómo tabular el potencial de 3 cuerpos para que sea concistente con la tercera ley de Newton, invalida el argumento/derivación/demostración desarrollada en~\ref{sec:Restriccion3cuerpos}, con la cuál se descartaron las configuraciones 1 y 2, cómo configuraciones válidas para el potencial de 3 cuerpos.
 Las correcciones demuestran que cualquier configuración es válida considerando lo disctuido en~\ref{sec:Tabulacion3Cuerpos}. 
-
+Por otro lado, asegura que la interacción de este potencial, cuando \(w=1\), reduce una interacción en todo el sistema.
 
 
 \subsection{Directory: 2026-02-23-111821 Config 1}
@@ -806,6 +835,40 @@ Las correcciones demuestran que cualquier configuración es válida considerando
     }\label{fig:Config2-Analitico}
 \end{figure}
 
+\newpage 
 
+Se repiten los experimentos eliminando la restricción de las distancias.
+
+\section{Directory: 2026-02-26-142254 Config1}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-26-142254/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-LAMMPS-a}
+\end{figure}
+
+Pues como que no salió.
+
+\newpage
+
+\section{Directory: 2026-02-26-142919 Config3}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-26-142919/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-LAMMPS-a}
+\end{figure}
+
+Pues no me queda claro.
 
 \end{document}

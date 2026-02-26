@@ -34,7 +34,7 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     th = deg2rad(th);
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
 
-    if r_ij<=r_c && r_ik<=r_c && r_jk<=r_c 
+#    if r_ij<=r_c && r_ik<=r_c && r_jk<=r_c 
         f_1=forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
         f_2=forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
         f_3=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
@@ -54,18 +54,18 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
         f_k2=-f_j2; 
 
         eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) 
-    else
-        f_i1=0;
-        f_i2=0;
+#    else
+#        f_i1=0;
+#        f_i2=0;
     
-        f_j1=0; 
-        f_j2=0; 
+#        f_j1=0; 
+#        f_j2=0; 
 
-        f_k1=0; 
-        f_k2=0; 
+#        f_k1=0; 
+#        f_k2=0; 
 
-        eng=0
-    end
+#        eng=0
+#    end
     #+ SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
     #eng=round(eng/3,digits=2^7)
 
