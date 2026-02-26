@@ -35,20 +35,20 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
 
     if r_ij<=r_c && r_ik<=r_c && r_jk<=r_c 
-        f_1=3*forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
-        #f_2=forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
-        #f_3=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+        f_1=forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
+        f_2=forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
+        f_3=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
 
-        #a=; b=-f_2[1]; c=a+b;
-        f_i1=f_1[1];
+        a=f_1[1]; b=-f_2[1]; c=a+b;
+        f_i1=c;
         
-        #a=; b=-f_3[1]; c=a+b;
-        f_i2=f_1[2];
+        a=f_1[2]; b=-f_3[1]; c=a+b;
+        f_i2=c;
     
         f_j1=-f_i1; 
 
-        #a=f_2[2]; b=-f_3[2]; c=a+b;
-        f_j2=0; 
+        a=f_2[2]; b=-f_3[2]; c=a+b;
+        f_j2=c; 
 
         f_k1=-f_i2; 
         f_k2=-f_j2; 

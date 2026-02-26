@@ -16,8 +16,14 @@ cm = inch / 2.54;
 # Load the functions
 include("functions.jl")
 
+
+# 2026-02-23-112958
+
 # Selection of an specific simulation
-date="2026-02-25-144129";
+date="2026-02-23-112958";
+#"2026-02-26-110302";
+
+#"2026-02-25-144129";
 #"2026-02-25-143337";
 #"2026-02-25-142453";
 #"2026-02-25-140610";
@@ -34,8 +40,9 @@ date="2026-02-25-144129";
 
 #"2026-02-23-111821";
 #"2026-02-23-120646";
-#"2026-02-23-112958";
-#"2026-02-23-111821";
+# Config2: 
+
+# Config1: "2026-02-23-111821";
 
 
 #"2026-02-17-121845";
@@ -153,11 +160,26 @@ f_swap1=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),vcat,1
 f_swap2=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_2));
 f_swap3=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_3));
 
+# Stuff of the table
+F_1s12 = f_swap1[:,1] .- f_swap2[:,1];
+F_1s13 = f_swap1[:,2] .- f_swap3[:,1];
+
+F_2s21 = f_swap2[:,1] .- f_swap1[:,1];
+F_2s23 = f_swap2[:,2] .- f_swap3[:,2];
+
+F_3s31 = f_swap3[:,1] .- f_swap1[:,2];
+F_3s32 = f_swap3[:,2] .- f_swap2[:,2];
+
 # Project the forces into the x,y basis
+f_swap1xy=(F_1s12).*vr_12 .+ (F_1s13).*vr_13;
+f_swap2xy=(F_2s21).*(vr_12) .+ (F_2s23).*vr_23;
+f_swap3xy=(F_3s31).*(vr_13) .+ (F_3s32).*(vr_23);
+
+#=
 f_swap1xy=f_swap1[:,1].*vr_12 .+ f_swap1[:,2].*vr_13;
 f_swap2xy=f_swap2[:,1].*(-vr_12) .+ f_swap2[:,2].*vr_23;
 f_swap3xy=f_swap3[:,1].*(-vr_13) .+ f_swap3[:,2].*(-vr_23);
-
+=#
 
 f_part1=f_patch12xy .+ f_patch13xy .+ f_swap1xy;
 f_part2=-f_patch12xy .+ f_patch23xy .+ f_swap2xy;

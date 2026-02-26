@@ -187,7 +187,7 @@ Es decir, ambas configuraciones no son válidas para el potencial de 3 cuerpos.
 
 A continuación se realizará una exploración para buscar una forma de parametrizar las configuraciones válidas para el potencial de 3 cuerpos.
 
-\section{Restricciones del potencial de 3 cuerpos.}
+\section{Restricciones del potencial de 3 cuerpos.}\label{sec:Restriccion3cuerpos}
 Al estar pensando en la simulación, me percaté qué para que el potencial de 3 cuerpos funcione correctamente, las tres distancias deben de estar en el dominio $r\in[0,r_c]$
 Sí en dado caso, una de las distancias quedá fuera de ese dominio, el potencial no cumplirá con la tercera ley de Newton.
 Esto impone una restricción en la posición de los patches de las partículas.
@@ -555,6 +555,255 @@ Se agregó un factor de $3$ a cada las componentes.
         Línea naranja: partícula a la derecha.
         Línea verde: partícula superior.
     }\label{fig:Config3-LAMMPS-modTab6}
+\end{figure}
+
+Es como poner $w=3$.
+Supongo que eso es lo que \emph{arregló} el problema en las simulaciones que analicé para la Tesis.
+Al aumentar el valor $w$ a \num{2.5}, ocasionaba una interacción repulsiva.
+Pero no indica que se implementó bien la tabulación.
+
+\newpage 
+
+\section{Tabulación del potencial de 3 cuerpos pt. 2}\label{sec:Tabulacion3Cuerpos}
+
+Volviendo a pensar con calma, la siguiente asignación de fuerza a las partículas,
+\begin{align*}
+    f_{i} &= f_{i1}\hat{r}_{ij} + f_{i2}\hat{ik}\\ 
+    f_{j} &= -f_{i1}\hat{r}_{ij}\\ 
+    f_{k} &= -f_{i2}\hat{r}_{ik}
+\end{align*}
+es el análisis de la tercera ley de newton para la partícula $i$.
+Falta realizar el análisis de la tercera ley de newton para las partículas $j$ y $k$.
+Recordando que,
+\begin{align*}
+    \vec{F}_{\mathrm{swap}-1} &= w\epsilon_{2,3}\left[
+        U_3(r_{1,3})f_3(r_{1,2})\hat{r}_{1,2} + U_3(r_{1,2})f_3(r_{1,3})\hat{r}_{1,3}
+    \right] \\
+    \vec{F}_{\mathrm{swap}-2} &= w\epsilon_{1,3}\left[
+        -U_3(r_{2,3})f_3(r_{2,1})\hat{r}_{1,2} + U_3(r_{2,1})f_3(r_{2,3})\hat{r}_{2,3}
+    \right] \\
+    \vec{F}_{\mathrm{swap}-3} &= w\epsilon_{1,2}\left[
+            -U_3(r_{3,2})f_3(r_{3,1})\hat{r}_{1,3} - U_3(r_{3,1})f_3(r_{3,2})\hat{r}_{2,3}
+    \right]
+\end{align*}
+podemos asginar la siguiente interpretación a cada término
+\begin{align*}
+    f_{12s} &= w\epsilon_{2,3}U_3(r_{1,3})f_3(r_{1,2}) \\
+    f_{13s} &= w\epsilon_{2,3}U_3(r_{1,2})f_3(r_{1,3}) \\
+    f_{21s} &= w\epsilon_{1,3}U_3(r_{2,3})f_3(r_{2,1}) \\
+    f_{23s} &= w\epsilon_{1,3}U_3(r_{2,1})f_3(r_{2,3}) \\
+    f_{31s} &= w\epsilon_{1,2}U_3(r_{3,2})f_3(r_{3,1}) \\
+    f_{32s} &= w\epsilon_{1,2}U_3(r_{3,1})f_3(r_{3,2})
+\end{align*}
+en donde \(f_{12s}\) es la fuerza en la partícula uno por interactuar con la partícula dos debido al potencial swap.
+Mientrás que \(f_{21s}\) es la fuerza en la partícula dos por interactuar con la partícula uno debido a l potencial swap.
+Y así sucesivamente.
+
+Entonces, la fuerza total que la partícula 1 es la suma de esas dos fuerzas, \(F_{1} = f_{12s} - f_{21s}\) en dirección $\hat{r}_{12}$.
+El signo menos, es debido a que van en direcciones opuestas, por el marco de referencia.
+
+Al repetir este proceso, se obtiene la siguiente relación
+\begin{align*}
+    \vec{F}_1 &= \qty(f_{12s} - f_{21s})\hat{r}_{12} + \qty(f_{13s} - f_{31s})\hat{r}_{13} \\
+    \vec{F}_2 &= \qty(f_{21s} - f_{12s})\hat{r}_{21} + \qty(f_{23s} - f_{32s})\hat{r}_{23} \\
+    \vec{F}_3 &= \qty(f_{31s} - f_{13s})\hat{r}_{31} + \qty(f_{32s} - f_{23s})\hat{r}_{32}
+\end{align*}
+Por lo tanto, \(f_{i1} = \qty(f_{12s} - f_{21s}),~f_{i2}=\qty(f_{13s} - f_{31s}),~f_{j2}=\qty(f_{23s} - f_{32s})\).
+Analizando conscistencia con la tercera ley de newton en los tres términos,
+\begin{align*}
+    -f_{i1} &= -\qty(f_{12s} - f_{21s}) \\
+            &= \qty(f_{21s} - f_{12s}) \\
+            &= f_{j1}
+\end{align*}
+
+\begin{align*}
+    -f_{i2} &= -\qty(f_{13s} - f_{31s}) \\
+            &= \qty(f_{31s} - f_{13s}) \\
+            &= f_{k1}
+\end{align*}
+
+\begin{align*}
+    -f_{j2} &= -\qty(f_{23s} - f_{32s}) \\
+            &= \qty(f_{32s} - f_{23s}) \\
+            &= f_{k2}
+\end{align*}
+
+Indicando que en la taublación se tiene que dar la fuerza resultante en cada partícula debido a la interacción de 3 cuerpos.
+Implementado este cambio en la tabulación obtenemos los siguientes resultados:
+
+\newpage 
+
+\section{Directory: 2026-02-26-110302}
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-26-110302/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab7}
+\end{figure}
+
+Pues si, pero no, pero casi.
+Me quedé sin ideas.
+Revisaré el script con el que estoy haciendo las gráficas.
+
+\newpage
+
+\subsection{Cuando graficas mal el analítico.}
+
+No había realizado el cambio descrito anteriormente con la gráfica que es evaluada usando las funciones.
+Al actualizar el código para graficar la parte analítica, considerando lo anterior, se obtiene,
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-26-110302/ChangeAnalytical/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-modTab7a}
+\end{figure}
+
+Pues bueno.
+Ahora es congruente la parte analítica con los resultados de la simulación.
+Solo que ahora podemos observar que la fuerza debida al potencial de swap no cancela por completo la fuerza del potencial de patch.
+Solamente reduce la magnitud de la interacción.
+En la figura~\ref{fig:Config3-LAMMPS-Analytical-a} se muestra una comparación en una sola gráfica para cada partícula entre el resultado de la simulación con el resultado analítico.
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-26-110302/ChangeAnalytical/fig_ForceComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-LAMMPS-Analytical-a}
+\end{figure}
+
+No me queda muy clara la diferencia numerica entre la analítica y la de la simulación.
+Pienso que puede ser por el tipo de aproximación que hace LAMMPS o por la cantidad de valores que hay para cada distancia (128).
+
+\newpage
+
+Por otro lado, en la figura~\ref{fig:Config3-SwapComp-a} se muestra las fuerzas debido a cada potencial para cada partícula obtenidas analíticamente.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-26-110302/ChangeAnalytical/fig_ForceSwapComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config3-SwapComp-a}
+\end{figure}
+
+\paragraph{Sospecha de interpretación}
+Con este resultado, ya tengo sospechas que mi interpretación de las configuraciones anteriores están equivocadas.
+Porque hice la interpretación de figuras mal graficadas.
+Voy a volver a hacer las gráficas con la corrección de las graficas analíticas.
+
+
+\newpage
+
+\section{Corrección en la interpretación}
+
+\paragraph{Resumen}
+La observación/derivación/argumentación realizada en la sección~\ref{sec:Tabulacion3Cuerpos}, acerca de cómo tabular el potencial de 3 cuerpos para que sea concistente con la tercera ley de Newton, invalida el argumento/derivación/demostración desarrollada en~\ref{sec:Restriccion3cuerpos}, con la cuál se descartaron las configuraciones 1 y 2, cómo configuraciones válidas para el potencial de 3 cuerpos.
+Las correcciones demuestran que cualquier configuración es válida considerando lo disctuido en~\ref{sec:Tabulacion3Cuerpos}. 
+
+
+
+\subsection{Directory: 2026-02-23-111821 Config 1}
+\begin{marginfigure}
+    \caption{\(t=0\)}
+    \includegraphics{../Figures/tests2/t_0.png}
+\end{marginfigure}
+\begin{marginfigure}
+    \caption{\(t=2\)}
+    \includegraphics{../Figures/tests2/t_2.png}
+\end{marginfigure}
+\begin{marginfigure}
+    \caption{\(t=4\)}
+    \includegraphics{../Figures/tests2/t_4.png}
+\end{marginfigure}
+
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-23-111821/ChangeAnalytical/fig_ForceSwapcomp.png}
+    \caption{Análisis de fuerzas analíticas en cada partícula.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-Analitico}
+\end{figure}
+
+\newpage
+
+\subsection{Directory: 2026-02-23-112958 Config 2}
+
+\begin{marginfigure}
+    \caption{\(t=0\)}
+    \includegraphics{../Figures/test3/triangle-1.png}
+\end{marginfigure}
+\begin{marginfigure}
+    \caption{\(t=2\)}
+    \includegraphics{../Figures/test3/triangle-2.png}
+\end{marginfigure}
+\begin{marginfigure}
+    \caption{\(t=4\)}
+    \includegraphics{../Figures/test3/triangle-3.png}
+\end{marginfigure}
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-23-112958/ChangeAnalytical/fig_ForceSwapcomp.png}
+    \caption{Análisis de fuerzas analíticas en cada partícula.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config2-Analitico}
+\end{figure}
+
+\newpage
+
+\subsection{Directory: 2026-02-26-110302 Config 3}
+
+\begin{marginfigure}
+    \caption{\(t=0\)}
+    \includegraphics{../Figures/test3_a/triangle-1.png}
+\end{marginfigure}
+\begin{marginfigure}
+    \caption{\(t=2\)}
+    \includegraphics{../Figures/test3_a/triangle-2.png}
+\end{marginfigure}
+\begin{marginfigure}
+    \caption{\(t=5\)}
+    \includegraphics{../Figures/test3_a/triangle-3.png}
+\end{marginfigure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-26-110302/ChangeAnalytical/fig_ForceSwapcomp.png}
+    \caption{Análisis de fuerzas analíticas en cada partícula.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula a la derecha.
+        Línea verde: partícula superior.
+    }\label{fig:Config2-Analitico}
 \end{figure}
 
 
