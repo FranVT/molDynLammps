@@ -20,7 +20,9 @@ include("functions.jl")
 # 2026-02-23-112958
 
 # Selection of an specific simulation
-date="2026-02-27-155337";
+date="2026-02-27-163258";
+
+#"2026-02-27-155337";
 
 #"2026-02-27-122735";
 
@@ -932,17 +934,18 @@ for (idx, df) in enumerate(table_pot1)
     r_val = r_ij_values[idx]
     # Normalizar el valor de r_ij al intervalo [0,1] para el mapeo de color
     color_norm = (r_val - r_min) / (r_max - r_min)
-    lines!(ax1_eng, df.r_ik, df.e,
+    scatterlines!(ax1_eng, df.r_ik, df.e,
            color = color_norm,
            colormap = cmap,
            colorrange = (0,1),
-           linewidth = 2)
+           markersize = 1.5)
     potTeo=map(s->Uswap(1,1,1,1,0.4,r_val,s),df.r_ik)
 
     scatterlines!(ax2_eng,df.r_ik,potTeo,
            color = color_norm,
            colormap = cmap,
-           colorrange = (0,1)
+           colorrange = (0,1),
+           markersize=1.5
             )
 end
 

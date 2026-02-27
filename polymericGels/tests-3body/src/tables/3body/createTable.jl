@@ -96,27 +96,35 @@ filename2 = string("swapMechTab2new_w",w,".table");
 th_dom = range(thi,thf,2*N);
 r_dom = range(rmin,rmax,N);
 
-doms1 = reduce(vcat,reverse.(Iterators.product(th_dom,r_dom,r_dom)|>collect));
-doms2 = reduce(vcat,map(s-> reshape(reverse.(Iterators.product(th_dom,r_dom[s:end],r_dom[s])),2*N*(N-(s-1)),1) ,eachindex(r_dom)));
+#doms1 = reduce(vcat,reverse.(Iterators.product(th_dom,r_dom,r_dom)|>collect));
+#doms2 = reduce(vcat,map(s-> reshape(reverse.(Iterators.product(th_dom,r_dom[s:end],r_dom[s])),2*N*(N-(s-1)),1) ,eachindex(r_dom)));
+
+doms_1=map(rij->map(rik->map(th->[rij rik th],th_dom),r_dom),r_dom);
+doms_1=reduce(vcat,reduce(vcat,doms_1));
+
+doms_2=map(rij->map(rik->map(th->[r_dom[rij] r_dom[rik] th],th_dom),rij:N),eachindex(r_dom));
+doms_2=reduce(vcat,reduce(vcat,doms_2));
+
+
 
 # Create tuples with the information
 # For Patch_j = Patch_k
 
 # For different spicies
-docs1 =  map(eachindex(doms1)) do s
+docs1 =  map(eachindex(doms_1)) do s
             (
                  s,
-                 doms1[s]...,
-                 force(w,eps_ij,eps_ik,eps_jk,sig,doms1[s]...)...
+                 doms_1[s]...,
+                 force(w,eps_ij,eps_ik,eps_jk,sig,doms_1[s]...)...
             )
         end;
 
 # For identical species
-docs2 =  map(eachindex(doms2)) do s
+docs2 =  map(eachindex(doms_2)) do s
             (
                  s,
-                 doms2[s]...,
-                 force(w,eps_ij,eps_ik,eps_jk,sig,doms2[s]...)...
+                 doms_2[s]...,
+                 force(w,eps_ij,eps_ik,eps_jk,sig,doms_2[s]...)...
             )
         end;
 

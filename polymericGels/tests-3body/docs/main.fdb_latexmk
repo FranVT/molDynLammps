@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1772230476.78669 "main.aux" "main.bbl" "main" 1772230476.829 2
-  "main.aux" 1772230476.67834 21606 55a99ac031b6083e31a1e5b6a56992d4 "pdflatex"
+["bibtex main"] 1772230476.78669 "main.aux" "main.bbl" "main" 1772231916.77461 2
+  "main.aux" 1772231916.66657 21606 55a99ac031b6083e31a1e5b6a56992d4 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1772230463.4037 "main.tex" "main.pdf" "main" 1772230476.82915 0
+["pdflatex"] 1772231903.40107 "main.tex" "main.pdf" "main" 1772231916.77476 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -208,11 +208,11 @@
   "docs/../Figures/tests2/t_0.png" 1771348590.41993 43876 b9e5c5758af9d78df0e66bf9b01d06d2 ""
   "docs/../Figures/tests2/t_2.png" 1771348580.77598 43929 582b0a9d02e267164b49de90d934ccee ""
   "docs/../Figures/tests2/t_4.png" 1771348598.49045 43686 6e4a2031c4f4306017563a533a8b4f23 ""
-  "docs/tests-3.tex" 1772230462.33099 45425 dbdc8c1227fc1527de9f7399230e6426 ""
-  "main.aux" 1772230476.67834 21606 55a99ac031b6083e31a1e5b6a56992d4 "pdflatex"
+  "docs/tests-3.tex" 1772231903.1826 45462 b7cc83992b9bc2d8d38a3f723a121806 ""
+  "main.aux" 1772231916.66657 21606 55a99ac031b6083e31a1e5b6a56992d4 "pdflatex"
   "main.bbl" 1772230476.82502 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1772230476.67834 5300 f82af7738b33506e801d3fd7ba60c170 "pdflatex"
-  "main.tex" 1772217919.82355 3275 fead8f138e0d9ad3db13543263135134 ""
+  "main.out" 1772231916.66657 5300 f82af7738b33506e801d3fd7ba60c170 "pdflatex"
+  "main.tex" 1772231906.69276 3275 fead8f138e0d9ad3db13543263135134 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
