@@ -38,11 +38,11 @@ function U3(eps_jk,eps,Dp,r)
 """
     r_min=Dp;
     r_c=1.5*Dp;
-    if r>0 && r<=r_min
-        return 1.0
-    elseif r>r_min && r<r_c
+    if r>r_min && r<=r_c
         return -Upatch(eps,Dp,r)/eps_jk
-    else
+    elseif r<=r_min
+        return 1.0
+    elseif r>r_c
         return 0.0
     end
 end

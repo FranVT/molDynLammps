@@ -53,7 +53,9 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
         f_k1=-f_i2; 
         f_k2=-f_j2; 
 
-        eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) 
+        eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+        
+#Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik);
 #    else
 #        f_i1=0;
 #        f_i2=0;
@@ -66,7 +68,7 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
 
 #        eng=0
 #    end
-    #+ SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + SwapU(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk)
+    #+ 
     #eng=round(eng/3,digits=2^7)
 
     return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
@@ -83,7 +85,7 @@ eps_jk = 1.0;
 sig = 0.4;
 rc = 1.5*sig;
 rmin = sig/10;
-rmax = rc;
+rmax = 2*sig;
 thi = 180/(4*N)
 thf = 180 - thi;
 w=1;

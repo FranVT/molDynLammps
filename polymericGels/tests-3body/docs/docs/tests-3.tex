@@ -871,4 +871,41 @@ Pues como que no salió.
 
 Pues no me queda claro.
 
+
+\newpage 
+
+Teoría: Cómo el cut off está en \(1.5 D_p\) LAMMPS no registra todos los potenciales.
+Entonces voy a aumentar el cut off del potencial de tres cuerpos \(2 D_p\) y probar que pasa.
+
+\section{Directory: 2026-02-27-091917 Config 1}
+
+Pues no fue eso.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-27-091917/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-LAMMPS-b}
+\end{figure}
+
+\newpage
+
+Si no hay fuerze, debería no haber energía.
+Posiblemente la sumatoria es el detalle.
+
+Intuyo que como hay energía y lammps hace concistencia de que \(\vec{F}=-\pdv{U}{r}\), es por eso que hay algo de fuerza.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-27-091917/fig_Uatom-fix.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-pot}
+\end{figure}
+
+
+
+
 \end{document}

@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1772137889.58451 "main.aux" "main.bbl" "main" 1772138017.77783 2
-  "main.aux" 1772138017.67511 17601 76e774c1283ff097a709880147a09f47 "pdflatex"
+["bibtex main"] 1772211030.03866 "main.aux" "main.bbl" "main" 1772211030.07915 2
+  "main.aux" 1772211029.93098 18471 1d8e458b84d0f8643592c34e9326d358 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1772138007.83853 "main.tex" "main.pdf" "main" 1772138017.77796 0
+["pdflatex"] 1772211019.43894 "main.tex" "main.pdf" "main" 1772211030.07931 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -189,6 +189,8 @@
   "docs/../Figures/2026-02-26-110302/fig_FComp.png" 1772125450.82565 344386 de6296e30e8ccddce5bd37d2eceb42c2 ""
   "docs/../Figures/2026-02-26-142254/fig_FComp.png" 1772137507.64772 361580 b99ce6d8ed0335b786cc98bd0a941612 ""
   "docs/../Figures/2026-02-26-142919/fig_FComp.png" 1772137822.4316 354851 53c88a66a23c98c0f4448cdba1cdfb71 ""
+  "docs/../Figures/2026-02-27-091917/fig_FComp.png" 1772205656.45475 362107 89f5c678ea6c122bda29aaf66057351e ""
+  "docs/../Figures/2026-02-27-091917/fig_Uatom-fix.png" 1772205676.60891 170420 d67c0e1000dd06dd10987af0ec19ff99 ""
   "docs/../Figures/test3/triangle-1.png" 1771867942.47812 41349 872f69e0dadda9dbaea655a9dc71a91b ""
   "docs/../Figures/test3/triangle-2.png" 1771867970.06286 41385 78c5e8bc06537872b2e1ca5d1c5cba44 ""
   "docs/../Figures/test3/triangle-3.png" 1771867981.37677 41351 937db170634d1795cf50e07845390876 ""
@@ -198,11 +200,11 @@
   "docs/../Figures/tests2/t_0.png" 1771348590.41993 43876 b9e5c5758af9d78df0e66bf9b01d06d2 ""
   "docs/../Figures/tests2/t_2.png" 1771348580.77598 43929 582b0a9d02e267164b49de90d934ccee ""
   "docs/../Figures/tests2/t_4.png" 1771348598.49045 43686 6e4a2031c4f4306017563a533a8b4f23 ""
-  "docs/tests-3.tex" 1772138006.19785 39527 9beb59a81dfa8d3a52fbd2c7ba67b114 ""
-  "main.aux" 1772138017.67511 17601 76e774c1283ff097a709880147a09f47 "pdflatex"
-  "main.bbl" 1772137889.6218 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1772138017.67511 4493 667e5c8fe1a8813130f84aa8c1604fcc "pdflatex"
-  "main.tex" 1772052339.67552 3275 fead8f138e0d9ad3db13543263135134 ""
+  "docs/tests-3.tex" 1772207821.56411 40684 ba2c682ed9c4dfe5162888d8a60d0ed1 ""
+  "main.aux" 1772211029.93098 18471 1d8e458b84d0f8643592c34e9326d358 "pdflatex"
+  "main.bbl" 1772211030.07432 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1772211029.93098 4733 447744f67d53c9ebb4ad5dcf4af9d532 "pdflatex"
+  "main.tex" 1772211018.45044 3275 fead8f138e0d9ad3db13543263135134 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
