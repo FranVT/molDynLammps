@@ -980,7 +980,63 @@ Calcule la derivada numérica de la energía potencial total:
     }\label{fig:Config1-Energ-pot}
 \end{figure}
 
+Haciendo zoom a la región de \(t>2\) se puede observar que las discontinuidades en la energía ocasiona una fuerza.
+Mi teoría/intuición, es que Lammps realiza los ajustes para que sea concistente que en el cambio de energía, tenga una fuerza.
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-27-122735/fig_UForceZoom.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-pot}
+\end{figure}
+
+Es una fuerza fantasma por error numérico.
+
+Reduciré el dominio de la tabulación para incrementar la presición.
+\(r_{\min}=D_p/2\) y \(r_{\max}=1.5 D_p\)
+
+\newpage
+
+\section{Directory: 2026-02-27-155337}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-27-155337/fig_Uatom-fix.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-pot}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-27-155337/fig_UForceZoom.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-pot}
+\end{figure}
+
+
+No sé cómo solucionar este fenómeno.
+LAMMPS usa una interpolación lineal al leer las tablas.
+Es todo lo que se.
+
+No entiendo.
+No sé por donde iniciar a comprender la situación.
+
+\newpage
+
+Observando con detenimiento la energía registrada en el potencial de swap, se puede observar que es discontinua.
+Esa subida escalonada es lo que ocasiona la fuerza fantasma.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-27-155337/fig_Uatom-fix.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-atom}
+\end{figure}
+
+No se cómo evitar que se tenga esa subida escalonada.
+Se que debe de estar relacionada con la forma en cómo se está evaluando el potencial para el caso en que se tiene un configuración simétrica de partículas identicas.
+Porque LAMMPS pide que se un archivo distinto.
+Tengo que cambiar la forma en cómo estoy evaluando los dominios.
 
 
 \end{document}

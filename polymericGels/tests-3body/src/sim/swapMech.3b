@@ -1,1 +1,8 @@
-PA PA PA 0.8 swapMechTab2new_w1.table SEC1 linear 128 
+PA PA PA 0.6 swapMechTab2new_w1.table SEC1 linear 128
+PB PA PA 0.6 swapMechTab2new_w1.table SEC1 linear 128
+PA PB PA 0.6 swapMechTab1new_w1.table SEC1 linear 128
+PB PB PA 0.6 swapMechTab1new_w1.table SEC1 linear 128
+PA PA PB 0.6 swapMechTab1new_w1.table SEC1 linear 128
+PB PA PB 0.6 swapMechTab1new_w1.table SEC1 linear 128
+PA PB PB 0.6 swapMechTab2new_w1.table SEC1 linear 128
+PB PB PB 0.6 swapMechTab2new_w1.table SEC1 linear 128

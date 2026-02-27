@@ -20,7 +20,13 @@ include("functions.jl")
 # 2026-02-23-112958
 
 # Selection of an specific simulation
-date="2026-02-27-122735";
+date="2026-02-27-155337";
+
+#"2026-02-27-122735";
+
+#"2026-02-27-151246";
+#"2026-02-27-144232";
+#
 #"2026-02-27-121522";
 #"2026-02-27-120321";
 
@@ -1129,14 +1135,14 @@ ax1_eng=Axis(fig_Uf[1,1],
 
 aux=combine(groupby(l, :TimeStep), :c_potAtom => sum => :suma_c_pot);
 
-scatter!(ax1_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fixPatch}}",color=1,colormap=:tab10,colorrange=(1,10))
-scatter!(ax1_eng,time_fix,DATA_fix.c_swapPair,label=L"U_{\mathrm{swap}}",color=2,colormap=:tab10,colorrange=(1,10))
-scatter!(ax1_eng,time_fix,DATA_fix.c_ep,label=L"U_{\mathrm{ep}}",color=3,colormap=:tab10,colorrange=(1,10))
+scatterlines!(ax1_eng,time_fix,DATA_fix.c_patchPair,label=L"U_{\mathrm{fixPatch}}",color=1,colormap=:tab10,colorrange=(1,10),markersize=1.5)
+scatterlines!(ax1_eng,time_fix,DATA_fix.c_swapPair,label=L"U_{\mathrm{swap}}",color=2,colormap=:tab10,colorrange=(1,10),markersize=1.5)
+scatterlines!(ax1_eng,time_fix,DATA_fix.c_ep,label=L"U_{\mathrm{ep}}",color=3,colormap=:tab10,colorrange=(1,10),markersize=1.5)
 
 
-lines!(ax1_eng,time_dump,DATA_dump_1.c_potAtom,label=L"U_{\mathrm{atom}1}",color=2,colormap=:viridis,colorrange=(1,10),linestyle=:dash)
-lines!(ax1_eng,time_dump,DATA_dump_2.c_potAtom,label=L"U_{\mathrm{atom}2}",color=4,colormap=:viridis,colorrange=(1,10),linestyle=:dash)
-lines!(ax1_eng,time_dump,DATA_dump_3.c_potAtom,label=L"U_{\mathrm{atom}3}",color=6,colormap=:viridis,colorrange=(1,10),linestyle=:dash)
+scatterlines!(ax1_eng,time_dump,DATA_dump_1.c_potAtom,label=L"U_{\mathrm{atom}1}",color=2,colormap=:viridis,colorrange=(1,10),markersize=1.5)
+scatterlines!(ax1_eng,time_dump,DATA_dump_2.c_potAtom,label=L"U_{\mathrm{atom}2}",color=4,colormap=:viridis,colorrange=(1,10),markersize=1.5)
+scatterlines!(ax1_eng,time_dump,DATA_dump_3.c_potAtom,label=L"U_{\mathrm{atom}3}",color=6,colormap=:viridis,colorrange=(1,10),markersize=1.5)
 lines!(ax1_eng,time_dump,aux.suma_c_pot,label=L"\sum U_{\mathrm{atom}}",color=:black,linestyle=:dash)
 
 
@@ -1243,12 +1249,57 @@ ax2_eng=Axis(fig_UForce[2,1],
              xminorgridvisible=true
    )
 
-scatterlines!(ax1_eng,time_fix,DATA_fix.c_ep,label=L"U_{\mathrm{ep}}",color=3,colormap=:tab10,colorrange=(1,10),markersize=2.5)
+
 
 forcel=(-1).*(DATA_fix.c_ep[2:end] .- DATA_fix.c_ep[1:end-1])./(time_fix[2:end] .- time_fix[1:end-1]);
 
-scatterlines!(ax2_eng,time_fix[2:end-1],forcel[1:end-1],markersize=2.5,color=3,colormap=:tab10,colorrange=(1,10))
+
+scatterlines!(ax1_eng,time_fix[1:end-1],DATA_fix.c_ep[1:end-1],label=L"U_{\mathrm{ep}}",color=3,colormap=:tab10,colorrange=(1,10),markersize=2.5)
+
+scatterlines!(ax2_eng,time_fix[1:end-1],forcel,markersize=2.5,color=3,colormap=:tab10,colorrange=(1,10))
 
 save("fig_UforceDErivative.png", fig_UForce, px_per_unit = 300/inch)
+
+
+
+ind_aux1=2001:length(time_fix)-2;
+ind_aux=2001:length(forcel)-1;
+fig_UForce=Figure(size = (18.75cm, 15cm));
+# Create twin axis: Energy and distance
+ax1_eng=Axis(fig_UForce[1,1],
+             title=latexstring("\\mathrm{Total~potencial~energy~of~the~system}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2_eng=Axis(fig_UForce[2,1],
+             title=latexstring("\\mathrm{Derivative~of~the~total~potencial~energy~of~the~system}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+scatterlines!(ax1_eng,time_fix[ind_aux1],DATA_fix.c_ep[ind_aux],label=L"U_{\mathrm{ep}}",color=3,colormap=:tab10,colorrange=(1,10),markersize=2.5)
+
+scatterlines!(ax2_eng,time_fix[ind_aux1],forcel[ind_aux],markersize=2.5,color=3,colormap=:tab10,colorrange=(1,10))
+
+
+
+
+
+
+save("fig_UForceZoom.png", fig_UForce, px_per_unit = 300/inch)
 
 
