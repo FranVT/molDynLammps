@@ -29,7 +29,6 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
 """
     Compute the scalars for the proyection of the forces
 """
-    r_c=1.5*sig_p;
 
     th = deg2rad(th);
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));

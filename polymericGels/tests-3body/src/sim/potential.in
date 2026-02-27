@@ -2,6 +2,6 @@
 
 #pair_coeff 1 1 zero 0.5
 #pair_coeff 1 2 table/omp sysFiles/pachTab.table POT 0.8 # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB
-pair_coeff * * table/omp sysFiles/pachTab.table POT 0.6 # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB 
+pair_coeff * * table/omp sysFiles/pachTab.table POT 0.8 # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB 
 pair_coeff * * threebody/table swapMech.3b NULL PA
 

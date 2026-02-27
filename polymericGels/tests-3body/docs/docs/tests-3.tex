@@ -905,6 +905,81 @@ Intuyo que como hay energía y lammps hace concistencia de que \(\vec{F}=-\pdv{U
     }\label{fig:Config1-Energ-pot}
 \end{figure}
 
+\newpage 
+
+\section{Directory: 2026-02-27-121522}
+
+hice que la energía sea igual a la sumatoria de las 3 energías por partícula.
+Y eso hace sentido.
+El salto de la enerǵia, al final de la simulación es por un cambio en la condicional del dominio.
+
+Pero observando, que en el intervalo \(t\in[2,2.5]\), la energía se mantiene constante y la fuerza en las partículas 1 y 3 es cero.
+Pero a partir de \(t=2.5\), se observan perturbaciones en la energía y se observa una fuerza en las partículas 1 y 3.
+No se si esas perturbaciones sea lo que causa que aparezca la fuerza 1 y 3 de LAMMPS.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-27-121522/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-LAMMPS-b}
+\end{figure}
+
+\newpage
+
+Por otro lado.
+Ya no tengo dudas de que la forma en cómo se está tabulando o graficando estén incorrectas.
+Ya estoy seguro de las gráficas analíticas.
+No se si se que estoy usando dos $r_c$ cause que LAMMPS tenga problemas.
+Pondré que ambos cut off sea \(2 D_p\).
+El potencial de patch y de tres cuerpos.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-02-27-121522/fig_Uatom-fix.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-pot}
+\end{figure}
+
+\newpage
+
+\section{Directory: 2026-02-27-122735}
+
+Pues no.
+No fue el cut off the potencial del patch.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-27-122735/fig_FComp.png}
+    \caption{Comparación de las fuerzas en LAMMPS con las fuerzas analíticas.
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-LAMMPS-b}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-27-122735/fig_Uatom-fix.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-pot}
+\end{figure}
+
+\newpage
+
+Calcule la derivada numérica de la energía potencial total:
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-02-27-122735/fig_UforceDErivative.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-pot}
+\end{figure}
+
 
 
 

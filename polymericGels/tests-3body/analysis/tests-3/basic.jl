@@ -20,7 +20,11 @@ include("functions.jl")
 # 2026-02-23-112958
 
 # Selection of an specific simulation
-date="2026-02-27-101516";
+date="2026-02-27-122735";
+#"2026-02-27-121522";
+#"2026-02-27-120321";
+
+#"2026-02-27-101516";
 #"2026-02-27-100222";
 #"2026-02-27-091917";
 
@@ -1206,4 +1210,45 @@ Legend(fig_UF[1,2],ax2_eng,
      labelsize=0.5cm)
 
 save("fig_Ufix-func.png", fig_UF, px_per_unit = 300/inch)
+
+
+"""
+    Numeric derivative
+"""
+
+fig_UForce=Figure(size = (18.75cm, 15cm));
+# Create twin axis: Energy and distance
+ax1_eng=Axis(fig_UForce[1,1],
+             title=latexstring("\\mathrm{Total~potencial~energy~of~the~system}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"U~[J/\epsilon]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2_eng=Axis(fig_UForce[2,1],
+             title=latexstring("\\mathrm{Derivative~of~the~total~potencial~energy~of~the~system}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+
+scatterlines!(ax1_eng,time_fix,DATA_fix.c_ep,label=L"U_{\mathrm{ep}}",color=3,colormap=:tab10,colorrange=(1,10),markersize=2.5)
+
+forcel=(-1).*(DATA_fix.c_ep[2:end] .- DATA_fix.c_ep[1:end-1])./(time_fix[2:end] .- time_fix[1:end-1]);
+
+scatterlines!(ax2_eng,time_fix[2:end-1],forcel[1:end-1],markersize=2.5,color=3,colormap=:tab10,colorrange=(1,10))
+
+save("fig_UforceDErivative.png", fig_UForce, px_per_unit = 300/inch)
+
 
