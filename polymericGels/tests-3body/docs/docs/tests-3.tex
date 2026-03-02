@@ -1040,5 +1040,24 @@ Tengo que cambiar la forma en cómo estoy evaluando los dominios.
 
 Ocupo hacer graficas de las tablas.
 
+\newpage 
+
+Intenté que la tabla del potencial de enlace tuviera los mismos puntos que el potencial de swap \(N=2^{7}\), pero eso no arregló las dicontinuidades.
+
+\section{Directory: 2026-03-02-093124}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-03-02-093124/fig_Uatom-fix.png}
+    \caption{Comparación de la energía potencial.
+    }\label{fig:Config1-Energ-atom}
+\end{figure}
+
+
+Idea: Cambiar la forma en cómo se están combinando los potenciales.
+\verb|pair_style hybrid/overlay| a \verb|pair_style hybrid| o \verb|pair_style hybrid/molecular|
+
+En el \verb|pair_style hybrid| sería el WCA para la partículas centrales y el threebody con la composición lineal del potencial swap más el potencial de enlace para los patches.
+En el \verb|pair_style hybrid/molecular| (aún no termino de leer la documentación) pero la idea sería tratar las partículas patchy cómo moleculas y tener interacciones inter-moleculares entre CL y MO.
 
 \end{document}
