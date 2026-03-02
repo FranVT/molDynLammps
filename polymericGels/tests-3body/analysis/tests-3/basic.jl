@@ -20,7 +20,9 @@ include("functions.jl")
 # 2026-02-23-112958
 
 # Selection of an specific simulation
-date="2026-03-02-093124";
+date="2026-03-02-160300";
+
+#"2026-03-02-093124";
 
 #"2026-02-27-163258";
 

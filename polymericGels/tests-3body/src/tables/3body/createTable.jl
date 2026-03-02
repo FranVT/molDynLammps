@@ -34,42 +34,21 @@ function force(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
 
 #    if r_ij<=r_c && r_ik<=r_c && r_jk<=r_c 
-        f_1=forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
-        f_2=forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
-        f_3=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+        f_1=(2).*forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
+        f_2=(2).*forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
+        f_3=(2).*forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
 
-        a=f_1[1]; b=-f_2[1]; c=a+b;
-        f_i1=c;
-        
-        a=f_1[2]; b=-f_3[1]; c=a+b;
-        f_i2=c;
-    
+        f_i1=f_1[1]-f_2[1];
+        f_i2=f_1[2]-f_3[1];
+   
         f_j1=-f_i1; 
-
-        a=f_2[2]; b=-f_3[2]; c=a+b;
-        f_j2=c; 
+        f_j2=f_2[2]-f_3[2]; 
 
         f_k1=-f_i2; 
         f_k2=-f_j2; 
 
         eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
         
-#Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik);
-#    else
-#        f_i1=0;
-#        f_i2=0;
-    
-#        f_j1=0; 
-#        f_j2=0; 
-
-#        f_k1=0; 
-#        f_k2=0; 
-
-#        eng=0
-#    end
-    #+ 
-    #eng=round(eng/3,digits=2^7)
-
     return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
 
 end
@@ -96,19 +75,13 @@ filename2 = string("swapMechTab2new_w",w,".table");
 th_dom = range(thi,thf,2*N);
 r_dom = range(rmin,rmax,N);
 
-#doms1 = reduce(vcat,reverse.(Iterators.product(th_dom,r_dom,r_dom)|>collect));
-#doms2 = reduce(vcat,map(s-> reshape(reverse.(Iterators.product(th_dom,r_dom[s:end],r_dom[s])),2*N*(N-(s-1)),1) ,eachindex(r_dom)));
-
 doms_1=map(rij->map(rik->map(th->[rij rik th],th_dom),r_dom),r_dom);
 doms_1=reduce(vcat,reduce(vcat,doms_1));
 
 doms_2=map(rij->map(rik->map(th->[r_dom[rij] r_dom[rik] th],th_dom),rij:N),eachindex(r_dom));
 doms_2=reduce(vcat,reduce(vcat,doms_2));
 
-
-
 # Create tuples with the information
-# For Patch_j = Patch_k
 
 # For different spicies
 docs1 =  map(eachindex(doms_1)) do s
