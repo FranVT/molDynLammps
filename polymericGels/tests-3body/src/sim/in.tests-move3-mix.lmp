@@ -39,7 +39,7 @@ group P3 id 3
 
 
 # Neighbor list
-neighbor 1.8 bin # extra-distance style
+neighbor 1.2 bin # extra-distance style
 
 # COMPUTES
 
@@ -95,6 +95,7 @@ run 2000
 
 # Dejar de mover la particula 2
 unfix moveP2
+fix moveP2 P2 move linear 0.0 0.0 0.0
 
 # Mover la tercera partícula
 fix moveP3 P3 move linear 0.0 0.1 0.0

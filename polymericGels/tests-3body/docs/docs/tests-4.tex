@@ -1,0 +1,119 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\justifying
+
+\section{Factor de dos y fuerza en la partícula 2}
+
+\subsection{Directory: 2026-03-03-101553}
+
+La siguiente grafica muestra:
+\begin{gather*}
+    \frac{1}{2}F_{\mathrm{tabla~swap}} - F_{\mathrm{LAMMPS}}
+\end{gather*}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-03-03-101553/fig_FswapDiff.png}
+    \caption{
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-SwapDiff}
+\end{figure}
+
+Podemos ver que en LAMMPS se registra la mitad del valor que se tabula.
+Pero también se observa que aparece una fuerza en la partícula dos.
+Esa fuerza no debe de aparecer ahí.
+Mi intución es que, la aparición de esa fuerza, ocasiona el ruido de la fuerza en la partícula 1 y 3.
+No me queda claro cómo aparece esa fuerza en la partícula 2.
+
+En la siguiente figura se muestra el cálculo de fuerzas usando las distancias y la fuerza de la tabla,
+\begin{gather}
+    \begin{pmatrix}
+        \vec{f}_i \\ \vec{f}_j \\\vec{f}_k 
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        f_{i1} & f_{i2} & 0 \\
+        f_{j1} & 0 & f_{j2} \\
+        0 & f_{k1} & f_{k2}
+    \end{pmatrix}
+    \begin{pmatrix}
+        \vec{r}_{ij} \\ \vec{r}_{ik} \\\vec{r}_{jk} 
+    \end{pmatrix}
+    \label{eqn:lammps3body}
+\end{gather}
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-03-03-101553/fig_Fswaptable.png}
+    \caption{
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-SwapDiff}
+\end{figure}
+
+Revisando el dump, aún aparece que la partícula 2 tiene una velocidad.
+Posiblemente de ahí provenga el error.
+Modificaré el script de lammps para que después de que se deje de mover la partícula 2, está no tenga velocidad.
+
+\newpage
+
+\subsection{Directory: 2026-03-03-115610}
+
+Pues no era eso\ldots
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-03-03-115610/fig_FswapDiff.png}
+    \caption{
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-SwapDiff}
+\end{figure}
+
+Voy a agregar un factor de \(2\) en la tabulación de la tabla y hacer el mismo análisis a ver que pasa.
+
+\newpage
+
+\subsection{Directory: 2026-03-03-120832}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-03-03-120832/fig_FswapDiff.png}
+    \caption{
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-SwapDiff}
+\end{figure}
+
+\newpage
+Pondré que la energía sea cero en todo el potencial, pero la fuerza que no sea nula.
+Pffff, lo mismo.
+
+\subsection{Directory: 2026-03-03-125817}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-03-03-125817/fig_FswapDiff.png}
+    \caption{
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config1-SwapDiff}
+\end{figure}
+
+
+\end{document}

@@ -3,7 +3,36 @@
 """
 
 # Include the functions for the force and potentials
-inlcude("../../src/tables/functions.jl")
+include("../../src/tables/functions.jl")
+
+function evaluateFswap(dist_12,dist_13,dist_23,DATA_dump_1,DATA_dump_2,DATA_dump_3)
+"""
+    Evaluate the Force to get analytical result
+"""
+
+f_swap1=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),vcat,1:1:nrow(DATA_dump_1));
+f_swap2=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_2));
+f_swap3=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_3));
+
+# Stuff of the table
+F_1s12 = f_swap1[:,1] .- f_swap2[:,1];
+F_1s13 = f_swap1[:,2] .- f_swap3[:,1];
+
+F_2s21 = f_swap2[:,1] .- f_swap1[:,1];
+F_2s23 = f_swap2[:,2] .- f_swap3[:,2];
+
+F_3s31 = f_swap3[:,1] .- f_swap1[:,2];
+F_3s32 = f_swap3[:,2] .- f_swap2[:,2];
+
+# Project the forces into the x,y basis
+f_swap1xy=(F_1s12).*vr_12 .+ (F_1s13).*vr_13;
+f_swap2xy=(F_2s21).*(vr_12) .+ (F_2s23).*vr_23;
+f_swap3xy=(F_3s31).*(vr_13) .+ (F_3s32).*(vr_23);
+
+
+    return (f_swap1xy,f_swap2xy,f_swap3xy)
+
+end
 
 function getTable3b(dir,file_name)
 """

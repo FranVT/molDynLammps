@@ -20,7 +20,13 @@ include("functions.jl")
 # 2026-02-23-112958
 
 # Selection of an specific simulation
-date="2026-03-02-160300";
+date="2026-03-03-125817";
+
+#"2026-03-03-120832";
+#"2026-03-03-115610";
+#"2026-03-03-101553";
+
+#2026-03-02-160300
 
 #"2026-03-02-155205";
 #"2026-03-02-154451";
@@ -129,43 +135,7 @@ f_patch13xy=f_patch13.*vr_13;
 f_patch23xy=f_patch23.*vr_23; 
 
 # Evaluate the Swap function
-
-
-function evaluateFswap(r12,r13,r23)
-    r_c=1.5*0.4;
-
-    if r12<r_c && r13<r_c && r23<r_c
-        f_1=forceSwap(1.0,1.0,1.0,1.0,0.4,r12,r13)
-        f_2=forceSwap(1.0,1.0,1.0,1.0,0.4,r12,r23)
-        f_3=forceSwap(1.0,1.0,1.0,1.0,0.4,r12,r13)
-end
-end
-
-
-f_swap1=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s]),vcat,1:1:nrow(DATA_dump_1));
-f_swap2=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_2));
-f_swap3=mapreduce(s->forceSwap(1.0,1.0,1.0,1.0,0.4,dist_13[s],dist_23[s]),vcat,1:1:nrow(DATA_dump_3));
-
-# Stuff of the table
-F_1s12 = f_swap1[:,1] .- f_swap2[:,1];
-F_1s13 = f_swap1[:,2] .- f_swap3[:,1];
-
-F_2s21 = f_swap2[:,1] .- f_swap1[:,1];
-F_2s23 = f_swap2[:,2] .- f_swap3[:,2];
-
-F_3s31 = f_swap3[:,1] .- f_swap1[:,2];
-F_3s32 = f_swap3[:,2] .- f_swap2[:,2];
-
-# Project the forces into the x,y basis
-f_swap1xy=(F_1s12).*vr_12 .+ (F_1s13).*vr_13;
-f_swap2xy=(F_2s21).*(vr_12) .+ (F_2s23).*vr_23;
-f_swap3xy=(F_3s31).*(vr_13) .+ (F_3s32).*(vr_23);
-
-#=
-f_swap1xy=f_swap1[:,1].*vr_12 .+ f_swap1[:,2].*vr_13;
-f_swap2xy=f_swap2[:,1].*(-vr_12) .+ f_swap2[:,2].*vr_23;
-f_swap3xy=f_swap3[:,1].*(-vr_13) .+ f_swap3[:,2].*(-vr_23);
-=#
+(f_swap1xy,f_swap2xy,f_swap3xy) = evaluateFswap(dist_12,dist_13,dist_23,DATA_dump_1,DATA_dump_2,DATA_dump_3)
 
 f_part1=f_patch12xy .+ f_patch13xy .+ f_swap1xy;
 f_part2=-f_patch12xy .+ f_patch23xy .+ f_swap2xy;
@@ -177,10 +147,208 @@ f_part3N=sqrt.(reduce(vcat,sum(f_part3.^2,dims=2)));
 
 F_systemA=f_part1N .+ f_part2N .+ f_part3N;
 
+#=
+    Compute the forces using the LAMMPS documentation
+=#
+
+
+
+fSwaptable =  map(eachindex(dist_12)) do s
+    th = rad2deg(acos( round((dist_12[s]^2 + dist_13[s]^2 - dist_23[s]^2)/(2*dist_12[s]*dist_13[s]),digits=6) ));
+            forceSwapTable(1.0,1.0,1.0,1.0,0.4,dist_12[s],dist_13[s],th)
+        end;
+
+
+fSwaptable=reduce(hcat,collect.(fSwaptable))';
+
+
+f_i1=fSwaptable[:,1];
+f_i2=fSwaptable[:,2];
+
+f_j1=fSwaptable[:,3];
+f_j2=fSwaptable[:,4];
+
+f_k1=fSwaptable[:,5];
+f_k2=fSwaptable[:,6];
+
+f_1=f_i1.*vr_12 .+ f_i2.*vr_13;
+f_2=f_j1.*vr_12 .+ f_j2.*vr_23;
+f_3=f_k1.*vr_13 .+ f_k2.*vr_23;
+
+# Compute the difference between LAMMPS and theoretical
+
+df_1x = 0.5*f_1[:,1] .- DATA_dump_1.fx;
+df_1y = 0.5*f_1[:,2] .- DATA_dump_1.fy;
+
+df_2x = 0.5*f_2[:,1] .- DATA_dump_2.fx;
+df_2y = 0.5*f_2[:,2] .- DATA_dump_2.fy;
+
+df_3x = 0.5*f_3[:,1] .- DATA_dump_3.fx;
+df_3y = 0.5*f_3[:,2] .- DATA_dump_3.fy;
+
+
+
+
 # Graphics
 
 tl_sz=0.55cm;
 ot_sz=0.35cm;
+
+fig_FswapDiff=Figure(size=(18.75cm,18.75cm));
+ax1=Axis(fig_FswapDiff[1,1],
+             title=latexstring("\\vec{F}_{\\mathrm{patch}~1}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2=Axis(fig_FswapDiff[2,1],
+             title=latexstring("\\vec{F}_{\\mathrm{patch}~2}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax3=Axis(fig_FswapDiff[3,1],
+             title=latexstring("\\vec{F}_{\\mathrm{patch}~3}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+linkyaxes!(ax1, ax2, ax3) #, ax3_F, ax1_Fa, ax2_Fa, ax3_Fa)
+
+lines!(ax1,time_dump,df_1x,
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax1,time_dump,df_1y,
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10),
+        linestyle=:dash
+       )
+
+lines!(ax2,time_dump,df_2x,
+        color=2,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax2,time_dump,df_2y,
+        color=2,
+        colormap=:tab10,
+        colorrange=(1,10),
+        linestyle=:dash
+       )
+
+lines!(ax3,time_dump,df_3x,
+        color=3,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax3,time_dump,df_3y,
+        color=3,
+        colormap=:tab10,
+        colorrange=(1,10),
+        linestyle=:dash
+       )
+
+save("fig_FswapDiff.png", fig_FswapDiff, px_per_unit = 300/inch)
+
+
+fig_Fswaptable=Figure(size=(18.75cm,18.75cm));
+ax1=Axis(fig_Fswaptable[1,1],
+             title=latexstring("\\vec{F}_{\\mathrm{patch}~1}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax2=Axis(fig_Fswaptable[2,1],
+             title=latexstring("\\vec{F}_{\\mathrm{patch}~2}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+ax3=Axis(fig_Fswaptable[3,1],
+             title=latexstring("\\vec{F}_{\\mathrm{patch}~3}"),
+             xlabel=L"t~[\tau]",
+             ylabel=L"F~[N^*]",
+             titlesize=tl_sz,
+             xticklabelsize=ot_sz,
+             yticklabelsize=ot_sz,
+             xlabelsize=tl_sz,
+             ylabelsize=tl_sz,
+             xminorticksvisible=true,
+             xminorgridvisible=true
+   )
+linkyaxes!(ax1, ax2, ax3) #, ax3_F, ax1_Fa, ax2_Fa, ax3_Fa)
+
+lines!(ax1,time_dump,f_1[:,1],
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax1,time_dump,f_1[:,2],
+        color=1,
+        colormap=:tab10,
+        colorrange=(1,10),
+        linestyle=:dash
+       )
+
+lines!(ax2,time_dump,f_2[:,1],
+        color=2,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax2,time_dump,f_2[:,2],
+        color=2,
+        colormap=:tab10,
+        colorrange=(1,10),
+        linestyle=:dash
+       )
+
+lines!(ax3,time_dump,f_3[:,1],
+        color=3,
+        colormap=:tab10,
+        colorrange=(1,10)
+       )
+lines!(ax3,time_dump,f_3[:,2],
+        color=3,
+        colormap=:tab10,
+        colorrange=(1,10),
+        linestyle=:dash
+       )
+
+save("fig_Fswaptable.png", fig_Fswaptable, px_per_unit = 300/inch)
+
 
 """
     Full components of the swap force analitical

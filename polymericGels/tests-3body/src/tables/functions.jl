@@ -11,9 +11,9 @@ function forceSwapTable(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
     r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
 
 #    if r_ij<=r_c && r_ik<=r_c && r_jk<=r_c 
-        f_1=(2).*forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
-        f_2=(2).*forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
-        f_3=(2).*forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+        f_1=2*forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
+        f_2=2*forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
+        f_3=2*forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
 
         f_i1=f_1[1]-f_2[1];
         f_i2=f_1[2]-f_3[1];
@@ -24,7 +24,7 @@ function forceSwapTable(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
         f_k1=-f_i2; 
         f_k2=-f_j2; 
 
-        eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
+        eng=0; #Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
         
     return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
 

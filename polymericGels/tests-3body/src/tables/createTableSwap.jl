@@ -6,9 +6,6 @@ include("parameters.jl")
 include("functions.jl")
 include("auxFunctions.jl")
 
-
-## Parameters for the file
-
 filename1 = string("swapMechTab1new_w",w,".table");
 filename2 = string("swapMechTab2new_w",w,".table");
 
