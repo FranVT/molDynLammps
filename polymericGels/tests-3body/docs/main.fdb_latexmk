@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1772564490.71911 "main.aux" "main.bbl" "main" 1772564490.76066 2
-  "main.aux" 1772564490.64384 2817 bd342762ca3c84876c7dadf3558533ed "pdflatex"
+["bibtex main"] 1772573460.37441 "main.aux" "main.bbl" "main" 1772573460.41928 2
+  "main.aux" 1772573460.29277 3329 ed95a760e763f4881766a764fe1c1f2b "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1772564487.39532 "main.tex" "main.pdf" "main" 1772564490.76082 0
+["pdflatex"] 1772573456.71402 "main.tex" "main.pdf" "main" 1772573460.41944 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -166,11 +166,12 @@
   "docs/../Figures/2026-03-03-115610/fig_FswapDiff.png" 1772560714.4665 210561 6c4b904039af61d601caee37a3f63119 ""
   "docs/../Figures/2026-03-03-120832/fig_FswapDiff.png" 1772561557.43757 197254 2a38231ee95ba148a227981ac0b6366b ""
   "docs/../Figures/2026-03-03-125817/fig_FswapDiff.png" 1772564360.1178 197254 2a38231ee95ba148a227981ac0b6366b ""
-  "docs/tests-4.tex" 1772564485.82361 3680 1584033f272ade12e1532588f16a5ede ""
-  "main.aux" 1772564490.64384 2817 bd342762ca3c84876c7dadf3558533ed "pdflatex"
-  "main.bbl" 1772564490.75384 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1772564490.64384 271 7e93a235789fdfb4ce248d5291342a75 "pdflatex"
-  "main.tex" 1772560143.76721 3302 0bb9b0c3b38ef3df225ecf37e00bed48 ""
+  "docs/../Figures/2026-03-03-151516/fig_FswapDiff.png" 1772572625.4806 178003 4841fef27b0d98816c240b990be1e37b ""
+  "docs/tests-4.tex" 1772573301.63869 4444 9fd40fb6efdf6879530b5510e3b097fb ""
+  "main.aux" 1772573460.29277 3329 ed95a760e763f4881766a764fe1c1f2b "pdflatex"
+  "main.bbl" 1772573460.41277 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1772573460.2961 271 7e93a235789fdfb4ce248d5291342a75 "pdflatex"
+  "main.tex" 1772564580.688 3302 0bb9b0c3b38ef3df225ecf37e00bed48 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)

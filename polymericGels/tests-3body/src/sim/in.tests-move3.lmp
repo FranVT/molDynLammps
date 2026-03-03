@@ -25,13 +25,13 @@ include potential.in
 region spawn_box block -$L $L -$L $L -$L $L
 
 # Patch B 
-create_atoms 2 single 0.0 0.0 0.0
+create_atoms 1 single -0.2 0.0 0.0
 
 # Patch B
-create_atoms 2 single 0.0 0.6 0.0
+create_atoms 1 single  0.4 0.0 0.0
 
 # Patch B
-create_atoms 2 single 0.0 -0.6 0.0
+create_atoms 1 single 0.0 0.646410 0.0
 
 # Create groups 
 group PA type 2
@@ -96,14 +96,14 @@ dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
 timestep ${tstep}
 
 # Mover the second particles 
-fix moveP2 P2 move linear 0.0 -0.1 0.0
+fix moveP2 P2 move linear -0.1 0.0 0.0
 run 2000 
 
 # Dejar de mover la particula 2
 unfix moveP2
+velocity P2 set 0.0 0.0 0.0
 
 # Mover la tercera partícula
-fix moveP3 P3 move linear 0.0 0.1 0.0
-run 2000
-
+fix moveP3 P3 move linear 0.0 -0.1 0.0
+run 3000
 

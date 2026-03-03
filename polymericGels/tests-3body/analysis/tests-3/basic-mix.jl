@@ -20,7 +20,12 @@ include("functions.jl")
 # 2026-02-23-112958
 
 # Selection of an specific simulation
-date="2026-03-03-125817";
+date="2026-03-03-155316";
+#"2026-03-03-154541";
+#"2026-03-03-153648";
+#"2026-03-03-152840";
+#"2026-03-03-151516";
+#"2026-03-03-125817";
 
 #"2026-03-03-120832";
 #"2026-03-03-115610";
@@ -177,14 +182,14 @@ f_3=f_k1.*vr_13 .+ f_k2.*vr_23;
 
 # Compute the difference between LAMMPS and theoretical
 
-df_1x = 0.5*f_1[:,1] .- DATA_dump_1.fx;
-df_1y = 0.5*f_1[:,2] .- DATA_dump_1.fy;
+df_1x = f_1[:,1] .- DATA_dump_1.fx;
+df_1y = f_1[:,2] .- DATA_dump_1.fy;
 
-df_2x = 0.5*f_2[:,1] .- DATA_dump_2.fx;
-df_2y = 0.5*f_2[:,2] .- DATA_dump_2.fy;
+df_2x = f_2[:,1] .- DATA_dump_2.fx;
+df_2y = f_2[:,2] .- DATA_dump_2.fy;
 
-df_3x = 0.5*f_3[:,1] .- DATA_dump_3.fx;
-df_3y = 0.5*f_3[:,2] .- DATA_dump_3.fy;
+df_3x = f_3[:,1] .- DATA_dump_3.fx;
+df_3y = f_3[:,2] .- DATA_dump_3.fy;
 
 
 
