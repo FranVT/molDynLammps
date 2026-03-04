@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  4 MAR 2026 14:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  4 MAR 2026 14:28
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -627,6 +627,12 @@ LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
 
 LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
 
+
+LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
+
+
+LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
+
 )
 \openout1 = `main.aux'.
 
@@ -853,7 +859,18 @@ Package pdftex.def Info: docs/../Figures/2026-03-04-141237/fig_FswapDiff.png  us
 (pdftex.def)             Requested size: 304.45168pt x 304.45168pt.
 
 
-[10 <./docs/../Figures/2026-03-04-141237/fig_ForceComp.png> <./docs/../Figures/2026-03-04-141237/fig_FswapDiff.png>])
+[10 <./docs/../Figures/2026-03-04-141237/fig_ForceComp.png> <./docs/../Figures/2026-03-04-141237/fig_FswapDiff.png>]
+<docs/../Figures/2026-03-04-142356/fig_ForceComp.png, id=76, 483.9681pt x 533.8344pt>
+File: docs/../Figures/2026-03-04-142356/fig_ForceComp.png Graphic file (type png)
+<use docs/../Figures/2026-03-04-142356/fig_ForceComp.png>
+Package pdftex.def Info: docs/../Figures/2026-03-04-142356/fig_ForceComp.png  used on input line 246.
+(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
+<docs/../Figures/2026-03-04-142356/fig_FswapDiff.png, id=77, 533.8344pt x 533.8344pt>
+File: docs/../Figures/2026-03-04-142356/fig_FswapDiff.png Graphic file (type png)
+<use docs/../Figures/2026-03-04-142356/fig_FswapDiff.png>
+Package pdftex.def Info: docs/../Figures/2026-03-04-142356/fig_FswapDiff.png  used on input line 258.
+(pdftex.def)             Requested size: 304.45168pt x 304.45168pt.
+)
 
 Package bibentry Warning: You have used \nobibliography* 
 (bibentry)                without a following \bibliography.
@@ -861,7 +878,9 @@ Package bibentry Warning: You have used \nobibliography*
 
 
 
-[11] (./main.aux)
+[11 <./docs/../Figures/2026-03-04-142356/fig_ForceComp.png>]
+
+[12 <./docs/../Figures/2026-03-04-142356/fig_FswapDiff.png>] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -874,18 +893,18 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: C3DCC612EEACEE86B69BC4E23979EF5F;300.
  ) 
 Here is how much of TeX's memory you used:
- 20895 strings out of 475171
- 383808 string characters out of 5767095
- 776700 words of memory out of 5000000
- 43486 multiletter control sequences out of 15000+600000
+ 20919 strings out of 475171
+ 384931 string characters out of 5767095
+ 776712 words of memory out of 5000000
+ 43506 multiletter control sequences out of 15000+600000
  610642 words of font info for 123 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  97i,15n,96p,541b,1167s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (11 pages, 2875343 bytes).
+Output written on main.pdf (12 pages, 3316073 bytes).
 PDF statistics:
- 127 PDF objects out of 1000 (max. 8388607)
- 85 compressed objects within 1 object stream
- 20 named destinations out of 1000 (max. 500000)
- 1083 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 134 PDF objects out of 1000 (max. 8388607)
+ 89 compressed objects within 1 object stream
+ 22 named destinations out of 1000 (max. 500000)
+ 1093 words of extra memory for PDF output out of 10000 (max. 10000000)
 
