@@ -3,7 +3,7 @@
 """
 
 # General parameters
-M=7;
+M=8;
 N = 2^M;
 sig = 0.4;
 rc=1.5*sig;

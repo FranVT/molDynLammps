@@ -26,7 +26,7 @@ function forceSwapTable(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
 
         eng=0; #Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
         
-    return (f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
+    return (2).*(f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng)
 
 end
 
