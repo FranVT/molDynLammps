@@ -716,6 +716,10 @@ INPUT ./docs/../Figures/0.050.30.05500-2026-01-27-162300/triple.png
 INPUT docs/../Figures/0.050.30.05500-2026-01-27-162300/triple.png
 INPUT ./docs/../Figures/0.050.30.05500-2026-01-27-162300/triple.png
 INPUT ./docs/../Figures/0.050.30.05500-2026-01-27-162300/triple.png
+INPUT ./docs/tests-2.tex
+INPUT docs/tests-2.tex
+INPUT ./docs/tests-2.tex
+INPUT docs/tests-2.tex
 INPUT main.aux
 INPUT ./main.out
 INPUT ./main.out

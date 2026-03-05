@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1772734940.79104 "main.aux" "main.bbl" "main" 1772734940.8335 2
-  "main.aux" 1772734940.70644 7156 e87fc62409c0bbbee9134354eb6432bc "pdflatex"
+["bibtex main"] 1772735798.12284 "main.aux" "main.bbl" "main" 1772735821.13933 2
+  "main.aux" 1772735821.05327 8081 848d20bb851d70476cf4b4d345cfe25a "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1772734934.59279 "main.tex" "main.pdf" "main" 1772734940.83366 0
+["pdflatex"] 1772735814.20703 "main.tex" "main.pdf" "main" 1772735821.13947 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1767555874 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1767555874 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr9d.tfm" 1767555874 6952 fcebd9505ff25166f6bdc98f5d26741b ""
@@ -176,10 +176,12 @@
   "docs/../Figures/2026-03-04-142356/fig_FswapDiff.png" 1772655981.69747 234700 b52fc0849e465a6d3b61b44cf830fba2 ""
   "docs/../Figures/2026-03-05-115307/fig_FComp.png" 1772734304.04506 357952 f8f1276581eb1adf0146854407efdd63 ""
   "docs/../Figures/2026-03-05-115307/fig_ForceComp.png" 1772734310.31919 249210 4bfc7096b9bf870870548e002850fd48 ""
-  "docs/tests-5.tex" 1772734933.88955 10538 82e8e166185e0de18ec52328002c38f5 ""
-  "main.aux" 1772734940.70644 7156 e87fc62409c0bbbee9134354eb6432bc "pdflatex"
-  "main.bbl" 1772734940.82645 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1772734940.70644 873 09c6e835dac6b100a421f61e72035951 "pdflatex"
+  "docs/../Figures/2026-03-05-122859/fig_FComp.png" 1772735575.19283 357952 f8f1276581eb1adf0146854407efdd63 ""
+  "docs/../Figures/2026-03-05-122859/fig_ForceComp.png" 1772735575.86285 249210 4bfc7096b9bf870870548e002850fd48 ""
+  "docs/tests-5.tex" 1772735813.53609 11396 7795793ccd736c32fa3d20fdecb6c9d8 ""
+  "main.aux" 1772735821.05327 8081 848d20bb851d70476cf4b4d345cfe25a "pdflatex"
+  "main.bbl" 1772735798.16169 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1772735821.05327 873 09c6e835dac6b100a421f61e72035951 "pdflatex"
   "main.tex" 1772656233.9197 3330 03387f17ed1d2aae2f39362e6d7f82e2 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
