@@ -11,7 +11,7 @@ Vol_CL1=4.80538;
 # Assign values to the independent variables
 T=0.05;
 N_particles=500;
-phi=0.3;
+phi=0.1;
 CL_con=0.05;
 
 # Assign computational parameters
