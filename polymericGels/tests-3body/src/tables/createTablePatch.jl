@@ -4,7 +4,7 @@
 filename = "pachTab.table";
 
 include("parameters.jl")
-include("function.jl")
+include("functions.jl")
 include("auxFunctions.jl")
 
 r_dom = range(rmin,rmax,length=N);
