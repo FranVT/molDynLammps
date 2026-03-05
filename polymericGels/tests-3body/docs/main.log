@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  4 MAR 2026 14:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2026.1.12)  5 MAR 2026 12:22
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -633,6 +633,18 @@ LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
 
 LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
 
+
+LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
+
+
+LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
+
+
+LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
+
+
+LaTeX Warning: Label `fig:Config3-TabTeo-5' multiply defined.
+
 )
 \openout1 = `main.aux'.
 
@@ -763,7 +775,7 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 7.91925pt on input line 14.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 6.25204pt on input line 14.
-<docs/../Figures/2026-03-04-095332/fig_FTabTeo.png, id=8, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-095332/fig_FTabTeo.png, id=12, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-095332/fig_FTabTeo.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-095332/fig_FTabTeo.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-095332/fig_FTabTeo.png  used on input line 25.
@@ -792,7 +804,7 @@ Overfull \hbox (9.60469pt too wide) in paragraph at lines 82--84
 
 
 [2]
-<docs/../Figures/2026-03-04-104032/fig_FTabTeo.png, id=29, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-104032/fig_FTabTeo.png, id=33, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-104032/fig_FTabTeo.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-104032/fig_FTabTeo.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-104032/fig_FTabTeo.png  used on input line 95.
@@ -800,7 +812,7 @@ Package pdftex.def Info: docs/../Figures/2026-03-04-104032/fig_FTabTeo.png  used
 
 
 [3 <./docs/../Figures/2026-03-04-104032/fig_FTabTeo.png>]
-<docs/../Figures/2026-03-04-104950/fig_FTabTeo.png, id=35, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-104950/fig_FTabTeo.png, id=39, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-104950/fig_FTabTeo.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-104950/fig_FTabTeo.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-104950/fig_FTabTeo.png  used on input line 112.
@@ -808,7 +820,7 @@ Package pdftex.def Info: docs/../Figures/2026-03-04-104950/fig_FTabTeo.png  used
 
 
 [4 <./docs/../Figures/2026-03-04-104950/fig_FTabTeo.png>]
-<docs/../Figures/2026-03-04-105941/fig_FTabTeo.png, id=41, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-105941/fig_FTabTeo.png, id=45, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-105941/fig_FTabTeo.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-105941/fig_FTabTeo.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-105941/fig_FTabTeo.png  used on input line 133.
@@ -816,7 +828,7 @@ Package pdftex.def Info: docs/../Figures/2026-03-04-105941/fig_FTabTeo.png  used
 
 
 [5 <./docs/../Figures/2026-03-04-105941/fig_FTabTeo.png>]
-<docs/../Figures/2026-03-04-105941/fig_FswapDiff.png, id=47, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-105941/fig_FswapDiff.png, id=51, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-105941/fig_FswapDiff.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-105941/fig_FswapDiff.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-105941/fig_FswapDiff.png  used on input line 150.
@@ -824,7 +836,7 @@ Package pdftex.def Info: docs/../Figures/2026-03-04-105941/fig_FswapDiff.png  us
 
 
 [6 <./docs/../Figures/2026-03-04-105941/fig_FswapDiff.png>]
-<docs/../Figures/2026-03-04-134835/fig_FTabTeo.png, id=52, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-134835/fig_FTabTeo.png, id=56, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-134835/fig_FTabTeo.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-134835/fig_FTabTeo.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-134835/fig_FTabTeo.png  used on input line 169.
@@ -832,12 +844,12 @@ Package pdftex.def Info: docs/../Figures/2026-03-04-134835/fig_FTabTeo.png  used
 
 
 [7 <./docs/../Figures/2026-03-04-134835/fig_FTabTeo.png>]
-<docs/../Figures/2026-03-04-134835/fig_ForceComp.png, id=59, 483.9681pt x 533.8344pt>
+<docs/../Figures/2026-03-04-134835/fig_ForceComp.png, id=63, 483.9681pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-134835/fig_ForceComp.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-134835/fig_ForceComp.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-134835/fig_ForceComp.png  used on input line 184.
 (pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-03-04-134835/fig_FswapDiff.png, id=60, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-134835/fig_FswapDiff.png, id=64, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-134835/fig_FswapDiff.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-134835/fig_FswapDiff.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-134835/fig_FswapDiff.png  used on input line 196.
@@ -847,12 +859,12 @@ Package pdftex.def Info: docs/../Figures/2026-03-04-134835/fig_FswapDiff.png  us
 [8 <./docs/../Figures/2026-03-04-134835/fig_ForceComp.png> <./docs/../Figures/2026-03-04-134835/fig_FswapDiff.png>]
 
 [9]
-<docs/../Figures/2026-03-04-141237/fig_ForceComp.png, id=69, 483.9681pt x 533.8344pt>
+<docs/../Figures/2026-03-04-141237/fig_ForceComp.png, id=73, 483.9681pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-141237/fig_ForceComp.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-141237/fig_ForceComp.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-141237/fig_ForceComp.png  used on input line 213.
 (pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-03-04-141237/fig_FswapDiff.png, id=70, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-141237/fig_FswapDiff.png, id=74, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-141237/fig_FswapDiff.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-141237/fig_FswapDiff.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-141237/fig_FswapDiff.png  used on input line 225.
@@ -860,17 +872,35 @@ Package pdftex.def Info: docs/../Figures/2026-03-04-141237/fig_FswapDiff.png  us
 
 
 [10 <./docs/../Figures/2026-03-04-141237/fig_ForceComp.png> <./docs/../Figures/2026-03-04-141237/fig_FswapDiff.png>]
-<docs/../Figures/2026-03-04-142356/fig_ForceComp.png, id=76, 483.9681pt x 533.8344pt>
+<docs/../Figures/2026-03-04-142356/fig_ForceComp.png, id=80, 483.9681pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-142356/fig_ForceComp.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-142356/fig_ForceComp.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-142356/fig_ForceComp.png  used on input line 246.
 (pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
-<docs/../Figures/2026-03-04-142356/fig_FswapDiff.png, id=77, 533.8344pt x 533.8344pt>
+<docs/../Figures/2026-03-04-142356/fig_FswapDiff.png, id=81, 533.8344pt x 533.8344pt>
 File: docs/../Figures/2026-03-04-142356/fig_FswapDiff.png Graphic file (type png)
 <use docs/../Figures/2026-03-04-142356/fig_FswapDiff.png>
 Package pdftex.def Info: docs/../Figures/2026-03-04-142356/fig_FswapDiff.png  used on input line 258.
-(pdftex.def)             Requested size: 304.45168pt x 304.45168pt.
-)
+(pdftex.def)             Requested size: 243.55482pt x 243.55482pt.
+
+
+[11 <./docs/../Figures/2026-03-04-142356/fig_ForceComp.png> <./docs/../Figures/2026-03-04-142356/fig_FswapDiff.png>]
+<docs/../Figures/2026-03-05-115307/fig_FComp.png, id=87, 483.9681pt x 533.8344pt>
+File: docs/../Figures/2026-03-05-115307/fig_FComp.png Graphic file (type png)
+<use docs/../Figures/2026-03-05-115307/fig_FComp.png>
+Package pdftex.def Info: docs/../Figures/2026-03-05-115307/fig_FComp.png  used on input line 277.
+(pdftex.def)             Requested size: 243.5564pt x 268.65155pt.
+
+
+[12 <./docs/../Figures/2026-03-05-115307/fig_FComp.png>]
+<docs/../Figures/2026-03-05-115307/fig_ForceComp.png, id=93, 483.9681pt x 533.8344pt>
+File: docs/../Figures/2026-03-05-115307/fig_ForceComp.png Graphic file (type png)
+<use docs/../Figures/2026-03-05-115307/fig_ForceComp.png>
+Package pdftex.def Info: docs/../Figures/2026-03-05-115307/fig_ForceComp.png  used on input line 290.
+(pdftex.def)             Requested size: 304.45842pt x 335.8287pt.
+
+
+[13 <./docs/../Figures/2026-03-05-115307/fig_ForceComp.png>])
 
 Package bibentry Warning: You have used \nobibliography* 
 (bibentry)                without a following \bibliography.
@@ -878,9 +908,7 @@ Package bibentry Warning: You have used \nobibliography*
 
 
 
-[11 <./docs/../Figures/2026-03-04-142356/fig_ForceComp.png>]
-
-[12 <./docs/../Figures/2026-03-04-142356/fig_FswapDiff.png>] (./main.aux)
+[14] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -889,22 +917,28 @@ L3 programming layer <2025-01-18>
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: C3DCC612EEACEE86B69BC4E23979EF5F;300.
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: CB7F46511745C5650DD03FC896C8F5CB;582
+(rerunfilecheck)             After:  09C6E835DAC6B100A421F61E72035951;873.
  ) 
 Here is how much of TeX's memory you used:
- 20919 strings out of 475171
- 384931 string characters out of 5767095
- 776712 words of memory out of 5000000
- 43506 multiletter control sequences out of 15000+600000
+ 20948 strings out of 475171
+ 386068 string characters out of 5767095
+ 776729 words of memory out of 5000000
+ 43527 multiletter control sequences out of 15000+600000
  610642 words of font info for 123 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 97i,15n,96p,541b,1167s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 97i,15n,96p,541b,1181s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/fpl/fplrij8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (12 pages, 3316073 bytes).
+Output written on main.pdf (14 pages, 3837469 bytes).
 PDF statistics:
- 134 PDF objects out of 1000 (max. 8388607)
- 89 compressed objects within 1 object stream
- 22 named destinations out of 1000 (max. 500000)
- 1093 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 153 PDF objects out of 1000 (max. 8388607)
+ 103 compressed objects within 2 object streams
+ 27 named destinations out of 1000 (max. 500000)
+ 1111 words of extra memory for PDF output out of 10000 (max. 10000000)
 

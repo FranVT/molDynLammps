@@ -255,7 +255,7 @@ Pues si jaló.
 Acá va la diferencia entre la teorica y lo de LAMMPS,
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=\textwidth]{../Figures/2026-03-04-142356/fig_FswapDiff.png}
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-03-04-142356/fig_FswapDiff.png}
     \caption{
         Línea sólida: Componente $x$, línea punteada: Componente $y$.
         Línea azul: particula central.
@@ -264,6 +264,46 @@ Acá va la diferencia entre la teorica y lo de LAMMPS,
     }\label{fig:Config3-TabTeo-5}
 \end{figure}
 
+\newpage 
+
+\section{Ahora con el potencial de enlace patch-patch}
+
+\subsection{Directory: 2026-03-05-115307}
+
+Resultados de la simulación considerando la superposición del potencial de enlace con el potencial de 3 cuerpos.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Figures/2026-03-05-115307/fig_FComp.png}
+    \caption{
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config3-TabTeo-5}
+\end{figure}
+
+\newpage
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{../Figures/2026-03-05-115307/fig_ForceComp.png}
+    \caption{
+        Línea sólida: Componente $x$, línea punteada: Componente $y$.
+        Línea azul: particula central.
+        Línea naranja: partícula superior.
+        Línea verde: partícula inferior.
+    }\label{fig:Config3-TabTeo-5}
+\end{figure}
+
+Al comparar pues cómo que todo decente, pero el error numérico de la tabulación hace que se tenga una fuerza residual en el sistema.
+Supongo que aumentando el número de puntos en el potencial de 3 cuerpo puede ayudar, pero me preocuparé de eso después.
+
+Ahora toca revisar entre dos tipos de patches.
+
+\newpage 
+
+\section{Patch central es CL. Patches externos son MO.}
 
 
 \end{document}

@@ -6,40 +6,40 @@ boundary p p p
 
 # Styles of atoms and that stuff
 atom_style atomic 
-pair_style threebody/table
+pair_style hybrid/overlay table/omp linear 128 threebody/table
 
 newton on
 
 # Create simulaiton box
 region simulation_box block -$L $L -$L $L -$L $L
-create_box 1 simulation_box
+create_box 2 simulation_box
 
 # Atom types
-mass 1 1.0      # PB 
+mass 1 1.0      # PA 
+mass 2 1.0      # PB
 
 # Coefficients
-pair_coeff * * swapMech.3b PA 
+include potential.in
 
 # Particles 
 region spawn_box block -$L $L -$L $L -$L $L
 
-# Patch B 
+# Patch A 
 create_atoms 1 single 0.0 0.0 0.0
 
-# Patch B
-create_atoms 1 single 0.0 0.6 0.0
+# Patch B 
+create_atoms 2 single  0.0 0.6 0.0
 
 # Patch B
-create_atoms 1 single 0.0 -0.6 0.0
+create_atoms 2 single 0.0 -0.6 0.0
 
 # Groups for the fix move
 group P1 id 1
 group P2 id 2 
 group P3 id 3
 
-
 # Neighbor list
-neighbor 1.2 bin # extra-distance style
+neighbor 1.8 bin # extra-distance style
 
 # COMPUTES
 
@@ -53,7 +53,8 @@ variable ec equal ecouple
 variable eC equal econserve
 
 # Potencial energy per pair-wise interaction
-compute tablePair all pair threebody/table epair
+compute patchPair all pair table/omp epair
+compute swapPair all pair threebody/table epair
 
 # Compute the pressure
 compute press all pressure t ke virial
@@ -76,7 +77,7 @@ compute potAtom all pe/atom pair
 thermo ${NsaveStress}
 
 # Save global energies and temperature
-fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_tablePair c_ep c_ek v_eT v_ec v_eC c_p file ${Dir}/${file1_name}
+fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p file ${Dir}/${file1_name}
 
 # Save Pressure and Stress tensor
 fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
@@ -100,3 +101,4 @@ velocity P2 set 0.0 0.0 0.0
 # Mover la tercera partícula
 fix moveP3 P3 move linear 0.0 0.1 0.0
 run 2000
+
