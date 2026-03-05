@@ -1,8 +1,7 @@
-# Input Script of lammps for assembly simulation of polimeric network.
-# Main code is based on: https://github.com/PipeB62/Hydrogel-Simulation
-# Patchy particles are with bond style.
-
-# Felipe Benavides modified by Fco. Vazquez
+# Input Script of lammps for assembly simulation of polimeric gel network.
+# Patchy particle script by Felipe Benavides: https://github.com/PipeB62/Hydrogel-Simulation
+# Assembly protocolo based on: https://doi.org/10.1021/acs.macromol.7b01600
+# Last Main modification: March 5, 2026 | Threebody interaction
 
 # Initialization
 units lj
@@ -30,8 +29,8 @@ create_box 4 simulation_box &
 # Atom types
 mass 1 1.0      # CL 
 mass 2 1.0      # MO
-mass 3 1.0      # PA
-mass 4 1.0      # PB
+mass 3 1.0      # PA (CL)
+mass 4 1.0      # PB (MO)
 
 # Coefficients
 include potential.in

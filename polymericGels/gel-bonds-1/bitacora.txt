@@ -1,5 +1,8 @@
 # Bitacora
 
+## Marzo 5
+Después de estar todo un mes viendo que conda con el potencial de 3 cuerpos, se regresa a este directorio para probar los cambios.
+
 ## Enero 21
 - Junta con asesores
 - VPN y entrar al cluster

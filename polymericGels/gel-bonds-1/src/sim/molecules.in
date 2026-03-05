@@ -27,7 +27,7 @@ group PB type 4
 group CM type 1 2
 
 # Neighbor list
-neighbor 1.8 bin # extra-distance style
+neighbor 1.2 bin # extra-distance style
 #neigh_modify delay 0 every 1 check no
 #neigh_modify exclude molecule/intra CrossLinker
 #neigh_modify exclude molecule/intra Monomer
