@@ -1,34 +1,6 @@
 """
-    Script with all functions for potentials and forces
+    Script with functions for the three body potential
 """
-
-function forceSwapTable(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik,th)
-"""
-    Compute the scalars for the proyection of the forces
-"""
-
-    th = deg2rad(th);
-    r_jk = sqrt(r_ij^2+r_ik^2-2*r_ij*r_ik*cos(th));
-
-#    if r_ij<=r_c && r_ik<=r_c && r_jk<=r_c 
-        f_1=forceSwap(w,eps_jk,eps_ij,eps_ik,sig_p,r_ij,r_ik);
-        f_2=forceSwap(w,eps_ik,eps_ij,eps_jk,sig_p,r_ij,r_jk);
-        f_3=forceSwap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
-
-        f_i1=f_1[1]-f_2[1];
-        f_i2=f_1[2]-f_3[1];
-   
-        f_j1=-f_i1; 
-        f_j2=f_2[2]-f_3[2]; 
-
-        f_k1=-f_i2; 
-        f_k2=-f_j2; 
-
-        eng=Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_ik) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ij,r_jk) + Uswap(w,eps_ij,eps_ik,eps_jk,sig_p,r_ik,r_jk);
-        
-    return (2).*(f_i1,f_i2,f_j1,f_j2,f_k1,f_k2,eng/2)
-
-end
 
 function Upatch(eps,Dp,r)
 """
@@ -112,7 +84,8 @@ function forcePatch(eps,Dp,r)
     if r>=r_c
         comp=0;
     else
-        comp=(4*Dp^4*eps)/(r^5)*exp( (Dp/(r-r_c)) + 2 ) + (Dp/((r-r_c)^2))*Upatch(eps,Dp,r) 
+        #comp=(1/r + 2*(eps/r)*exp( Dp/(r-r_c) + 2 ) + ( Dp/(r-r_c)^2 ) )*Upatch(eps,Dp,r)
+        comp=(4*Dp^4*eps)/(r^5)*exp( (Dp/(r-r_c)) + 2 ) + ((2*Dp*eps)/(r-r_c)^2)*exp( (Dp/(r-r_c)) + 2 )*( (1/2)*(Dp/r)^4 - 1 )
     end
     mag=sqrt(comp^2)
     return (comp,mag) 
