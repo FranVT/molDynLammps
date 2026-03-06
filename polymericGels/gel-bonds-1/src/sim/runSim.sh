@@ -11,7 +11,7 @@ Vol_CL1=4.80538;
 # Assign values to the independent variables
 T=0.05;
 N_particles=500;
-phi=0.1;
+phi=0.15;
 CL_con=0.05;
 
 # Assign computational parameters
@@ -21,7 +21,7 @@ seed1=3234;
 seed2=6321;
 seed3=2010;
 
-steps_isot=3500000;
+steps_isot=8500000;
 steps_heat=500000;
 
 log_name="log-test.log";

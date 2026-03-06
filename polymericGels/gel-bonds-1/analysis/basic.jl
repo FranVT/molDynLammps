@@ -3,23 +3,22 @@
 """
 
 using DataFrames, CSV
-#using Plots, LaTeXStrings, Plots.PlotMeasures
-#gr()
 using Statistics
-using GLMakie, LaTeXStrings, Typst_jll
 
 # Load the functions
 include("functions.jl")
-
+include("graphs-functions.jl") # Includes the graphical packages
 
 # Parameter to select the system
 T=0.05;
 N_particles=500;
-phi=0.3;
+phi=0.1;
 CL_con=0.05;
 
 # Selection of an specific simulation
-date="2026-03-05-124121";
+date="2026-03-06-112337";
+#"2026-03-05-124121";
+
 #"2026-01-23-150058";
 #"2026-01-22-165623";
 #"2026-01-22-163251";
@@ -38,7 +37,6 @@ date="2026-03-05-124121";
 (DIR,id_c)=getDir(T,N_particles,phi,CL_con,date);
 DIR=DIR[1];
 
-
 # Filename with the simulation data
 FILE_NAME="system_assembly.fixf";
 
@@ -52,27 +50,26 @@ DATA=DataFrame(data[2]',data[1]);
     P L O T S 
 """
 
-# these are relative to 1 CSS px
-inch = 96
-pt = 4/3
-cm = inch / 2.54
-
-
 damp=1;
 dt=0.001;
 
-fig_temp=fig_Temp(cm, pt, dt,DATA,T);
-fig_eng=fig_Eng(cm, pt, dt,DATA);
-fig_engB=fig_EngB(cm, pt, dt,DATA);
-fig_engSys=fig_EngSys(cm, pt, dt,DATA);
-fig_engPair=fig_EngPair(cm, pt, dt,DATA)
+# Create and save the graphics
+fig_Temp(dt,DATA,T,DIR,id_c);
+fig_Eng(dt,DATA,DIR,id_c);
+fig_EngB(dt,DATA,DIR,id_c);
+fig_EngSys(dt,DATA,DIR,id_c);
+fig_EngPair(dt,DATA,DIR,id_c)
 
-save(joinpath(DIR,string("temp-",id_c,".png")), fig_temp, px_per_unit = 300/inch)
-save(joinpath(DIR,string("epk-",id_c,".png")), fig_eng, px_per_unit = 300/inch)
-save(joinpath(DIR,string("eB-",id_c,".png")), fig_engB, px_per_unit = 300/inch)
-save(joinpath(DIR,string("eSys-",id_c,".png")), fig_engSys, px_per_unit = 300/inch)
-save(joinpath(DIR,string("ePair-",id_c,".png")), fig_engPair, px_per_unit = 300/inch)
 
+# Get the directory of the desire system
+(DIR,id_c)=getDir(T,N_particles,phi,CL_con,date);
+DIR=joinpath(DIR[1],"traj");
+
+# Filename with the simulation data
+FILE_NAME="traj_assembly.4000000.dumpf";
+
+# Get data
+data=getDump(DIR,FILE_NAME);
 
 
 
