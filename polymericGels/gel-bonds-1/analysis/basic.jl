@@ -11,12 +11,14 @@ include("graphs-functions.jl") # Includes the graphical packages
 
 # Parameter to select the system
 T=0.05;
-N_particles=500;
-phi=0.1;
+N_particles=5000;
+phi=0.15;
 CL_con=0.05;
 
 # Selection of an specific simulation
-date="2026-03-06-112337";
+# 0.050.150.055000-2026-03-06-175535
+date="2026-03-06-175535";
+#"2026-03-06-112337";
 #"2026-03-05-124121";
 
 #"2026-01-23-150058";
