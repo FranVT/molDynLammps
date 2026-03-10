@@ -3,7 +3,7 @@
 """
 
 using DataFrames, CSV
-using Statistics
+using Statistics, StatsBase
 
 # Load the functions
 include("functions.jl")
@@ -68,10 +68,37 @@ fig_EngPair(dt,DATA,DIR,id_c)
 DIR=joinpath(DIR[1],"traj");
 
 # Filename with the simulation data
-FILE_NAME="traj_assembly.4000000.dumpf";
+FILE_NAME="traj_assembly.9000000.dumpf";
 
 # Get data
 data=getDump(DIR,FILE_NAME);
 
+clusters=map(collect(groupby(data,:c_clusters,sort=true))) do s
+    s[(s.type.==1.0).|(s.type.==2.0),:]
+end
 
+# Start creating the list of neighbors to analuze distances and stuff
+pos=[clusters[1].x clusters[1].y clusters[1].z]
+
+sum(map(s->evaluate(Euclidean(),pos[1,:],pos[s,:]),2:length(pos[:,1])).<=1.2)
+
+
+
+#=
+
+# The amount of CL and MO
+nrow.(typeCl1|>collect)
+
+
+
+
+
+patches=data[(data.type.==4.0).|(data.type.==3.0),:];
+
+# Count all same id of cl_clusters (Amount of clusters)
+N_patchclusters=values(countmap(patches.c_clusters));
+
+# Count the size of each cluster
+cl_patches=countmap(N_patchclusters);
+=#
 

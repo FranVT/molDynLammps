@@ -20,7 +20,9 @@ include("functions.jl")
 # 2026-02-23-112958
 
 # Selection of an specific simulation
-date="2026-03-05-122859"
+date="2026-03-10-103849";
+
+#"2026-03-05-122859"
 
 #"2026-03-05-115307";
 
@@ -112,7 +114,7 @@ if act == 1
     DATA_fix=DataFrame(data[2]',data[1]);
 
     # Get table
-    tableSwap=getTable3b(DIR,"swapMechTab2new_w1.table");
+    tableSwap=getTable3b(DIR,"swapMechTab2new_w1.1.table");
     swapTabPlot=Iterators.partition(tableSwap.e,200)|>collect;
 
     # Obtener la evolución de r_ik
