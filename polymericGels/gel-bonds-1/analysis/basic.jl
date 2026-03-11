@@ -36,7 +36,6 @@ date="2026-03-06-175535";
 
 #0.050.30.05500-2026-01-20-121005
 
-#=
 
 # Get the directory of the desire system
 (DIR,id_c)=getDir(T,N_particles,phi,CL_con,date);
@@ -85,7 +84,6 @@ end
 
 #sum(map(s->evaluate(Euclidean(),pos[1,:],pos[s,:]),2:length(pos[:,1])).<=1.2)
 
-=#
 
 # Agregar los vecinos
 df=clusters[2];
@@ -111,7 +109,7 @@ for it1 in 1:n
         dist=evaluate(PeriodicEuclidean(box_size),pos1,pos2);
 
         # Classify as a neighbor or not
-        if dist <= 1.4 && dist >= 1.0 
+        if dist <= 1.6 && dist >= 1.0 
             push!(df.neigh[it1],ids[it2])
         end
     end
@@ -137,6 +135,16 @@ end
 
 # Guardar los grados de cada partícula
 df.grado=length.(df.neigh)
+
+
+# Checar concistencia (Ver problemas con potencial de 3 cuerpos)
+df.inconsistente = [if type == 1.0
+                        grado > 4 ? 1 : 0
+                    elseif type == 2.0
+                        grado > 2 ? 1 : 0
+                    else
+                        1  # tipo desconocido se marca como inconsistente
+                    end for (type, grado) in zip(df.type, df.grado)]
 
 
 #=
