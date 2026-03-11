@@ -4,6 +4,7 @@
 
 using DataFrames, CSV
 using Statistics, StatsBase
+using Distances
 
 # Load the functions
 include("functions.jl")
@@ -35,8 +36,8 @@ date="2026-03-06-175535";
 
 #0.050.30.05500-2026-01-20-121005
 
-
 #=
+
 # Get the directory of the desire system
 (DIR,id_c)=getDir(T,N_particles,phi,CL_con,date);
 DIR=DIR[1];
@@ -84,10 +85,15 @@ end
 
 #sum(map(s->evaluate(Euclidean(),pos[1,:],pos[s,:]),2:length(pos[:,1])).<=1.2)
 
+=#
+
 # Agregar los vecinos
-df=clusters[1];
+df=clusters[2];
 n = nrow(df);
 ids=df.id;
+
+# Crear una lista de vecinos
+
 # Alocar memoria
 df.neigh=[Float64[] for _ in 1:n];
 
@@ -100,44 +106,69 @@ for it1 in 1:n
         it1 == it2 && continue
         # Compute the distances
         pos2=[df.x[it2], df.y[it2], df.z[it2]];
-        dist=evaluate(Euclidean(),pos1,pos2);
+        L=2*26.592409;
+        box_size=[L,L,L];
+        dist=evaluate(PeriodicEuclidean(box_size),pos1,pos2);
 
         # Classify as a neighbor or not
-        if dist <= 1.2
+        if dist <= 1.4 && dist >= 1.0 
             push!(df.neigh[it1],ids[it2])
         end
     end
 end
 
-=#
+# Modificar la lista de vecinos para asegurar simetría
+# Evitar grafos dirigidos
+neigh_dict = Dict(df.id[i] => Set(df.neigh[i]) for i in 1:n)
 
-# El df ahora tiene una columna con vecinos
-# Ahora a creare el grafo
-
-# Crear un diccionario de adyacencia y calcular grados
-adyacencia=Dict{Float64,Vector{Float64}}();
-for row in eachrow(df)
-    adyacencia[row.id]=row.neigh
-end
-
-# Verificar simetría, ya que no es un grafo dirigido
-for (id, vecinos) in adyacencia
-    for v in vecinos
-        if !(id in get(adyacencia, v, []))
-            # Agregar vecinos para no hacerlo dirigido
-            push!(adyacencia[v], id)
-        end
+# Agregar vecinos faltantes (i → j implica j → i)
+for i in 1:n
+    id_i = df.id[i]
+    for j in df.neigh[i]
+        push!(neigh_dict[j], id_i)
     end
 end
 
-# Se calcula el grado de los nodos para facilitar creación del grafo
-# (Cuanto vecinos tiene)
-grados=Dict(id=>length(vecinos) for (id, vecinos) in adyacencia);
+# Actualizar df.neigh con listas simétricas (ordenadas opcionalmente)
+for i in 1:n
+    df.neigh[i] = collect(neigh_dict[df.id[i]])
+    sort!(df.neigh[i])  # opcional: mantener orden
+end
 
-# Creación del grafo
+# Guardar los grados de cada partícula
+df.grado=length.(df.neigh)
 
+
+#=
+
+# Clasificar los grados para poner los CL como "nodos especiales"
+especial = Dict{Float64, Bool}()
+for id in keys(adyacencia)
+    if grados[id] == 1
+        especial[id] = true   # extremo
+    elseif df[df.id .== id,:].type[1] == 1.0 && grados[id] >= 3
+        especial[id] = true   # CL 
+    else
+        especial[id] = false  # lineal (grado 2, o 4-patch con grado ≤2)
+    end
+end
+
+
+# Conjunto de nodos lineales (grado 2 y no especiales)
+lineales=Set(id for (id,e) in especial if !e && grados[id] == 2.0);
+
+
+
+# Creación del grafo compelto
 visitados=Set{Float64}();
 cadenas=Vector{Vector{Float64}}();
+
+# Creación del grafo simplificado
+caminos = Vector{Vector{Int}}()
+visitados_lineas = Set{Int}()  # nodos lineales ya procesados
+
+
+
 
 # Explorar una línea desde un nodo inicial en una dirección
 function explorar_linea(inicio, direccion_primer_paso)
@@ -162,6 +193,81 @@ function explorar_linea(inicio, direccion_primer_paso)
     return linea
 end
 
+# -----------------------------------------------------------------------------------------
+function recorrer_linea(inicio_especial, primer_lineal)
+    camino = [inicio_especial, primer_lineal]
+    actual = primer_lineal
+    anterior = inicio_especial
+    while true
+        vecinos = adyacencia[actual]
+        # El nodo lineal tiene grado 2, así que hay un solo vecino diferente al anterior
+        siguiente = filter(v -> v != anterior, vecinos)[1]
+        if especial[siguiente]
+            push!(camino, siguiente)
+            break
+        elseif siguiente in lineales
+            push!(camino, siguiente)
+            push!(visitados_lineas, siguiente)
+            anterior, actual = actual, siguiente
+        else
+            # No debería pasar, pero por si acaso
+            break
+        end
+    end
+    return camino
+end
+
+
+# Procesar cada nodo especial
+for s in sort(collect(keys(adyacencia)))  # orden para evitar duplicados
+    if especial[s]
+        for v in adyacencia[s]
+            if especial[v]
+                # Conexión directa entre dos especiales
+                if s < v
+                    push!(caminos, [s, v])
+                end
+            elseif v in lineales && !(v in visitados_lineas)
+                # Explorar línea desde s a través de v
+                camino = recorrer_linea(s, v)
+                t = last(camino)
+                if s < t
+                    push!(caminos, camino)
+                end
+                # Los nodos lineales ya se marcaron en recorrer_linea
+            end
+        end
+    end
+end
+
+
+function visualizar_caminos(df, caminos, especial)
+    coords = Dict(row.id => (row.x, row.y, row.z) for row in eachrow(df))
+   
+    fig=Figure()
+    ax=Axis3(fig[1,1],xlabel="x", ylabel="y", zlabel="z")
+    colores = cgrad(:tab10, length(caminos); categorical=true)
+    
+    for (i, camino) in enumerate(caminos)
+        puntos = [coords[id] for id in camino]
+        xs = [p[1] for p in puntos]
+        ys = [p[2] for p in puntos]
+        zs = [p[3] for p in puntos]
+        
+        # Dibujar línea
+        lines!(ax,xs, ys, zs, color=colores[i], linewidth=3)
+        
+        # Nodos: tamaño según sean especiales o no
+        sizes = [especial[id] ? 8 : 4 for id in camino]
+        scatter!(ax,xs, ys, zs, color=colores[i], markersize=8)
+    end
+    
+    display(fig)
+end
+
+visualizar_caminos(df, caminos, especial)
+
+# ----------------------------------------------------------------------------------------------
 
 # Primero, buscar nodos con grado != 2 como puntos de partida (extremos o bifurcaciones)
 for (id, grado) in grados
@@ -206,12 +312,13 @@ for (id, grado) in grados
 end
 
 
+# Visualización de las cadenas anteriores
     coords = Dict(row.id => (row.x, row.y, row.z) for row in eachrow(df))
     
     fig = Figure()
     ax = Axis3(fig[1,1])
     
-    colores = cgrad(:tab10, length(cadenas); categorical=true)
+    colores = cgrad(:tab20, length(cadenas); categorical=true)
     
     for (i, cadena) in enumerate(cadenas)
         puntos = [coords[id] for id in cadena]
@@ -226,6 +333,23 @@ end
     end
     
     fig
+=#
+# Simplificar las cadenas/red
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #=
 
