@@ -4,7 +4,11 @@
 
 using DataFrames, CSV
 using Statistics, StatsBase
-using Distances
+using Distances, Graphs
+using GraphMakie
+
+# https://juliagraphs.org/Graphs.jl/v1.5/
+# https://graphsjl-docs.readthedocs.io/en/latest/
 
 # Load the functions
 include("functions.jl")
@@ -88,9 +92,100 @@ end
 
 
 # Agregar los vecinos
-df=clusters[2];
+n_clu=2;
+df=clusters[n_clu];
 n = nrow(df);
 ids_mol=df.mol; # Id of the molecule
+
+clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
+    s[(s.type.==3.0).|(s.type.==4.0),:]
+end
+
+# Agregar los vecinos
+df_patchs=clusters_patchs[n_clu];
+n_patchs = nrow(df_patchs);
+ids_mol_patchs=df_patchs.mol; # Id of the molecule
+
+# Crear una lista de vecinos
+
+# Alocar memoria
+df_patchs.neigh=[Float64[] for _ in 1:n_patchs];
+
+for it1 in 1:n_patchs
+    # Get the reference particle
+    pos1=[df_patchs.x[it1], df_patchs.y[it1], df_patchs.z[it1]];
+    
+    # Compute the distacnes with other particles and determine the neighbors
+    for it2 in 1:n_patchs
+        it1 == it2 && continue
+        # Compute the distances
+        pos2=[df_patchs.x[it2], df_patchs.y[it2], df_patchs.z[it2]];
+        L=2*26.592409;
+        box_size=[L,L,L];
+        dist=evaluate(PeriodicEuclidean(box_size),pos1,pos2);
+
+        # Classify as a neighbor or not
+        if (dist <= 0.6) && (ids_mol_patchs[it1] != ids_mol_patchs[it2])
+            push!(df_patchs.neigh[it1],ids_mol_patchs[it2])
+        end
+    end
+end
+
+# Guardar los grados de cada partícula
+df_patchs.grado=length.(df_patchs.neigh)
+
+
+# Checar concistencia (Ver problemas con potencial de 3 cuerpos)
+df_patchs.inconsistente = df_patchs.grado.>1
+
+# Reducir el dataframe a id de molecula
+redPatch=combine(groupby(df_patchs,:mol),
+                 :neigh => (s->[vcat(s...)]) => :neigh,
+                 :grado => sum => :grado,
+                 :inconsistente => maximum => :inconsistente );
+
+# Pasar la información de vecinos al Dataframe con partículas centrales
+df = leftjoin(df, redPatch, on = :mol)
+
+# Crear las cadenas
+ady = Dict{Int, Vector{Int}}()
+tipo = Dict{Int, Int}()
+for row in eachrow(df)
+    id = Int(row.mol)
+    tipo[id] = Int(row.type)
+    ady[id] = [Int(n) for n in row.neigh]
+end
+
+
+# Mapeo ID → índice
+ids = sort(unique(Int.(df.mol)))
+map_id = Dict(id => i for (i, id) in enumerate(ids))
+n = length(ids)
+g = SimpleGraph(n)
+
+for row in eachrow(df)
+    u = map_id[Int(row.mol)]
+    for v in row.neigh
+        add_edge!(g, u, map_id[Int(v)])
+    end
+end
+
+# Guardar tipo como propiedad de vértice (opcional)
+tipo_vertices = [tipo[ids[i]] for i in 1:n]
+# Asignar colores según tipo (CL=1, MO=2)
+nodecolor = [tipo_vertices[i] == 1.0 ? "red" : "blue" for i in 1:n]
+
+#draw(PNG("grafo.png", 10cm, 10cm), gplot(g, nodefillc=nodecolor))
+
+# Visualizer el cluster en grafo
+graphplot(g, node_color=nodecolor, node_size=15, edge_width=1)
+
+
+if is_cyclic(g)
+    # Regresa los ciclos con los ids
+    cylces=cycle_basis(g)
+end
+
 
 # Crear una lista de vecinos
 
@@ -149,49 +244,6 @@ df.inconsistente = [if type == 1.0
                     end for (type, grado) in zip(df.type, df.grado)]
 =#
 
-clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
-    s[(s.type.==3.0).|(s.type.==4.0),:]
-end
-
-# Agregar los vecinos
-df_patchs=clusters_patchs[2];
-n_patchs = nrow(df_patchs);
-ids_mol_patchs=df_patchs.mol; # Id of the molecule
-
-# Crear una lista de vecinos
-
-# Alocar memoria
-df_patchs.neigh=[Float64[] for _ in 1:n_patchs];
-
-for it1 in 1:n_patchs
-    # Get the reference particle
-    pos1=[df_patchs.x[it1], df_patchs.y[it1], df_patchs.z[it1]];
-    
-    # Compute the distacnes with other particles and determine the neighbors
-    for it2 in 1:n_patchs
-        it1 == it2 && continue
-        # Compute the distances
-        pos2=[df_patchs.x[it2], df_patchs.y[it2], df_patchs.z[it2]];
-        L=2*26.592409;
-        box_size=[L,L,L];
-        dist=evaluate(PeriodicEuclidean(box_size),pos1,pos2);
-
-        # Classify as a neighbor or not
-        if (dist <= 0.6) && (ids_mol_patchs[it1] != ids_mol_patchs[it2])
-            push!(df_patchs.neigh[it1],ids_mol_patchs[it2])
-        end
-    end
-end
-
-# Guardar los grados de cada partícula
-df_patchs.grado=length.(df_patchs.neigh)
-
-
-# Checar concistencia (Ver problemas con potencial de 3 cuerpos)
-df_patchs.inconsistente = df_patchs.grado.>1
-
-# Pasar la información de vecinos al Dataframe con partículas centrales
-df = leftjoin(df, select(df_patchs, [:mol, :neigh, :grado, :inconsistente]), on = :mol)
 
 
 
