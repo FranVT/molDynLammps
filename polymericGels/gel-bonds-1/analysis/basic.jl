@@ -186,6 +186,23 @@ if is_cyclic(g)
     cylces=cycle_basis(g)
 end
 
+function cadenas_desde(g, inicio, tipo)
+    # inicio es índice del CL
+    cadenas = []
+    for nb in neighbors(g, inicio)
+        path = [inicio, nb]
+        while tipo_vertices[last(path)] == 0   # mientras sea MO
+            siguientes = setdiff(neighbors(g, last(path)), [path[end-1]])
+            isempty(siguientes) && break
+            push!(path, only(siguientes))
+        end
+        push!(cadenas, path)
+    end
+    return cadenas
+end
+
+cad1=cadenas_desde(g, 4, 1)
+
 
 # Crear una lista de vecinos
 
