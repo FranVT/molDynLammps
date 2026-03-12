@@ -79,6 +79,8 @@ clusters=map(collect(groupby(data,:c_clusters,sort=true))) do s
     s[(s.type.==1.0).|(s.type.==2.0),:]
 end
 
+
+
 # Start creating the list of neighbors to analuze distances and stuff
 #pos=[clusters[1].x clusters[1].y clusters[1].z]
 
@@ -88,10 +90,11 @@ end
 # Agregar los vecinos
 df=clusters[2];
 n = nrow(df);
-ids=df.id;
+ids_mol=df.mol; # Id of the molecule
 
 # Crear una lista de vecinos
 
+#=
 # Alocar memoria
 df.neigh=[Float64[] for _ in 1:n];
 
@@ -109,28 +112,27 @@ for it1 in 1:n
         dist=evaluate(PeriodicEuclidean(box_size),pos1,pos2);
 
         # Classify as a neighbor or not
-        if dist <= 1.6 && dist >= 1.0 
-            push!(df.neigh[it1],ids[it2])
+        if dist <= 1.4 && dist >= 1.0 
+            push!(df.neigh[it1],ids_mol[it2])
         end
     end
 end
 
 # Modificar la lista de vecinos para asegurar simetría
 # Evitar grafos dirigidos
-neigh_dict = Dict(df.id[i] => Set(df.neigh[i]) for i in 1:n)
+neigh_dict = Dict(df.mol[i] => Set(df.neigh[i]) for i in 1:n)
 
 # Agregar vecinos faltantes (i → j implica j → i)
 for i in 1:n
-    id_i = df.id[i]
+    id_i = df.mol[i]
     for j in df.neigh[i]
         push!(neigh_dict[j], id_i)
     end
 end
 
-# Actualizar df.neigh con listas simétricas (ordenadas opcionalmente)
+# Actualizar df.neigh con listas simétricas 
 for i in 1:n
-    df.neigh[i] = collect(neigh_dict[df.id[i]])
-    sort!(df.neigh[i])  # opcional: mantener orden
+    df.neigh[i] = collect(neigh_dict[df.mol[i]])
 end
 
 # Guardar los grados de cada partícula
@@ -145,6 +147,52 @@ df.inconsistente = [if type == 1.0
                     else
                         1  # tipo desconocido se marca como inconsistente
                     end for (type, grado) in zip(df.type, df.grado)]
+=#
+
+clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
+    s[(s.type.==3.0).|(s.type.==4.0),:]
+end
+
+# Agregar los vecinos
+df_patchs=clusters_patchs[2];
+n_patchs = nrow(df_patchs);
+ids_mol_patchs=df_patchs.mol; # Id of the molecule
+
+# Crear una lista de vecinos
+
+# Alocar memoria
+df_patchs.neigh=[Float64[] for _ in 1:n_patchs];
+
+for it1 in 1:n_patchs
+    # Get the reference particle
+    pos1=[df_patchs.x[it1], df_patchs.y[it1], df_patchs.z[it1]];
+    
+    # Compute the distacnes with other particles and determine the neighbors
+    for it2 in 1:n_patchs
+        it1 == it2 && continue
+        # Compute the distances
+        pos2=[df_patchs.x[it2], df_patchs.y[it2], df_patchs.z[it2]];
+        L=2*26.592409;
+        box_size=[L,L,L];
+        dist=evaluate(PeriodicEuclidean(box_size),pos1,pos2);
+
+        # Classify as a neighbor or not
+        if (dist <= 0.6) && (ids_mol_patchs[it1] != ids_mol_patchs[it2])
+            push!(df_patchs.neigh[it1],ids_mol_patchs[it2])
+        end
+    end
+end
+
+# Guardar los grados de cada partícula
+df_patchs.grado=length.(df_patchs.neigh)
+
+
+# Checar concistencia (Ver problemas con potencial de 3 cuerpos)
+df_patchs.inconsistente = df_patchs.grado.>1
+
+# Pasar la información de vecinos al Dataframe con partículas centrales
+df = leftjoin(df, select(df_patchs, [:mol, :neigh, :grado, :inconsistente]), on = :mol)
+
 
 
 #=
