@@ -5,8 +5,8 @@
 #!/bin/bash
 
 # Volume of patchy particles
-Vol_MO1=4.49789;
-Vol_CL1=4.80538;
+Vol_MO1=0.5376050428;
+Vol_CL1=0.5516113101;
 
 # Assign values to the independent variables
 T=0.1;
