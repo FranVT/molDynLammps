@@ -10,7 +10,7 @@ Vol_CL1=0.5516113101;
 
 # Assign values to the independent variables
 T=0.1;
-N_particles=5000;
+N_particles=500;
 phi=0.15;
 CL_con=0.05;
 
