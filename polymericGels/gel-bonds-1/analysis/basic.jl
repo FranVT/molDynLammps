@@ -93,20 +93,6 @@ cluster_Size=nrow.(clusters);   # Amount of central particles in each cluster in
 graphs=map(s->createGraph(clusters[s]),eachindex(clusters))
 
 # Structure factor
-
-
-function structureFactor(vec_r,vec_K)
-"""
-    Get the factor of structure of a set of points
-"""
-
-    # Dot product between the wave vector and the position vector
-    dot_kr=map(s->dot(vec_K,vec_r[s,:]),eachindex(vec_r[:,1]));
-    I_k=sum(exp.(im.*dot_kr))
-
-   return I_k
-end
-
 l=1.5; # "wave length"
 vec_K=(2*pi).*[1/l,1/l,1/l]; # vector
 # Structure factor per cluster

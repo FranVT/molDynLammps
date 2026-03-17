@@ -2,6 +2,20 @@
     Functions 
 """
 
+function structureFactor(vec_r,vec_K)
+"""
+    Get the factor of structure of a set of points
+"""
+
+    # Dot product between the wave vector and the position vector
+    dot_kr=map(s->dot(vec_K,vec_r[s,:]),eachindex(vec_r[:,1]));
+    I_k=sum(exp.(im.*dot_kr))
+
+   return I_k
+end
+
+
+
 function createNeighborList(cluster,cluster_patch,L)
 """
     Create analysis of the cluster for each dump
