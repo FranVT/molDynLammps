@@ -9,9 +9,9 @@ Vol_MO1=0.5376050428;
 Vol_CL1=0.5516113101;
 
 # Assign values to the independent variables
-T=0.1;
+T=0.05;
 N_particles=500;
-phi=0.15;
+phi=0.01;
 CL_con=0.05;
 
 # Assign computational parameters

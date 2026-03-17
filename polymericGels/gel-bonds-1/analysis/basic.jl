@@ -16,13 +16,15 @@ include("graphs-functions.jl") # Includes the graphical packages
 
 # Parameter to select the system
 T=0.05;
-N_particles=5000;
-phi=0.15;
+N_particles=500;
+phi=0.01;
 CL_con=0.05;
 
 # Selection of an specific simulation
 # 0.050.150.055000-2026-03-06-175535
-date="2026-03-06-175535";
+date="2026-03-17-145727";
+
+#"2026-03-06-175535";
 #"2026-03-06-112337";
 #"2026-03-05-124121";
 
@@ -79,102 +81,138 @@ FILE_NAME="traj_assembly.9000000.dumpf";
 # Get data
 data=getDump(DIR,FILE_NAME);
 
-clusters=map(collect(groupby(data,:c_clusters,sort=true))) do s
-    s[(s.type.==1.0).|(s.type.==2.0),:]
-end
-
 
 
 # Start creating the list of neighbors to analuze distances and stuff
 #pos=[clusters[1].x clusters[1].y clusters[1].z]
 
 #sum(map(s->evaluate(Euclidean(),pos[1,:],pos[s,:]),2:length(pos[:,1])).<=1.2)
-
-
-# Agregar los vecinos
-n_clu=2;
-df=clusters[n_clu];
-n = nrow(df);
-ids_mol=df.mol; # Id of the molecule
-
-clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
-    s[(s.type.==3.0).|(s.type.==4.0),:]
-end
-
-# Agregar los vecinos
-df_patchs=clusters_patchs[n_clu];
-n_patchs = nrow(df_patchs);
-ids_mol_patchs=df_patchs.mol; # Id of the molecule
-
-# Crear una lista de vecinos
-
-# Alocar memoria
-df_patchs.neigh=[Float64[] for _ in 1:n_patchs];
-
-for it1 in 1:n_patchs
-    # Get the reference particle
-    pos1=[df_patchs.x[it1], df_patchs.y[it1], df_patchs.z[it1]];
+function createNeighborList(cluster,cluster_patch,L)
+"""
+    Create analysis of the cluster for each dump
+    cluster:    A data frame with the information of the cluster 
+    L:          The length of one side of the simulation box.
+"""
     
-    # Compute the distacnes with other particles and determine the neighbors
-    for it2 in 1:n_patchs
-        it1 == it2 && continue
-        # Compute the distances
-        pos2=[df_patchs.x[it2], df_patchs.y[it2], df_patchs.z[it2]];
-        L=2*26.592409;
-        box_size=[L,L,L];
-        dist=evaluate(PeriodicEuclidean(box_size),pos1,pos2);
+    # Data frame with the ccluster information
+    df=cluster;
+    n = nrow(df);
+    ids_mol=df.mol; # Id of the molecule
 
-        # Classify as a neighbor or not
-        if (dist <= 0.6) && (ids_mol_patchs[it1] != ids_mol_patchs[it2])
-            push!(df_patchs.neigh[it1],ids_mol_patchs[it2])
+    # Agregar los vecinos
+    df_patchs=cluster_patch;
+    n_patchs = nrow(df_patchs);
+    ids_mol_patchs=df_patchs.mol; # Id of the molecule
+
+    # Crear una lista de vecinos
+
+    # Alocar memoria
+    df_patchs.neigh=[Float64[] for _ in 1:n_patchs];
+
+    for it1 in 1:n_patchs
+        # Get the reference particle
+        pos1=[df_patchs.x[it1], df_patchs.y[it1], df_patchs.z[it1]];
+    
+        # Compute the distacnes with other particles and determine the neighbors
+        for it2 in 1:n_patchs
+            it1 == it2 && continue
+            # Compute the distances
+            pos2=[df_patchs.x[it2], df_patchs.y[it2], df_patchs.z[it2]];
+            box_size=[L,L,L];
+            dist=evaluate(PeriodicEuclidean(box_size),pos1,pos2);
+
+            # Classify as a neighbor or not
+            if (dist <= 0.6) && (ids_mol_patchs[it1] != ids_mol_patchs[it2])
+                push!(df_patchs.neigh[it1],ids_mol_patchs[it2])
+            end
         end
     end
+
+    # Guardar los grados de cada partícula
+    df_patchs.grado=length.(df_patchs.neigh)
+
+
+    # Checar concistencia (Ver problemas con potencial de 3 cuerpos)
+    df_patchs.inconsistente = df_patchs.grado.>1
+
+    # Reducir el dataframe a id de molecula
+    redPatch=combine(groupby(df_patchs,:mol),
+                    :neigh => (s->[vcat(s...)]) => :neigh,
+                    :grado => sum => :grado,
+                    :inconsistente => maximum => :inconsistente );
+
+    # Pasar la información de vecinos al Dataframe con partículas centrales
+    df = leftjoin(df, redPatch, on = :mol)
+
+    return df 
 end
 
-# Guardar los grados de cada partícula
-df_patchs.grado=length.(df_patchs.neigh)
-
-
-# Checar concistencia (Ver problemas con potencial de 3 cuerpos)
-df_patchs.inconsistente = df_patchs.grado.>1
-
-# Reducir el dataframe a id de molecula
-redPatch=combine(groupby(df_patchs,:mol),
-                 :neigh => (s->[vcat(s...)]) => :neigh,
-                 :grado => sum => :grado,
-                 :inconsistente => maximum => :inconsistente );
-
-# Pasar la información de vecinos al Dataframe con partículas centrales
-df = leftjoin(df, redPatch, on = :mol)
-
-# Crear las cadenas
-ady = Dict{Int, Vector{Int}}()
-tipo = Dict{Int, Int}()
-for row in eachrow(df)
-    id = Int(row.mol)
-    tipo[id] = Int(row.type)
-    ady[id] = [Int(n) for n in row.neigh]
-end
-
-
-# Mapeo ID → índice
-ids = sort(unique(Int.(df.mol)))
-map_id = Dict(id => i for (i, id) in enumerate(ids))
-n = length(ids)
-g = SimpleGraph(n)
-
-for row in eachrow(df)
-    u = map_id[Int(row.mol)]
-    for v in row.neigh
-        add_edge!(g, u, map_id[Int(v)])
+function getClusters(data,L)
+"""
+    Get a dataframe with a list of neighbors for each cluster in the system
+"""
+    
+    clusters=map(collect(groupby(data,:c_clusters,sort=true))) do s
+        s[(s.type.==1.0).|(s.type.==2.0),:]
     end
+
+    # Create a dataframe with only the patches. (From this df the neoghbor list is constructed)
+    clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
+        s[(s.type.==3.0).|(s.type.==4.0),:]
+    end
+
+    # Agregar los vecinos
+    clusters = map(s->createNeighborList(clusters[s],clusters_patchs[s],L),eachindex(clusters));
+
+    return clusters
+
 end
 
-# Guardar tipo como propiedad de vértice (opcional)
-tipo_vertices = [tipo[ids[i]] for i in 1:n]
-# Asignar colores según tipo (CL=1, MO=2)
-nodecolor = [tipo_vertices[i] == 1.0 ? "red" : "blue" for i in 1:n]
 
+L=2*14.984222; # Length of the box
+clusters=getClusters(data,L); # Just central particles. Patches have been descarted
+
+
+function createGraph(df)
+"""
+    Create a graph from a Dataframe with list of neighbors
+"""
+
+    # Crear las cadenas
+    ady = Dict{Int, Vector{Int}}()
+    tipo = Dict{Int, Int}()
+    for row in eachrow(df)
+        id = Int(row.mol)
+        tipo[id] = Int(row.type)
+        ady[id] = [Int(n) for n in row.neigh]
+    end
+
+
+    # Mapeo ID → índice
+    ids = sort(unique(Int.(df.mol)))
+    map_id = Dict(id => i for (i, id) in enumerate(ids))
+    n = length(ids)
+    g = SimpleGraph(n)
+
+    for row in eachrow(df)
+        u = map_id[Int(row.mol)]
+        for v in row.neigh
+            add_edge!(g, u, map_id[Int(v)])
+        end
+    end
+
+    # Guardar tipo como propiedad de vértice (opcional)
+    tipo_vertices = [tipo[ids[i]] for i in 1:n]
+    # Asignar colores según tipo (CL=1, MO=2)
+    nodecolor = [tipo_vertices[i] == 1.0 ? "red" : "blue" for i in 1:n]
+
+    return (g,nodecolor)
+end
+
+
+graphs=map(s->createGraph(clusters[s]),eachindex(clusters))
+
+#=
 #draw(PNG("grafo.png", 10cm, 10cm), gplot(g, nodefillc=nodecolor))
 
 # Visualizer el cluster en grafo
@@ -202,7 +240,7 @@ function cadenas_desde(g, inicio, tipo)
 end
 
 cad1=cadenas_desde(g, 4, 1)
-
+=#
 
 # Crear una lista de vecinos
 
