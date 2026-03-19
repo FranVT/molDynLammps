@@ -33,7 +33,7 @@ Nsave=$(echo "scale=0; 100 * $damp * $aux" | bc);
 Nsave=${Nsave%.*};
 NsaveStress=$(echo "scale=0; 100 * $damp * $aux" | bc);
 NsaveStress=${NsaveStress%.*};
-Ndump=$(echo "scale=0; 1000 *  $aux" | bc);
+Ndump=$(echo "scale=0; $aux" | bc);
 Ndump=${Ndump%.*};
 
 # Seed for the langevin thermostat and initial positions

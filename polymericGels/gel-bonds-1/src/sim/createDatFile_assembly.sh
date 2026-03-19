@@ -35,7 +35,7 @@ headers+=("phi")
 values+=("${phi}")
 
 headers+=("CL-Con")
-values+=("${var_ccL}")
+values+=("${CL_con}")
 
 headers+=("Npart")
 values+=("${N_particles}")

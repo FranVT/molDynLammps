@@ -1,0 +1,2 @@
+file0,file1,file2,file3,phi,CL-Con,Npart,Temperature,damp,time-step,N_heat,N_isot,N_CL,N_MO,L,save-dump,save-fix,save-stress
+system_assembly.fixf,stress_assembly.fixf,traj_assembly.*.dumpf,data.hydrogel,0.015,0.05,2500,0.05,1,0.001,500000,8500000,125,2375,22.383449,1000,100000,100000

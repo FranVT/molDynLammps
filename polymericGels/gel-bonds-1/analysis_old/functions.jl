@@ -2,21 +2,6 @@
     Functions 
 """
 
-function getDatFile(date)
-"""
-    Return a dataframe with the parameters of the simulation of a given directory.
-"""
-
-    DIR=getDir(date);
-    filename="dataAssembly.dat";
-    aux=split.(readlines(joinpath(DIR,filename)),",");
-
-    header=aux[1][5:end];
-    info=parse.(Float64,aux[2][5:end]);
-
-    return DataFrame(info',header)
-end
-
 function structureFactor(vec_r,vec_K)
 """
     Get the factor of structure of a set of points
@@ -166,13 +151,10 @@ function extractFixScalar(path_system,file_name)
     Function that extracts the information of fix files that stores global scalar values
 """
     aux=split.(readlines(joinpath(path_system,file_name))," ");
-    header=aux[2][2:end];
-    info=reduce(hcat,map(s->parse.(Float64,s),aux[3:end]));
-
-    return DataFrame(info',header)
+    return (aux[2][2:end],reduce(hcat,map(s->parse.(Float64,s),aux[3:end])));
 end
 
-function getDir(date)
+function getDir(T,N_particles,phi,CL_con,date)
 """
     To get the directory of the simulation
 """
@@ -184,16 +166,19 @@ DATA_DIR=joinpath(MAIN_DIR,"data");
 # Read the directory where data is stored
 sims=filter(isdir,readdir(DATA_DIR,join=true));
 
+# Creation of the id
+id=string(T,phi,CL_con,N_particles);
+
 # For this script, evetually we are going to get assembly averages
-id_c=date; # filter!(s->s==id_c,readdir(DATA_DIR))
+id_c=string(T,phi,CL_con,N_particles,"-",date); # filter!(s->s==id_c,readdir(DATA_DIR))
 
 # Get the idex for the directory
 indx=findall(!isempty,findall.(id_c,sims));
 
 # Get the directory
-DIR=sims[indx][1];
+DIR=sims[indx];
 
-    return DIR
+    return DIR, id_c
 
 end
 

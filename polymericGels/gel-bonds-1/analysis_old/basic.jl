@@ -14,31 +14,47 @@ using GraphMakie, LinearAlgebra
 include("functions.jl")
 include("graphs-functions.jl") # Includes the graphical packages
 
-# Selection of an specific simulation
-date="2026-03-19-111120";
-path=getDir(date);
+# Parameter to select the system
+T=0.05;
+N_particles=500;
+phi=0.01;
+CL_con=0.05;
 
-# Read the data file
-datConfig=getDatFile(path);
+# Selection of an specific simulation
+# 0.050.150.055000-2026-03-06-175535
+date="2026-03-17-145727";
+
+#"2026-03-06-175535";
+#"2026-03-06-112337";
+#"2026-03-05-124121";
+
+#"2026-01-23-150058";
+#"2026-01-22-165623";
+#"2026-01-22-163251";
+#"2026-01-22-154929";
+#"2026-01-21-161335";
+#"2026-01-21-133721";
+#"2026-01-20-151755";
+#"2026-01-20-143651";
+#"2026-01-20-135923";
+#"2026-01-20-121005"; 
+#"2026-01-20-111704";
+
+#0.050.30.05500-2026-01-20-121005
+
+
+# Get the directory of the desire system
+(DIR,id_c)=getDir(T,N_particles,phi,CL_con,date);
+DIR=DIR[1];
+
+# Filename with the simulation data
+FILE_NAME="system_assembly.fixf";
 
 # Extract the data from the file
-dataSystem=extractFixScalar(path,"system_assembly.fixf");
+data=extractFixScalar(DIR,FILE_NAME);
 
-
-dt=datConfig."time-step"[1];
-
-
-
-# Create and save the graphics
-fig_Temp(dt,dataSystem,datConfig."Temperature"[1],path,date);
-fig_Eng(dt,dataSystem,path,date);
-fig_EngB(dt,dataSystem,path,date);
-fig_EngSys(dt,dataSystem,path,date);
-fig_EngPair(dt,dataSystem,path,date);
-
-
-
-#=
+# Convert the array into a DataFrame
+DATA=DataFrame(data[2]',data[1]);
 
 """
     P L O T S 
@@ -46,6 +62,13 @@ fig_EngPair(dt,dataSystem,path,date);
 
 damp=1;
 dt=0.001;
+
+# Create and save the graphics
+fig_Temp(dt,DATA,T,DIR,id_c);
+fig_Eng(dt,DATA,DIR,id_c);
+fig_EngB(dt,DATA,DIR,id_c);
+fig_EngSys(dt,DATA,DIR,id_c);
+fig_EngPair(dt,DATA,DIR,id_c)
 
 
 # Get the directory of the desire system
@@ -78,6 +101,6 @@ I_k=map(s->structureFactor([clusters[s].x clusters[s].y clusters[s].z],vec_K),ea
 #Structure factor of all the system
 I_K=sum(I_k);
 
-=#
+
 
 
