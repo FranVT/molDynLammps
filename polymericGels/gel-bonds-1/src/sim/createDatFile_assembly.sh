@@ -5,19 +5,18 @@
 #!/bin/bash
 
 # Input variables
-dir_system=$1
+dir_save=$1
 dir_src=$2
 id=$3
-id=$4
 
 # Load the parameters file
 source load_parameters.sh system.parameters
 
 # Load the assembly config file
-source load_parameters.sh assembly$id-$var_ccL.parameters
+source load_parameters.sh assembly$id.config
 
 # Go to the directory in which the files are going to be created 
-cd $dir_system;
+cd $dir_save;
 
 # Create the data.dat file
 file_name="dataAssembly.dat";

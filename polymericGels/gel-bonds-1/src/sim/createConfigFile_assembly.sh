@@ -7,8 +7,11 @@
 
 echo "Running the create config assembly"
 
-dir_src=$1
+dir_sim=$1
 id=$2
+
+# Remove old config files
+rm assembly*.config
 
 # Load the parameter file for assembly
 source load_parameters.sh system.parameters
@@ -41,7 +44,7 @@ seed3=$((10 + $N_CL));       # Langevin thermostat
 echo "Start writting the assembly config file"
 
 # Define the output parameters file (default: parameters.config)
-OUTPUT_FILE="assembly$id-$var_ccL.parameters"
+OUTPUT_FILE="assembly$id.config"
 
 # List of variable names to include in the parameters file
 VAR_NAMES=(
@@ -72,5 +75,5 @@ done
 
 echo "Parameters file generated: $OUTPUT_FILE"
 
-mv $OUTPUT_FILE "$dir_src/docs"
+#mv $OUTPUT_FILE "$dir_src/docs"
 
