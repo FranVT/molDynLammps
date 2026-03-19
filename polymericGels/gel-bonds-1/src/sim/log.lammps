@@ -1,0 +1,265 @@
+LAMMPS (22 Jul 2025)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+package omp 0
+using multi-threaded neighbor list subroutines
+# Input Script of lammps for assembly simulation of polimeric gel network.
+# Patchy particle script by Felipe Benavides: https://github.com/PipeB62/Hydrogel-Simulation
+# Assembly protocolo based on: https://doi.org/10.1021/acs.macromol.7b01600
+# Last Main modification: March 5, 2026 | Threebody interaction
+
+# Initialization
+units lj
+dimension 3
+boundary p p p
+
+# Styles of atoms and that stuff
+atom_style full
+bond_style harmonic
+angle_style harmonic
+pair_style hybrid/overlay zero 0.0 lj/cut/omp 1.12 table/omp linear 128 threebody/table
+
+newton on
+
+# Create simulaiton box
+region simulation_box block -$L $L -$L $L -$L $L
+region simulation_box block -13.089937 $L -$L $L -$L $L
+region simulation_box block -13.089937 13.089937 -$L $L -$L $L
+region simulation_box block -13.089937 13.089937 -13.089937 $L -$L $L
+region simulation_box block -13.089937 13.089937 -13.089937 13.089937 -$L $L
+region simulation_box block -13.089937 13.089937 -13.089937 13.089937 -13.089937 $L
+region simulation_box block -13.089937 13.089937 -13.089937 13.089937 -13.089937 13.089937
+# N-atom-types region-ID keyword value Is necesesary the extra/special/per/atom (# of special neighbors per atom)
+create_box 4 simulation_box     bond/types 1     angle/types 2     extra/bond/per/atom 10     extra/angle/per/atom 6     extra/special/per/atom 10
+Created orthogonal box = (-13.089937 -13.089937 -13.089937) to (13.089937 13.089937 13.089937)
+  2 by 2 by 2 MPI processor grid
+
+# Atom types
+mass 1 1.0      # CL
+mass 2 1.0      # MO
+mass 3 1.0      # PA (CL)
+mass 4 1.0      # PB (MO)
+
+# Coefficients
+include potential.in
+# Script with the pair-wise interaction and bonds between particles
+
+bond_coeff 1 100.0 0.4
+angle_coeff 1 100.0 180
+angle_coeff 2 100.0 109.4712
+pair_coeff 1 3 zero 0.5
+pair_coeff 1 4 zero 0.5
+pair_coeff 2 3 zero 0.5
+pair_coeff 2 4 zero 0.5
+pair_coeff 3 3 zero 0.5
+pair_coeff 1 1 lj/cut/omp 1.0 1.0 1.12
+pair_coeff 2 2 lj/cut/omp 1.0 1.0 1.12
+pair_coeff 1 2 lj/cut/omp 1.0 1.0 1.12
+pair_coeff 3 4 table/omp sysFiles/pachTab.table POT 0.6 # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB
+Reading pair table potential file sysFiles/pachTab.table with DATE: 2025-02-09
+WARNING: 1 of 128 force values in table POT are inconsistent with -dE/dr.
+WARNING:  Should only be flagged at inflection points (src/pair_table.cpp:469)
+pair_coeff 4 4 table/omp sysFiles/pachTab.table POT 0.6 # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB
+Reading pair table potential file sysFiles/pachTab.table with DATE: 2025-02-09
+WARNING: 1 of 128 force values in table POT are inconsistent with -dE/dr.
+WARNING:  Should only be flagged at inflection points (src/pair_table.cpp:469)
+pair_coeff * * threebody/table swapMech.3b NULL NULL PA PB
+pair_modify pair lj/cut/omp shift yes
+
+
+# Molecules
+include molecules.in
+# Script with all molecule information and create groups for computes
+
+# Read the molecule information
+molecule CL sysFiles/molecule.patchy.CL
+Read molecule template CL:
+# Patchy Cross-Linker
+  1 molecules
+  0 fragments
+  0 bodies
+  5 atoms with max type 3
+  4 bonds with max type 1
+  6 angles with max type 2
+  0 dihedrals with max type 0
+  0 impropers with max type 0
+molecule MO sysFiles/molecule.patchy.MO
+Read molecule template MO:
+# Patchy Monomer
+  1 molecules
+  0 fragments
+  0 bodies
+  3 atoms with max type 4
+  2 bonds with max type 1
+  1 angles with max type 1
+  0 dihedrals with max type 0
+  0 impropers with max type 0
+
+# Introduce the molecules
+# ID style args keyword arg
+region spawn_box block -$L $L -$L $L -$L $L
+region spawn_box block -13.089937 $L -$L $L -$L $L
+region spawn_box block -13.089937 13.089937 -$L $L -$L $L
+region spawn_box block -13.089937 13.089937 -13.089937 $L -$L $L
+region spawn_box block -13.089937 13.089937 -13.089937 13.089937 -$L $L
+region spawn_box block -13.089937 13.089937 -13.089937 13.089937 -13.089937 $L
+region spawn_box block -13.089937 13.089937 -13.089937 13.089937 -13.089937 13.089937
+
+# create_atoms type style args keyword values
+# style_random: N seed region-ID
+# keyword_mol: template-ID seed
+# keyword_overlap: overlap value = only insert if at least this distance from all existing atoms
+# keyword_maxtry: maxtry value = number of attempts to insert a particle before failure
+create_atoms 0 random ${NCL} ${seed1} spawn_box mol CL ${seed1} overlap 1.0 maxtry 5000 #xls
+create_atoms 0 random 25 ${seed1} spawn_box mol CL ${seed1} overlap 1.0 maxtry 5000 
+create_atoms 0 random 25 1259 spawn_box mol CL ${seed1} overlap 1.0 maxtry 5000 
+create_atoms 0 random 25 1259 spawn_box mol CL 1259 overlap 1.0 maxtry 5000 
+Created 125 atoms
+  using lattice units in orthogonal box = (-13.089937 -13.089937 -13.089937) to (13.089937 13.089937 13.089937)
+  create_atoms CPU = 0.011 seconds
+create_atoms 0 random ${NMO} ${seed2} spawn_box mol MO ${seed2} overlap 1.0 maxtry 5000 #mon
+create_atoms 0 random 475 ${seed2} spawn_box mol MO ${seed2} overlap 1.0 maxtry 5000 
+create_atoms 0 random 475 4346 spawn_box mol MO ${seed2} overlap 1.0 maxtry 5000 
+create_atoms 0 random 475 4346 spawn_box mol MO 4346 overlap 1.0 maxtry 5000 
+Created 1425 atoms
+  using lattice units in orthogonal box = (-13.089937 -13.089937 -13.089937) to (13.089937 13.089937 13.089937)
+  create_atoms CPU = 0.006 seconds
+
+# Create patchy particles
+group CrossLinker type 1 3
+125 atoms in group CrossLinker
+group Monomer type 2 4
+1425 atoms in group Monomer
+group Patches type 3 4
+1050 atoms in group Patches
+group CL type 1
+25 atoms in group CL
+group MO type 2
+475 atoms in group MO
+group PA type 3
+100 atoms in group PA
+group PB type 4
+950 atoms in group PB
+group CM type 1 2
+500 atoms in group CM
+
+# Neighbor list
+neighbor 1.2 bin # extra-distance style
+#neigh_modify delay 0 every 1 check no
+#neigh_modify exclude molecule/intra CrossLinker
+#neigh_modify exclude molecule/intra Monomer
+
+# COMPUTES
+
+# Compute global kinetic and potential energy and temperature
+compute t all temp
+compute p all pressure t
+compute ep all pe
+compute ek all ke
+variable eT equal etotal
+variable eB equal ebond
+variable eA equal eangle
+variable eM equal emol
+variable ec equal ecouple
+variable eC equal econserve
+
+# Potencial energy per pair-wise interaction
+compute wcaPair all pair lj/cut/omp epair
+compute patchPair all pair table/omp epair
+compute swapPair all pair threebody/table epair
+
+# Compute the pressure
+compute press all pressure t ke virial
+compute pressVirial all pressure t virial
+compute pressVirialMod all pressure t pair bond angle
+
+# Computes for the stress
+compute cstress all stress/atom t ke pair bond angle
+compute cstressVirial all stress/atom t virial
+compute cstressVirialMod all stress/atom t pair bond angle
+compute stress all reduce sum c_cstress[*]
+compute stressVirial all reduce sum c_cstressVirial[*]
+compute stressVirialMod all reduce sum c_cstressVirialMod[*]
+
+# Displacement of the central particles
+compute disp CM displace/atom
+compute redDisp CM reduce ave c_disp[*] # All, because yes
+
+# Get the number of central particles per cluster
+compute clusters all aggregate/atom 0.6                             # Create the clusters
+compute Nclpart CM chunk/atom c_clusters compress yes discard yes   # Get the number of clusters
+compute clsize CM property/chunk Nclpart count                      # Counts the atoms in each chunk
+compute idcl CM property/chunk Nclpart id                           # Get the ids of the clusters
+
+# DUMPS and FIXES
+
+thermo ${NsaveStress}
+thermo 100000
+
+# Save global energies and temperature
+fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file ${Dir}/${file1_name}
+fix Energy all ave/time 1 100000 ${Nsave} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file ${Dir}/${file1_name}
+fix Energy all ave/time 1 100000 100000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file ${Dir}/${file1_name}
+fix Energy all ave/time 1 100000 100000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/2026-03-19-100246/${file1_name}
+fix Energy all ave/time 1 100000 100000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM c_redDisp[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/2026-03-19-100246/system_assembly.fixf
+
+# Save Pressure and Stress tensor
+fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+fix fixStress5 all ave/time 1 100000 ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+fix fixStress5 all ave/time 1 100000 100000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+fix fixStress5 all ave/time 1 100000 100000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/2026-03-19-100246/${file2_name}
+fix fixStress5 all ave/time 1 100000 100000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/2026-03-19-100246/stress_assembly.fixf
+
+# Save the global cluster information
+fix 1 CM ave/time 1 1 ${Ndump} c_idcl c_clsize file ${Dir}/${file3_name} mode vector
+fix 1 CM ave/time 1 1 1000000 c_idcl c_clsize file ${Dir}/${file3_name} mode vector
+fix 1 CM ave/time 1 1 1000000 c_idcl c_clsize file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/2026-03-19-100246/${file3_name} mode vector
+fix 1 CM ave/time 1 1 1000000 c_idcl c_clsize file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/2026-03-19-100246/clust_assembly.fixf mode vector
+
+# Save atom positions with cluster id
+dump dumpID all custom ${Ndump} ${Dir}/traj/${file5_name} id mol c_clusters type x y z vx vy vz
+dump dumpID all custom 1000000 ${Dir}/traj/${file5_name} id mol c_clusters type x y z vx vy vz
+dump dumpID all custom 1000000 /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/2026-03-19-100246/traj/${file5_name} id mol c_clusters type x y z vx vy vz
+dump dumpID all custom 1000000 /home/franvt/GitRepos/molDynLammps/polymericGels/gel-bonds-1/data/2026-03-19-100246/traj/traj_assembly.*.dumpf id mol c_clusters type x y z vx vy vz
+dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
+
+# RUN SIMULATION
+
+# Brownian Dynamics using Langevin Thermostat
+
+timestep ${tstep}
+timestep 0.001
+
+fix VelVerlet all nve # Use Velocity Verlet integrator
+
+# First elevate the temperature
+fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve
+fix ThermoLng all langevin 0.0 0.05 ${damp} ${seed3} tally yes zero yes 
+fix ThermoLng all langevin 0.0 0.05 1 ${seed3} tally yes zero yes 
+fix ThermoLng all langevin 0.0 0.05 1 35 tally yes zero yes 
+run ${stepsheat}
+run 500000
+WARNING: Using a manybody potential with bonds/angles/dihedrals and special_bond exclusions (src/pair.cpp:250)
+Hybrid pair style last /omp style table/omp
+Last active /omp style is angle_style harmonic/omp
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.32
+  ghost atom cutoff = 2.32
+  binsize = 1.16, bins = 23 23 23
+  7 neighbor lists, perpetual/occasional/extra = 6 1 0
+  (1) pair zero, perpetual, skip from (7)
+      attributes: half, newton on, omp
+      pair build: skip/omp
+      stencil: none
+      bin: none
+  (2) pair lj/cut/omp, perpetual, skip from (7)
+      attributes: half, newton on, omp
+      pair build: skip/omp
+      stencil: none
+      bin: none
+  (3) pair table/omp, perpetual, skip from (7)
+      attributes: half, newton on, omp
+      pair build: skip/omp
+      sten

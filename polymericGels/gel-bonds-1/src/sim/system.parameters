@@ -14,8 +14,8 @@ steps_isot=8500000
 Vol_MO1=0.5376050428
 Vol_CL1=0.5516113101
 files_name=("system_assembly.fixf" "stress_assembly.fixf" "clust_assembly.fixf" "profiles_assembly.fixf" "traj_assembly.*.dumpf" "data.hydrogel" "system_shear.fixf" "stress_shear.fixf" "clust_shear.fixf" "profiles_shear.fixf" "traj_shear.*.dumpf" "strain-*.restart")
-seed1=3234;
-seed2=6321;
-seed3=2010;
+seed1=3234
+seed2=6321
+seed3=2010
 
 
