@@ -15,7 +15,8 @@ include("functions.jl")
 include("graphs-functions.jl") # Includes the graphical packages
 
 # Selection of an specific simulation
-date="2026-03-20-105611";
+date="2026-03-19-130353";
+#"2026-03-20-105611";
 #"2026-03-19-130353";
 path=getDir(date);
 path_dump=joinpath(path,"traj");
@@ -77,12 +78,12 @@ end;
 nothing
 
 
-fig = Figure()
-ax = Axis(fig[1, 1])
-for i in Int.(round.(range(1,length(info_cluster),length=10000)))
-    hist!(ax, info_cluster[i][2], offset=i, direction=:x,bins=(1:2:50))
-end
-fig
+#fig = Figure()
+#ax = Axis(fig[1, 1])
+#for i in Int.(round.(range(1,length(info_cluster),length=10000)))
+#    hist!(ax, info_cluster[i][2], offset=i, direction=:x,bins=(1:2:50))
+#end
+#fig
 
 
 function fig_NumClusters(dt,DATA,DIR,id_c)
