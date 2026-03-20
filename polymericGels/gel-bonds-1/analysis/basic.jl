@@ -48,7 +48,11 @@ file_names=string.("traj_assembly.",id_files,".dumpf");
 L=2*datConfig.L[1]; # Length of the box
 
 # Cluster analysis
-function clusterAnalysis(DIR,FILE_NAME,L)
+DIR=path_dump
+FILE_NAME=file_names[1]
+
+
+#function clusterAnalysis(DIR,FILE_NAME,L)
 """
     Function that performs a quick cluster analysis.
     Return a dataframe with the position of the particles and neighbors and stuff
@@ -63,14 +67,22 @@ function clusterAnalysis(DIR,FILE_NAME,L)
     cluster_Size=nrow.(clusters);   # Amount of central particles in each cluster in the system
 
     # Get one graph for each cluster (strand length and loops)
-    graphs=map(s->createGraph(clusters[s]),eachindex(clusters))
+#    graphs=map(s->createGraph(clusters[s]),eachindex(clusters))
 
-    return (clusters,N_clusters,cluster_Size,graphs)
+#    return (clusters,N_clusters,cluster_Size,graphs)
 
-return 
+#end 
+
+#clustersCP=map(collect(groupby(data,:c_clusters,sort=true))) do s
+#        s[(s.type.==1.0).|(s.type.==2.0),:]
+#    end
+
+#clustersCP = map(collect(groupby(data, :c_clusters, sort=true))) do s
+#    s[(s.type.==1.0) .| (s.type.==2.0), :]
+#end |> x -> filter(!isempty, x)
 
 
-(clusters,N_clusters,cluster_Size,graphs)=clusterAnalysis(path_dump,file_names[1],L)
+#(clusters,N_clusters,cluster_Size,graphs)=clusterAnalysis(path_dump,file_names[1],L)
 
 #files=readdir(joinpath(path,"traj"),join=true);
 

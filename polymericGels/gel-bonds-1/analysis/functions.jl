@@ -75,20 +75,30 @@ function createNeighborList(cluster,cluster_patch,L)
     # Guardar los grados de cada partícula
     df_patchs.grado=length.(df_patchs.neigh)
 
-
     # Checar concistencia (Ver problemas con potencial de 3 cuerpos)
     df_patchs.inconsistente = df_patchs.grado.>1
 
-    # Reducir el dataframe a id de molecula
-    redPatch=combine(groupby(df_patchs,:mol),
-                    :neigh => (s->[vcat(s...)]) => :neigh,
-                    :grado => sum => :grado,
-                    :inconsistente => maximum => :inconsistente );
+    if nrow(df_patchs) == 0 # Implica que no tiene vecinos
+        # Crear redPatch con las mismas moléculas que df y valores por defecto
+        df.neigh=[[] for _ in 1:nrow(df)];
+        df.grado=zeros(Int, nrow(df));
+        df.inconsistente=zeros(Int, nrow(df));
 
-    # Pasar la información de vecinos al Dataframe con partículas centrales
-    df = leftjoin(df, redPatch, on = :mol)
+        #redPatch = DataFrame(mol = df.mol,
+        #                 neigh = [[] for _ in 1:nrow(df)],
+        #                 grado = zeros(Int, nrow(df)),
+        #                 inconsistente = zeros(Int, nrow(df)))
+    else
+        # Agrupar y combinar como antes
+        redPatch = combine(groupby(df_patchs, :mol),
+                       :neigh => (s -> [vcat(s...)]) => :neigh,
+                       :grado => sum => :grado,
+                       :inconsistente => maximum => :inconsistente)
+        # Pasar la información de vecinos al Dataframe con partículas centrales
+        df = leftjoin(df, redPatch, on = :mol)
+    end
 
-    return df 
+        return df
 end
 
 function getClusters(data,L)
@@ -98,12 +108,12 @@ function getClusters(data,L)
     
     clusters=map(collect(groupby(data,:c_clusters,sort=true))) do s
         s[(s.type.==1.0).|(s.type.==2.0),:]
-    end
+    end |> x -> filter(!isempty, x)
 
     # Create a dataframe with only the patches. (From this df the neoghbor list is constructed)
     clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
         s[(s.type.==3.0).|(s.type.==4.0),:]
-    end
+    end |> x -> filter(!isempty, x)
 
     # Agregar los vecinos
     clusters = map(s->createNeighborList(clusters[s],clusters_patchs[s],L),eachindex(clusters));
