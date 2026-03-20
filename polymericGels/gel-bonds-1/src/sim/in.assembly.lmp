@@ -71,7 +71,7 @@ compute stressVirial all reduce sum c_cstressVirial[*]
 compute stressVirialMod all reduce sum c_cstressVirialMod[*]
 
 # Get the number of central particles per cluster
-compute clusters all cluster/atom 0.6                             # Create the clusters
+compute clusters all aggregate/atom 0.6                             # Create the clusters
 
 # DUMPS and FIXES
 

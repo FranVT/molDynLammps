@@ -80,14 +80,10 @@ function createNeighborList(cluster,cluster_patch,L)
 
     if nrow(df_patchs) == 0 # Implica que no tiene vecinos
         # Crear redPatch con las mismas moléculas que df y valores por defecto
-        df.neigh=[[] for _ in 1:nrow(df)];
-        df.grado=zeros(Int, nrow(df));
-        df.inconsistente=zeros(Int, nrow(df));
-
-        #redPatch = DataFrame(mol = df.mol,
-        #                 neigh = [[] for _ in 1:nrow(df)],
-        #                 grado = zeros(Int, nrow(df)),
-        #                 inconsistente = zeros(Int, nrow(df)))
+        redPatch = DataFrame(mol = df.mol,
+                         neigh = [[] for _ in 1:nrow(df)],
+                         grado = zeros(Int, nrow(df)),
+                         inconsistente = zeros(Int, nrow(df)))
     else
         # Agrupar y combinar como antes
         redPatch = combine(groupby(df_patchs, :mol),
@@ -108,12 +104,12 @@ function getClusters(data,L)
     
     clusters=map(collect(groupby(data,:c_clusters,sort=true))) do s
         s[(s.type.==1.0).|(s.type.==2.0),:]
-    end |> x -> filter(!isempty, x)
+    end
 
     # Create a dataframe with only the patches. (From this df the neoghbor list is constructed)
     clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
         s[(s.type.==3.0).|(s.type.==4.0),:]
-    end |> x -> filter(!isempty, x)
+    end
 
     # Agregar los vecinos
     clusters = map(s->createNeighborList(clusters[s],clusters_patchs[s],L),eachindex(clusters));
