@@ -15,8 +15,9 @@ include("functions.jl")
 include("graphs-functions.jl") # Includes the graphical packages
 
 # Selection of an specific simulation
-date="2026-03-19-111120";
+date="2026-03-19-130353";
 path=getDir(date);
+path_dump=joinpath(path,"traj");
 
 # Read the data file
 datConfig=getDatFile(path);
@@ -38,37 +39,45 @@ fig_EngPair(dt,dataSystem,path,date);
 
 
 
-#=
-
-"""
-    P L O T S 
-"""
-
-damp=1;
-dt=0.001;
-
-
-# Get the directory of the desire system
-(DIR,id_c)=getDir(T,N_particles,phi,CL_con,date);
-DIR=joinpath(DIR[1],"traj");
-
 # Filename with the simulation data
 FILE_NAME="traj_assembly.9000000.dumpf";
 
+id_files=(0:Int(datConfig."save-dump"[1]):Int(datConfig."N_heat"[1]+datConfig."N_isot"[1]));
+file_names=string.("traj_assembly.",id_files,".dumpf");
+
+L=2*datConfig.L[1]; # Length of the box
+
+# Cluster analysis
+function clusterAnalysis(DIR,FILE_NAME,L)
+"""
+    Function that performs a quick cluster analysis.
+    Return a dataframe with the position of the particles and neighbors and stuff
+"""
+
+    data=getDump(DIR,FILE_NAME);
+
+    # Get one dataframe per cluster in the system with its neighbors
+    clusters=getClusters(data,L); # Just central particles. Patches have been descarted
+
+    N_clusters=length(clusters);    # Amount of clusters in the system
+    cluster_Size=nrow.(clusters);   # Amount of central particles in each cluster in the system
+
+    # Get one graph for each cluster (strand length and loops)
+    graphs=map(s->createGraph(clusters[s]),eachindex(clusters))
+
+    return (clusters,N_clusters,cluster_Size,graphs)
+
+return 
+
+
+(clusters,N_clusters,cluster_Size,graphs)=clusterAnalysis(path_dump,file_names[1],L)
+
+#files=readdir(joinpath(path,"traj"),join=true);
+
+
+
+#=
 # Get data
-data=getDump(DIR,FILE_NAME);
-
-L=2*14.984222; # Length of the box
-
-# Get one dataframe per cluster in the system with its neighbors
-clusters=getClusters(data,L); # Just central particles. Patches have been descarted
-
-N_clusters=length(clusters);    # Amount of clusters in the system
-cluster_Size=nrow.(clusters);   # Amount of central particles in each cluster in the system
-
-# Get one graph for each cluster (strand length and loops)
-graphs=map(s->createGraph(clusters[s]),eachindex(clusters))
-
 # Structure factor
 l=1.5; # "wave length"
 vec_K=(2*pi).*[1/l,1/l,1/l]; # vector
@@ -77,6 +86,10 @@ I_k=map(s->structureFactor([clusters[s].x clusters[s].y clusters[s].z],vec_K),ea
 
 #Structure factor of all the system
 I_K=sum(I_k);
+
+
+
+
 
 =#
 
