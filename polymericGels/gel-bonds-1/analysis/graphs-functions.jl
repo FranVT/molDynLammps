@@ -36,6 +36,57 @@ set_theme!(
     )
 )
 
+function fig_NumClusters(dt,time_step,DATA,DIR,id_c)
+
+fig=Figure();
+
+clbr=:managua10;
+
+ax=Axis(fig[1:1,1:1],
+    title=latexstring("\\mathrm{Number~of~clusters}"),
+    #subtitle=latexstring(subtitle),
+    xlabel=L"\mathrm{Time~units}~[\tau^*]",
+    ylabel=L"\mathrm{Amount~of~Clusters}",
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(0,nothing,nothing,nothing) 
+   )
+
+plot!(ax,dt.*time_step,DATA)
+
+#hlines!(ax,[T])
+
+save(joinpath(DIR,string("Nclusters-",id_c,".png")), fig, px_per_unit = 300/inch)
+
+end
+
+
+function fig_MaxClusterPart(dt,time_step,DATA,DIR,id_c)
+
+fig=Figure();
+
+clbr=:managua10;
+
+ax=Axis(fig[1:1,1:1],
+    title=latexstring("\\mathrm{Amount~of~Cent~Part~in~the~biggest~cluster}"),
+    #subtitle=latexstring(subtitle),
+    xlabel=L"\mathrm{Time~units}~[\tau^*]",
+    ylabel=L"\mathrm{Amount~of~Particles}",
+    xminorticksvisible=true,
+    xminorgridvisible=true,
+    limits=(0,nothing,nothing,nothing) 
+   )
+
+plot!(ax,dt.*time_step,DATA)
+
+#hlines!(ax,[T])
+
+save(joinpath(DIR,string("NpartCluster-",id_c,".png")), fig, px_per_unit = 300/inch)
+
+end
+
+
+
 function fig_EngPair(dt,DATA,DIR,id_c)
 
 fig=Figure();

@@ -6,6 +6,7 @@ using DataFrames, CSV
 using Statistics, StatsBase
 using Distances, Graphs
 using GraphMakie, LinearAlgebra
+using BenchmarkTools
 
 # https://juliagraphs.org/Graphs.jl/v1.5/
 # https://graphsjl-docs.readthedocs.io/en/latest/
@@ -15,7 +16,11 @@ include("functions.jl")
 include("graphs-functions.jl") # Includes the graphical packages
 
 # Selection of an specific simulation
-date="2026-03-19-130353";
+date="2026-03-20-112940";
+#"2026-03-20-105611";
+
+
+#"2026-03-19-130353"; # COMPUTE CLUSTER
 #"2026-03-20-105611";
 #"2026-03-19-130353";
 path=getDir(date);
@@ -39,6 +44,7 @@ fig_EngB(dt,dataSystem,path,date);
 fig_EngSys(dt,dataSystem,path,date);
 fig_EngPair(dt,dataSystem,path,date);
 
+println("Imagenes del sistema listas")
 
 
 # Filename with the simulation data
@@ -71,52 +77,48 @@ function clusterAnalysis(DIR,FILE_NAME,L)
 
 end 
 
-info_cluster=map(file_names) do s
-    (N_clusters,cluster_Size)=clusterAnalysis(path_dump,s,L);   
+
+function clusterAnalysis_opt(DIR,FILE_NAME,L)
+"""
+    Function that performs a quick cluster analysis.
+    Return a dataframe with the position of the particles and neighbors and stuff
+"""
+
+    data=getDump(DIR,FILE_NAME);
+
+    # Get one dataframe per cluster in the system with its neighbors
+    clusters=getClusters_opt(data,L); # Just central particles. Patches have been descarted
+
+    N_clusters=length(clusters);    # Amount of clusters in the system
+    cluster_Size=nrow.(clusters);   # Amount of central particles in each cluster in the system
+
+    # Get one graph for each cluster (strand length and loops)
+    #graphs=map(s->createGraph(clusters[s]),eachindex(clusters))
+
+    return (N_clusters,cluster_Size)
+
+end 
+
+# Reducción de la cantidad de time steps a analizar
+N = 2^8  # cantidad deseada de puntos
+log_min = log(1.0);
+log_max = log(length(file_names));
+pts = unique(round.(Int, exp.(range(log_min, log_max, length=N))))
+pts = pts[pts .<= 100001]  # asegura límite superior
+
+
+
+#println("Inicio de analisis de cluster")
+info_cluster=map(pts) do s
+    (N_clusters,cluster_Size)=clusterAnalysis(path_dump,file_names[s],L);   
 end;
 
+fig_NumClusters(dt,id_files[pts],first.(info_cluster),path,date)
+
+fig_MaxClusterPart(dt,id_files[pts],maximum.(last.(info_cluster)),path,date)
+
+
 nothing
-
-
-#fig = Figure()
-#ax = Axis(fig[1, 1])
-#for i in Int.(round.(range(1,length(info_cluster),length=10000)))
-#    hist!(ax, info_cluster[i][2], offset=i, direction=:x,bins=(1:2:50))
-#end
-#fig
-
-
-function fig_NumClusters(dt,DATA,DIR,id_c)
-
-fig=Figure();
-
-clbr=:managua10;
-
-ax=Axis(fig[1:1,1:1],
-    title=latexstring("\\mathrm{Number~of~clusters}"),
-    #subtitle=latexstring(subtitle),
-    xlabel=L"\mathrm{Time~units}~[\tau^*]",
-    ylabel=L"\mathrm{Clusters}",
-    xminorticksvisible=true,
-    xminorgridvisible=true,
-    limits=(0,nothing,nothing,nothing) 
-   )
-
-plot!(ax,dt.*DATA.TimeStep,DATA."c_wcaPair",label=L"\mathrm{WCA}")
-plot!(ax,dt.*DATA.TimeStep,DATA."c_patchPair",label=L"\mathrm{patch}")
-plot!(ax,dt.*DATA.TimeStep,DATA."c_swapPair",label=L"\mathrm{swap}")
-
-#hlines!(ax,[T])
-
-Legend(fig[1,2],ax,
-      L"\mathrm{Legend}"
-     )
-
-save(joinpath(DIR,string("ePair-",id_c,".png")), fig, px_per_unit = 300/inch)
-
-    return fig
-
-end
 
 
 

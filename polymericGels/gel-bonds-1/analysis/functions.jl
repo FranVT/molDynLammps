@@ -29,6 +29,82 @@ function structureFactor(vec_r,vec_K)
    return I_k
 end
 
+function createNeighborList_opt(cluster, cluster_patch, L, cutoff)
+    df_p = cluster_patch
+    n = nrow(df_p)
+    xs, ys, zs, mols = df_p.x, df_p.y, df_p.z, df_p.mol
+    
+    # Cell list
+    cell_size = cutoff
+    ncells = ceil(Int, L / cell_size)
+    cell_idx(x) = clamp(floor(Int, x / cell_size) + 1, 1, ncells)
+    cell_idy(x) = clamp(floor(Int, x / cell_size) + 1, 1, ncells)
+    cell_idz(x) = clamp(floor(Int, x / cell_size) + 1, 1, ncells)
+    cells = [Int[] for _ in 1:ncells^3]
+    for i in 1:n
+        cx = cell_idx(xs[i])
+        cy = cell_idy(ys[i])
+        cz = cell_idz(zs[i])
+        idx = (cx-1)*ncells^2 + (cy-1)*ncells + cz
+        push!(cells[idx], i)
+    end
+    
+    neigh = [Int[] for _ in 1:n]
+    for i in 1:n
+        cx = cell_idx(xs[i])
+        for dx in -1:1, dy in -1:1, dz in -1:1
+            nx = mod1(cx+dx, ncells)
+            ny = mod1(cy+dy, ncells)
+            nz = mod1(cz+dz, ncells)
+            cell_id = (nx-1)*ncells^2 + (ny-1)*ncells + nz
+            for j in cells[cell_id]
+                i == j && continue
+                mols[i] == mols[j] && continue
+                # Distancia periódica
+                dx_ = abs(xs[i] - xs[j])
+                dx_ = min(dx_, L - dx_)
+                dy_ = abs(ys[i] - ys[j])
+                dy_ = min(dy_, L - dy_)
+                dz_ = abs(zs[i] - zs[j])
+                dz_ = min(dz_, L - dz_)
+                dist = sqrt(dx_^2 + dy_^2 + dz_^2)
+                if dist <= cutoff
+                    push!(neigh[i], mols[j])
+                end
+            end
+        end
+    end
+    
+    # Agregar grado e inconsistencia
+    grado = length.(neigh)
+    inconsistente = grado .> 1
+    
+    # Agrupar por mol (evitar leftjoin)
+    mol_neigh = Dict{Int, Vector{Int}}()
+    mol_grado = Dict{Int, Int}()
+    mol_incons = Dict{Int, Bool}()
+    for i in 1:n
+        m = mols[i]
+        if haskey(mol_neigh, m)
+            append!(mol_neigh[m], neigh[i])
+            mol_grado[m] += grado[i]
+            mol_incons[m] = mol_incons[m] || inconsistente[i]
+        else
+            mol_neigh[m] = copy(neigh[i])
+            mol_grado[m] = grado[i]
+            mol_incons[m] = inconsistente[i]
+        end
+    end
+    
+    # Construir DataFrame final (similar al original)
+    redPatch = DataFrame(mol=collect(keys(mol_neigh)),
+                         neigh=[mol_neigh[m] for m in keys(mol_neigh)],
+                         grado=[mol_grado[m] for m in keys(mol_neigh)],
+                         inconsistente=[mol_incons[m] for m in keys(mol_neigh)])
+    
+    return leftjoin(cluster, redPatch, on=:mol)  # si se necesita preservar estructura original
+end
+
 
 
 function createNeighborList(cluster,cluster_patch,L)
@@ -117,6 +193,30 @@ function getClusters(data,L)
     return clusters
 
 end
+
+function getClusters_opt(data,L)
+"""
+    Get a dataframe with a list of neighbors for each cluster in the system
+"""
+    
+    clusters=map(collect(groupby(data,:c_clusters,sort=true))) do s
+        s[(s.type.==1.0).|(s.type.==2.0),:]
+    end
+
+    # Create a dataframe with only the patches. (From this df the neoghbor list is constructed)
+    clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
+        s[(s.type.==3.0).|(s.type.==4.0),:]
+    end
+
+    # Agregar los vecinos
+    clusters = map(s->createNeighborList_opt(clusters[s], clusters_patchs[s], L,0.6),eachindex(clusters));
+
+    return clusters
+
+end
+
+
+
 
 function createGraph(df)
 """

@@ -1,0 +1,6 @@
+julia> include("basic.jl")
+Imagenes del sistema listas
+Inicio de analisis de cluster
+  42.429 s (702092026 allocations: 21.52 GiB)
+fig_NumClusters (generic function with 1 method)
+
