@@ -50,6 +50,7 @@ ax=Axis(fig[1:1,1:1],
     xminorticksvisible=true,
     xminorgridvisible=true,
     limits=(0,nothing,nothing,nothing),
+    xscale=log10,
     yscale=log10
    )
 
@@ -76,6 +77,7 @@ ax=Axis(fig[1:1,1:1],
     xminorticksvisible=true,
     xminorgridvisible=true,
     limits=(0,nothing,nothing,nothing),
+    xscale=log10,
     yscale=log10 
    )
 

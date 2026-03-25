@@ -73,7 +73,7 @@ function getClusters(data,L)
     end
 
     # Agregar los vecinos
-    clusters = map(s->createNeighborList(clusters[s],clusters_patchs[s],L),eachindex(clusters));
+    #clusters = map(s->createNeighborList(clusters[s],clusters_patchs[s],L),eachindex(clusters));
 
     return clusters
 
@@ -84,6 +84,8 @@ function createNeighborList(cluster,cluster_patch,L)
     Create analysis of the cluster for each dump
     cluster:    A data frame with the information of the cluster 
     L:          The length of one side of the simulation box.
+
+    df: es el cluster de las partículas centrales.
 """
     
     # Data frame with the ccluster information
@@ -144,30 +146,6 @@ function createNeighborList(cluster,cluster_patch,L)
 
         return df
 end
-
-function getClusters_opt(data,L)
-"""
-    Get a dataframe with a list of neighbors for each cluster in the system
-"""
-    
-    clusters=map(collect(groupby(data,:c_clusters,sort=true))) do s
-        s[(s.type.==1.0).|(s.type.==2.0),:]
-    end
-
-    # Create a dataframe with only the patches. (From this df the neoghbor list is constructed)
-    clusters_patchs=map(collect(groupby(data,:c_clusters,sort=true))) do s
-        s[(s.type.==3.0).|(s.type.==4.0),:]
-    end
-
-    # Agregar los vecinos
-    clusters = map(s->createNeighborList_opt(clusters[s], clusters_patchs[s], L,0.6),eachindex(clusters));
-
-    return clusters
-
-end
-
-
-
 
 function createGraph(df)
 """
