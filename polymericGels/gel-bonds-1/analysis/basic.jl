@@ -16,7 +16,9 @@ include("functions.jl")
 include("graphs-functions.jl") # Includes the graphical packages
 
 # Selection of an specific simulation
-date="2026-03-24-102830";
+date="2026-03-25-093253";
+#"2026-03-24-163630";
+#"2026-03-24-102830";
 #"2026-03-20-112940";
 #"2026-03-20-105611";
 
@@ -60,15 +62,16 @@ log_max = log(length(file_names));
 pts = unique(round.(Int, exp.(range(log_min, log_max, length=N))))
 pts = pts[pts .<= 100001]  # asegura límite superior
 
-
+#=
 println("Inicio de analisis de cluster")
 info_cluster=map(pts) do s
     (N_clusters,cluster_Size)=clusterAnalysis(path_dump,file_names[s],L);   
 end;
+=#
 
 println("Figuras de analisis de cluster")
 fig_NumClusters(dt,id_files[pts],first.(info_cluster),path,date)
-fig_MaxClusterPart(dt,id_files[pts],maximum.(last.(info_cluster)),path,date)
+fig_MaxClusterPart(dt,id_files[pts],datConfig.Npart[1].-maximum.(last.(info_cluster)),path,date)
 
 
 nothing

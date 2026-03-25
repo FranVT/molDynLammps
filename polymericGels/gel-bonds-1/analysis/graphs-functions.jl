@@ -49,7 +49,8 @@ ax=Axis(fig[1:1,1:1],
     ylabel=L"\mathrm{Amount~of~Clusters}",
     xminorticksvisible=true,
     xminorgridvisible=true,
-    limits=(0,nothing,nothing,nothing) 
+    limits=(0,nothing,nothing,nothing),
+    yscale=log10
    )
 
 plot!(ax,dt.*time_step,DATA)
@@ -71,10 +72,11 @@ ax=Axis(fig[1:1,1:1],
     title=latexstring("\\mathrm{Amount~of~Cent~Part~in~the~biggest~cluster}"),
     #subtitle=latexstring(subtitle),
     xlabel=L"\mathrm{Time~units}~[\tau^*]",
-    ylabel=L"\mathrm{Amount~of~Particles}",
+    ylabel=L"N_{\mathrm{Tot}} - N_{\mathrm{max~cluster}}",
     xminorticksvisible=true,
     xminorgridvisible=true,
-    limits=(0,nothing,nothing,nothing) 
+    limits=(0,nothing,nothing,nothing),
+    yscale=log10 
    )
 
 plot!(ax,dt.*time_step,DATA)
