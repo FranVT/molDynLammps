@@ -217,7 +217,7 @@ end
 #println("Obtención de vecinos")
 @btime createNeighborList_opt(first(tests),last(tests),L) # 60 s
 
-@btime createNeighborList(first(tests),last(tests),L)
+#@btime createNeighborList(first(tests),last(tests),L)
 
 #println("Figuras de analisis de cluster")
 #fig_NumClusters(dt,id_files[pts],first.(info_cluster),path,date)
