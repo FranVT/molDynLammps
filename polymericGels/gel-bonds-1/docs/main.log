@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)  (format=lualatex 2026.3.13)  17 MAR 2026 15:25
+This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)  (format=lualatex 2026.3.13)  26 MAR 2026 15:30
  restricted system commands enabled.
  file:line:error style messages enabled.
 **main.tex
@@ -1003,15 +1003,76 @@ Overfull \hbox (32.28065pt too wide) in paragraph at lines 9--14
 \TU/TeXGyrePagella(0)/m/n/10 Fi-nal-mente se ex-plo-rará por-centa-jes de Cross-Linkers, $\OT1/pplx/m/n/10 %[] \OMS/zplm/m/n/10 2 f\OT1/pplx/m/n/10 1%, 5%, 10%\OMS/zplm/m/n/10 g$\TU/TeXGyrePagella(0)/m/n/10 . 
  []
 
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+<docs/../Figures/2026-03-24-163630/Nclusters-2026-03-24-163630.png, id=21, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-24-163630/Nclusters-2026-03-24-163630.png Graphic file (type png)
+<use docs/../Figures/2026-03-24-163630/Nclusters-2026-03-24-163630.png>
+Package luatex.def Info: docs/../Figures/2026-03-24-163630/Nclusters-2026-03-24-163630.png  used on input line 37.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+<docs/../Figures/2026-03-24-163630/NpartCluster-2026-03-24-163630.png, id=22, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-24-163630/NpartCluster-2026-03-24-163630.png Graphic file (type png)
+<use docs/../Figures/2026-03-24-163630/NpartCluster-2026-03-24-163630.png>
+Package luatex.def Info: docs/../Figures/2026-03-24-163630/NpartCluster-2026-03-24-163630.png  used on input line 41.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+<docs/../Figures/2026-03-20-112940/Nclusters-2026-03-20-112940.png, id=23, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-20-112940/Nclusters-2026-03-20-112940.png Graphic file (type png)
+<use docs/../Figures/2026-03-20-112940/Nclusters-2026-03-20-112940.png>
+Package luatex.def Info: docs/../Figures/2026-03-20-112940/Nclusters-2026-03-20-112940.png  used on input line 56.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+<docs/../Figures/2026-03-20-112940/NpartCluster-2026-03-20-112940.png, id=24, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-20-112940/NpartCluster-2026-03-20-112940.png Graphic file (type png)
+<use docs/../Figures/2026-03-20-112940/NpartCluster-2026-03-20-112940.png>
+Package luatex.def Info: docs/../Figures/2026-03-20-112940/NpartCluster-2026-03-20-112940.png  used on input line 60.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+<docs/../Figures/2026-03-25-173506/Nclusters-2026-03-25-173506.png, id=25, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-25-173506/Nclusters-2026-03-25-173506.png Graphic file (type png)
+<use docs/../Figures/2026-03-25-173506/Nclusters-2026-03-25-173506.png>
+Package luatex.def Info: docs/../Figures/2026-03-25-173506/Nclusters-2026-03-25-173506.png  used on input line 74.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+<docs/../Figures/2026-03-25-173506/NpartCluster-2026-03-25-173506.png, id=26, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-25-173506/NpartCluster-2026-03-25-173506.png Graphic file (type png)
+<use docs/../Figures/2026-03-25-173506/NpartCluster-2026-03-25-173506.png>
+Package luatex.def Info: docs/../Figures/2026-03-25-173506/NpartCluster-2026-03-25-173506.png  used on input line 78.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+<docs/../Figures/2026-03-24-102830/Nclusters-2026-03-24-102830.png, id=27, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-24-102830/Nclusters-2026-03-24-102830.png Graphic file (type png)
+<use docs/../Figures/2026-03-24-102830/Nclusters-2026-03-24-102830.png>
+Package luatex.def Info: docs/../Figures/2026-03-24-102830/Nclusters-2026-03-24-102830.png  used on input line 93.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+<docs/../Figures/2026-03-24-102830/NpartCluster-2026-03-24-102830.png, id=28, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-24-102830/NpartCluster-2026-03-24-102830.png Graphic file (type png)
+<use docs/../Figures/2026-03-24-102830/NpartCluster-2026-03-24-102830.png>
+Package luatex.def Info: docs/../Figures/2026-03-24-102830/NpartCluster-2026-03-24-102830.png  used on input line 97.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 109.
+
+[2<./docs/../Figures/2026-03-24-163630/Nclusters-2026-03-24-163630.png><./docs/../Figures/2026-03-24-163630/NpartCluster-2026-03-24-163630.png><./docs/../Figures/2026-03-20-112940/Nclusters-2026-03-20-112940.png><./docs/../Figures/2026-03-20-112940/NpartCluster-2026-03-20-112940.png><./docs/../Figures/2026-03-25-173506/Nclusters-2026-03-25-173506.png><./docs/../Figures/2026-03-25-173506/NpartCluster-2026-03-25-173506.png><./docs/../Figures/2026-03-24-102830/Nclusters-2026-03-24-102830.png><./docs/../Figures/2026-03-24-102830/NpartCluster-2026-03-24-102830.png>]
+<docs/../Figures/2026-03-25-093253/Nclusters-2026-03-25-093253.png, id=37, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-25-093253/Nclusters-2026-03-25-093253.png Graphic file (type png)
+<use docs/../Figures/2026-03-25-093253/Nclusters-2026-03-25-093253.png>
+Package luatex.def Info: docs/../Figures/2026-03-25-093253/Nclusters-2026-03-25-093253.png  used on input line 111.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
+<docs/../Figures/2026-03-25-093253/NpartCluster-2026-03-25-093253.png, id=38, 451.6875pt x 338.7054pt>
+File: docs/../Figures/2026-03-25-093253/NpartCluster-2026-03-25-093253.png Graphic file (type png)
+<use docs/../Figures/2026-03-25-093253/NpartCluster-2026-03-25-093253.png>
+Package luatex.def Info: docs/../Figures/2026-03-25-093253/NpartCluster-2026-03-25-093253.png  used on input line 115.
+(luatex.def)             Requested size: 137.00288pt x 102.7339pt.
 )
 
 Package bibentry Warning: You have used \nobibliography* 
 (bibentry)                without a following \bibliography.
 (bibentry)                You may not be able to run BibTeX.
 
-[1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./main.aux)
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 85.
+
+[3<./docs/../Figures/2026-03-25-093253/Nclusters-2026-03-25-093253.png><./docs/../Figures/2026-03-25-093253/NpartCluster-2026-03-25-093253.png>] (./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -1021,19 +1082,19 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 )
 
 Here is how much of LuaTeX's memory you used:
- 22821 strings out of 476076
+ 23012 strings out of 476076
  125129,953878 words of node,token memory allocated
  832 words of node memory still in use:
    6 hlist, 2 vlist, 2 rule, 2 glue, 22 kern, 1 glyph, 13 attribute, 98 glue_spec, 13 attribute_list, 1 write nodes
-   avail lists: 2:248,3:153,4:21,5:360,6:42,7:4360,8:51,9:255,10:4,11:339
- 44708 multiletter control sequences out of 65536+600000
+   avail lists: 1:1,2:745,3:180,4:21,5:369,6:64,7:4360,8:51,9:618,10:6,11:339
+ 44802 multiletter control sequences out of 65536+600000
  107 fonts using 12064679 bytes
- 95i,11n,112p,540b,934s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 95i,12n,112p,540b,1072s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrepagella-regular.otf></usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrepagella-italic.otf></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (1 page, 51618 bytes).
+Output written on main.pdf (3 pages, 1087562 bytes).
 
-PDF statistics: 54 PDF objects out of 1000 (max. 8388607)
- 39 compressed objects within 1 object stream
- 4 named destinations out of 1000 (max. 1048576)
+PDF statistics: 77 PDF objects out of 1000 (max. 8388607)
+ 50 compressed objects within 1 object stream
+ 11 named destinations out of 1000 (max. 1048576)
  9 words of extra memory for PDF output out of 10000 (max. 100000000)
 

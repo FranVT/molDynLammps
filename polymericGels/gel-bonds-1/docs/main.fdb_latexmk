@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1773782429.10013 "main.aux" "main.bbl" "main" 1773782761.86732 2
-  "main.aux" 1773782761.65457 418 84e9a63182748e826a3a83e1a97585e6 "pdflatex"
+["bibtex main"] 1774560651.19186 "main.aux" "main.bbl" "main" 1774560651.23937 2
+  "main.aux" 1774560651.01875 1003 d1adc03a7967371df7e8229962ec27ac "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1773782759.86391 "main.tex" "main.pdf" "main" 1773782761.8675 0
+["pdflatex"] 1774560647.98697 "main.tex" "main.pdf" "main" 1774560651.23953 0
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1773782347.59966 128397 b1a63c819bb04eb1bd0314afd1be0537 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1773443583.29431 127314 202d777ecbd04f99755b23dfb376733b ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1773782349.33974 128950 15bfd9b42a1ce4469fb321b58978f5a6 ""
@@ -213,11 +213,21 @@
   "/usr/share/texmf-dist/tex/luatex/luaotfload/luaotfload.lua" 1772820570 13566 16df94dd2de231b2bca0aaa0190941fe ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1773332582 5381098 9f966685d344a3d34adbc94f52661a01 ""
   "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1773443471 5659380 fc04a1442e9f3b1bea1cf514176bd1f2 ""
-  "docs/tests-3.tex" 1773782759.55339 1212 8df62bc2a4b616c95df5f25315372268 ""
-  "main.aux" 1773782761.65457 418 84e9a63182748e826a3a83e1a97585e6 "pdflatex"
-  "main.bbl" 1773782429.15113 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1773782761.65569 193 acdda4a94ab3d091020a43bd3783fb45 "pdflatex"
-  "main.tex" 1773782408.729 2837 3b701a1adcfcf27df886d32711b3f592 ""
+  "docs/../Figures/2026-03-20-112940/Nclusters-2026-03-20-112940.png" 1774559530.71996 120173 50bb357d0c04be1e5e45ea9646c3cf18 ""
+  "docs/../Figures/2026-03-20-112940/NpartCluster-2026-03-20-112940.png" 1774559530.97997 155632 57b95e04531a2bfbe3a38b70f25d76a2 ""
+  "docs/../Figures/2026-03-24-102830/Nclusters-2026-03-24-102830.png" 1774559157.23868 116806 cd032dd0a5efab120393d87f2ab39e96 ""
+  "docs/../Figures/2026-03-24-102830/NpartCluster-2026-03-24-102830.png" 1774559157.48202 143229 37447380d3074213d6e6e215b533cc9c ""
+  "docs/../Figures/2026-03-24-163630/Nclusters-2026-03-24-163630.png" 1774559017.64858 121617 863b8ca2443f12919f2ee5bde28d3a17 ""
+  "docs/../Figures/2026-03-24-163630/NpartCluster-2026-03-24-163630.png" 1774559017.89526 134714 5475de39872007483b294f8fa6322f1e ""
+  "docs/../Figures/2026-03-25-093253/Nclusters-2026-03-25-093253.png" 1774558955.37555 116432 5fc7ff05fd3b03f0e979ca8bade2d951 ""
+  "docs/../Figures/2026-03-25-093253/NpartCluster-2026-03-25-093253.png" 1774558955.61889 136510 dbe3983f84ebee073bbca4404c6f1f88 ""
+  "docs/../Figures/2026-03-25-173506/Nclusters-2026-03-25-173506.png" 1774558861.64763 116790 401f4263360f3981d02b7524b4b7434a ""
+  "docs/../Figures/2026-03-25-173506/NpartCluster-2026-03-25-173506.png" 1774558861.89764 142045 847c0b75b9417ffb70280e3a0a242ae2 ""
+  "docs/tests-3.tex" 1774560646.79177 4135 79fe253f1e46711a30c703ab7d810762 ""
+  "main.aux" 1774560651.01875 1003 d1adc03a7967371df7e8229962ec27ac "pdflatex"
+  "main.bbl" 1774560651.23661 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1774560651.01923 193 acdda4a94ab3d091020a43bd3783fb45 "pdflatex"
+  "main.tex" 1773786817.69141 2837 3b701a1adcfcf27df886d32711b3f592 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
