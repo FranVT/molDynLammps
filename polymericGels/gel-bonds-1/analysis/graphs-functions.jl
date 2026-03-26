@@ -49,9 +49,9 @@ ax=Axis(fig[1:1,1:1],
     ylabel=L"\mathrm{Amount~of~Clusters}",
     xminorticksvisible=true,
     xminorgridvisible=true,
-    limits=(0,nothing,nothing,nothing),
-    xscale=log10,
-    yscale=log10
+    limits=(nothing,nothing,nothing,nothing),
+    #xscale=log10,
+    #yscale=log10
    )
 
 plot!(ax,dt.*time_step,DATA)
@@ -76,9 +76,9 @@ ax=Axis(fig[1:1,1:1],
     ylabel=L"N_{\mathrm{Tot}} - N_{\mathrm{max~cluster}}",
     xminorticksvisible=true,
     xminorgridvisible=true,
-    limits=(0,nothing,nothing,nothing),
-    xscale=log10,
-    yscale=log10 
+    limits=(nothing,nothing,nothing,nothing),
+    #xscale=log10,
+    #yscale=log10 
    )
 
 plot!(ax,dt.*time_step,DATA)
