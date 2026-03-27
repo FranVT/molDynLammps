@@ -43,6 +43,9 @@ values+=("${N_particles}")
 headers+=("Temperature")
 values+=("${T}")
 
+headers+=("Nexp")
+values+=("${Nexp}")
+
 headers+=("damp")
 values+=("${damp}")
 
@@ -72,6 +75,16 @@ values+=("${Nsave}")
 
 headers+=("save-stress")
 values+=("${NsaveStress}")
+
+headers+=("seed1")
+values+=("${seed1}")
+
+headers+=("seed2")
+values+=("${seed2}")
+
+headers+=("seed3")
+values+=("${seed3}")
+
 
 # Write headers and values to the file
 echo "$(IFS=,; echo "${headers[*]}")" > "$file_name"

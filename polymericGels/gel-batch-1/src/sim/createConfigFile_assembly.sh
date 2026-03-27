@@ -9,6 +9,8 @@ echo "Running the create config assembly"
 
 dir_sim=$1
 id=$2
+phi=$3
+Nexp=$4
 
 # Remove old config files
 rm assembly*.config
@@ -37,9 +39,9 @@ Ndump=$(echo "scale=0; $aux" | bc);
 Ndump=${Ndump%.*};
 
 # Seed for the langevin thermostat and initial positions
-seed1=$((1234 + $N_CL));     # MO positions
-seed2=$((4321 + $N_CL));     # CL positions
-seed3=$((10 + $N_CL));       # Langevin thermostat
+seed1=$(( $Nexp + $(date +%M) + $(date +%S) ))
+seed2=$(( $Nexp + $(date +%H) + $(date +%M) ))
+seed3=$(( $seed1 + $seed2 ))
 
 echo "Start writting the assembly config file"
 
@@ -48,6 +50,7 @@ OUTPUT_FILE="assembly$id.config"
 
 # List of variable names to include in the parameters file
 VAR_NAMES=(
+    "phi"
     "N_particles"
     "N_CL"
     "N_MO"
@@ -58,6 +61,7 @@ VAR_NAMES=(
     "Nsave"
     "NsaveStress"
     "Ndump"
+    "Nexp"
 )
 
 # Create or overwrite the parameters file
@@ -74,6 +78,4 @@ for var in "${VAR_NAMES[@]}"; do
 done
 
 echo "Parameters file generated: $OUTPUT_FILE"
-
-#mv $OUTPUT_FILE "$dir_src/docs"
 
