@@ -19,5 +19,21 @@ DATA_DIR=joinpath(MAIN_DIR,"data");
 SIMS_DIR=filter(isdir,readdir(DATA_DIR,join=true));
 
 # Get all data files in a dataframe
-df=mapreduce(s->getDat(s),vcat,SIMS_DIR);
+data_info=mapreduce(s->getDat(s),vcat,SIMS_DIR);
 
+# Selection of the system by parameters
+phi=0.01;
+Temp=0.05;
+N_part=5000.0;
+CL_con=0.05;
+
+# Se filtra el dataframe 
+data_filtrada = subset(data_info,
+    :phi => ByRow(==(phi)),
+    :Temperature => ByRow(==(Temp)),
+    :Npart => ByRow(==(N_part)),
+    :"CL-Con" => ByRow(==(CL_con))
+)
+
+# Promedio de los N experimentos
+data_system=meanFixystem(data_filtrada.dir);
