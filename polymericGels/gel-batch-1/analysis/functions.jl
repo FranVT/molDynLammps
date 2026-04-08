@@ -57,7 +57,7 @@ function getDat(path)
         end
     end
 
-    df_aux[!, :dir] = [path];
+    df_aux[!, :dir] = [last(split(path,"/"))];
 
     return df_aux
 end
