@@ -45,7 +45,23 @@ DF_DIR=filter(isfile,readdir(INFO_DIR,join=true));
 # Get the dat dataframes
 dat_DF=getDatInfo(DF_DIR);
 
+# Directory of the files
 TRAJ_DIR=joinpath(DATA_DIR,dat_DF.dir[1],"traj");
+
+# Stored timesteps
+aux_id=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
+
+aux_dump=getDump(TRAJ_DIR,string("traj_assembly.",aux_id[1],".dumpf"));
+
+
+N_clusters=length(unique(aux_dump.c_clusters));
+
+clusters=groupby(aux_dump,[:c_clusters,:mol]);
+
+df_aux=combine(clusters,:type=>(x->count(==(1),x))=>:count_type1);
+
+
+#N_sum(df_aux.count_type1)
 
 
 
