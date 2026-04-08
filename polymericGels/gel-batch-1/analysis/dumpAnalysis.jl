@@ -5,9 +5,7 @@
 
 using DataFrames, CSV
 using Statistics, StatsBase
-using Distances, Graphs
-using GraphMakie, LinearAlgebra
-using BenchmarkTools, UUIDs
+using UUIDs, LinearAlgebra
 
 # Include auxiliary files
 include("functions.jl")
@@ -47,7 +45,7 @@ DF_DIR=filter(isfile,readdir(INFO_DIR,join=true));
 # Get the dat dataframes
 dat_DF=getDatInfo(DF_DIR);
 
-TRAJ_DIR=joinpath(dat_DF.dir[1],"traj");
+TRAJ_DIR=joinpath(DATA_DIR,dat_DF.dir[1],"traj");
 
 
 
