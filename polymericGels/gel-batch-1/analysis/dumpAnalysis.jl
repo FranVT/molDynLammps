@@ -45,20 +45,52 @@ DF_DIR=filter(isfile,readdir(INFO_DIR,join=true));
 # Get the dat dataframes
 dat_DF=getDatInfo(DF_DIR);
 
+DIR_id=1;
+
 # Directory of the files
-TRAJ_DIR=joinpath(DATA_DIR,dat_DF.dir[1],"traj");
+TRAJ_DIR=joinpath(DATA_DIR,dat_DF.dir[DIR_id],"traj");
 
 # Stored timesteps
-aux_id=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
+aux_id=Int.((0:dat_DF."save-dump"[DIR_id]:(dat_DF."N_heat"[DIR_id] + dat_DF."N_isot"[DIR_id])));
 
-aux_dump=getDump(TRAJ_DIR,string("traj_assembly.",aux_id[1],".dumpf"));
+# Alocate memory
+cluster_observable=[Vector{Int}() for _ in eachindex(aux_id)];
+
+#it=1;
+
+for it in eachindex(aux_id)
+
+    aux_dump=getDump(TRAJ_DIR,string("traj_assembly.",aux_id[it],".dumpf"));
+
+    # Filtrar
+    mask=(aux_dump.type .==1) .| (aux_dump.type .== 2.0);
+    df_filtered=aux_dump[mask,:];
+
+    # Contar frecuencias de c_clusters (más rápido que groupby+combine)
+    counts = countmap(df_filtered.c_clusters);
+    cluster_observable[it] = [counts[cluster] for cluster in sort(collect(keys(counts)))];
+end
+
+    # Elminate rows that have patches information
+    #df_central=subset(aux_dump, :type=> ByRow(x -> x in (1.0,2.0)))
+
+    # Group by clusters 
+    #clusters=groupby(df_central,[:c_clusters]);
+
+    # Count of molecules in each cluster
+    #counts_clusters=combine(clusters, nrow => :count);
+
+    # Save the data
+    #cluster_observable[it]=counts_clusters.count;
 
 
-N_clusters=length(unique(aux_dump.c_clusters));
 
-clusters=groupby(aux_dump,[:c_clusters,:mol]);
 
-df_aux=combine(clusters,:type=>(x->count(==(1),x))=>:count_type1);
+
+
+#N_clusters=length(unique(aux_dump.c_clusters));
+
+#df_aux=combine(clusters,:type=>(x->count(==(1),x))=>:count_type1);
 
 
 #N_sum(df_aux.count_type1)
