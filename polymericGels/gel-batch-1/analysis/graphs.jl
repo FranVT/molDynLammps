@@ -198,7 +198,7 @@ function numberClustersFig(dat_DF,system_DF)
     linkxaxes!(ax,ax_f,ax_f2)
 
     for it in 1:nrow(dat_DF)
-        plot!(ax,system_DF[it].Nclustres,
+        plot!(ax,dat_DF."time-step"[it].*system_DF[it].TimeStep,system_DF[it].Nclustres,
             label=latexstring(100*dat_DF.phi[it]),
             )
         plot!(ax_f,[-1],[0],
@@ -245,7 +245,7 @@ function maxPartClustersFig(dat_DF,system_DF)
     linkxaxes!(ax,ax_f,ax_f2)
 
     for it in 1:nrow(dat_DF)
-        plot!(ax,system_DF[it].Maxparticles,
+        plot!(ax,dat_DF."time-step"[it].*system_DF[it].TimeStep,system_DF[it].Maxparticles,
             label=latexstring(100*dat_DF.phi[it]),
             )
         plot!(ax_f,[-1],[0],
@@ -264,10 +264,6 @@ function maxPartClustersFig(dat_DF,system_DF)
 end
 
 
-
-
-
-
 #=
     Script
 =#
@@ -283,22 +279,13 @@ dat_DF=getDatInfo(DF_DIR);
 # Get the info of each system
 system_DF=getInfoSystem(INFO_DIR,dat_DF.file_system);
 
-
-
-
-
 cluster_DF=getInfoSystem(INFO_DIR,string.("clusterObservables_",dat_DF.id_ref,".csv"))
-
-
-
-
-
 
 #=
     Figures
 =#
 
-#potentialEnergyFig(dat_DF,system_DF)
-#patchEnergyFig(dat_DF,system_DF)
-#numberClustersFig(dat_DF,cluster_DF)
+potentialEnergyFig(dat_DF,system_DF)
+patchEnergyFig(dat_DF,system_DF)
+numberClustersFig(dat_DF,cluster_DF)
 maxPartClustersFig(dat_DF,cluster_DF)

@@ -68,7 +68,7 @@ dat_DF = subset(dat_files,
 
 M_frames=100;
 
-save_observables=[zeros(Int,M_frames,2) for _ in eachindex(dat_DF.dir)];
+save_observables=[zeros(Int,M_frames,3) for _ in eachindex(dat_DF.dir)];
 
 for (DIR_id,dir) in enumerate(dat_DF.dir)
 
@@ -82,7 +82,7 @@ for (DIR_id,dir) in enumerate(dat_DF.dir)
     TRAJ_DIR=joinpath(DATA_DIR,dat_DF.dir[DIR_id],"traj");
 
     # Alocate memory
-    observables=zeros(Int,length(ind_graph),2);
+    observables=zeros(Int,length(ind_graph),3);
 
 
     for (it,ind) in enumerate(ind_graph)
@@ -97,8 +97,9 @@ for (DIR_id,dir) in enumerate(dat_DF.dir)
         counts = countmap(df_filtered.c_clusters);
         cluster_observable = [counts[cluster] for cluster in sort(collect(keys(counts)))];
 
-        observables[it,1]=length(cluster_observable);
-        observables[it,2]=maximum(cluster_observable);
+        observables[it,1]=aux_id[ind];
+        observables[it,2]=length(cluster_observable);
+        observables[it,3]=maximum(cluster_observable);
     end
 
     save_observables[DIR_id]=observables; 
@@ -110,5 +111,5 @@ avg_observables=ceil.(Int,dropdims(mean(cat(save_observables..., dims=3), dims=3
 
 # Save the observables
 file_name=string("clusterObservables_",dat_DF.id_ref[1],".csv");
-CSV.write(joinpath(INFO_DIR,file_name),DataFrame(avg_observables,[:Nclustres, :Maxparticles]));
+CSV.write(joinpath(INFO_DIR,file_name),DataFrame(avg_observables,[:TimeStep,:Nclustres, :Maxparticles]));
 
