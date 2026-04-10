@@ -184,9 +184,9 @@ function numberClustersFig(dat_DF,system_DF)
         ylabel=L"N",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(0,nothing,0,nothing),
-        #xscale=log10,
-        #yscale=log10
+        #limits=(0,nothing,0,nothing),
+        xscale=log10,
+        yscale=log10
     )
 
     hidespines!(ax_f)
@@ -194,17 +194,17 @@ function numberClustersFig(dat_DF,system_DF)
     hidespines!(ax_f2)
     hidedecorations!(ax_f2)
 
-    linkyaxes!(ax,ax_f,ax_f2)
-    linkxaxes!(ax,ax_f,ax_f2)
+    #linkyaxes!(ax,ax_f,ax_f2)
+    #linkxaxes!(ax,ax_f,ax_f2)
 
     for it in 1:nrow(dat_DF)
         plot!(ax,dat_DF."time-step"[it].*system_DF[it].TimeStep,system_DF[it].Nclustres,
             label=latexstring(100*dat_DF.phi[it]),
             )
-        plot!(ax_f,[-1],[0],
+        plot!(ax_f,[1],[0],
             label=latexstring(100*dat_DF."CL-Con"[it])
             )
-        plot!(ax_f2,[-1],[0],
+        plot!(ax_f2,[1],[0],
             label=latexstring(dat_DF."Temperature"[it])
             )
     end
@@ -225,13 +225,13 @@ function maxPartClustersFig(dat_DF,system_DF)
     ax_f2=Axis(fig[1:1,1:1])
 
     ax=Axis(fig[1:3,1:1],
-        title=latexstring("\\mathrm{Particles~in~biggest~cluster}"),
+        title=latexstring("\\mathrm{Fraction~of~particles~in~biggest~cluster}"),
         #subtitle=latexstring(subtitle),
         xlabel=L"\mathrm{Time~units}~[\tau^*]",
         ylabel=L"N",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(0,nothing,0,nothing),
+        limits=(0,nothing,0,1),
         #xscale=log10,
         #yscale=log10
     )
@@ -245,7 +245,7 @@ function maxPartClustersFig(dat_DF,system_DF)
     linkxaxes!(ax,ax_f,ax_f2)
 
     for it in 1:nrow(dat_DF)
-        plot!(ax,dat_DF."time-step"[it].*system_DF[it].TimeStep,system_DF[it].Maxparticles,
+        plot!(ax,dat_DF."time-step"[it].*system_DF[it].TimeStep,system_DF[it].Maxparticles/Int.(dat_DF.Npart[it]),
             label=latexstring(100*dat_DF.phi[it]),
             )
         plot!(ax_f,[-1],[0],
