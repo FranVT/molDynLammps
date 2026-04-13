@@ -44,6 +44,26 @@ function getDatInfo(DF_DIR)
     return df_final
 end
 
+function clusterObservables(DF)
+"""
+    Function that returns:
+    how many clusters there are
+    the number of particles in the biggest cluster
+"""
+
+    # Filtrar
+    mask=(DF.type .==1) .| (DF.type .== 2.0);
+    df_filtered=DF[mask,:];
+
+    # Contar frecuencias de c_clusters (más rápido que groupby+combine)
+    counts = countmap(df_filtered.c_clusters);
+    cluster_observable = [counts[cluster] for cluster in sort(collect(keys(counts)))];
+
+    N_clusters=length(cluster_observable);
+    Np_maxCluster=maximum(cluster_observable);
+
+end
+
 # Get directories 
 MAIN_DIR=dirname(pwd());
 DATA_DIR=joinpath(MAIN_DIR,"data");
@@ -89,17 +109,13 @@ for (DIR_id,dir) in enumerate(dat_DF.dir)
 
         aux_dump=getDump(TRAJ_DIR,string("traj_assembly.",aux_id[ind],".dumpf"));
 
-        # Filtrar
-        mask=(aux_dump.type .==1) .| (aux_dump.type .== 2.0);
-        df_filtered=aux_dump[mask,:];
-
-        # Contar frecuencias de c_clusters (más rápido que groupby+combine)
-        counts = countmap(df_filtered.c_clusters);
-        cluster_observable = [counts[cluster] for cluster in sort(collect(keys(counts)))];
-
+        # Compute the cluster analysis
+        (N_clusters,Np_maxCluster)=clusterObservables(aux_dump);
+    
+        # Store the values
         observables[it,1]=aux_id[ind];
-        observables[it,2]=length(cluster_observable);
-        observables[it,3]=maximum(cluster_observable);
+        observables[it,2]=N_clusters;
+        observables[it,3]=Np_maxCluster;
     end
 
     save_observables[DIR_id]=observables; 
