@@ -21,7 +21,7 @@ SIMS_DIR=filter(isdir,readdir(DATA_DIR,join=true));
 data_info=mapreduce(s->getDat(s),vcat,SIMS_DIR);
 
 # Selection of the system by parameters
-phi=0.02;
+phi=0.05;
 Temp=0.05;
 N_part=5000.0;
 CL_con=0.05;

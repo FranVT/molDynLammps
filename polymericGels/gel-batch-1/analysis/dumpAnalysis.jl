@@ -62,6 +62,7 @@ function clusterObservables(DF)
     N_clusters=length(cluster_observable);
     Np_maxCluster=maximum(cluster_observable);
 
+    return (N_clusters,Np_maxCluster)
 end
 
 # Get directories 
@@ -73,7 +74,7 @@ DF_DIR=filter(isfile,readdir(INFO_DIR,join=true));
 dat_files=getDatInfo(DF_DIR);
 
 # Selection of the system by parameters
-phi=0.02;
+phi=0.05;
 Temp=0.05;
 N_part=5000.0;
 CL_con=0.05;

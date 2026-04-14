@@ -25,7 +25,7 @@ set_theme!(
         spinewidth = 1.5pt,
     ),
     Legend = (
-        labelsize = 14pt,                   # tamaño texto leyenda
+        labelsize = 10pt,                   # tamaño texto leyenda
         framewidth = 1.5pt,
     ),
     Colorbar = (
@@ -114,8 +114,8 @@ function potentialEnergyFig(dat_DF,system_DF)
     end
 
     Legend(fig[1,2],ax,L"\phi~\%")
-    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%")
-    Legend(fig[3,2],ax_f2,L"\mathrm{T}")
+    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[3,2],ax_f2,L"\mathrm{T}",merge=true)
 
     save(joinpath(pwd(),"ep.png"), fig, px_per_unit = 300/inch)
 end
@@ -163,8 +163,8 @@ function patchEnergyFig(dat_DF,system_DF)
     end
 
     Legend(fig[1,2],ax,L"\phi~\%")
-    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%")
-    Legend(fig[3,2],ax_f2,L"\mathrm{T}")
+    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[3,2],ax_f2,L"\mathrm{T}",merge=true)
 
     save(joinpath(pwd(),"patchyEnergy.png"), fig, px_per_unit = 300/inch)
 end
@@ -210,8 +210,8 @@ function numberClustersFig(dat_DF,system_DF)
     end
 
     Legend(fig[1,2],ax,L"\phi~\%")
-    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%")
-    Legend(fig[3,2],ax_f2,L"\mathrm{T}")
+    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[3,2],ax_f2,L"\mathrm{T}",merge=true)
 
     save(joinpath(pwd(),"NClusters.png"), fig, px_per_unit = 300/inch)
 end
@@ -257,8 +257,8 @@ function maxPartClustersFig(dat_DF,system_DF)
     end
 
     Legend(fig[1,2],ax,L"\phi~\%")
-    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%")
-    Legend(fig[3,2],ax_f2,L"\mathrm{T}")
+    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[3,2],ax_f2,L"\mathrm{T}",merge=true)
 
     save(joinpath(pwd(),"MaxPartClusters.png"), fig, px_per_unit = 300/inch)
 end
