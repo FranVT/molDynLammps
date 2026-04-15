@@ -184,7 +184,7 @@ function numberClustersFig(dat_DF,system_DF)
         ylabel=L"N",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        #limits=(0,nothing,0,nothing),
+        limits=(10^2,10^4,nothing,nothing),
         xscale=log10,
         yscale=log10
     )
