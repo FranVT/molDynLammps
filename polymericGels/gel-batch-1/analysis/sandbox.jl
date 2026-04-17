@@ -44,7 +44,7 @@ function getDatInfo(DF_DIR)
     return df_final
 end
 
-function waveVectorSq(N,L)
+function waveVectorSq(L)
 """
     Se calcula el vector de onda para el factor de estructura.
     Regresa un diccionario con los vectores agrupados por magnitud
@@ -74,13 +74,13 @@ function waveVectorSq(N,L)
     return grupos
 end
 
-function structureFactor(grupos,rx,ry,rz,N_part)
+function structureFactor(L,rx,ry,rz,N_part)
 """
     Compute the structure factor given the wave vector in a dictionary and positions.
 """
 
     # Vector de onda
-    grupos=waveVectorSq(N,L); 
+    grupos=waveVectorSq(L); 
 
     Sq_ensamble=[];
 
@@ -131,15 +131,15 @@ dat_DF = subset(dat_files,
     :"CL-Con" => ByRow(==(CL_con))
 )
 
-M_frames=100;
+M_frames=100;   # Cada 100 unidades temporales
 
 Sq_observable=[];
 
-for (DIR_id,dir) in enumerate(dat_DF.dir) # Cycle thru directories
+for (DIR_id,dir) in enumerate(dat_DF.dir[1]) # Cycle thru directories
     # Stored timesteps
     aux_id=Int.((0:dat_DF."save-dump"[DIR_id]:(dat_DF."N_heat"[DIR_id] + dat_DF."N_isot"[DIR_id])));
 
-    # REduce the amount of frames, because I no time for optimization
+    # Reduce the amount of frames, because I no time for optimization
     ind_graph=floor.(Int,range(1,length(aux_id),length=M_frames));
 
     # Directory of the files
@@ -158,18 +158,14 @@ for (DIR_id,dir) in enumerate(dat_DF.dir) # Cycle thru directories
         ry=df_filtered.y;
         rz=df_filtered.z;
 
-        # número de partículas en la simulación
-        N_part=dat_DF.Npart[DIR_id];
-
         # Range of wave vector
         L=2*dat_DF.L[5];
 
         # Factor de estructura
-        Sq_ensamble=structureFactor(N,L,rx,ry,rz,N_part);
+        Sq_ensamble=structureFactor(L,rx,ry,rz,dat_DF.Npart[DIR_id]);
     
         push!(Sq_observable,Sq_ensamble)
     end
-
 end
 
 
