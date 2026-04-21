@@ -23,6 +23,9 @@ module load lammps/gcc/22jul25		# Cargar Lammps version 22jul25
 # Script
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+# Load the parameters file
+source load_parameters.sh system.parameters
+
 # Main Directories
 dir_home="/mnt/data/cferreiro/fvazquez/experiments/gel-batch-2";
 dir_src="$dir_home/src";
