@@ -28,16 +28,16 @@ Vol_Tot=$(echo "scale=$cs; $Vol_Totg / $phi" | bc);
 L_real=$(echo "scale=$cs; e( (1/3) * l($Vol_Tot) )" | bc -l );
 L=$(echo "scale=$cs; $L_real / 2" | bc);
 aux=$(echo "scale=$cs; 1 / $dt" | bc);
-Nsave=$(echo "scale=0; 100 * $damp * $aux" | bc);
-Nsave=${Nsave%.*};
-NsaveStress=$(echo "scale=0; 100 * $damp * $aux" | bc);
-NsaveStress=${NsaveStress%.*};
-Ndump=$(echo "scale=0; $aux" | bc);
-Ndump=${Ndump%.*};
+#Nsave=$(echo "scale=0; 100 * $damp * $aux" | bc);
+Nsave=10; #${Nsave%.*};
+#NsaveStress=$(echo "scale=0; 100 * $damp * $aux" | bc);
+NsaveStress=10; #${NsaveStress%.*};
+Ndump=10; #$(echo "scale=0; $aux" | bc);
+#Ndump=${Ndump%.*};
 
 # Seed for the langevin thermostat and initial positions
-seed1=$(( $Nexp + $(date +%M) + $(date +%S) ))
-seed2=$(( $Nexp + $(date +%H) + $(date +%M) ))
+seed1=$(( $Nexp + 10#$(date +%M) + 10#$(date +%S) ))
+seed2=$(( $Nexp + 10#$(date +%H) + 10#$(date +%M) ))
 seed3=$(( $seed1 + $seed2 ))
 
 echo "Start writting the assembly config file"
