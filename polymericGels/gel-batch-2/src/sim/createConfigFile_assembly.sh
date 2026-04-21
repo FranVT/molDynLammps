@@ -12,9 +12,6 @@ id=$2
 phi=$3
 Nexp=$4
 
-# Remove old config files
-rm assembly*.config
-
 # Load the parameter file for assembly
 source load_parameters.sh system.parameters
 

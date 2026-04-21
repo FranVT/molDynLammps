@@ -30,13 +30,13 @@ dir_sim="$dir_src/sim";
 dir_data="$dir_home/data";
 
 # Create the id for the simulation
-id="$(date +%F-%H%M%S)_${var_Nexp}";
+id="$(date +%F-%H%M%S)_${Nexp}";
 
-        # Directory to save the information Directory to save the informationn
+# Directory to save the information Directory to save the informationn
 dir_save="$dir_data/$id";
 
         # Create the config fle
-bash createConfigFile_assembly.sh $dir_sim $id $var_phi $var_Nexp
+bash createConfigFile_assembly.sh $dir_sim $id $phi $Nexp
 
         # Create directory to save data
 mkdir "$dir_save";
