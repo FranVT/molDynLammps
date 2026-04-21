@@ -53,4 +53,4 @@ bash  createDatFile_assembly.sh $dir_save $dir_src $id
         # Load the config file
 source load_parameters.sh assembly$id.config 
 
-env OMP_NUM_THREADS=1 lmp -sf omp -in in.assembly.lmp -log "$id.log" -var Dir "$dir_save" -var L "$L" -var seed1 "$seed1" -var seed2 "$seed2" -var NCL "$N_CL" -var NMO "$N_MO" -var Nsave "$Nsave" -var file1_name "${files_name[0]}" -var NsaveStress "$NsaveStress" -var file2_name "${files_name[1]}" -var Ndump "$Ndump" -var file3_name "${files_name[2]}" -var tstep "$dt" -var temp "$T" -var damp "$damp" -var seed3 "$seed3" -var stepsheat "$steps_heat" -var steps "$steps_isot" -var file4_name "${files_name[3]}"
+env OMP_NUM_THREADS=1 lmp -sf omp -in in.assembly.lmp -var Dir "$dir_save" -var L "$L" -var seed1 "$seed1" -var seed2 "$seed2" -var NCL "$N_CL" -var NMO "$N_MO" -var Nsave "$Nsave" -var file1_name "${files_name[0]}" -var NsaveStress "$NsaveStress" -var file2_name "${files_name[1]}" -var Ndump "$Ndump" -var file3_name "${files_name[2]}" -var tstep "$dt" -var temp "$T" -var damp "$damp" -var seed3 "$seed3" -var stepsheat "$steps_heat" -var steps "$steps_isot" -var file4_name "${files_name[3]}"
