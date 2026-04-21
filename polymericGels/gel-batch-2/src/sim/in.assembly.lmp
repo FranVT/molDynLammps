@@ -3,6 +3,9 @@
 # Assembly protocolo based on: https://doi.org/10.1021/acs.macromol.7b01600
 # Last Main modification: March 5, 2026 | Threebody interaction
 
+# Store the log un the directory
+log ${Dir}/log.lammps
+
 # Initialization
 units lj
 dimension 3
