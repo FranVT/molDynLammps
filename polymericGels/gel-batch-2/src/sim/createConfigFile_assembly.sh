@@ -27,9 +27,8 @@ Vol_Totg=$(echo "scale=$cs; $Vol_MO + $Vol_CL" | bc);       # Total volume of a 
 Vol_Tot=$(echo "scale=$cs; $Vol_Totg / $phi" | bc);
 L_real=$(echo "scale=$cs; e( (1/3) * l($Vol_Tot) )" | bc -l );
 L=$(echo "scale=$cs; $L_real / 2" | bc);
-aux=$(echo "scale=$cs; 1 / $dt" | bc);
-Nsave=$(echo "scale=0; 100 * $damp * $aux" | bc);
-NsaveStress=$(echo "scale=0; 100 * $damp * $aux" | bc);
+Nsave=100000; #$(echo "scale=0; 100 * $damp * $aux" | bc);
+NsaveStress=100000; #$(echo "scale=0; 100 * $damp * $aux" | bc);
 Ndump=100000; #$(echo "scale=0; $aux" | bc);
 
 # Seed for the langevin thermostat and initial positions
