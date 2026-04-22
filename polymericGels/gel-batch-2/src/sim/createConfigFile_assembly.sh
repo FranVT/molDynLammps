@@ -33,7 +33,7 @@ ${Nsave%.*};
 NsaveStress=$(echo "scale=0; 100 * $damp * $aux" | bc);
 NsaveStress=${NsaveStress%.*};
 Ndump=100000; #$(echo "scale=0; $aux" | bc);
-#Ndump=${Ndump%.*};
+Ndump=${Ndump%.*};
 
 # Seed for the langevin thermostat and initial positions
 seed1=$(( $Nexp + 10#$(date +%M) + 10#$(date +%S) ))
