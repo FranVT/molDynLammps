@@ -49,8 +49,16 @@ time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux
 Sq_t=[getTimeEvolSq(dump_paths,time_instant) for time_instant in time_instants];
 
 
-reduce.(vcat,Sq_t)
+Sq_df=DataFrame(;
+    timeStep = aux_id,
+    Sq       = reduce.(vcat, Sq_t),
+    lambda_o = fill(lambda_o, length(aux_id)),
+    lambda_f = fill(lambda_f, length(aux_id)),
+    phi=fill(phi),
+    temp=fill(Temp),
+    Npart=fill(N_part),
+    CLcon=fill(CL_con)
+)
 
-
-DataFrame(Dict(:timeStep=>aux_id, :Sq=>reduce.(vcat,Sq_t), :lambda_o=>repeat([lambda_o],length(aux_id)), :lambda_f=>repeat([lambda_f],length(aux_id))))
+ CSV.write(joinpath(SAVE_DIR,"structureFactor.csv"),Sq_df)
 
