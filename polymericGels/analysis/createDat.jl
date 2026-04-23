@@ -43,7 +43,7 @@ id=reduce(hcat,id);
 
 id=[replace(join(string.(row)), "." => "") for row in eachrow(id)];
 
-data_info[!,:id].=id;
+data_info[!,:id].=string.("id",id);
 
 # Store the data
 CSV.write(string(STORE_DIR,"/experiments_dat.csv"),data_info);

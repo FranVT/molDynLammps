@@ -35,10 +35,10 @@ dat_DF = subset(dat_files,
 dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
 
 # Parametros para obtener el factor de estructura
-N_qu=2^5; # Cantidad de direcciones
+N_qu=2^2; # Cantidad de direcciones
 lambda_o=1; # Limites del rango a explorar (Monomero)
 lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
-N_lambda=2^6; # Cantidad de magnitudes
+N_lambda=2^3; # Cantidad de magnitudes
 
 # Seleccion de time instants
 aux_id=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
@@ -54,11 +54,10 @@ Sq_df=DataFrame(;
     Sq       = reduce.(vcat, Sq_t),
     lambda_o = fill(lambda_o, length(aux_id)),
     lambda_f = fill(lambda_f, length(aux_id)),
-    phi=fill(phi),
-    temp=fill(Temp),
-    Npart=fill(N_part),
-    CLcon=fill(CL_con)
+    id=unique(dat_DF.id)[1]
 )
 
- CSV.write(joinpath(SAVE_DIR,"structureFactor.csv"),Sq_df)
+# CSV.write(joinpath(SAVE_DIR,"structureFactor.csv"),Sq_df)
 
+
+CSV.write(joinpath(SAVE_DIR,string("structureFactor",Sq_df.id[1],".csv")),Sq_df)
