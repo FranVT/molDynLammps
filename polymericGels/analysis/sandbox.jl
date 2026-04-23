@@ -21,29 +21,6 @@ function getDump(dir,file_name)
     return DataFrame(INFO,HEADERS)
 end
 
-function getDatInfo(DF_DIR)
-"""
-    This function get the dat.csv of experiments
-"""
-
-    archivos = filter(str -> occursin("dat-", str), DF_DIR)
-    df_final = DataFrame()  # vacío inicial
-    for (i, archivo) in enumerate(archivos)
-        df_temp = CSV.read(archivo, DataFrame)
-        
-        # IF there are is missing stuff
-        for col in names(df_temp)
-            if eltype(df_temp[!, col]) <: Union{Missing, Number}
-                df_temp[!, col] = coalesce.(df_temp[!, col], 0.0)
-            end
-        end
-
-        append!(df_final, df_temp)
-        df_temp = nothing  # liberar referencia
-    end
-    return df_final
-end
-
 function waveVectorSq(L)
 """
     Se calcula el vector de onda para el factor de estructura.
@@ -110,14 +87,11 @@ end
 
 
 # Get directories 
-MAIN_DIR=dirname(pwd());
-DATA_DIR="/run/media/franvt/rogelio/DinMol/gel-batch-1";
-INFO_DIR=joinpath(pwd(),"data_mod");
-DF_DIR=filter(isfile,readdir(INFO_DIR,join=true));
+MAIN_DIR=pwd();
+DAT_PATH=joinpath(MAIN_DIR,"datFiles","experiments_dat.csv");
 
+dat_files=CSV.read(DAT_PATH,DataFrame);
 
-
-dat_files=getDatInfo(DF_DIR);
 
 # Selection of the system by parameters
 phi=0.02;
