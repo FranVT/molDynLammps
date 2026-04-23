@@ -21,77 +21,91 @@ function getDump(dir,file_name)
     return DataFrame(INFO,HEADERS)
 end
 
-function waveVectorSq(L)
+function dotSpherical(theta,phi,r)
 """
-    Se calcula el vector de onda para el factor de estructura.
-    Regresa un diccionario con los vectores agrupados por magnitud
+    Compute the dot product betwen a position and a unit vector r in psherical coordinates.
 """
-    tol=10;
-    grupos=Dict{Float64, Vector{Tuple{Float64,Float64,Float64}}}();
-
-    #N=ceil(Int,8/sqrt(27)*L); Ese esta cool, pero se tarda un chingo
-    N=20; # Por mientrás, que no está optimizado
-    Q_max=sqrt(3*(2*pi/L)^2);
-
-    for nx in -N:N, ny in -N:N, nz in -N:N
-        qx=2*pi*nx/L;
-        qy=2*pi*ny/L;
-        qz=2*pi*nz/L;
-        qq=qx^2 + qy^2 + qz^2;
-        q=sqrt(qq);
-    
-        if q<Q_max || q == 0.0
-            continue
-        end
-
-        clave=round(qq, digits=tol);
-        push!(get!(grupos,clave,[]),(qx,qy,qz))
-    end
-
-    return grupos
+    q_x=cos(theta)*sin(phi);
+    q_y=sin(theta)*sin(phi);
+    q_z=cos(phi);
+    return q_x*r[1]+q_y*r[2]+q_z*r[3]
 end
 
-function structureFactor(L,rx,ry,rz,N_part)
+function densityRhoQ(q_mag,dot_qr)
 """
-    Compute the structure factor given the wave vector in a dictionary and positions.
+    Compute the squared of the absolute value of the density at the reciprocal space.
+    |rho(r)|^2 = A(vec{q}cdotvec{r})^2 + B(vec{q}cdotvec{r}^2)
+    A = sumcos(); B = sumsin()
+"""
+    return sum(cos.(q_mag*dot_qr))^2 + sum(sin.(q_mag*dot_qr))^2
+end
+
+function computeDensity(N_qu,lambda_o,lambda_f,N_lambda,r)
+"""
+    Function that computes the static structure factor de different wave vectors.
+    Returns a vector with the following interpretation of the values:
+    [row] -> [magnitude]}
 """
 
-    # Vector de onda
-    grupos=waveVectorSq(L); 
+    # Vector unitario del vector de onda
+    theta=2*pi*rand(N_qu);
+    phi=pi*rand(N_qu); 
 
-    Sq_ensamble=[];
+    # Calculo del producto punto
+    dot_qr=[dotSpherical(theta[s],phi[s],r) for s in 1:N_qu];
 
-    for (clave, lista_q) in grupos
-        q_mod=sqrt(clave);
-        S_acumulado=0.0;
-    
-        # Compute structure factor per group
-        for v_q in lista_q
-            # Compute dot product
-            qr=v_q[1].*rx .+ v_q[2].*ry .+ v_q[3].*rz;
-        
-            # Compute the structure factor
-            S_q=(1/N_part)*(sum(cos.(qr))^2 + sum(sin.(qr))^2);
-        
-            # Guardar el factor de estructura de cada vector
-            push!(Sq_ensamble,(q_mod,S_q));
-        end
-    end
-
-    # Ordena de mayor a menor
-    Sq_ensamble=sort!(Sq_ensamble);
-
-    return Sq_ensamble
+    # Evaluación de la densidad y promedio
+    # [renglon x columna] -> [ mag x direccion ]
+    rho_q=[densityRhoQ(2*pi/l,d) for l in range(lambda_o,lambda_f,length=N_lambda), d in dot_qr];
+    return mean(rho_q,dims=2)
 
 end
 
+function getPosition(dump)
+"""
+    Get the position of the central particles of a given dump
+"""
+
+    # Filtrar
+    mask=(dump.type .==1) .| (dump.type .== 2.0);
+    dump_filtered=dump[mask,:];
+
+   return [dump_filtered.x,dump_filtered.y,dump_filtered.z]
+
+end
+
+function structureFactor(N_qu,lambda_o,lambda_f,N_lambda,r_exp)
+"""
+    Compute the static structure factor
+"""
+    S_q_exp=[computeDensity(N_qu,lambda_o,lambda_f,N_lambda,r) for r in r_exp];
+
+    return mean(reduce(hcat,S_q_exp),dims=2)/dat_DF.Npart[1];
+end
+
+function getTimeEvolSq(dump_paths,time_instant)
+"""
+    Compute the time evolution of the structure factor
+"""
+
+    # Obtenemos los dumps de los N experimentos para un instante de tiempo
+    dumps=[getDump(path,time_instant) for path in dump_paths];
+
+    r_exp=[getPosition(df) for df in dumps];
+
+    return structureFactor(N_qu,lambda_o,lambda_f,N_lambda,r_exp);
+
+end
+
+######
+#   SCRIPT
+######
 
 # Get directories 
 MAIN_DIR=pwd();
 DAT_PATH=joinpath(MAIN_DIR,"datFiles","experiments_dat.csv");
 
 dat_files=CSV.read(DAT_PATH,DataFrame);
-
 
 # Selection of the system by parameters
 phi=0.02;
@@ -106,6 +120,31 @@ dat_DF = subset(dat_files,
     :Npart => ByRow(==(N_part)),
     :"CL-Con" => ByRow(==(CL_con))
 )
+
+
+# Path to the dumps
+dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
+
+# Parametros para obtener el factor de estructura
+N_qu=2^5; # Cantidad de direcciones
+lambda_o=1; # Limites del rango a explorar
+lambda_f=100; # Limites del rango a explorar
+N_lambda=2^6; # Cantidad de magnitudes
+
+# Seleccion de time instants
+aux_id=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
+aux_id=aux_id[1:100:end];
+
+
+time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux_id];
+
+time_instant=time_instants[1];
+
+
+S_q=getTimeEvolSq(dump_paths,time_instant);
+
+
+Sq_t=[getTimeEvolSq(dump_paths,time_instant) for time_instant in time_instants];
 
 
 
