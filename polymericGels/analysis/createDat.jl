@@ -24,6 +24,27 @@ data_info=mapreduce(s->getDat(s),vcat,SIMS_DIR);
 # Add related paths
 data_info[!,:PARENT_DIR].=[DATA_DIR];
 
+# Create an id for each experiment
+id=[
+data_info.phi,
+data_info."CL-Con",
+data_info.Npart,
+data_info.Temperature,
+data_info.damp,
+data_info."time-step",
+data_info."N_heat",
+data_info."N_isot",
+data_info."N_CL",
+data_info."N_MO",
+data_info."L"
+]
+
+id=reduce(hcat,id);
+
+id=[replace(join(string.(row)), "." => "") for row in eachrow(id)];
+
+data_info[!,:id].=id;
+
 # Store the data
 CSV.write(string(STORE_DIR,"/experiments_dat.csv"),data_info);
 
