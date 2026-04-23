@@ -1,6 +1,100 @@
 """
     File with all the functions needed for multiple.jl script
 """
+#######
+#   STRUCTURE FACTOR RELATED FUNCTIONS
+#######
+
+function getDump(dir,file_name)
+"""
+    Get the data from a single dump file that stores one timeste information
+"""
+    data = split.(readlines(joinpath(dir,file_name))," ")[9:end];
+    HEADERS=data[1][3:end];
+    INFO=parse.(Float64,reduce(hcat,data[2:end]))';
+
+    return DataFrame(INFO,HEADERS)
+end
+
+function dotSpherical(theta,phi,r)
+"""
+    Compute the dot product betwen a position and a unit vector r in psherical coordinates.
+"""
+    q_x=cos(theta)*sin(phi);
+    q_y=sin(theta)*sin(phi);
+    q_z=cos(phi);
+    return q_x*r[1]+q_y*r[2]+q_z*r[3]
+end
+
+function densityRhoQ(q_mag,dot_qr)
+"""
+    Compute the squared of the absolute value of the density at the reciprocal space.
+    |rho(r)|^2 = A(vec{q}cdotvec{r})^2 + B(vec{q}cdotvec{r}^2)
+    A = sumcos(); B = sumsin()
+"""
+    return sum(cos.(q_mag*dot_qr))^2 + sum(sin.(q_mag*dot_qr))^2
+end
+
+function computeDensity(N_qu,lambda_o,lambda_f,N_lambda,r)
+"""
+    Function that computes the static structure factor de different wave vectors.
+    Returns a vector with the following interpretation of the values:
+    [row] -> [magnitude]}
+"""
+
+    # Vector unitario del vector de onda
+    theta=2*pi*rand(N_qu);
+    phi=pi*rand(N_qu); 
+
+    # Calculo del producto punto
+    dot_qr=[dotSpherical(theta[s],phi[s],r) for s in 1:N_qu];
+
+    # Evaluación de la densidad y promedio
+    # [renglon x columna] -> [ mag x direccion ]
+    rho_q=[densityRhoQ(2*pi/l,d) for l in range(lambda_o,lambda_f,length=N_lambda), d in dot_qr];
+    return mean(rho_q,dims=2)
+
+end
+
+function getPosition(dump)
+"""
+    Get the position of the central particles of a given dump
+"""
+
+    # Filtrar
+    mask=(dump.type .==1) .| (dump.type .== 2.0);
+    dump_filtered=dump[mask,:];
+
+   return [dump_filtered.x,dump_filtered.y,dump_filtered.z]
+
+end
+
+function structureFactor(N_qu,lambda_o,lambda_f,N_lambda,r_exp)
+"""
+    Compute the static structure factor
+"""
+    S_q_exp=[computeDensity(N_qu,lambda_o,lambda_f,N_lambda,r) for r in r_exp];
+
+    return mean(reduce(hcat,S_q_exp),dims=2)/dat_DF.Npart[1];
+end
+
+function getTimeEvolSq(dump_paths,time_instant)
+"""
+    Compute the time evolution of the structure factor
+"""
+
+    # Obtenemos los dumps de los N experimentos para un instante de tiempo
+    dumps=[getDump(path,time_instant) for path in dump_paths];
+
+    r_exp=[getPosition(df) for df in dumps];
+
+    return structureFactor(N_qu,lambda_o,lambda_f,N_lambda,r_exp);
+
+end
+
+#######
+#   OTHER  FUNCTIONS
+#######
 
 function meanFixystem(dirs)
 """
