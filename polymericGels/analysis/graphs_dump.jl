@@ -66,51 +66,80 @@ file_paths=[joinpath(SAVE_DIR,replace(filename_Sq, "*" => it)) for it in unique(
 # Get the information
 Sq=[CSV.read(file,DataFrame) for file in file_paths];
 
+
+# Dictionaries to map id to info.
+dict_phi=Dict(dat_files.id.=>dat_files.phi);
+dict_CL=Dict(dat_files.id.=>dat_files."CL-Con");
+dict_T=Dict(dat_files.id.=>dat_files.Temperature);
+
+
+id=5;
+
 # Scketch of the graph
 
     fig=Figure()
     ax_f=Axis(fig[1:1,1:1])
     ax_f2=Axis(fig[1:1,1:1])
+    ax_f3=Axis(fig[1:1,1:1])
 
-    ax=Axis(fig[1:3,1:1],
-        title=latexstring("\\mathrm{Structure factor}"),
+
+
+    ax=Axis(fig[1:6,1:3],
+        title=latexstring("\\mathrm{Structure~factor}"),
         #subtitle=latexstring(subtitle),
-        xlabel=L"\mathrm{1/d}~[D]",
-        ylabel=L"U~[S(q)]",
+        xlabel=L"|\vec{q}|L=\frac{2\pi}{\lambda}L",
+        ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(0,nothing,0,nothing),
-        #xscale=log10,
+        limits=(nothing,nothing,0,nothing),
+        xscale=log10,
         #yscale=log10
     )
-
     hidespines!(ax_f)
     hidedecorations!(ax_f)
     hidespines!(ax_f2)
     hidedecorations!(ax_f2)
-
-    linkyaxes!(ax,ax_f,ax_f2)
-    linkxaxes!(ax,ax_f,ax_f2)
-
+    hidespines!(ax_f3)
+    hidedecorations!(ax_f3)
+ 
 
     for it in eachindex(Sq)
-        Sq[it].Sq
+        Sq_plot=[Float64.(M) for M in eval(Meta.parse(Sq[it].Sq[id]))];
+        l_o=first(unique(Sq[it].lambda_o));
+        l_f=first(unique(Sq[it].lambda_f));
+        dom=range(l_o,l_f,length=length(Sq_plot));
+        
+
+        data=[[(2*pi/dom[it])*l_f,Sq_plot[it]]  for it in eachindex(dom)];
+        data=reduce(hcat,data);
+
+
+
+        lines!(ax,data[1,:],data[2,:],
+            label=latexstring(100*dict_phi[unique(Sq[it].id)[1]]))
+    
+        p1=plot!(ax_f,[0],[-1],
+            label=latexstring(100*dict_CL[unique(Sq[it].id)[1]])
+            )
+        p2=plot!(ax_f2,[0],[-1],
+            label=latexstring(dict_T[unique(Sq[it].id)[1]])
+            )
+        p3=plot!(ax_f3,[0],[-1],
+              label=latexstring(0.001*Sq[it].timeStep[id])
+            )
+
+    p1.visible = false
+    p2.visible = false
+    p3.visible = false
+
+
     end
 
-
-
-    for it in 1:eachindex(Sq)
-        plot!(ax_f,[-1],[0],
-            label=latexstring(100*dat_DF."CL-Con"[it])
-            )
-        plot!(ax_f2,[-1],[0],
-            label=latexstring(dat_DF."Temperature"[it])
-            )
-    end
-
-    Legend(fig[1,2],ax,L"\phi~\%")
-    Legend(fig[2,2],ax_f,L"\mathrm{CL}~\%",merge=true)
-    Legend(fig[3,2],ax_f2,L"\mathrm{T}",merge=true)
+    Legend(fig[1:3,4],ax,L"\phi~\%")
+    
+    Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
+    Legend(fig[6,4],ax_f3,L"\mathrm{Time}",merge=true)
 
 
 
