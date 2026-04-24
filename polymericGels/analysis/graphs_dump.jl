@@ -74,7 +74,7 @@ N_instants=nrow(Sq[1]);
 time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
 Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
 
-l_domain=[range(first(Sq[N].lambda_o),first(Sq[N].lambda_f),length(Sq_plot[N][1]))*first(Sq[N].lambda_f) for N in eachindex(Sq)];
+l_domain=[range(2*pi/first(Sq[N].lambda_o),2*pi/first(Sq[N].lambda_f),length(Sq_plot[N][1]))*first(Sq[N].lambda_f) for N in eachindex(Sq)];
 
 
 id_exp=1;
@@ -114,7 +114,7 @@ colors = cgrad(cmap)[norm_taus]
 
     for it in eachindex(time_domains[id_exp])
 
-        q_domain=(2*pi)./collect(l_domain[id_exp]);
+        q_domain=collect(l_domain[id_exp]);
         range=Sq_plot[id_exp][it];
 
         lines!(ax,q_domain,range,
