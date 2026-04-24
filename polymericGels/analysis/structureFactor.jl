@@ -18,7 +18,7 @@ SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
 dat_files=CSV.read(DAT_PATH,DataFrame);
 
 # Selection of the system by parameters
-phi=0.05;
+phi=0.01;
 Temp=0.05;
 N_part=5000.0;
 CL_con=0.05;
@@ -42,7 +42,7 @@ N_lambda=2^7; # Cantidad de magnitudes
 
 # Seleccion de time instants
 aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
-ind=round.(Int, LinRange(1, length(aux_timeStep), 10));
+ind=round.(Int, LinRange(1, length(aux_timeStep), 31));
 aux_id=aux_timeStep[ind];
 
 time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux_id];

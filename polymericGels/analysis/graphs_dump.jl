@@ -51,11 +51,10 @@ SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
 # Get the dat dataframes
 dat_files=CSV.read(DAT_PATH,DataFrame);
 
-# PAra los labels
-phi=unique(dat_files.phi);
-temp=unique(dat_files.Temperature);
-clCon=unique(dat_files."CL-Con");
-
+# Dictionaries to map id to info.
+dict_phi=Dict(dat_files.id.=>dat_files.phi);
+dict_CL=Dict(dat_files.id.=>dat_files."CL-Con");
+dict_T=Dict(dat_files.id.=>dat_files.Temperature);
 
 # File name of interested data
 filename_Sq="structureFactor*.csv";
@@ -66,13 +65,95 @@ file_paths=[joinpath(SAVE_DIR,replace(filename_Sq, "*" => it)) for it in unique(
 # Get the information
 Sq=[CSV.read(file,DataFrame) for file in file_paths];
 
+# Parameters to graph
+N_sims=length(Sq);
+N_instants=nrow(Sq[1]);
 
-# Dictionaries to map id to info.
-dict_phi=Dict(dat_files.id.=>dat_files.phi);
-dict_CL=Dict(dat_files.id.=>dat_files."CL-Con");
-dict_T=Dict(dat_files.id.=>dat_files.Temperature);
+# Prepare the data for the graphs
+
+time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
+Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
+
+l_domain=[range(first(Sq[N].lambda_o),first(Sq[N].lambda_f),length(Sq_plot[N][1]))*first(Sq[N].lambda_f) for N in eachindex(Sq)];
 
 
+id_exp=1;
+
+taus = 0.001 * time_domains[id_exp]          # vector de tiempos
+cmap = :viridis
+
+# Normaliza entre 0 y 1
+norm_taus = (taus .- minimum(taus)) ./ (maximum(taus) - minimum(taus))
+colors = cgrad(cmap)[norm_taus]
+
+    fig=Figure()
+    ax_f=Axis(fig[1:1,1:1])
+    ax_f2=Axis(fig[1:1,1:1])
+    ax_f3=Axis(fig[1:1,1:1])
+
+
+
+    ax=Axis(fig[1:6,1:3],
+        title=latexstring("\\mathrm{Structure~factor}"),
+        #subtitle=latexstring(subtitle),
+        xlabel=L"|\vec{q}|L=\frac{2\pi}{\lambda}L",
+        ylabel=L"S(q)",
+        xminorticksvisible=true,
+        xminorgridvisible=true,
+        limits=(nothing,nothing,0,nothing),
+        xscale=log10,
+        #yscale=log10
+    )
+    hidespines!(ax_f)
+    hidedecorations!(ax_f)
+    hidespines!(ax_f2)
+    hidedecorations!(ax_f2)
+    hidespines!(ax_f3)
+    hidedecorations!(ax_f3)
+ 
+
+    for it in eachindex(time_domains[id_exp])
+
+        q_domain=(2*pi)./collect(l_domain[id_exp]);
+        range=Sq_plot[id_exp][it];
+
+        lines!(ax,q_domain,range,
+               color=colors[it],
+               label="" #latexstring(0.001*time_domains[id_exp][it])
+           )
+    
+        p1=plot!(ax_f,[0],[-1],
+            label=latexstring(100*dict_CL[unique(Sq[id_exp].id)[1]])
+            )
+        p2=plot!(ax_f2,[0],[-1],
+            label=latexstring(dict_T[unique(Sq[id_exp].id)[1]])
+            )
+        p3=plot!(ax_f3,[0],[-1],
+              label=latexstring(100*dict_phi[unique(Sq[id_exp].id)[1]])
+            )
+
+    p1.visible = false
+    p2.visible = false
+    p3.visible = false
+
+
+    end
+
+    #Legend(fig[1:3,4],ax,L"\tau")
+    Colorbar(fig[1:3, 4], colormap=cmap,
+         limits = (minimum(taus), maximum(taus)),
+         label = L"\tau")
+
+    Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
+    Legend(fig[6,4],ax_f3,L"\phi~\%",merge=true)
+
+
+
+
+
+
+function structureFactorGraph()
 id=5;
 
 # Scketch of the graph
@@ -140,7 +221,7 @@ id=5;
     Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
     Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
     Legend(fig[6,4],ax_f3,L"\mathrm{Time}",merge=true)
-
+end
 
 
 
