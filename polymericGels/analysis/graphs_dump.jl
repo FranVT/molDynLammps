@@ -77,7 +77,7 @@ Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)
 l_domain=[range(2*pi/first(Sq[N].lambda_o),2*pi/first(Sq[N].lambda_f),length(Sq_plot[N][1]))*first(Sq[N].lambda_f) for N in eachindex(Sq)];
 
 
-id_exp=1;
+id_exp=5;
 
 taus = 0.001 * time_domains[id_exp]          # vector de tiempos
 cmap = :viridis
@@ -101,7 +101,7 @@ colors = cgrad(cmap)[norm_taus]
         xminorticksvisible=true,
         xminorgridvisible=true,
         limits=(nothing,nothing,0,nothing),
-        xscale=log10,
+        #xscale=log10,
         #yscale=log10
     )
     hidespines!(ax_f)
