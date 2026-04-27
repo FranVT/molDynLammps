@@ -4,6 +4,7 @@
 
 using CSV, DataFrames
 using GLMakie, LaTeXStrings, Typst_jll
+using Peaks
 
 # these are relative to 1 CSS px
 inch = 96;
@@ -78,6 +79,91 @@ l_domain=[range(2*pi/first(Sq[N].lambda_o),2*pi/first(Sq[N].lambda_f),length(Sq_
 
 
 id_exp=5;
+Sq2analyze_to=Sq_plot[id_exp][1];
+Sq2analyze_tf=Sq_plot[id_exp][end];
+
+(ind_peaks_to,peaks_to,~)=findmaxima(Sq2analyze_to);
+(ind_peaks_tf,peaks_tf,~)=findmaxima(Sq2analyze_tf);
+
+peaks_timeDomain=[[] for _ in eachindex(time_domains[id_exp])];
+
+for it in eachindex(time_domains[id_exp])
+    peaks_timeDomain[it]=Sq_plot[id_exp][it][ind_peaks_to];
+end    
+
+#q_peaks=reduce(hcat,q_peaks);
+peaks_timeDomain=reduce(hcat,peaks_timeDomain);
+
+
+
+#peaks_sq=[findmaxima(Sq_plot[id_exp][it_time]) for it_time in eachindex(Sq_plot[id_exp])]
+
+# Plot the time evolution of the peaks
+
+cmap = :nipy_spectral #:viridis
+
+# Normaliza entre 0 y 1
+norm_peaks = (peaks_to .- minimum(peaks_to)) ./ (maximum(peaks_to) - minimum(peaks_to))
+colors = cgrad(cmap)[norm_peaks]
+
+    fig=Figure()
+    ax_f=Axis(fig[1:1,1:1])
+    ax_f2=Axis(fig[1:1,1:1])
+    ax_f3=Axis(fig[1:1,1:1])
+
+    ax=Axis(fig[1:6,1:3],
+        title=latexstring("\\mathrm{Peaks~evolution}"),
+        #subtitle=latexstring(subtitle),
+        xlabel=latexstring("\\mathrm{Peaks~evolution}"),
+        ylabel=L"S(q)_{\mathrm{peak}}",
+        xminorticksvisible=true,
+        xminorgridvisible=true,
+        limits=(10^(2.5),10^(4.1),0,25),
+        xscale=log10,
+        #yscale=log10
+    )
+    hidespines!(ax_f)
+    hidedecorations!(ax_f)
+    hidespines!(ax_f2)
+    hidedecorations!(ax_f2)
+    hidespines!(ax_f3)
+    hidedecorations!(ax_f3)
+
+    for it in eachindex(ind_peaks_to)
+
+        scatterlines!(ax,(0.001).*time_domains[1],peaks_timeDomain[it,:],color=colors[it])
+   
+        p1=plot!(ax_f,[0],[-1],
+            label=latexstring(100*dict_CL[unique(Sq[id_exp].id)[1]])
+            )
+        p2=plot!(ax_f2,[0],[-1],
+            label=latexstring(dict_T[unique(Sq[id_exp].id)[1]])
+            )
+        p3=plot!(ax_f3,[0],[-1],
+              label=latexstring(100*dict_phi[unique(Sq[id_exp].id)[1]])
+            )
+
+    p1.visible = false
+    p2.visible = false
+    p3.visible = false
+
+
+    end
+
+        #Legend(fig[1:3,4],ax,L"\tau")
+    Colorbar(fig[1:3, 4], colormap=cmap,
+         limits = (minimum(peaks_to), maximum(peaks_to)),
+         label = L"|\vec{q}|L")
+
+    Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
+    Legend(fig[6,4],ax_f3,L"\phi~\%",merge=true)
+
+
+
+
+function timeSeries()
+#id_exp=5;
 
 taus = 0.001 * time_domains[id_exp]          # vector de tiempos
 cmap = :viridis
@@ -110,7 +196,10 @@ colors = cgrad(cmap)[norm_taus]
     hidedecorations!(ax_f2)
     hidespines!(ax_f3)
     hidedecorations!(ax_f3)
- 
+
+    for it in ind_peaks_to
+        vlines!(ax,l_domain[id_exp][it],linestyle=:dash,color=:black)
+    end
 
     for it in eachindex(time_domains[id_exp])
 
@@ -139,6 +228,13 @@ colors = cgrad(cmap)[norm_taus]
 
     end
 
+    for it in eachindex(ind_peaks_to)
+        scatter!(ax,l_domain[id_exp][ind_peaks_to[it]],peaks_to[it],color=:black)
+    end
+    for it in eachindex(ind_peaks_tf)
+        scatter!(ax,l_domain[id_exp][ind_peaks_tf[it]],peaks_tf[it],color=:red)
+    end
+
     #Legend(fig[1:3,4],ax,L"\tau")
     Colorbar(fig[1:3, 4], colormap=cmap,
          limits = (minimum(taus), maximum(taus)),
@@ -147,7 +243,7 @@ colors = cgrad(cmap)[norm_taus]
     Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
     Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
     Legend(fig[6,4],ax_f3,L"\phi~\%",merge=true)
-
+end
 
 
 
