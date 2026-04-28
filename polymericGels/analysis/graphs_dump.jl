@@ -72,10 +72,14 @@ N_instants=nrow(Sq[1]);
 
 # Prepare the data for the graphs
 
-time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
-Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
-l_domain=reverse.([range(2*pi/first(Sq[N].lambda_o),2*pi/first(Sq[N].lambda_f),length(Sq_plot[N][1])) for N in eachindex(Sq)]);
 
+#[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
+
+time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
+qdomain_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].q_domain) for it in eachindex(Sq)];
+Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
+
+qdomain_tf=[qdomain_plot[id_exp][end] for id_exp in eachindex(Sq)];
 Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)];
 
     fig=Figure()
@@ -134,7 +138,7 @@ Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)];
 
 
     for it in eachindex(Sq_tf)
-        lines!(ax,l_domain[it],Sq_tf[it],
+        lines!(ax,qdomain_tf[it],Sq_tf[it],
             label=latexstring(100*dict_phi[unique(Sq[it].id)[1]]))
     
         p1=plot!(ax_f,[0],[-1],
