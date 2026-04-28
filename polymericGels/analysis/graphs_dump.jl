@@ -74,11 +74,108 @@ N_instants=nrow(Sq[1]);
 
 time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
 Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
-
-l_domain=[range(2*pi/first(Sq[N].lambda_o),2*pi/first(Sq[N].lambda_f),length(Sq_plot[N][1])) for N in eachindex(Sq)];
+l_domain=reverse.([range(2*pi/first(Sq[N].lambda_o),2*pi/first(Sq[N].lambda_f),length(Sq_plot[N][1])) for N in eachindex(Sq)]);
 
 Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)];
 
+    fig=Figure()
+    ax_f=Axis(fig[1:1,1:1])
+    ax_f2=Axis(fig[1:1,1:1])
+    ax_f3=Axis(fig[1:1,1:1])
+
+
+
+    ax=Axis(fig[1:6,1:3],
+        title=latexstring("\\mathrm{Structure~factor}"),
+        #subtitle=latexstring(subtitle),
+        xlabel=L"|\vec{q}|=\frac{2\pi}{\lambda}",
+        ylabel=L"S(q)",
+        xminorticksvisible=true,
+        xminorgridvisible=true,
+        limits=(nothing,nothing,0,nothing),
+        #xscale=log10,
+        #yscale=log10
+    )
+    hidespines!(ax_f)
+    hidedecorations!(ax_f)
+    hidespines!(ax_f2)
+    hidedecorations!(ax_f2)
+    hidespines!(ax_f3)
+    hidedecorations!(ax_f3)
+
+    vlines!(ax,2*pi,linestyle=:solid)
+    vlines!(ax,(2*pi)/1.2,linestyle=:solid)
+    vlines!(ax,(2*pi)/(1.2*0.5),linestyle=:solid)
+
+
+    #    annotation!(-200, 0, 0, 0, path = Ann.Paths.Line(), text = "Line()")
+
+    annotation!(ax, pi,40, 2*pi/1,40,
+                text = L"\frac{2\pi}{1}",
+        path = Ann.Paths.Arc(0.3),
+        style = Ann.Styles.LineArrow(),
+        labelspace = :data
+        )
+
+    annotation!(ax, pi,60, 2*pi/1.2,60,
+        text = L"\frac{2\pi}{1.2}",
+        path = Ann.Paths.Arc(0.3),
+        style = Ann.Styles.LineArrow(),
+        labelspace = :data
+        )
+    
+    annotation!(ax, 2*pi,60, 2*pi/(1.2*0.5),60,
+        text = L"\frac{2\pi}{0.24}",
+        path = Ann.Paths.Arc(0.3),
+        style = Ann.Styles.LineArrow(),
+        labelspace = :data
+        )
+
+
+
+    for it in eachindex(Sq_tf)
+        lines!(ax,l_domain[it],Sq_tf[it],
+            label=latexstring(100*dict_phi[unique(Sq[it].id)[1]]))
+    
+        p1=plot!(ax_f,[0],[-1],
+            label=latexstring(100*dict_CL[unique(Sq[it].id)[1]])
+            )
+        p2=plot!(ax_f2,[0],[-1],
+            label=latexstring(dict_T[unique(Sq[it].id)[1]])
+            )
+        p3=plot!(ax_f3,[0],[-1],
+            label=latexstring(0.001*Sq[it].timeStep[end])
+            )
+
+    p1.visible = false
+    p2.visible = false
+    p3.visible = false
+
+
+    end
+
+    Legend(fig[1:3,4],ax,L"\phi~\%")
+    
+    Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
+    Legend(fig[6,4],ax_f3,L"\mathrm{Time}",merge=true)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#=
 Sq2analyze_tf=Sq_plot[id_exp][end];
 
 peaks_Sq_tf=[findmaxima(s) for s in Sq_tf];
@@ -92,7 +189,6 @@ peaks_q_tf=[l_domain[s][peaks_Sq_tf[s][1]] for s in eachindex(Sq_tf)];
 
 
 #(ind_peaks_tf,peaks_tf,~)=findmaxima(Sq2analyze_tf);
-
 
 
 cmap = :nipy_spectral #:viridis
@@ -180,7 +276,7 @@ colors = cgrad(cmap)[norm_peaks]
     Legend(fig[6,4],ax_f3,L"\mathrm{Time}",merge=true)
 
 
-
+=#
 
 
 #=

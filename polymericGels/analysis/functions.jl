@@ -51,7 +51,10 @@ function computeDensity(N_qu,lambda_o,lambda_f,N_lambda,r)
 
     # Evaluación de la densidad y promedio
     # [renglon x columna] -> [ mag x direccion ]
-    rho_q=[densityRhoQ(2*pi/l,d) for l in range(lambda_o,lambda_f,length=N_lambda), d in dot_qr];
+    q_min=2*pi/lambda_f;
+    q_max=2*pi/lambda_o;
+
+    rho_q=[densityRhoQ(l,d) for l in range(q_min,q_max,length=N_lambda), d in dot_qr];
     return mean(rho_q,dims=2)
 
 end
