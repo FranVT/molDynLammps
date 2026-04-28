@@ -35,27 +35,25 @@ function densityRhoQ(q_mag,dot_qr)
     return sum(cos.(q_mag*dot_qr))^2 + sum(sin.(q_mag*dot_qr))^2
 end
 
-function computeDensity(N_qu,lambda_o,lambda_f,N_lambda,r)
+function computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r)
 """
     Function that computes the static structure factor de different wave vectors.
     Returns a vector with the following interpretation of the values:
     [row] -> [magnitude]}
 """
 
-    # Vector unitario del vector de onda
-    theta=2*pi*rand(N_qu);
-    phi=pi*rand(N_qu); 
-
     # Calculo del producto punto
-    dot_qr=[dotSpherical(theta[s],phi[s],r) for s in 1:N_qu];
+    dot_qr=[dotSpherical(theta[s],phi[s],r) for s in 1:length(theta)];
 
     # Evaluación de la densidad y promedio
     # [renglon x columna] -> [ mag x direccion ]
     q_min=2*pi/lambda_f;
     q_max=2*pi/lambda_o;
+    q_dom=range(q_min,q_max,length=N_lambda);
 
-    rho_q=[densityRhoQ(l,d) for l in range(q_min,q_max,length=N_lambda), d in dot_qr];
-    return mean(rho_q,dims=2)
+    rho_q=[densityRhoQ(l,d) for l in q_dom, d in dot_qr];
+
+    return [q_dom,reduce(vcat,mean(rho_q,dims=2))]
 
 end
 
@@ -72,26 +70,35 @@ function getPosition(dump)
 
 end
 
-function structureFactor(N_qu,lambda_o,lambda_f,N_lambda,r_exp)
+function structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
 """
     Compute the static structure factor
 """
-    S_q_exp=[computeDensity(N_qu,lambda_o,lambda_f,N_lambda,r) for r in r_exp];
+    data=[computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r) for r in r_exp];
+    data=reduce(hcat,data);
+    q_domain=collect(first(unique(data[1,:])));
+    Sq=reduce(vcat,mean(reduce(hcat,data[2,:]),dims=2));
 
-    return mean(reduce(hcat,S_q_exp),dims=2)/dat_DF.Npart[1];
+    return [q_domain,Sq]
 end
 
-function getTimeEvolSq(dump_paths,time_instant)
+function getTimeEvolSq(N_qu,dump_paths,time_instant)
 """
     Compute the time evolution of the structure factor
 """
+
+    # Vector unitario del vector de onda
+    theta=2*pi*rand(N_qu);
+    phi=pi*rand(N_qu); 
 
     # Obtenemos los dumps de los N experimentos para un instante de tiempo
     dumps=[getDump(path,time_instant) for path in dump_paths];
 
     r_exp=[getPosition(df) for df in dumps];
 
-    return structureFactor(N_qu,lambda_o,lambda_f,N_lambda,r_exp);
+    Sq=structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
+   
+    return Sq
 
 end
 
