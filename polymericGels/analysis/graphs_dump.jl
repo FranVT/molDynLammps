@@ -80,7 +80,7 @@ qdomain_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].q_domain) for it in ea
 Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
 
 qdomain_tf=[qdomain_plot[id_exp][end] for id_exp in eachindex(Sq)];
-Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)];
+Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)]./(5000);
 
     fig=Figure()
     ax_f=Axis(fig[1:1,1:1])
@@ -96,7 +96,7 @@ Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)];
         ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(nothing,nothing,0,nothing),
+        limits=(nothing,nothing,0,5),
         #xscale=log10,
         #yscale=log10
     )
@@ -114,21 +114,21 @@ Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)];
 
     #    annotation!(-200, 0, 0, 0, path = Ann.Paths.Line(), text = "Line()")
 
-    annotation!(ax, pi,40, 2*pi/1,40,
+    annotation!(ax, pi,4, 2*pi/1,4,
                 text = L"\frac{2\pi}{1}",
         path = Ann.Paths.Arc(0.3),
         style = Ann.Styles.LineArrow(),
         labelspace = :data
         )
 
-    annotation!(ax, pi,60, 2*pi/1.2,60,
+    annotation!(ax, pi,4, 2*pi/1.2,4,
         text = L"\frac{2\pi}{1.2}",
         path = Ann.Paths.Arc(0.3),
         style = Ann.Styles.LineArrow(),
         labelspace = :data
         )
     
-    annotation!(ax, 2*pi,60, 2*pi/(1.2*0.5),60,
+    annotation!(ax, 2*pi,4, 2*pi/(1.2*0.5),4,
         text = L"\frac{2\pi}{0.24}",
         path = Ann.Paths.Arc(0.3),
         style = Ann.Styles.LineArrow(),
