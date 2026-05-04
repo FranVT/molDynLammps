@@ -52,9 +52,11 @@ function computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r)
     q_dom=range(q_min,q_max,length=N_lambda);
 
     rho_q=[densityRhoQ(l,d) for l in q_dom, d in dot_qr];
+    # Compute the avg of the different direction but same magnitude
+    rho_q=reduce(vcat,mean(mean(rho_q,dims=3),dims=2));
 
     # Compute the average with the same magnitude, different directions
-    return [q_dom,reduce(vcat,mean(rho_q,dims=2))]
+    return [q_dom,rho_q]
 
 end
 
@@ -79,8 +81,8 @@ function structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
     data=reduce(hcat,data);
     q_domain=collect(first(unique(data[1,:])));
 
-    # Compute assembly average 
-    Sq=reduce(vcat,mean(reduce(hcat,data[2,:]),dims=2));
+    # Compute assembly average and scale of 1/N_particles 
+    Sq=reduce(vcat,mean(reduce(hcat,data[2,:]),dims=2))./length(r_exp);
 
     return [q_domain,Sq]
 end
@@ -91,7 +93,7 @@ function getTimeEvolSq(N_qu,dump_paths,time_instant)
 """
 
     # Vector unitario del vector de onda
-    N_phi=Int64(div(sqrt(N_qu),2));
+    N_phi=Int64(sqrt(div(N_qu,2)));
     N_theta=Int64(2*N_phi);
 
     theta=2*pi*rand(N_theta);

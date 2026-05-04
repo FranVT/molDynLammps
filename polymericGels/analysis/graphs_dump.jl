@@ -83,10 +83,10 @@ Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)
 id_time=1;
 
 qdomain_tf=[qdomain_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)]./(5000);
+Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
 
-peaks_Sq_tf=[findmaxima(s) for s in Sq_tf];
-peaks_q=qdomain_tf[1][peaks_Sq_tf[1].indices];
+#peaks_Sq_tf=[findmaxima(s) for s in Sq_tf];
+#peaks_q=qdomain_tf[1][peaks_Sq_tf[1].indices];
 
 
     fig=Figure()
