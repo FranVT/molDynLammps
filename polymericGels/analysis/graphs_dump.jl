@@ -4,7 +4,7 @@
 
 using CSV, DataFrames
 using GLMakie, LaTeXStrings, Typst_jll
-using Peaks
+using Peaks, Forecast
 
 # these are relative to 1 CSS px
 inch = 96;
@@ -82,6 +82,10 @@ Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)
 qdomain_tf=[qdomain_plot[id_exp][end] for id_exp in eachindex(Sq)];
 Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)]./(5000);
 
+peaks_Sq_tf=[findmaxima(s) for s in Sq_tf];
+peaks_q=qdomain_tf[1][peaks_Sq_tf[1].indices];
+
+
     fig=Figure()
     ax_f=Axis(fig[1:1,1:1])
     ax_f2=Axis(fig[1:1,1:1])
@@ -107,19 +111,15 @@ Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)]./(5000);
     hidespines!(ax_f3)
     hidedecorations!(ax_f3)
 
-    vlines!(ax,2*pi,linestyle=:solid)
-    vlines!(ax,(2*pi)/1.2,linestyle=:solid)
-    vlines!(ax,(2*pi)/(1.2*0.5),linestyle=:solid)
+    #vlines!(ax,2*pi,linestyle=:solid)
+    for p in peaks_q
+        vlines!(ax,p,linestyle=:solid)
+    end
+
+    #vlines!(ax,(2*pi)/(1.2*0.5),linestyle=:solid)
 
 
     #    annotation!(-200, 0, 0, 0, path = Ann.Paths.Line(), text = "Line()")
-
-    annotation!(ax, pi,4, 2*pi/1,4,
-                text = L"\frac{2\pi}{1}",
-        path = Ann.Paths.Arc(0.3),
-        style = Ann.Styles.LineArrow(),
-        labelspace = :data
-        )
 
     annotation!(ax, pi,4, 2*pi/1.2,4,
         text = L"\frac{2\pi}{1.2}",
