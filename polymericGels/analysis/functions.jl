@@ -43,7 +43,7 @@ function computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r)
 """
 
     # Calculo del producto punto
-    dot_qr=[dotSpherical(theta[s],phi[s],r) for s in 1:length(theta)];
+    dot_qr=[dotSpherical(th,ph,r) for th in theta, ph in phi];
 
     # Evaluación de la densidad y promedio
     # [renglon x columna] -> [ mag x direccion ]
@@ -53,6 +53,7 @@ function computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r)
 
     rho_q=[densityRhoQ(l,d) for l in q_dom, d in dot_qr];
 
+    # Compute the average with the same magnitude, different directions
     return [q_dom,reduce(vcat,mean(rho_q,dims=2))]
 
 end
@@ -77,6 +78,8 @@ function structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
     data=[computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r) for r in r_exp];
     data=reduce(hcat,data);
     q_domain=collect(first(unique(data[1,:])));
+
+    # Compute assembly average 
     Sq=reduce(vcat,mean(reduce(hcat,data[2,:]),dims=2));
 
     return [q_domain,Sq]
@@ -88,8 +91,11 @@ function getTimeEvolSq(N_qu,dump_paths,time_instant)
 """
 
     # Vector unitario del vector de onda
-    theta=2*pi*rand(N_qu);
-    phi=pi*rand(N_qu); 
+    N_phi=Int64(div(sqrt(N_qu),2));
+    N_theta=Int64(2*N_phi);
+
+    theta=2*pi*rand(N_theta);
+    phi=pi*rand(N_phi); 
 
     # Obtenemos los dumps de los N experimentos para un instante de tiempo
     dumps=[getDump(path,time_instant) for path in dump_paths];

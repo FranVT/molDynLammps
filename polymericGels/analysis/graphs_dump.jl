@@ -4,7 +4,8 @@
 
 using CSV, DataFrames
 using GLMakie, LaTeXStrings, Typst_jll
-using Peaks, Forecast
+using Peaks
+#, Forecast
 
 # these are relative to 1 CSS px
 inch = 96;
@@ -79,8 +80,10 @@ time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
 qdomain_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].q_domain) for it in eachindex(Sq)];
 Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
 
-qdomain_tf=[qdomain_plot[id_exp][end] for id_exp in eachindex(Sq)];
-Sq_tf=[Sq_plot[id_exp][end] for id_exp in eachindex(Sq)]./(5000);
+id_time=1;
+
+qdomain_tf=[qdomain_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
+Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)]./(5000);
 
 peaks_Sq_tf=[findmaxima(s) for s in Sq_tf];
 peaks_q=qdomain_tf[1][peaks_Sq_tf[1].indices];
@@ -112,9 +115,9 @@ peaks_q=qdomain_tf[1][peaks_Sq_tf[1].indices];
     hidedecorations!(ax_f3)
 
     #vlines!(ax,2*pi,linestyle=:solid)
-    for p in peaks_q
-        vlines!(ax,p,linestyle=:solid)
-    end
+    #for p in peaks_q
+    #    vlines!(ax,p,linestyle=:solid)
+    #end
 
     #vlines!(ax,(2*pi)/(1.2*0.5),linestyle=:solid)
 
@@ -148,7 +151,7 @@ peaks_q=qdomain_tf[1][peaks_Sq_tf[1].indices];
             label=latexstring(dict_T[unique(Sq[it].id)[1]])
             )
         p3=plot!(ax_f3,[0],[-1],
-            label=latexstring(0.001*Sq[it].timeStep[end])
+            label=latexstring(0.001*Sq[it].timeStep[id_time])
             )
 
     p1.visible = false
