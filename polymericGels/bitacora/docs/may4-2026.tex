@@ -118,11 +118,81 @@ El producto punto se calcula de la siguiente manera,
                            &=\frac{2\pi}{\lambda}\left(r_{1}^{j}r_{x} + r_{2}r^{j}_{y} + r_{3}r^{j}_{z} \right).
 \end{align*}
 
+\paragraph{Definición de dominios.}
 Hay tres parámetros por definir, \(\lambda,\theta,\phi\).
 Se pueden obtener $N_{\alpha}$ vectores unitarios para un solo valor de \(\lambda\).
 Por otro lado el parámetro \(\lambda\) se restringue para el análisis de la red polimérica.
 \(\lambda\in\qty[1,L]\), donde \(L\) es la lognitud de la caja.
 Para obtener una curva lo suficientemente suave para el análisis se define \(N_{\lambda}=64=2^{6}\).
+
+Por otro lado, se escoge que \(N_{\alpha}=32=2^5\) para obtener una cantidad de direcciones que cumplan con el teorema de límitre central y poder realizar un promedio significativo. 
+Sin embargo para tener un buen sampleo para los dominios \(\theta\) y \(\phi\) se tiene que considerar que el dominio de \(\theta\) es el doble qué el dominio de \(\phi\).
+Esta situación plantea la siguiente restricciones,
+\begin{align*}
+    N_{\alpha} &=N_{\theta} \cdot N_{\phi} \\
+               &=2N_{\phi} \cdot N_{\phi} \\ 
+               &=2N^{2}_{\phi}.
+\end{align*}
+Por lo tanto, \(N_{\phi} = \sqrt{N_{\alpha}/2}\), considerando qué es conveniente definir \(N_{\alpha}\equiv 2^{n_{\alpha}}\).
+En consecuencia, \(N_{\phi} = \sqrt{2^{n_{\alpha}-1}}\).
+Esto hace que \(n_{\alpha}\) necesita ser impar para siempre obtener un número entero en el dominio.
+
+\paragraph{Descripción del algoritmo.}
+Primero se definen las \(2^{5}\) direcciones de los vectores unitarios.
+Se tienen 3 vectores de \(2^{5}\) elementos que corresponden a las componentes \(x,y,z\) de \(\hat{r}\).
+Después cada conjunto de \(3N_{\alpha}\) elementos se multiplica por una magnitud \(2\pi/\lambda\), obteniendo un total de \(N_{\lambda}3N_{\alpha}\) elementos\footnote{Específicamente \(N_{\lambda}N_{\alpha}=2^{6}2^{5}=2^{11}\) elementos por cada componente del vector de onda \(\vec{q}\)}.
+
+Ya que se definieron los elementos de los vectores de onda con distintas direcciones para distintas magnitudes se obtiene las componentes de \(\vec{r}_{j}\).
+En los análisis anteriores \(\vec{r}_{j}\) es la posición de la partícula centra en el espacio de simulación.
+Sin embargo eso no me ayuda a interpretar bien los resultados.
+Por lo tanto, para este nuevo análisis se realizó que \(\vec{r}_{j} = \vec{r}_{j}-\vec{r}_{k}\).
+Esto cambia la definición de \(A\) y \(B\) a la siguiente,
+\begin{gather*}
+    A = \sum_{j=1}^{N}\sum_{k=1}^{N}\cos\qty(\vec{q}\cdot\qty(\vec{r}_{j}-\vec{r}_{k})),\quad
+    B = \sum_{j=1}^{N}\sum_{k=1}^{N}\sin\qty(\vec{q}\cdot\qty(\vec{r}_{j}-\vec{r}_{k})).
+\end{gather*}
+Por lo tanto hay que calcular la distancia entre partículas centrales en el sistema considerando condiciones de frontera periodicas.
+
+Tomando en cuenta que hay \num{5d3} partículas centrales, se tienen \(\qty(\num{5d3})^{2}\) distancias.
+Observando la simetría entre las distancias, \(\vec{r}_{j}-\vec{r}_{k}=-\qty(\vec{r}_{k}-\vec{j})\) la cantidad de distancias se puede reducir a \(\num{12.5d6}\).
+
+Una vez que se tienen las distancias, se realiza el producto punto con los vectores de onda \(\vec{q}\) con la misma magnitud con distintas direcciones.
+Posteriormente se evaluan las funciones trigonométricas para las \(N_{\alpha}\) direcciones y se realiza la sumatoria para obtener \(A\) y \(B\).
+Después se realiza la sumatoria de cuadrados y se obtiene el valor esperado con un promedio de las direcciones,
+\begin{gather*}
+    \expval{A^2 + B^2} = \frac{1}{N_{\alpha}}\sum_{a=1}^{N_{\alpha}}A_{a}^{2}+B_{a}^{2}.
+\end{gather*}
+Finalmente se escala el valor por \(1/N_{\mathrm{part}}\) y se repite el proceso para cada una de las magnitudes.
+
+\subsection{Resultados en gráficas}
+
+La siguiente gráfica es el resultado de la imlementación descrita con anterioridad.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/may5/fig_SqCorreccion_phi5.png}
+    \caption{Factor de estructura con la corrección. \(\phi=5\%\). Las líneas verticales están ubicadas en \(|\vec{q}|=2\pi/1.2,~|\vec{q}|=2\pi/(2\cdot1.2),~|\vec{q}|=2\pi/(3\cdot1.2)\)}
+\end{figure}
+
+Tengo entendido que los picos se esperan en distancias características del sistema.
+Para este sistema, la distancia entre dos partículas centrales cuyos patches entán enlazados por el potencial patch es de \num{1.2}.
+Eso se ve en el \emph{pico} en \(|\vec{q}|=2\pi/1.2\).
+El resto de pcios no los entiendo.
+
+Esperaba picos en múltiplos de la distancia de enlace, pero no es así.
+Conforme la magnitud se va acercando a \(0\) el factor de estructura empiza a diverger.
+Tengo entendido que eso hace sentido, ya que \(\lambda\to L\) y el sistema fue simulado con condiciones de frontera periódicas.
+
+
+\paragraph{Intento de interpretación de la gráfica.}
+Para intentar entender que onda con esto analizaré los dominios y rangos de los argumentos de las funciones trigonométricas y veré que onda con efectos de productos puntos y etc.
+
+Comezando con el producto punto,
+\begin{align*}
+    \vec{q}\cdot\vec{r}_{j}&=\frac{2\pi}{\lambda}\hat{r}\cdot\vec{r}_{j} \\
+                           &=\frac{2\pi}{\lambda}\left(r_{1}^{j}r_{x} + r_{2}r^{j}_{y} + r_{3}r^{j}_{z} \right).
+\end{align*}
+
 
 
 %Mi intución es que el producto punto no está evaluada.

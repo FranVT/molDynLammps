@@ -53,7 +53,7 @@ SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
 dat_files=CSV.read(DAT_PATH,DataFrame);
 
 # Selection of the system by parameters
-phi=0.05;
+phi=0.01;
 Temp=0.05;
 N_part=5000.0;
 CL_con=0.05;
@@ -77,7 +77,6 @@ N_lambda=64; # Cantidad de magnitudes
 N_instants=2;
 
 
-#=
 
 # Seleccion de time instants
 aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
@@ -141,11 +140,11 @@ time_instant=time_instants[end];
 
     end
 
-=#
 
+#=
 fig=Figure()
 ax=Axis(fig[1:1,1:1],
-        limits=(1,nothing,0,1e6)
+        limits=(1,nothing,0,1e5)
        )
 vlines!(ax,2*pi/(1.2))
 vlines!(ax,2*pi/(2*1.2))
@@ -154,6 +153,7 @@ vlines!(ax,2*pi/(3*1.2))
 
 scatterlines!(ax,q_dom,mean(S_q))
 
+=#
 
 
 
