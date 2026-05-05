@@ -145,9 +145,13 @@ time_instant=time_instants[end];
 
 fig=Figure()
 ax=Axis(fig[1:1,1:1],
-        limits=(nothing,nothing,nothing,nothing),
-
+        limits=(1,nothing,0,1e6)
        )
+vlines!(ax,2*pi/(1.2))
+vlines!(ax,2*pi/(2*1.2))
+vlines!(ax,2*pi/(3*1.2))
+
+
 scatterlines!(ax,q_dom,mean(S_q))
 
 
