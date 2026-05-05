@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1777925476.97 "main.aux" "main.bbl" "main" 1777931115.73007 2
-  "main.aux" 1777931115.56238 3305 6e5c67395bd3084d3accde0dec6c112b "pdflatex"
+["bibtex main"] 1777925476.97 "main.aux" "main.bbl" "main" 1778018710.12543 2
+  "main.aux" 1778018709.94548 3305 6e5c67395bd3084d3accde0dec6c112b "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1777931112.41063 "main.tex" "main.pdf" "main" 1777931115.7302 0
+["pdflatex"] 1778018706.72711 "main.tex" "main.pdf" "main" 1778018710.12557 0
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1776097119.09146 128397 dc8cded2bbafe8195c86cdaea92e40b2 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1776097118.76811 127314 7c5efae986e60281c7ad546cf8ed9a14 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1776097121.1949 128950 b259fc34906ff4c20552f96907d63131 ""
@@ -219,10 +219,10 @@
   "docs/../Figures/may4/fig_factorEstructuraCambios_to_xL.png" 1777921482.83284 156118 2287c63d08dd5946c9193b1cf4696f2c ""
   "docs/../Figures/may4/fig_factorEstructuraCambios_to_zoom.png" 1777923977.66981 251504 379cb9240726ae6669013a56834eef0c ""
   "docs/../Figures/may4/structureFactor_timeSeries_phi5.png" 1777306990.01279 320571 ca90ee1afd6e14b3fbd9091394e09dee ""
-  "docs/may4-2026.tex" 1777931110.41875 5344 6faef23a8129dbd0c1d8cfaff287ab76 ""
-  "main.aux" 1777931115.56238 3305 6e5c67395bd3084d3accde0dec6c112b "pdflatex"
+  "docs/may4-2026.tex" 1778018705.44193 5898 76ee4e1178b344fc2017c2645c4901c9 ""
+  "main.aux" 1778018709.94548 3305 6e5c67395bd3084d3accde0dec6c112b "pdflatex"
   "main.bbl" 1777925477.009 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1777931115.56299 756 c88899b1e0b6491ea9b30173c9f1721f "pdflatex"
+  "main.out" 1778018709.95105 756 c88899b1e0b6491ea9b30173c9f1721f "pdflatex"
   "main.tex" 1777919631.99948 2372 aa534cb1bf66a94eeb9512066da4988e ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""

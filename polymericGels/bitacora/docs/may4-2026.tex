@@ -102,16 +102,29 @@ De acuerdo con la expresión que \emph{pseudo-investigué} usando DeepSeek, esto
 \end{gather*}
 en donde,
 \begin{gather*}
-    A^2 = \sum_{j=1}^{N}\cos\qty(\vec{q}\cdot\vec{r}_{j}),\quad
-    B^2 = \sum_{j=1}^{N}\sin\qty(\vec{q}\cdot\vec{r}_{j}).
+    A = \sum_{j=1}^{N}\cos\qty(\vec{q}\cdot\vec{r}_{j}),\quad
+    B = \sum_{j=1}^{N}\sin\qty(\vec{q}\cdot\vec{r}_{j}).
 \end{gather*}
-Considerando que \(\vec{q} = \frac{2\pi}{\lambda}\hat{r}\) con \(\hat{r}\) siendo el vector de posición unitario en coordenadas esféricas.
-El producto punto lo calculo de la siguiente manera,
+Considerando que \(\vec{q} = \frac{2\pi}{\lambda}\hat{r}\) con \(\hat{r}\) siendo el vector de posición unitario en coordenadas esféricas\footnote{
+    \begin{align*}
+        r_1&=\cos\theta\sin\phi \\
+        r_2&=\sin\theta\sin\phi \\
+        r_3&=\cos\phi
+    \end{align*}
+}.
+El producto punto se calcula de la siguiente manera,
 \begin{align*}
     \vec{q}\cdot\vec{r}_{j}&=\frac{2\pi}{\lambda}\hat{r}\cdot\vec{r}_{j} \\
-                           &=\frac{2\pi}{\lambda}\left(r_{1}r_{jx} + r_{2}r_{jy} + r_{3}r_{jz} \right)
+                           &=\frac{2\pi}{\lambda}\left(r_{1}^{j}r_{x} + r_{2}r^{j}_{y} + r_{3}r^{j}_{z} \right).
 \end{align*}
 
-Mi intución es que el producto punto no está evaluada.
+Hay tres parámetros por definir, \(\lambda,\theta,\phi\).
+Se pueden obtener $N_{\alpha}$ vectores unitarios para un solo valor de \(\lambda\).
+Por otro lado el parámetro \(\lambda\) se restringue para el análisis de la red polimérica.
+\(\lambda\in\qty[1,L]\), donde \(L\) es la lognitud de la caja.
+Para obtener una curva lo suficientemente suave para el análisis se define \(N_{\lambda}=64=2^{6}\).
+
+
+%Mi intución es que el producto punto no está evaluada.
 
 \end{document}
