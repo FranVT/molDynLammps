@@ -13,6 +13,38 @@ Random.seed!(1234)
 # Include auxiliary files
 include("functions.jl")
 
+    function computeDensity(q_x,q_y,q_z,dist_x,dist_y,dist_z)
+        
+        # Calcular el producto punto. 
+        # Misma magnitud. Distintas direcciones
+        l=q_x.*dist_x' .+ q_y.*dist_y' .+ q_z.*dist_z';
+
+        # Calcular la densidad
+        A=map(id->mapreduce(s->cos(s),+,l[id,:]),1:N_qu);
+        B=map(id->mapreduce(s->sin(s),+,l[id,:]),1:N_qu);
+        rho_q=A.^2 .+ B.^2;
+        return rho
+    end
+
+    function computeDistances(r,lambda_f)
+        r_x=reshape(r[1],1,N_part);
+        r_y=reshape(r[2],1,N_part);
+        r_z=reshape(r[3],1,N_part);
+
+        # Calcular la distancia entre partículas considerando condiciones periodicas de frontera
+        dist_x=pairwise(PeriodicEuclidean(lambda_f),r_x,dims=2);
+        dist_y=pairwise(PeriodicEuclidean(lambda_f),r_y,dims=2);
+        dist_z=pairwise(PeriodicEuclidean(lambda_f),r_z,dims=2);
+
+        # Reducir la cantidad de elementos para evaluar distancias
+        dist_x=[dist_x[it...] for it in ids_utri];
+        dist_y=[dist_y[it...] for it in ids_utri];
+        dist_z=[dist_z[it...] for it in ids_utri];
+
+        return (dist_x,dist_y,dist_z)
+    end
+
+
 # Get directories 
 MAIN_DIR=pwd();
 DAT_PATH=joinpath(MAIN_DIR,"datFiles","experiments_dat.csv");
@@ -41,7 +73,7 @@ dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
 N_qu=2^5; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
 lambda_o=1; # Limites del rango a explorar (Monomero)
 lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
-N_lambda=32; # Cantidad de magnitudes
+N_lambda=64; # Cantidad de magnitudes
 N_instants=2;
 
 # Seleccion de time instants
@@ -67,9 +99,9 @@ time_instant=time_instants[end];
 
     # Para todas las posiciones/factor de estructura
     # Crear los vectores unitarios del vector de onda
-    q_x=[cos(th)*sin(ph) for th in theta, ph in phi];
-    q_y=[sin(th)*sin(ph) for th in theta, ph in phi];
-    q_z=[cos(ph) for th in theta, ph in phi];
+    q_x=mapreduce(ph->map(th->cos(th)*sin(ph),theta),vcat,phi); 
+    q_y=mapreduce(ph->map(th->sin(th)*sin(ph),theta),vcat,phi);
+    q_z=mapreduce(ph->map(th->cos(ph),theta),vcat,phi); 
 
     # Calcular la densidad promedio de cada magnitud
     q_min=2*pi/lambda_f;
@@ -87,107 +119,71 @@ time_instant=time_instants[end];
     # Vector de N elementos. Cada elemento es la posición de N partículas de los N_exp.
     r_exp=[getPosition(df) for df in dumps];
 
-    # Extraer la posición y separar por componentes
-    r=r_exp[1];
-    r_x=reshape(r[1],1,N_part);
-    r_y=reshape(r[2],1,N_part);
-    r_z=reshape(r[3],1,N_part);
+    # Realizar el cálculo para distintos experimentos
+    S_q=[zeros(N_lambda) for s in eachindex(r_exp)];
+    for it_r in eachindex(r_exp)
+        # Obtener las distancias considerando condiciones periodicas de frontera 
+        dist_x,dist_y,dist_z=computeDistances(r_exp[it_r],lambda_f);
 
-    # Calcular la distancia entre partículas considerando condiciones periodicas de frontera
-    dist_x=pairwise(PeriodicEuclidean(lambda_f),r_x,dims=2);
-    dist_y=pairwise(PeriodicEuclidean(lambda_f),r_y,dims=2);
-    dist_z=pairwise(PeriodicEuclidean(lambda_f),r_z,dims=2);
+        for it_q in eachindex(q_dom)
+            # Compute the density
+            rho_q=computeDensity(q_x[it_q],q_y[it_q],q_z[it_q],dist_x,dist_y,dist_z);
 
-    # Reducir la cantidad de elementos para evaluar distancias
-    dist_x=[dist_x[it...] for it in ids_utri];
-    dist_y=[dist_y[it...] for it in ids_utri];
-    dist_z=[dist_z[it...] for it in ids_utri];
+            # Obtener el factor de structura para una magnitud
+            S_q[it_r][it_q]=mean(rho_q)/N_part;
 
-S_q=zeros(N_lambda);
-for it_q in eachindex(q_dom)
-    println(it_q)
-    # Calcular el producto punto. 
-    # Misma magnitud. Distintas direcciones
-    l=[q_x[it_q][s]*dist_x + q_y[it_q][s]dist_y + q_z[it_q][s]*dist_z for s in 1:N_qu];
+            println(it_q)
+        end
+        println(it_r)
 
-    # Calcular la densidad
-    rho_q=sum.(map(s->cos.(s),l)).^2 .+ sum.(map(s->sin.(s),l)).^2;
-
-    # Obtener el factor de structura para una magnitud
-    S_q[it_q]=mean(rho_q)/N_part;
-end
-
-     #it_q=1;
-
-    #S_q=zeros(N_lambda);
-    #for it_q in eachindex(q_dom)
-        # Calcular el producto punto para distintas direcciones
-        #pp=[q_x[it_q]*dist_x[it...]+q_y[it_q]*dist_y[it...]+q_z[it_q]*dist_z[it...] for it in ids_utri];
-
-        # Promedio de productos puntos de distintas direcciones, mismas magnitudes 
-        #pp_mean=map(s->mean(s),pp);
-
-    #    pp_mean=meanPP(q_x[it_q],q_y[it_q],q_z[it_q],dist_x,dist_y,dist_z,ids_utri);
-
-        # Cálculo de la densidad para distintos vectores de onda
-    #    S_q[it_q]=mapreduce(s->cos(s),+,pp_mean)^2 + mapreduce(s->sin(s),+,pp_mean)^2
-
-        #data[id]=mean(sum.([2*cos.(q_dom[id]*it) for it in pp]));
-    #end
-
-    
+    end
 
 
-
-
-    #[dist_x[s..] for s in ids]
-
-
-
-    # Calcular el producto punto para distintas direcciones
-    #pp=[q_x[it]*dist_x+q_y[it]*dist_y+q_z[it]*dist_z for it in eachindex(q_x)];
-    
-    # Get upper triangle
-    #pp=reduce(hcat,[filter(!iszero,it[utri]) for it in pp]);
-
-
-    #pp_x=[vq*dist_x for vq in q_x];
-    #pp_y=[vq*dist_y for vq in q_y];
-    #pp_z=[vq*dist_z for vq in q_z];
-
-    #pp=pp_x .+ pp_y .+ pp_z;
-
-    #q_min=2*pi/lambda_f;
-    #q_max=2*pi/lambda_o;
-    #q_dom=range(q_min,q_max,length=N_lambda);
-
-    #A=[mean(sum.([2*cos.(q*it) for it in pp])) for q in q_dom];
-    
-    #data=zeros(N_lambda);
-    #Threads.@threads for id in eachindex(q_dom)
-    #    data[id]=mean(sum.([2*cos.(q_dom[id]*it) for it in pp]));
-    #end
-
-
-
-    #B=[mean(sum.([sin.(it) for it in pp])) for q in q_dom];
-
-
-    #pp=[(cos(th)*sin(ph).*dist_x) .+ (sin(th)*sin(ph).*dist_y) .+ (cos(ph).*dist_z) for th in theta, ph in phi];
 
 #=
-    # Calcular el producto punto
-    pp=[(cos(th)*sin(ph).*dist_x) .+ (sin(th)*sin(ph).*dist_y) .+ (cos(ph).*dist_z) for th in theta, ph in phi];
+    S_q=zeros(N_lambda);
+    for it_q in eachindex(q_dom)
+    
+        # Calcular el producto punto. 
+        # Misma magnitud. Distintas direcciones
+        l=q_x[it_q].*dist_x' .+ q_y[it_q].*dist_y' .+ q_z[it_q].*dist_z';
 
-    # Calcular la densidad promedio de cada magnitud
-    q_min=2*pi/lambda_f;
-    q_max=2*pi/lambda_o;
-    q_dom=range(q_min,q_max,length=N_lambda);
+        # Calcular la densidad
+        A=map(id->mapreduce(s->cos(s),+,l[id,:]),1:N_qu);
+        B=map(id->mapreduce(s->sin(s),+,l[id,:]),1:N_qu);
+        rho_q=A.^2 .+ B.^2;
 
-    #density=[mean([sum(cos.(mag.*it) - I)^2 + sum(sin.(mag.*it))^2 for it in pp])/N_part for mag in q_dom];
+        # Obtener el factor de structura para una magnitud
+        S_q[it_q]=mean(rho_q)/N_part;
 
-    data=zeros(N_lambda);
-    Threads.@threads for id in eachindex(q_dom)
-        data[id]=mean([sum(cos.(q_dom[id].*it) - I)^2 + sum(sin.(q_dom[id].*it))^2 for it in pp])/N_part;
+        println(it_q)
     end
 =#
+
+#=
+    S_q=zeros(N_lambda);
+    for it_q in eachindex(q_dom)
+        
+        # Compute the density
+        rho_q=computeDensity(q_x[it_q],q_y[it_q],q_z[it_q],dist_x,dist_y,dist_z);
+
+        # Obtener el factor de structura para una magnitud
+        S_q[it_q]=mean(rho_q)/N_part;
+
+        println(it_q)
+    end
+=#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
