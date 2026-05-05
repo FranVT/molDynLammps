@@ -6,7 +6,9 @@
 using DataFrames, CSV
 using Statistics, StatsBase
 using UUIDs, LinearAlgebra
-using Distances
+using Distances, Random
+
+Random.seed!(1234)
 
 # Include auxiliary files
 include("functions.jl")
@@ -60,6 +62,25 @@ time_instant=time_instants[end];
     theta=2*pi*rand(N_theta);
     phi=pi*rand(N_phi); 
 
+    # Para todas las distancias
+    ids_utri=reduce(vcat,[[[r,c] for c in r+1:N_part] for r in 1:N_part]);
+
+    # Para todas las posiciones/factor de estructura
+    # Crear los vectores unitarios del vector de onda
+    q_x=[cos(th)*sin(ph) for th in theta, ph in phi];
+    q_y=[sin(th)*sin(ph) for th in theta, ph in phi];
+    q_z=[cos(ph) for th in theta, ph in phi];
+
+    # Calcular la densidad promedio de cada magnitud
+    q_min=2*pi/lambda_f;
+    q_max=2*pi/lambda_o;
+    q_dom=range(q_min,q_max,length=N_lambda);
+
+    # Evaluar distintas magnitudes
+    q_x=[mag*q_x for mag in q_dom];
+    q_y=[mag*q_y for mag in q_dom];
+    q_z=[mag*q_z for mag in q_dom];
+
     # Obtenemos los dumps de los N experimentos para un instante de tiempo
     dumps=[getDump(path,time_instant) for path in dump_paths];
 
@@ -71,25 +92,63 @@ time_instant=time_instants[end];
     r_x=reshape(r[1],1,N_part);
     r_y=reshape(r[2],1,N_part);
     r_z=reshape(r[3],1,N_part);
-   
+
     # Calcular la distancia entre partículas considerando condiciones periodicas de frontera
     dist_x=pairwise(PeriodicEuclidean(lambda_f),r_x,dims=2);
     dist_y=pairwise(PeriodicEuclidean(lambda_f),r_y,dims=2);
     dist_z=pairwise(PeriodicEuclidean(lambda_f),r_z,dims=2);
 
-    utri=triu!(trues(size(dist_x)));
-    utri=utri;
+    # Reducir la cantidad de elementos para evaluar distancias
+    dist_x=[dist_x[it...] for it in ids_utri];
+    dist_y=[dist_y[it...] for it in ids_utri];
+    dist_z=[dist_z[it...] for it in ids_utri];
 
-    # Crear los vectores unitarios del vector de onda
-    q_x=reshape([cos(th)*sin(ph) for th in theta, ph in phi],N_qu,1);
-    q_y=reshape([sin(th)*sin(ph) for th in theta, ph in phi],N_qu,1);
-    q_z=reshape([cos(ph) for th in theta, ph in phi],N_qu,1);
+S_q=zeros(N_lambda);
+for it_q in eachindex(q_dom)
+    println(it_q)
+    # Calcular el producto punto. 
+    # Misma magnitud. Distintas direcciones
+    l=[q_x[it_q][s]*dist_x + q_y[it_q][s]dist_y + q_z[it_q][s]*dist_z for s in 1:N_qu];
+
+    # Calcular la densidad
+    rho_q=sum.(map(s->cos.(s),l)).^2 .+ sum.(map(s->sin.(s),l)).^2;
+
+    # Obtener el factor de structura para una magnitud
+    S_q[it_q]=mean(rho_q)/N_part;
+end
+
+     #it_q=1;
+
+    #S_q=zeros(N_lambda);
+    #for it_q in eachindex(q_dom)
+        # Calcular el producto punto para distintas direcciones
+        #pp=[q_x[it_q]*dist_x[it...]+q_y[it_q]*dist_y[it...]+q_z[it_q]*dist_z[it...] for it in ids_utri];
+
+        # Promedio de productos puntos de distintas direcciones, mismas magnitudes 
+        #pp_mean=map(s->mean(s),pp);
+
+    #    pp_mean=meanPP(q_x[it_q],q_y[it_q],q_z[it_q],dist_x,dist_y,dist_z,ids_utri);
+
+        # Cálculo de la densidad para distintos vectores de onda
+    #    S_q[it_q]=mapreduce(s->cos(s),+,pp_mean)^2 + mapreduce(s->sin(s),+,pp_mean)^2
+
+        #data[id]=mean(sum.([2*cos.(q_dom[id]*it) for it in pp]));
+    #end
+
+    
+
+
+
+
+    #[dist_x[s..] for s in ids]
+
+
 
     # Calcular el producto punto para distintas direcciones
-    pp=[q_x[it]*dist_x+q_y[it]*dist_y+q_z[it]*dist_z for it in eachindex(q_x)];
+    #pp=[q_x[it]*dist_x+q_y[it]*dist_y+q_z[it]*dist_z for it in eachindex(q_x)];
     
     # Get upper triangle
-    pp=reduce(hcat,[filter(!iszero,it[utri]) for it in pp]);
+    #pp=reduce(hcat,[filter(!iszero,it[utri]) for it in pp]);
 
 
     #pp_x=[vq*dist_x for vq in q_x];
@@ -98,16 +157,16 @@ time_instant=time_instants[end];
 
     #pp=pp_x .+ pp_y .+ pp_z;
 
-    q_min=2*pi/lambda_f;
-    q_max=2*pi/lambda_o;
-    q_dom=range(q_min,q_max,length=N_lambda);
+    #q_min=2*pi/lambda_f;
+    #q_max=2*pi/lambda_o;
+    #q_dom=range(q_min,q_max,length=N_lambda);
 
     #A=[mean(sum.([2*cos.(q*it) for it in pp])) for q in q_dom];
     
-    data=zeros(N_lambda);
-    Threads.@threads for id in eachindex(q_dom)
-        data[id]=mean(sum.([2*cos.(q_dom[id]*it) for it in pp]));
-    end
+    #data=zeros(N_lambda);
+    #Threads.@threads for id in eachindex(q_dom)
+    #    data[id]=mean(sum.([2*cos.(q_dom[id]*it) for it in pp]));
+    #end
 
 
 
