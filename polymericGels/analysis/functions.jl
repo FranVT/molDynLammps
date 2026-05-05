@@ -82,7 +82,7 @@ function structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
     q_domain=collect(first(unique(data[1,:])));
 
     # Compute assembly average and scale of 1/N_particles 
-    Sq=reduce(vcat,mean(reduce(hcat,data[2,:]),dims=2))./length(r_exp);
+    Sq=reduce(vcat,mean(reduce(hcat,data[2,:]),dims=2))./length(r_exp[1]);
 
     return [q_domain,Sq]
 end

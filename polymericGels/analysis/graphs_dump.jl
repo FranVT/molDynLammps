@@ -80,10 +80,10 @@ time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
 qdomain_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].q_domain) for it in eachindex(Sq)];
 Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
 
-id_time=1;
+id_time=length(Sq_plot[1]);
 
 qdomain_tf=[qdomain_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
+Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)]./500;
 
 #peaks_Sq_tf=[findmaxima(s) for s in Sq_tf];
 #peaks_q=qdomain_tf[1][peaks_Sq_tf[1].indices];
@@ -103,7 +103,7 @@ Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
         ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(nothing,nothing,0,5),
+        limits=(nothing,nothing,0,20),
         #xscale=log10,
         #yscale=log10
     )
@@ -119,25 +119,9 @@ Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
     #    vlines!(ax,p,linestyle=:solid)
     #end
 
-    #vlines!(ax,(2*pi)/(1.2*0.5),linestyle=:solid)
-
-
-    #    annotation!(-200, 0, 0, 0, path = Ann.Paths.Line(), text = "Line()")
-
-    annotation!(ax, pi,4, 2*pi/1.2,4,
-        text = L"\frac{2\pi}{1.2}",
-        path = Ann.Paths.Arc(0.3),
-        style = Ann.Styles.LineArrow(),
-        labelspace = :data
-        )
-    
-    annotation!(ax, 2*pi,4, 2*pi/(1.2*0.5),4,
-        text = L"\frac{2\pi}{0.24}",
-        path = Ann.Paths.Arc(0.3),
-        style = Ann.Styles.LineArrow(),
-        labelspace = :data
-        )
-
+    vlines!(ax,(2*pi),linestyle=:solid)
+    vlines!(ax,(2*pi)/(1.2),linestyle=:solid)
+    #vlines!(ax,(2*pi)/(3*1.2),linestyle=:solid)
 
 
     for it in eachindex(Sq_tf)

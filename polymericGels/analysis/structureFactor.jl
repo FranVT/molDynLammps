@@ -18,7 +18,7 @@ SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
 dat_files=CSV.read(DAT_PATH,DataFrame);
 
 # Selection of the system by parameters
-phi=0.05;
+phi=0.01;
 Temp=0.05;
 N_part=5000.0;
 CL_con=0.05;
@@ -35,10 +35,10 @@ dat_DF = subset(dat_files,
 dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
 
 # Parametros para obtener el factor de estructura
-N_qu=2^7; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
-lambda_o=0.5; # Limites del rango a explorar (Monomero)
+N_qu=2^9; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
+lambda_o=1; # Limites del rango a explorar (Monomero)
 lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
-N_lambda=2^9; # Cantidad de magnitudes
+N_lambda=2^7; # Cantidad de magnitudes
 N_instants=2;
 
 # Seleccion de time instants
@@ -63,4 +63,4 @@ Sq_df=DataFrame(;
     id=unique(dat_DF.id)[1]
 )
 
-#CSV.write(joinpath(SAVE_DIR,string("structureFactor",Sq_df.id[1],".csv")),Sq_df)
+CSV.write(joinpath(SAVE_DIR,string("structureFactor",Sq_df.id[1],".csv")),Sq_df)

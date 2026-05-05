@@ -1,3 +1,7 @@
+"""
+    Script to debug stuff
+"""
+
 # Get directories 
 MAIN_DIR=pwd();
 DAT_PATH=joinpath(MAIN_DIR,"datFiles","experiments_dat.csv");
