@@ -71,13 +71,12 @@ dat_DF = subset(dat_files,
 dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
 
 # Parametros para obtener el factor de estructura
-N_qu=2^5; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
+N_qu=2^7; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
 lambda_o=1; # Limites del rango a explorar (Monomero)
 lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
 N_lambda=64; # Cantidad de magnitudes
 N_instants=2;
 
-#=
 # Seleccion de time instants
 aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
 ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
@@ -93,8 +92,8 @@ time_instant=time_instants[1];
     N_phi=Int64(sqrt(div(N_qu,2)));
     N_theta=Int64(2*N_phi);
 
-    theta=2*pi*rand(N_theta);
-    phi=pi*rand(N_phi); 
+    theta=2*pi*range(0,1,length=N_theta);
+    phi=pi*range(0,1,length=N_phi); 
 
     # Calcular la densidad promedio de cada magnitud
     q_min=2*pi/lambda_f;
@@ -115,6 +114,8 @@ time_instant=time_instants[1];
     q_y=[mag*q_y for mag in q_dom];
     q_z=[mag*q_z for mag in q_dom];
 
+
+
     # Obtenemos los dumps de los N experimentos para un instante de tiempo
     dumps=[getDump(path,time_instant) for path in dump_paths];
 
@@ -123,7 +124,7 @@ time_instant=time_instants[1];
 
     # Realizar el cálculo para distintos experimentos
     S_q=[zeros(N_lambda) for s in eachindex(r_exp)];
-    for it_r in eachindex(r_exp)
+    for it_r in 1:1 #eachindex(r_exp)
         # Obtener las distancias considerando condiciones periodicas de frontera 
         dist_x,dist_y,dist_z=computeDistances(r_exp[it_r],lambda_f);
 
@@ -139,9 +140,9 @@ time_instant=time_instants[1];
         println(it_r)
 
     end
-=#
 
 
+#=
 fig=Figure()
 ax=Axis(fig[1:1,1:1],
         limits=(nothing,nothing,0,1.0e6)
@@ -162,7 +163,7 @@ vlines!(ax,2*pi/(0.0625*lambda_f),linestyle=:solid,color=:black)
 
 scatterlines!(ax,q_dom,mean(S_q))
 
-
+=#
 
 
 

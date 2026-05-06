@@ -96,6 +96,60 @@ Considerando que la mayor distancia que se puede encontrar entre partículas es 
     B = \sum_{j=1}^{N}\sum_{k=1}^{N}\sin\qty(\vec{q}\cdot\qty(\vec{r}_{j}-\vec{r}_{k})).
 \end{gather*}
 
+\dots 
+
+\section{Discusión con Claudia acerca del factor de estructura}
+
+Pues la intución está en que cometí un error en la forma en cómo se mapea el vector de onda \(\vec{q}\).
+Caludia comentó que genera el vector de onda al definir un dominio para cada una de las componentes con un resolución mínima. 
+Después agrupa los componentes en términos de magnitud.
+
+Esa metodología difiere en cómo yo estoy realizando la binarización del vector de onda.
+Porque yo divido entre magnitud y direcciones, por lo que no estoy realizando un muestreo adecuado en el espacio recíproco.
+
+\subsection{Definición del espacio recíproco}
+
+La forma en cómo lo sugiere Claudia es que se defina un máximo y un mínimo.
+En este caso se tiene que \(\lambda\in\qty[1,L]\).
+Pero esa restricción solamente afecta a la magnitud del vector de onda, no en las direcciones.
+Por lo que es posible definir que las componentes del vector de onda tengan el siguiente dominio \(q_{i}\in\qty[-L,L]\), con \(i\) representando las direcciones cartesianas.
+
+\paragraph{Implementación.}
+Lo que cambie fue que ya no se generan puntos aleatorios, si no que se genera el vector unitario equiespaciado en coordenadas esféricas.
+Después analice bien cómo estaba calaculando el producto punto y esta mal paralelizado/optimizado.
+
+\subsection{Cálculo del producto punto optimizado}
+
+La idea es realizar una multiplicación matricial para optimizar el cálculo del producto punto entre el vector de onda con el vector distancia.
+Aprovecharé la propiedad conmutativa de la sumatoria para segmentar la sumatoria en los términos $A$ y $B$.
+
+El vector de onda se puede representar por un vector columna, \[\vec{q}^{(\lambda)}=\begin{bmatrix}q_x^{(\lambda)} \\ q_z^{(\lambda)} \\ q_z^{(\lambda)}\end{bmatrix}.\]
+Cómo se tienen \(N_{d}=\num{12.5d6}\) distancias, podemos representar todas las direcciones de 3 columnas con \(N_{d}\) renglones,
+\begin{gather*}
+    M_{d^{(jk)}} = 
+        \begin{bmatrix}
+            d_{x}^{(jk)} & d_{y}^{(jk)} & d_{z}^{(jk)} \\
+            d_{x}^{(jk)} & d_{y}^{(jk)} & d_{z}^{(jk)} \\
+            \vdots & \vdots & \vdots \\
+            d_{x}^{(jk)} & d_{y}^{(jk)} & d_{z}^{(jk)}
+        \end{bmatrix}.
+\end{gather*}
+Por lo tanto, se puede paralelizar el cálculo del producto punto para \(N_{d}\) direcciones usando una multiplicación matricial.
+\begin{gather*}
+    \vec{q}^{(\lambda)}\cdot\vec{d}^{(jk)} = 
+    \begin{bmatrix}
+            d_{x}^{(jk)} & d_{y}^{(jk)} & d_{z}^{(jk)} \\
+            d_{x}^{(jk)} & d_{y}^{(jk)} & d_{z}^{(jk)} \\
+            \vdots & \vdots & \vdots \\
+            d_{x}^{(jk)} & d_{y}^{(jk)} & d_{z}^{(jk)}
+        \end{bmatrix}
+        \begin{bmatrix}q_x^{(\lambda)} \\ q_z^{(\lambda)} \\ q_z^{(\lambda)}\end{bmatrix}
+\end{gather*}
+
+Si la memoria RAM no da para almacenar la matriz \(M_{d^{jk}}\) se puede seccionar por subsecciones de 3 columnas por $n_{d}$ renglones y calcular la multiplicación matricial.
+
+Posteriormente se evaluan las funciones trigonométricas usando el vector resultante cómo argumento, se suman y se guarda el resultado.
+
 
 
 \end{document}
