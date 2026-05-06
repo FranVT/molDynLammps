@@ -339,6 +339,9 @@ INPUT ./docs/../Figures/may4/fig_factorEstructuraCambios_tf_zoom.png
 INPUT ./docs/../Figures/may5/fig_SqCorreccion_phi5.png
 INPUT ./docs/../Figures/may5/fig_SqCorreccion_phi5.png
 INPUT ./docs/../Figures/may5/fig_SqCorreccion_phi5.png
+INPUT ./docs/../Figures/may5/fig_SqCorreccion_phi1.png
+INPUT ./docs/../Figures/may5/fig_SqCorreccion_phi1.png
+INPUT ./docs/../Figures/may5/fig_SqCorreccion_phi1.png
 INPUT ./main.aux
 INPUT ./main.out
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb

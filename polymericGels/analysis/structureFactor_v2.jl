@@ -78,6 +78,7 @@ N_instants=2;
 
 
 
+#=
 # Seleccion de time instants
 aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
 ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
@@ -140,8 +141,8 @@ time_instant=time_instants[end];
 
     end
 
+=#
 
-#=
 fig=Figure()
 ax=Axis(fig[1:1,1:1],
         limits=(1,nothing,0,1e5)
@@ -153,7 +154,6 @@ vlines!(ax,2*pi/(3*1.2))
 
 scatterlines!(ax,q_dom,mean(S_q))
 
-=#
 
 
 
