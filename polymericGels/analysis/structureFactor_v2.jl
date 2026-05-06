@@ -7,6 +7,7 @@ using DataFrames, CSV
 using Statistics, StatsBase
 using UUIDs, LinearAlgebra
 using Distances, Random
+using GLMakie
 
 Random.seed!(1234)
 
@@ -41,7 +42,7 @@ include("functions.jl")
         dist_y=[dist_y[it...] for it in ids_utri];
         dist_z=[dist_z[it...] for it in ids_utri];
 
-        return (dist_x,dist_y,dist_z)
+        return [dist_x dist_y dist_z]
         #return (r[1],r[2],r[3])
     end
 
@@ -84,7 +85,7 @@ aux_id=aux_timeStep[ind];
 
 time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux_id];
 
-time_instant=time_instants[1];
+time_instant=time_instants[end];
 
     N_part=Int(dat_DF.Npart[1]);
 
@@ -122,6 +123,17 @@ time_instant=time_instants[1];
     # Vector de N elementos. Cada elemento es la posición de N partículas de los N_exp.
     r_exp=[getPosition(df) for df in dumps];
 
+        dist=computeDistances(r_exp[1],lambda_f);
+        q_lambda=[q_x[1] q_y[1] q_z[1]];
+        pp=dist*q_lambda[1,:];
+        S_q_lambda=mapreduce(s->cos(s),+,pp)^2 + mapreduce(s->sin(s),+,pp)^2
+
+
+
+
+
+#=
+
     # Realizar el cálculo para distintos experimentos
     S_q=[zeros(N_lambda) for s in eachindex(r_exp)];
     for it_r in 1:1 #eachindex(r_exp)
@@ -141,8 +153,6 @@ time_instant=time_instants[1];
 
     end
 
-
-#=
 fig=Figure()
 ax=Axis(fig[1:1,1:1],
         limits=(nothing,nothing,0,1.0e6)
@@ -157,14 +167,10 @@ vlines!(ax,2*pi/(0.25*lambda_f),linestyle=:solid,color=:black)
 vlines!(ax,2*pi/(0.125*lambda_f),linestyle=:solid,color=:black)
 vlines!(ax,2*pi/(0.0625*lambda_f),linestyle=:solid,color=:black)
 
-
-
-
-
 scatterlines!(ax,q_dom,mean(S_q))
 
-=#
 
+=#
 
 
 
