@@ -189,11 +189,29 @@ Para intentar entender que onda con esto analizaré los dominios y rangos de los
 
 Comezando con el producto punto,
 \begin{align*}
-    \vec{q}\cdot\vec{r}_{j}&=\frac{2\pi}{\lambda}\hat{r}\cdot\vec{r}_{j} \\
-                           &=\frac{2\pi}{\lambda}\left(r_{1}^{j}r_{x} + r_{2}r^{j}_{y} + r_{3}r^{j}_{z} \right).
+    \vec{q}\cdot\vec{r}_{j}&=2\pi\frac{d_{jk}}{\lambda}\hat{q}\cdot\hat{r}_{jk}
 \end{align*}
+se observan los siguientes dos términos, \(2\pi\frac{d_{jk}}{\lambda}\) y \(\hat{q}\cdot\hat{r}_{jk}\).
+Por propiedades de producto punto entre vectores unitarios, \(\hat{q}\cdot\hat{r}_{jk}\in\qty[0,1]\).
+Por otro lado, la distancia entre dos partículas centrales\footnote{La mínima distancia es debido al potencial WCA, mientrás que el máximo de la distancia es por las condiciones de frontera.} va desde \(1\) hasta \(L/2\).
+Recordando que \(\lambda\in\qty[1,L]\), entonces,
+\begin{gather*}
+    \frac{d_{jk}}{\lambda} =\left\{
+        \begin{array}{cc}
+            1/1 & \min(d_{jk}),\min(\lambda) \\
+            1/L & \min(d_{jk}),\max(\lambda) \\
+            (L/2)/1 & \max(d_{jk}),\min(\lambda) \\
+            (L/2)/L & \max(d_{jk}),\max(\lambda)
+        \end{array}
+        \right.
+\end{gather*}
+es decir que,
+\(\dfrac{d_{jk}}{\lambda}\in\qty[\dfrac{1}{L},\dfrac{L}{2}]\).
+Por lo tanto el producto entre el vector de onda con el vector distancia entre partículas es \(\vec{q}\cdot\vec{r}_{j}\in\qty[\dfrac{2\pi}{L},\pi L]\).
+Por otra parte el rango de la función \(\cos\) es \(-1,1\) y para \(\sin\) es \(0,1\).
 
-
+Cuando los vectores unitarios son ortogonales se tiene que \(\cos(0)=1\) y que \(\sin(0)=0\).
+Cuando los vectores unitarios son paralelos se tiene que \(\cos(\dfrac{2\pi}{L})~\mathrm{a}~\cos(\pi L)\) y que \(\sin(\dfrac{2\pi}{L})~\mathrm{a}~\sin(\pi L)\).
 
 %Mi intución es que el producto punto no está evaluada.
 
