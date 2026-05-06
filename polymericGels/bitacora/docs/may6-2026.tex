@@ -38,20 +38,18 @@ A las 11:40 acabó.
 
 \begin{figure}[ht!]
     \centering
-    \includegraphics[width=0.9\textwidth]{../Figures/may6/fig_SqCorreccion_phi5_r.png}
-    \caption{\(t=0\) Factor de estructura con la corrección. \(\phi=5\%\). Las líneas verticales están ubicadas en \(|\vec{q}|=2\pi/1.2,~|\vec{q}|=2\pi/(2\cdot1.2),~|\vec{q}|=2\pi/(3\cdot1.2)\)}
-\end{figure}
-
-\subsection{Regresando a distancia entre partículas}
-
-\begin{figure}[ht!]
-    \centering
     \includegraphics[width=0.9\textwidth]{../Figures/may6/fig_SqCorreccion_phi5_d_compt.png}
     \caption{Factor de estructura con la corrección. \(\phi=5\%\). 
     Las líneas verticales punteadas en azúl están ubicadas en \(|\vec{q}|=2\pi/1.2,~|\vec{q}|=2\pi/(2\cdot1.2),~|\vec{q}|=2\pi/(3\cdot1.2)\).
     Las líneas verticales punteadas en negro están ubicadas en \(|\vec{q}|\in\{2\pi/L,2\pi/L/2,2\pi/L/4,2\pi/L/8,2\pi/L/16\}\).
 }
 \end{figure}
+
+De la figura anterior se puede observar que los picos a esas intensidades corresponden a la longitud de la caja.
+Después hay un pico entre \(2\pi/L/2 \leq|\vec{q}|\leq 2\pi/L/4\).
+Después de \(|\vec{q}|>2\pi/L/4\) parece que ya no hay picos.
+Por lo tanto se hace un \emph{zoom} al disminuir el rango en el eje $y$.
+
 
 \begin{figure}[ht!]
     \centering
@@ -62,6 +60,11 @@ A las 11:40 acabó.
 }
 \end{figure}
 
+Este primer zoom ayuda a oberservar otros dos picos entre \(2\pi/L/4 \leq|\vec{q}|\leq 2\pi/L/8\).
+Pero siguen sin apreciarse picos en términos de la longitud de enlace entre partículas patchy.
+Por lo tanto se hace un segundo \emph{zoom}.
+
+
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=0.9\textwidth]{../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom2.png}
@@ -71,6 +74,27 @@ A las 11:40 acabó.
 }
 \end{figure}
 
+Finalmente observamos algunos picos en terminos de la longitud de enlace y una diferencia entre la configuración inicial y la configuración final.
+Podemos observar que hay un pico exactamente en \(|\vec{q}|=2\pi/1.2\), la cuál es la distancia de enlace.
+También se observan 3 picos siguientes marcados con una línea punteada gris en \(|\vec{q}|\in\{2\pi/(1.05\cdot1.2),2\pi/(1.15\cdot1.2),2\pi/(1.25\cdot1.2)\}\)
+
+Por último, la \emph{gran} diferencia entre la primera configuración y la última configuración del sistema es magnitud del factor de estructura cuando \(\lambda\to1\).
+Para la última configuración es considerablemente mayor que al inicio de la simulación.
+
+%Considerando que la intensidad es debido a una interferencia constructiva 
+
+\paragraph{Acerca de los picos de intensidad.}
+Aún no me queda muy claro cómo surgen los picos.
+Se menciona que tiene que ver con la interferencia cosntructiva y me ahce sentido, porque es una sumatoria de funciones trigonométricas, pero aún no me queda muy claro cómo se \emph{controla} la interferencia constructiva.
+Está el producto punto y el cociente entre la longitud de onda con la distancia de las partículas.
+
+
+Considerando que la mayor distancia que se puede encontrar entre partículas es \(L/2\) debido a las condiciones periódicas de frontera, podemos analizar facilmente le valor del factor de estructura para cuando \(\lambda=L\).
+
+\begin{gather*}
+    A = \sum_{j=1}^{N}\sum_{k=1}^{N}\cos\qty(\vec{q}\cdot\qty(\vec{r}_{j}-\vec{r}_{k})),\quad
+    B = \sum_{j=1}^{N}\sum_{k=1}^{N}\sin\qty(\vec{q}\cdot\qty(\vec{r}_{j}-\vec{r}_{k})).
+\end{gather*}
 
 
 
