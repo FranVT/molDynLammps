@@ -1,0 +1,47 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Prueba con solo la posición de las partículas. No la distancia.}
+
+Sin las distancias es bastante rápido.
+Lo que más tarda es la función computeDensity.
+
+Ayer tuve que esperar, aproximadamente 3 hrs para 10 experimentos.
+Eliminando el análisis con las distancias tuve que esperar medio minuto.
+
+\subsection{Resultados}
+
+Pues en la siguiente gráfica se observa la gran diferencia cuando solo se usa la posición de las partículas y no se usa la distancia entre las partículas.
+
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/may6/fig_SqCorreccion_phi5_r.png}
+    \caption{Factor de estructura con la corrección. \(\phi=5\%\). Las líneas verticales están ubicadas en \(|\vec{q}|=2\pi/1.2,~|\vec{q}|=2\pi/(2\cdot1.2),~|\vec{q}|=2\pi/(3\cdot1.2)\)}
+\end{figure}
+
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/may6/fig_SqCorreccion_phi1_r.png}
+    \caption{Factor de estructura con la corrección. \(\phi=1\%\). Las líneas verticales están ubicadas en \(|\vec{q}|=2\pi/1.2,~|\vec{q}|=2\pi/(2\cdot1.2),~|\vec{q}|=2\pi/(3\cdot1.2)\)}
+\end{figure}
+
+Pues si dan dos factores de estructura distintos, lo cuál es bueno saberlo.
+Pero aún no se cómo interpretar estos análisis por lo que, por el momento, es \emph{información inútil} para mi.
+
+\subsection{Comparación en \(t=0\) con timepo final usando distancias ente partículas}
+
+8:43 se empezó a ejecutar el código.
+A las 11:40 acabó.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/may6/fig_SqCorreccion_phi5_r.png}
+    \caption{\(t=0\) Factor de estructura con la corrección. \(\phi=5\%\). Las líneas verticales están ubicadas en \(|\vec{q}|=2\pi/1.2,~|\vec{q}|=2\pi/(2\cdot1.2),~|\vec{q}|=2\pi/(3\cdot1.2)\)}
+\end{figure}
+
+
+
+\end{document}

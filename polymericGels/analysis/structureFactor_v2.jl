@@ -42,6 +42,7 @@ include("functions.jl")
         dist_z=[dist_z[it...] for it in ids_utri];
 
         return (dist_x,dist_y,dist_z)
+        #return (r[1],r[2],r[3])
     end
 
 
@@ -53,7 +54,7 @@ SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
 dat_files=CSV.read(DAT_PATH,DataFrame);
 
 # Selection of the system by parameters
-phi=0.01;
+phi=0.05;
 Temp=0.05;
 N_part=5000.0;
 CL_con=0.05;
@@ -76,8 +77,6 @@ lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
 N_lambda=64; # Cantidad de magnitudes
 N_instants=2;
 
-
-
 #=
 # Seleccion de time instants
 aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
@@ -86,7 +85,7 @@ aux_id=aux_timeStep[ind];
 
 time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux_id];
 
-time_instant=time_instants[end];
+time_instant=time_instants[1];
 
     N_part=Int(dat_DF.Npart[1]);
 
@@ -140,21 +139,28 @@ time_instant=time_instants[end];
         println(it_r)
 
     end
-
 =#
+
 
 fig=Figure()
 ax=Axis(fig[1:1,1:1],
-        limits=(1,nothing,0,1e5)
+        limits=(nothing,nothing,0,1.0e6)
        )
-vlines!(ax,2*pi/(1.2))
-vlines!(ax,2*pi/(2*1.2))
-vlines!(ax,2*pi/(3*1.2))
+vlines!(ax,2*pi/(1.2),linestyle=:dash,color=:blue)
+vlines!(ax,2*pi/(2*1.2),linestyle=:dash,color=:blue)
+vlines!(ax,2*pi/(3*1.2),linestyle=:dash,color=:blue)
+
+#vlines!(ax,2*pi/(lambda_f),linestyle=:solid,color=:black)
+vlines!(ax,2*pi/(0.5*lambda_f),linestyle=:solid,color=:black)
+vlines!(ax,2*pi/(0.25*lambda_f),linestyle=:solid,color=:black)
+vlines!(ax,2*pi/(0.125*lambda_f),linestyle=:solid,color=:black)
+vlines!(ax,2*pi/(0.0625*lambda_f),linestyle=:solid,color=:black)
+
+
+
 
 
 scatterlines!(ax,q_dom,mean(S_q))
-
-
 
 
 
