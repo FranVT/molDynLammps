@@ -375,6 +375,15 @@ INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_r.png
 INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_r.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom1.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom1.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom1.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom2.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom2.png
+INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom2.png
 INPUT ./main.aux
 INPUT ./main.out
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb

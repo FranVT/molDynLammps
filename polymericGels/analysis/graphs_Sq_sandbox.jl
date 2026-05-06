@@ -58,16 +58,16 @@ qdomain=range(q_min,q_max,length=length(Sq_phi5_tf));
     ax_f2=Axis(fig[1:1,1:1])
     ax_f3=Axis(fig[1:1,1:1])
 
-
+y_max=5.0e4;
 
     ax=Axis(fig[1:6,1:3],
-        title=latexstring("\\mathrm{Structure~factor}"),
+        #title=latexstring("\\mathrm{Structure~factor}"),
         #subtitle=latexstring(subtitle),
         xlabel=L"|\vec{q}|=\frac{2\pi}{\lambda}",
         ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(nothing,nothing,nothing,nothing),
+        limits=(nothing,nothing,0,y_max),
         #xscale=log10,
         #yscale=log10
     )
@@ -94,6 +94,14 @@ qdomain=range(q_min,q_max,length=length(Sq_phi5_tf));
     vlines!(ax,2*pi/(0.0625*L),linestyle=:solid,color=:black)
 
     vlines!(ax,2*pi/(1.2),linestyle=:dash,color=:blue)
+    
+    vlines!(ax,2*pi/((1.05)*1.2),linestyle=:dash,color=:grey)   
+    #vlines!(ax,2*pi/((1.1)*1.2),linestyle=:dash,color=:grey)   
+    vlines!(ax,2*pi/((1.15)*1.2),linestyle=:dash,color=:grey)   
+    #vlines!(ax,2*pi/((1.5)*1.2),linestyle=:dash,color=:grey)   
+    vlines!(ax,2*pi/((1.25)*1.2),linestyle=:dash,color=:grey)
+
+
     vlines!(ax,2*pi/(2*1.2),linestyle=:dash,color=:blue)
     vlines!(ax,2*pi/(3*1.2),linestyle=:dash,color=:blue)
 
