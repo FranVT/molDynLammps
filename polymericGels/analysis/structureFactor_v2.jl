@@ -75,7 +75,6 @@ N_lambda=64; # Cantidad de magnitudes
 N_instants=2;
 
 
-#=
 # Seleccion de time instants
 aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
 ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
@@ -108,42 +107,37 @@ time_instant=time_instants[end];
     q_y=mapreduce(ph->map(th->sin(th)*sin(ph),theta),vcat,phi);
     q_z=mapreduce(ph->map(th->cos(ph),theta),vcat,phi); 
 
-    # Evaluar distintas magnitudes
-    q_x=[mag*q_x for mag in q_dom];
-    q_y=[mag*q_y for mag in q_dom];
-    q_z=[mag*q_z for mag in q_dom];
-
-
     # Obtenemos los dumps de los N experimentos para un instante de tiempo
     dumps=[getDump(path,time_instant) for path in dump_paths];
 
     # Vector de N elementos. Cada elemento es la posición de N partículas de los N_exp.
     r_exp=[getPosition(df) for df in dumps];
 
+    # Allocate memory      
+    S_q=[zeros(N_lambda) for _ in eachindex(r_exp)];
+
+    for it_exp in eachindex(r_exp)
         # Seleccionar un experimento
-        dist=computeDistances(r_exp[1],lambda_f);
-       
-        S_q=zeros(N_lambda);
+        dist=computeDistances(r_exp[it_exp],lambda_f);
+ 
         for it_lambda in 1:N_lambda
             # Seleccionar una sola magnitud
-            q_lambda=[q_x[it_lambda] q_y[it_lambda] q_z[it_lambda]];
-        
-            # Calcualr el producto punto para todas las direcciones usando multiplicación matricial 
-            pp=map(s->dist*q_lambda[s,:],1:N_qu);
-        
+            # Calcular el producto punto para todas las direcciones usando multiplicación matricial 
+            pp=map(s->dist*((q_dom[it_lambda]).*[q_x[s],q_y[s],q_z[s]]),1:N_qu);
+            println("Dot product done")
+
             # Calcular la densidad para una sola magnitud, dada N_qu direcciones
-            #rho_q=[computeDensity(it_pp) for it_pp in pp];
             rho_q=map(s->computeDensity(s),pp);
+            println("Density done")
 
-            # Obtener el factor de estructura para una sola magnitud
-            S_q_lambda=mean(rho_q)/N_part;
-
-            # Almacenar el factor de estructura
-            S_q[it_lambda]=S_q_lambda;
+            # Obtener el factor de estructura para una sola magnitud y almacenar el resultado
+            S_q[it_exp][it_lambda]=mean(rho_q)/N_part;
 
             println(it_lambda)
         end
-=#
+        println("Experiment",it_exp," done")
+    end
+
 
 
 #=
