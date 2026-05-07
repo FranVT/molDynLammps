@@ -382,6 +382,11 @@ INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom1.png
 INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom2.png
 INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom2.png
 INPUT ./docs/../Figures/may6/fig_SqCorreccion_phi5_d_compt_zoom2.png
+INPUT ./docs/may7-2026.tex
+INPUT ./docs/may7-2026.tex
+INPUT ./docs/../Figures/may7/fig_SqCorreccion3_phi5_d_zoom1.png
+INPUT ./docs/../Figures/may7/fig_SqCorreccion3_phi5_d_zoom1.png
+INPUT ./docs/../Figures/may7/fig_SqCorreccion3_phi5_d_zoom1.png
 INPUT ./main.aux
 INPUT ./main.out
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb

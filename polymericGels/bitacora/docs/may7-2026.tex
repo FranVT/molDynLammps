@@ -1,0 +1,26 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Observaciones de la implementación anterior}
+
+Estoy ocupando 40 Gb de RAM para ejecutar el análisis.
+Mi intución es que puedo reducir el uso de la RAM con la forma en cómo estoy definiendo el dominio de los vectores de onda.
+Puedo ocupar una sola matriz de vectores unitarios y reutilizarla para ir cambiando la magnitud del vector de onda.
+
+\subsection{Resultados corrección anterior}
+
+Se realizó una discretización equiespaciada en los dominios angulares y se corrigío el cálculo del producto punto.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../Figures/may7/fig_SqCorreccion3_phi5_d_zoom1.png}
+    \caption{Factor de estructura con la corrección. \(\phi=5\%\). 
+    Las líneas verticales punteadas en azúl están ubicadas en \(|\vec{q}|=2\pi/1.2,~|\vec{q}|=2\pi/(2\cdot1.2),~|\vec{q}|=2\pi/(3\cdot1.2)\).
+    Las líneas verticales punteadas en negro están ubicadas en \(|\vec{q}|\in\{2\pi/L,2\pi/L/2,2\pi/L/4,2\pi/L/8,2\pi/L/16\}\).
+}
+\end{figure}
+
+
+
+\end{document}
