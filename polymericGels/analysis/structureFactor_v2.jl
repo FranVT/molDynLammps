@@ -135,7 +135,7 @@ time_instant=time_instants[end];
 
             println(it_lambda)
         end
-        println("Experiment",it_exp," done")
+        println("Experiment ",it_exp," done")
     end
 
 
