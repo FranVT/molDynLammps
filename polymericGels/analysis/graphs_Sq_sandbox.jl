@@ -40,13 +40,14 @@ set_theme!(
 
 # Get data
 
-d = load(joinpath(pwd(),"Sq_phi5.jld2"));
+d = load(joinpath(pwd(),"Sq_phi1_tf.jld"));
 Sq_phi5_tf=d["Sq"];
 
-d = load(joinpath(pwd(),"Sq_phi5_to.jld2"));
+d = load(joinpath(pwd(),"Sq_phi1_to.jld"));
 Sq_phi5_to=d["Sq"];
 
-L=37.75791;
+L=64.565034;
+#37.75791;
 r_c=1.2;
 
 q_min=2*pi/L;
@@ -58,7 +59,7 @@ qdomain=range(q_min,q_max,length=length(Sq_phi5_tf));
     ax_f2=Axis(fig[1:1,1:1])
     ax_f3=Axis(fig[1:1,1:1])
 
-y_max=5.0e4;
+y_max=10;
 
     ax=Axis(fig[1:6,1:3],
         #title=latexstring("\\mathrm{Structure~factor}"),
@@ -113,7 +114,7 @@ y_max=5.0e4;
     
 
    p1=plot!(ax_f,[0],[-1],
-            label=latexstring(5)
+            label=latexstring(1)
             )
     p1.visible = false
     Legend(fig[1:3,4],ax,L"\mathrm{Time}")
