@@ -23,7 +23,7 @@ include("functions.jl")
         return mapreduce(s->cos(s),+,pp)^2 + mapreduce(s->sin(s),+,pp)^2
     end
 
-    function getPositions(path,time_instant,dump_paths)
+    function getPositions(time_instant,dump_paths)
     """
         Extract the positions of N dataframes for one time instant.
     """
@@ -34,7 +34,7 @@ include("functions.jl")
         return [getPosition(df) for df in dumps];
     end
 
-    function computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,path,time_instant,dump_paths)
+    function computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instant,dump_paths)
     """
         Compute the structure factor of a time instant of one configuration
         Returns the average of N experiments.
@@ -59,7 +59,7 @@ include("functions.jl")
     q_z=mapreduce(ph->map(th->cos(ph),theta),vcat,phi); 
 
     # Get the position of N experiments at a given time instant
-    r_exp=getPositions(path,time_instant,dump_paths);
+    r_exp=getPositions(time_instant,dump_paths);
 
     # Allocate memory      
     S_q=[zeros(N_lambda) for _ in eachindex(r_exp)];
@@ -128,32 +128,28 @@ time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux
 
 time_instant=time_instants[end];
 
-    N_part=Int(dat_DF.Npart[1]);
+N_part=Int(dat_DF.Npart[1]);
 
-    S_q=computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,path,time_instant,dump_paths);
+S_q=computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instant,dump_paths);
 
-
-
-
-
-
-
-
+q_min=2*pi/lambda_f;
+q_max=2*pi/lambda_o;
+q_dom=range(q_min,q_max,length=N_lambda);
 
 
 fig=Figure()
 ax=Axis(fig[1:1,1:1],
-        limits=(first(q_dom),last(q_dom),0,10)
+        limits=(nothing,nothing,0,10)
        )
-vlines!(ax,2*pi/(1.2),linestyle=:dash,color=:blue)
-vlines!(ax,2*pi/(2*1.2),linestyle=:dash,color=:blue)
-vlines!(ax,2*pi/(3*1.2),linestyle=:dash,color=:blue)
+#vlines!(ax,2*pi/(1.2),linestyle=:dash,color=:blue)
+#vlines!(ax,2*pi/(2*1.2),linestyle=:dash,color=:blue)
+#vlines!(ax,2*pi/(3*1.2),linestyle=:dash,color=:blue)
 
 #vlines!(ax,2*pi/(lambda_f),linestyle=:solid,color=:black)
-vlines!(ax,2*pi/(0.5*lambda_f),linestyle=:solid,color=:black)
-vlines!(ax,2*pi/(0.25*lambda_f),linestyle=:solid,color=:black)
-vlines!(ax,2*pi/(0.125*lambda_f),linestyle=:solid,color=:black)
-vlines!(ax,2*pi/(0.0625*lambda_f),linestyle=:solid,color=:black)
+#vlines!(ax,2*pi/(0.5*lambda_f),linestyle=:solid,color=:black)
+#vlines!(ax,2*pi/(0.25*lambda_f),linestyle=:solid,color=:black)
+#vlines!(ax,2*pi/(0.125*lambda_f),linestyle=:solid,color=:black)
+#vlines!(ax,2*pi/(0.0625*lambda_f),linestyle=:solid,color=:black)
 
-scatterlines!(ax,q_dom,mean(S_q))
+scatterlines!(ax,(2pi)./q_dom,S_q)
 
