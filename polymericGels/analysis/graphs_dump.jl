@@ -80,10 +80,10 @@ time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
 qdomain_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].q_domain) for it in eachindex(Sq)];
 Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
 
-id_time=length(Sq_plot[1]);
+id_time=1; #length(Sq_plot[1]);
 
 qdomain_tf=[qdomain_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)]./500;
+Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
 
 #peaks_Sq_tf=[findmaxima(s) for s in Sq_tf];
 #peaks_q=qdomain_tf[1][peaks_Sq_tf[1].indices];
@@ -103,7 +103,7 @@ Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)]./500;
         ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(nothing,nothing,0,20),
+        limits=(nothing,nothing,0,10),
         #xscale=log10,
         #yscale=log10
     )
