@@ -5,60 +5,83 @@
 #   STRUCTURE FACTOR RELATED FUNCTIONS
 #######
 
-function getDump(dir,file_name)
-"""
-    Get the data from a single dump file that stores one timeste information
-"""
-    data = split.(readlines(joinpath(dir,file_name))," ")[9:end];
-    HEADERS=data[1][3:end];
-    INFO=parse.(Float64,reduce(hcat,data[2:end]))';
+function getPositions(time_instant,dump_paths)
+    """
+        Extract the positions of N dataframes for one time instant.
+    """
+        # Obtenemos los dumps de los N experimentos para un instante de tiempo
+        dumps=[getDump(path,time_instant) for path in dump_paths];
 
-    return DataFrame(INFO,HEADERS)
+        # Vector de N elementos. Cada elemento es la posición de N partículas de los N_exp.
+        return [getPosition(df) for df in dumps];
 end
 
-function dotSpherical(theta,phi,r)
-"""
-    Compute the dot product betwen a position and a unit vector r in psherical coordinates.
-"""
-    q_x=cos(theta)*sin(phi);
-    q_y=sin(theta)*sin(phi);
-    q_z=cos(phi);
-    return q_x*r[1]+q_y*r[2]+q_z*r[3]
+function computeDensity(pp)
+    """
+        Compute the density for the structure factor
+        pp is the dot product.
+        pp is an array. Each row represent the dot product of onde direction with a distance
+    """
+        return mapreduce(s->cos(s),+,pp)^2 + mapreduce(s->sin(s),+,pp)^2
 end
 
-function densityRhoQ(q_mag,dot_qr)
-"""
-    Compute the squared of the absolute value of the density at the reciprocal space.
-    |rho(r)|^2 = A(vec{q}cdotvec{r})^2 + B(vec{q}cdotvec{r}^2)
-    A = sumcos(); B = sumsin()
-"""
-    return sum(cos.(q_mag*dot_qr))^2 + sum(sin.(q_mag*dot_qr))^2
-end
+function computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instant,dump_paths)
+    """
+        Compute the structure factor of a time instant of one configuration
+        Returns the average of N experiments.
+    """
 
-function computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r)
-"""
-    Function that computes the static structure factor de different wave vectors.
-    Returns a vector with the following interpretation of the values:
-    [row] -> [magnitude]}
-"""
+    # Vector unitario del vector de onda
+    N_phi=Int64(sqrt(div(N_qu,2)));
+    N_theta=Int64(2*N_phi);
 
-    # Calculo del producto punto
-    dot_qr=[dotSpherical(th,ph,r) for th in theta, ph in phi];
+    theta=2*pi*range(0,1,length=N_theta).*rand(N_theta);
+    phi=pi*range(0,1,length=N_phi).*rand(N_phi); 
 
-    # Evaluación de la densidad y promedio
-    # [renglon x columna] -> [ mag x direccion ]
+    # Calcular la densidad promedio de cada magnitud
     q_min=2*pi/lambda_f;
     q_max=2*pi/lambda_o;
     q_dom=range(q_min,q_max,length=N_lambda);
 
-    rho_q=[densityRhoQ(l,d) for l in q_dom, d in dot_qr];
-    # Compute the avg of the different direction but same magnitude
-    rho_q=reduce(vcat,mean(mean(rho_q,dims=3),dims=2));
+    # Para todas las posiciones/factor de estructura
+    # Crear los vectores unitarios del vector de onda
+    q_x=mapreduce(ph->map(th->cos(th)*sin(ph),theta),vcat,phi); 
+    q_y=mapreduce(ph->map(th->sin(th)*sin(ph),theta),vcat,phi);
+    q_z=mapreduce(ph->map(th->cos(ph),theta),vcat,phi); 
 
-    # Compute the average with the same magnitude, different directions
-    return [q_dom,rho_q]
+    # Get the position of N experiments at a given time instant
+    r_exp=getPositions(time_instant,dump_paths);
+
+    # Allocate memory      
+    S_q=[zeros(N_lambda) for _ in eachindex(r_exp)];
+
+    for it_exp in eachindex(r_exp)
+        # Seleccionar un experimento
+        dist=reduce(hcat,r_exp[it_exp]);
+
+        for it_lambda in 1:N_lambda
+            # Seleccionar una sola magnitud
+            # Calcular el producto punto para todas las direcciones usando multiplicación matricial 
+            pp=map(s->dist*((q_dom[it_lambda]).*[q_x[s],q_y[s],q_z[s]]),1:N_qu);
+
+            # Calcular la densidad para una sola magnitud, dada N_qu direcciones
+            rho_q=map(s->computeDensity(s),pp);
+
+            # Obtener el factor de estructura para una sola magnitud y almacenar el resultado
+            S_q[it_exp][it_lambda]=mean(rho_q)/N_part;
+        end
+        println("Experiment ",it_exp," done")
+    end
+
+    return mean(S_q)
 
 end
+
+
+
+#######
+#   DUMP FUNCTIONS
+#######
 
 function getPosition(dump)
 """
@@ -73,46 +96,21 @@ function getPosition(dump)
 
 end
 
-function structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
+function getDump(dir,file_name)
 """
-    Compute the static structure factor
+    Get the data from a single dump file that stores one timeste information
 """
-    data=[computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r) for r in r_exp];
-    data=reduce(hcat,data);
-    q_domain=collect(first(unique(data[1,:])));
+    data = split.(readlines(joinpath(dir,file_name))," ")[9:end];
+    HEADERS=data[1][3:end];
+    INFO=parse.(Float64,reduce(hcat,data[2:end]))';
 
-    # Compute assembly average and scale of 1/N_particles 
-    Sq=reduce(vcat,mean(reduce(hcat,data[2,:]),dims=2))./length(r_exp[1]);
-
-    return [q_domain,Sq]
-end
-
-function getTimeEvolSq(N_qu,dump_paths,time_instant)
-"""
-    Compute the time evolution of the structure factor
-"""
-
-    # Vector unitario del vector de onda
-    N_phi=Int64(sqrt(div(N_qu,2)));
-    N_theta=Int64(2*N_phi);
-
-    theta=2*pi*rand(N_theta);
-    phi=pi*rand(N_phi); 
-
-    # Obtenemos los dumps de los N experimentos para un instante de tiempo
-    dumps=[getDump(path,time_instant) for path in dump_paths];
-
-    r_exp=[getPosition(df) for df in dumps];
-
-    Sq=structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
-   
-    return Sq
-
+    return DataFrame(INFO,HEADERS)
 end
 
 #######
 #   OTHER  FUNCTIONS
 #######
+
 
 function meanFixystem(dirs)
 """
