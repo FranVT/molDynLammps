@@ -21,7 +21,7 @@ SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
 dat_files=CSV.read(DAT_PATH,DataFrame);
 
 # Selection of the system by parameters
-phi=0.02;
+phi=0.05;
 Temp=0.05;
 N_part=5000.0;
 CL_con=0.05;

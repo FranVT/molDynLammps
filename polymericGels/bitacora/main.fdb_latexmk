@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1777925476.97 "main.aux" "main.bbl" "main" 1778260267.95185 2
-  "main.aux" 1778260267.73205 11303 2b920bd2b12536412cf76f622db3b2dd "pdflatex"
+["bibtex main"] 1777925476.97 "main.aux" "main.bbl" "main" 1778264771.83756 2
+  "main.aux" 1778264771.63315 11303 2b920bd2b12536412cf76f622db3b2dd "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1778260261.34628 "main.tex" "main.pdf" "main" 1778260267.9521 2
+["pdflatex"] 1778264765.34277 "main.tex" "main.pdf" "main" 1778264771.83773 2
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1776097119.09146 128397 dc8cded2bbafe8195c86cdaea92e40b2 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1776097118.76811 127314 7c5efae986e60281c7ad546cf8ed9a14 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1776097121.1949 128950 b259fc34906ff4c20552f96907d63131 ""
@@ -235,10 +235,10 @@
   "docs/may4-2026.tex" 1778031093.79751 12255 570f935d544d3a41e25522210db1e636 ""
   "docs/may6-2026.tex" 1778167168.87967 8328 0bfac91584a424898dcc452f56e47292 ""
   "docs/may7-2026.tex" 1778173775.52939 1727 17d1ea1a0ffc1608f58057d163c2aef7 ""
-  "docs/may8-2026.tex" 1778260260.86507 4395 6fee817bf04eb607e60fff0a790ec6fb ""
-  "main.aux" 1778260267.73205 11303 2b920bd2b12536412cf76f622db3b2dd "pdflatex"
+  "docs/may8-2026.tex" 1778264765.10622 4509 f0646c79b6301ffa654baf2a0283b738 ""
+  "main.aux" 1778264771.63315 11303 2b920bd2b12536412cf76f622db3b2dd "pdflatex"
   "main.bbl" 1777925477.009 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1778260267.7374 1798 4cee875c280af893a1a8e05d42e71ab8 "pdflatex"
+  "main.out" 1778264771.63604 1798 4cee875c280af893a1a8e05d42e71ab8 "pdflatex"
   "main.tex" 1778251078.23911 2462 ae414f1253a8f076074ca599687e43cb ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
