@@ -1,0 +1,33 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Organizar las funciones/scripts de análsis de resultados}
+
+Pues tengo un caos.
+
+\subsection{Definición de protocolo}
+
+El flujo general del script es el siguiente
+
+\begin{enumerate}
+    \item Enlistar todos los sistemas disponibles a analizar
+    \item Seleccionar el sistema a analizar
+    \item Extraer el archivo dat del sistema a analizar
+    \item Analizar la información
+\end{enumerate}
+
+La selección del sistema es en base a los siguientes parámetros, densidad de empaquetamiento, temperatura, número de partículas y concentración de \emph{cross-linkers}.
+
+\subsection{Metodología de los scripts}
+
+En esta sección escribiré el flujo de información que voy formando.
+
+\begin{enumerate}
+    \item Obtener los directorios donde se almacenan los resultados numéricos 
+    \item Extraer la información del archivo dat\footnote{Cuando se extrae se genera una nueva columna con el directorio del archivo} que hay cada uno de los directorios
+    \item Agrupar por parámetros del sistema: \(\phi,T,\mathrm{N}_{\mathrm{part}},\%\mathrm{CL},\mathrm{damp},dt\).
+    \item Crear un \emph{id} en términos de los parámetros anteriores
+\end{enumerate}
+
+\end{document}
