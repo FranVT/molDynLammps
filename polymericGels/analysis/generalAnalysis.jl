@@ -18,3 +18,15 @@ if up ==1
     createDatFiles();
 end
 
+# Extraer la información del dat file
+dat_files=extractDatFiles();
+
+# Selección de categorias
+categories=[:phi];
+
+# Creación de los subdataframes por sistema
+data_bySystem=groupby(dat_files,categories);
+
+# Analyze the structure factor per system
+analyzeStructureFactor(data_bySystem[1])
+

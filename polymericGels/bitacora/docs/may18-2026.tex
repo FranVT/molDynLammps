@@ -1,0 +1,27 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Organizar las funciones/scripts de análsis de resultados}
+
+La idea es la siguiente:
+
+\begin{minipage}{0.8\textwidth}
+    \large
+    \emph{Tener un script en donde se activen o desactiven funciones de análisis}.
+\end{minipage}
+
+Por ahora va el siguiente flujo de funciones:
+\begin{enumerate}
+    \item \verb|createDatFiles()|
+    \item \verb|extractDatFiles()|
+    \item \verb|analyzeStructureFactor()|
+\end{enumerate}
+
+\subsection{createDatFiles}
+
+Busca en un directorio específico los directorios de los sistemas disponibles a analizar y genera un archivo con información de los parámetros del sistema de cada simulación.
+
+
+
+\end{document}
