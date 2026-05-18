@@ -11,9 +11,11 @@ Random.seed!(1234)
 # Include auxiliary files
 include("functions.jl")
 
+# Activate functions
+up=0;
+Sq=0;
 
 # Update the data file with new systems
-up=0;
 if up ==1 
     createDatFiles();
 end
@@ -28,5 +30,8 @@ categories=[:phi];
 data_bySystem=groupby(dat_files,categories);
 
 # Analyze the structure factor per system
-analyzeStructureFactor(data_bySystem[1])
+if Sq == 1
+    map(s->analyzeStructureFactor(data_bySystem[s]),1:length(data_bySystem));
+end
+
 

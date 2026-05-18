@@ -179,9 +179,6 @@ function analyzeStructureFactor(dat_DF)
     Function that stores the structure factor of a system
 """
 
-# Path to the dumps
-dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
-
 # Parametros para obtener el factor de estructura
 lambda_o=1; # Limites del rango a explorar (Monomero)
 lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
@@ -189,6 +186,9 @@ N_part=Int(dat_DF.Npart[1]);
 N_qu=2^9; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
 N_lambda=2^8; # Cantidad de magnitudes
 N_instants=2;
+
+# Path to the dumps
+dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
 
 # Seleccion de time instants
 aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
