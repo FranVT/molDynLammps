@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1777925476.97 "main.aux" "main.bbl" "main" 1778264771.83756 2
-  "main.aux" 1778264771.63315 11303 2b920bd2b12536412cf76f622db3b2dd "pdflatex"
+["bibtex main"] 1777925476.97 "main.aux" "main.bbl" "main" 1779136051.36439 2
+  "main.aux" 1779136051.161 11678 42a8cc4b6d3e28e5c4eedc8eb4a66a51 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1778264765.34277 "main.tex" "main.pdf" "main" 1778264771.83773 2
+["pdflatex"] 1779136044.85716 "main.tex" "main.pdf" "main" 1779136051.36454 2
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1776097119.09146 128397 dc8cded2bbafe8195c86cdaea92e40b2 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1776097118.76811 127314 7c5efae986e60281c7ad546cf8ed9a14 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1776097121.1949 128950 b259fc34906ff4c20552f96907d63131 ""
@@ -20,7 +20,7 @@
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrepagella-bolditalic.luc" 1776097119.53815 287782 6ee80be4eab3b2c86206420ea3b22196 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrepagella-italic.luc" 1776097119.97817 311406 73578b173f3ed4ae82fdd3dc04ebf71d ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrepagella-regular.luc" 1776097119.32814 310169 9b3e9edf24e20b573531feac5c631c5c ""
-  "/home/franvt/.texlive/texmf-var/luatex-cache/generic/names/luaotfload-lookup-cache.luc" 1776189693.25574 5498 7b6248bcd358da43af63320c2101f052 ""
+  "/home/franvt/.texlive/texmf-var/luatex-cache/generic/names/luaotfload-lookup-cache.luc" 1779114074.02044 5601 836ad4f2379ae25a4bd484a34001a5a3 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz" 1773443583.11097 834001 9a55e276a5a2728c64a9644abbb10060 ""
   "/usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrepagella-italic.otf" 1775415801 221936 4d7ac678310008b3b26bd10cf015c648 ""
   "/usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrepagella-regular.otf" 1775415801 218100 ee927992843e53183a6e7c09838e9f82 ""
@@ -210,7 +210,7 @@
   "/usr/share/texmf-dist/tex/luatex/luaotfload/luaotfload-unicode.lua" 1775415801 7918 4272855a25780b80472f3b58edd95e33 ""
   "/usr/share/texmf-dist/tex/luatex/luaotfload/luaotfload.lua" 1775415801 13566 16df94dd2de231b2bca0aaa0190941fe ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1775495310 5381098 9f966685d344a3d34adbc94f52661a01 ""
-  "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1775495307 5658771 9cfff914613e3cfa7c282b61a97cd8ca ""
+  "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1779134037 5658042 cdf914b44559080d0111bab7878a7563 ""
   "docs/../Figures/may4/fig_StructureFactor_tf_xL.png" 1777044129.19908 229809 3fcec75471b77c5e02cfff8208c5365e ""
   "docs/../Figures/may4/fig_factorEstructuraCambios_tf.png" 1777922565.87885 169364 ed5ce4a7f3aff950f2d2ab82bb0c3592 ""
   "docs/../Figures/may4/fig_factorEstructuraCambios_tf_xL.png" 1777921463.7819 183509 2f399ba3873a68eab31115a1b62838f3 ""
@@ -232,14 +232,15 @@
   "docs/../Figures/may8/fig_SqCorreccion3_phi5_d_zoom1_nexp10.png" 1778249949.66465 176179 705b6201b0756b3b1879174f961c7db9 ""
   "docs/../Figures/may8/fig_SqCorreccion5_phi1_tfto.png" 1778259659.84058 138096 a11b1e32c35d0095253023842e3cd3f1 ""
   "docs/../Figures/may8/fig_SqCorreccion5_phi5_tfto.png" 1778258961.2504 142033 c3b8590bdfafced97d0a6efb843f074d ""
-  "docs/may4-2026.tex" 1778031093.79751 12255 570f935d544d3a41e25522210db1e636 ""
+  "docs/may15-2026.tex" 1778887268.92917 1241 47de6c043b829f399ffd1c0d13add6de ""
+  "docs/may4-2026.tex" 1779136043.77586 12259 a877ebd47f9e32551ec7894c66022c1c ""
   "docs/may6-2026.tex" 1778167168.87967 8328 0bfac91584a424898dcc452f56e47292 ""
   "docs/may7-2026.tex" 1778173775.52939 1727 17d1ea1a0ffc1608f58057d163c2aef7 ""
-  "docs/may8-2026.tex" 1778264765.10622 4509 f0646c79b6301ffa654baf2a0283b738 ""
-  "main.aux" 1778264771.63315 11303 2b920bd2b12536412cf76f622db3b2dd "pdflatex"
+  "docs/may8-2026.tex" 1778264774.5983 4509 f0646c79b6301ffa654baf2a0283b738 ""
+  "main.aux" 1779136051.161 11678 42a8cc4b6d3e28e5c4eedc8eb4a66a51 "pdflatex"
   "main.bbl" 1777925477.009 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1778264771.63604 1798 4cee875c280af893a1a8e05d42e71ab8 "pdflatex"
-  "main.tex" 1778251078.23911 2462 ae414f1253a8f076074ca599687e43cb ""
+  "main.out" 1779136051.16216 2144 ac6cea326ea5ad0f2f8e70b53610bf46 "pdflatex"
+  "main.tex" 1778887281.96376 2493 4b915e99e30cae45b441ecf82a39e6f9 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)

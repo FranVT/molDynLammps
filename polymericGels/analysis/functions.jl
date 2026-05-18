@@ -1,6 +1,47 @@
 """
     File with all the functions needed for multiple.jl script
 """
+
+###########################
+# UPDATE DAT FILE
+###########################
+
+function createDatFiles()
+"""
+    Create a csv file with the information of the dat files and assign an id as a function of the system.
+"""
+
+# Get all directories in the data directory
+MAIN_DIR=dirname(pwd());
+DATA_DIR="/run/media/franvt/rogelio/DinMol/gel-batch-1/data";
+#joinpath(MAIN_DIR,"data");
+
+# Read the directory where data is stored
+SIMS_DIR=filter(isdir,readdir(DATA_DIR,join=true));
+
+# Get all data files in a dataframe
+data_info=mapreduce(s->getDat(s),vcat,SIMS_DIR);
+
+# Selección de categorias
+categories=[:phi,Symbol("CL-Con"),:Temperature,:Npart,:damp,Symbol("time-step")];
+
+# Creación de los subdataframes
+data_bySystem=groupby(data_info,categories);
+
+# Obtención de los valores numéricos de las categorias
+id_values=unique(data_info[:,categories]);
+
+# Creación de los ids
+ids=map(s->join(string.(collect(id_values[s,:]))),1:nrow(id_values));
+
+# Asignar el id a los data frames
+map(s->data_bySystem[s][!,:id].=[ids[s]],1:length(data_bySystem));
+
+# Guardar el dataframe en un csv
+CSV.write(joinpath(pwd(),"datFiles","systemDatfiles.csv"),reduce(vcat,data_bySystem));
+
+end
+
 #######
 #   STRUCTURE FACTOR RELATED FUNCTIONS
 #######

@@ -404,6 +404,8 @@ INPUT ./docs/../Figures/may8/fig_SqCorreccion5_phi5_tfto.png
 INPUT ./docs/../Figures/may8/fig_SqCorreccion5_phi1_tfto.png
 INPUT ./docs/../Figures/may8/fig_SqCorreccion5_phi1_tfto.png
 INPUT ./docs/../Figures/may8/fig_SqCorreccion5_phi1_tfto.png
+INPUT ./docs/may15-2026.tex
+INPUT ./docs/may15-2026.tex
 INPUT ./main.aux
 INPUT ./main.out
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
