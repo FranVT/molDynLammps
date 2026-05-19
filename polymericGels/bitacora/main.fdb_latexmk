@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1779139827.3257 "main.aux" "main.bbl" "main" 1779139827.37926 2
-  "main.aux" 1779139827.14702 420 49074f8330ae4ddecced74a23f0c39bd "pdflatex"
+["bibtex main"] 1779232013.79544 "main.aux" "main.bbl" "main" 1779232013.84925 2
+  "main.aux" 1779232013.61769 4678 92c7dd5ca9bd8012bf7222f7727cc62f "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1779139825.75974 "main.tex" "main.pdf" "main" 1779139827.37942 0
+["pdflatex"] 1779232012.18148 "main.tex" "main.pdf" "main" 1779232013.84941 0
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1776097119.09146 128397 dc8cded2bbafe8195c86cdaea92e40b2 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1776097118.76811 127314 7c5efae986e60281c7ad546cf8ed9a14 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1776097121.1949 128950 b259fc34906ff4c20552f96907d63131 ""
@@ -22,7 +22,6 @@
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrepagella-regular.luc" 1776097119.32814 310169 9b3e9edf24e20b573531feac5c631c5c ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/names/luaotfload-lookup-cache.luc" 1779139650.35349 5687 47d2233e5d65e89a4c5fca197c9fc078 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz" 1773443583.11097 834001 9a55e276a5a2728c64a9644abbb10060 ""
-  "/usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrecursor-regular.otf" 1775415801 84652 af0a4ae66d8890d339bae8e0ce9902d4 ""
   "/usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrepagella-italic.otf" 1775415801 221936 4d7ac678310008b3b26bd10cf015c648 ""
   "/usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrepagella-regular.otf" 1775415801 218100 ee927992843e53183a6e7c09838e9f82 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/palatino/pplr8r.tfm" 1775415801 2796 d37c29814a6717720ee1a7c9a0b2c3b8 ""
@@ -40,6 +39,10 @@
   "/usr/share/texmf-dist/fonts/tfm/public/mathpazo/zplmr7t.tfm" 1775415801 1828 bb8add3bd19426549f9267c88b0cb8bd ""
   "/usr/share/texmf-dist/fonts/tfm/public/mathpazo/zplmr7v.tfm" 1775415801 1012 955c4ca523d7827d33db91a33412b048 ""
   "/usr/share/texmf-dist/fonts/tfm/public/mathpazo/zplmr7y.tfm" 1775415801 1316 b4037e9c09961a72f8476628774e1ec1 ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1775415801 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1775415801 35752 024fb6c41858982481f6968b5fc26508 ""
+  "/usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb" 1775415801 52665 661b1e6b26edb5f50dd491f8a701cb57 ""
+  "/usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb" 1775415801 50022 90249cba7e3e4e9845f80328d6f9bd13 ""
   "/usr/share/texmf-dist/fonts/vf/adobe/palatino/pplr9t.vf" 1775415801 1036 6bf3f57f140c19369dc13ae2329f0e57 ""
   "/usr/share/texmf-dist/fonts/vf/public/mathpazo/zplmr7m.vf" 1775415801 1812 de7624743c8bafe2ce204bec2f72ce7e ""
   "/usr/share/texmf-dist/fonts/vf/public/mathpazo/zplmr7t.vf" 1775415801 1532 73e2c76c81e4f977ab65540630baf4f0 ""
@@ -204,11 +207,11 @@
   "/usr/share/texmf-dist/tex/luatex/luaotfload/luaotfload.lua" 1775415801 13566 16df94dd2de231b2bca0aaa0190941fe ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1775495310 5381098 9f966685d344a3d34adbc94f52661a01 ""
   "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1779134037 5658042 cdf914b44559080d0111bab7878a7563 ""
-  "docs/may18-2026.tex" 1779139824.05792 713 054d3f119657a74cb1d03327a4ba666f ""
-  "main.aux" 1779139827.14702 420 49074f8330ae4ddecced74a23f0c39bd "pdflatex"
-  "main.bbl" 1779139827.37474 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1779139827.14778 345 91ab3265dd2d934895540ccdb829ae3b "pdflatex"
-  "main.tex" 1779139574.88132 2529 88547e13ff93b038d715bf48f4825fe1 ""
+  "docs/may19-2026.tex" 1779232010.7909 5717 548fe2d11286f909f2a61988e2d6ab8f ""
+  "main.aux" 1779232013.61769 4678 92c7dd5ca9bd8012bf7222f7727cc62f "pdflatex"
+  "main.bbl" 1779232013.84437 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1779232013.62175 296 b1ade79db1c621550f91edb37ffe9888 "pdflatex"
+  "main.tex" 1779229471.14017 2560 b1b6a066e5e18e7ec31b3d3aca5e281a ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)

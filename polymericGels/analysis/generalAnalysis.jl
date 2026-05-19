@@ -15,7 +15,7 @@ include("functions_graphs.jl")
 
 # Activate functions
 up=0;
-Sq=0;
+Sq=1;
 
 # Update the data file with new systems
 if up ==1 
@@ -40,6 +40,7 @@ end
 #figureCompareSl(dat_files)
 
 
+#=
 # Grafica del factor de estructura
 MAIN_DIR=pwd();
 SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
@@ -129,3 +130,4 @@ fig=Figure()
     Legend(fig[6,4],ax_f3,L"\phi",merge=true)
 
 save(string("fig_Slcomp_phi_",1,".png"), fig, px_per_unit = 300/inch)
+=#

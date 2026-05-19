@@ -132,8 +132,8 @@ function computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instant,dum
     N_phi=Int64(sqrt(div(N_qu,2)));
     N_theta=Int64(2*N_phi);
 
-    theta=2*pi*range(0,1,length=N_theta).*rand(N_theta);
-    phi=pi*range(0,1,length=N_phi).*rand(N_phi); 
+    theta=2*pi*range(0,1,length=N_theta);
+    phi=pi*range(0,1,length=N_phi); 
 
     # Calcular la densidad promedio de cada magnitud
     q_min=2*pi/lambda_f;
@@ -184,7 +184,7 @@ lambda_o=1; # Limites del rango a explorar (Monomero)
 lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
 N_part=Int(dat_DF.Npart[1]);
 N_qu=2^9; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
-N_lambda=2^8; # Cantidad de magnitudes
+N_lambda=2^11; # Cantidad de magnitudes
 N_instants=2;
 
 # Path to the dumps

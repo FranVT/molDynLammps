@@ -1,0 +1,133 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Cambios de ideas}
+
+Aumente la cantidad de magnitudes de los vectores de onda para tener una mejor resolución en la gráfica del factor de estructura.
+Aún no he hecho la prueba con una estructura cúbica y analizado que mi implementación de un factor de estructura sea correcta.
+
+El principal cambio entre \(t_{o}\) y \(t_{f}\) en el factor de estructura es el aumento de la magnitud de \(S(\vec{q})\) en los mismos valores de \(\vec{q}\).
+Entonces me puse a buscar, sin haber comprobado con una estructura cúbica, otras técnicas de análisis para la red, por si el factor de estructura no es un buen observable.
+
+\subsection{Opciones según DeepSeek}
+
+\paragraph{Teoría de percolación}
+Relacionar la fracción de enlaces y la conectividad con parámetros de interés.
+
+\paragraph{Ecuación de Smoluchowski con kernel dependiente del potencial.}
+Modela la evoluación de la distribución de tamaños agregados\footnote{Puede que funcione para fracciones de empaquetamiento bajos o bajas densidades de crosslinkers.}.
+
+\paragraph{Teoría de perturbación termodinámica de Wertheim para fluidos asociantes.}
+Para interacciones con dirección y de corto alcance, formando enlaces físicos transistorios.
+
+\paragraph{Modelo de esferas adhesivas (Baxer) y solución analítica de Percus-Yevick}
+Al considerar que el potencial atractivo es de corto alcance, el potencial exponencial se puede mapear a un potencial adhesivo con un parámetro de pegajosidad.
+
+\paragraph{Teoría de acoplamiento de modos para geles atractivos.}
+Predice la transición dinámica a un estado no ergódico en función de la fuierza y el alcance de la atracción.
+
+\paragraph{Modelo de energía de paisaje y cinéctica de reacción entre estados.}
+Considerar los enlaces como activos o inactivos y formula una ecuación maestra para la red.
+
+\subsection{Notas al aire}
+
+No estoy muy seguro que se está caracterizando.
+Si el sistema percola?
+La elasticidad?
+LA geometría?
+No me queda muy claro cuál es la tirada.
+
+Me acuerdo que tiene que ver con impresión de hidrogeles.
+Una impresión por extrucción.
+Analizar las propiedades mecánicas.
+
+\section{Sugerencias de DeepSeek}
+
+Al no estar seguro que analizar, usé DeepSeek para crear una lista de los observables más comunes que se usan para caracterizar geles, de forma experimental o por simulación computacional.
+
+\subsection{Conectividad y estructura de la red}
+
+\paragraph{Probabilidad de percolación \(P_{\mathrm{perc}}\)}
+Fracción de configuraciones que representa un cluster que conecta dos bordes opuestos del sistema.
+
+\paragraph{Fracción de partículas en el cluster que percola.}
+Masa del cluster que percola divida entre el número total de partículas.
+Cero en la fase sol y finita en el gel.
+
+\paragraph{Distribución de tamaños de clusters}
+Número de clusters de tamaño \(s\).
+En el punto de gelación muestra una cola de ley de potencias.
+
+\paragraph{Tamaño medio de cluster.}
+Segundo momento de la distribución de tamaño de cluster, axcluyendo el cluster percolante.
+
+\paragraph{Longitud de correlación de conectividad.}
+Distancia característica de la malla de la red incipiente.
+Se extrae del factor de estructura \(S(q)\) o por conteo directo de pares conectados.
+Diverge en el punto crítico.
+
+
+\subsection{Estructura espacial y orden local}
+
+\paragraph{Factor de estructura estático.}
+En geles se observa un pico a bajo \(q\) asociado a la longitud de la malla y un pico a \(q\) alto por la escala de la partícula.
+La intensidad a bajo \(q\) aumenta drásticamente al gelificar.
+
+\paragraph{Función de distribución radial.}
+Probabilidad de encontrar una partícula a distancia \(r\) de otra.
+Permite identificar enlaces formados y la extensión de la capa de coordinación, así como cambios en la estructura local al variar la atracción.
+
+\paragraph{Número de coordinación medio \(Z\).}
+Promedio de vecinos enlazados por partícula.
+
+\paragraph{Parámetro de orden orientacional}
+
+\subsection{Propiedades dinámicas}
+
+\paragraph{Desplazamiento cuadrático medio.}
+La altura de la meseta y la difusividad de largo plazo están ligadas a la rigidez de la red.
+
+\paragraph{Función de correlación de densidad intermedia.}
+Decaimiento de las fluctuaciones de densidad.
+La congelación del gel se manifiesta como un parámetro de no ergodicidad.
+Cuanta estructura queda congelada.
+
+\paragraph{Coeficiente de difusión colectiva y depdencia con el vector de onda.}
+Obtenido de \(S(q,t)=S(q)e^{D_{c}q^2 t}\) a bajo \(q\).
+Al gelificar, \(D_c\) cae varios órdenes de magnitud.
+
+\subsection{Propiedades mecánicas y reológicas.}
+
+\paragraph{Modulos de almacenamiento y pérdida.}
+
+\paragraph{Viscosidad de corte cero.}
+
+\subsection{Observables termodinámicos y energéticos}
+
+\paragraph{Energía potencial media por partícula.}
+
+\paragraph{Capacidad calorífica configuracional o fluctiaciones de energía.}
+
+\subsection{Observables específicos de percolación}
+
+\paragraph{Distribución de fuerzas en los enlaces.}
+
+\paragraph{Conectividad de loops o circuitos cerrados.}
+Número de ciclos independientes.
+Permite distinguir entre agregados ramificados y geles con ciclos.
+
+\subsection{Parámetros directos de DeepSeek}
+
+\begin{itemize}
+    \item Fracción de partículas en el cluster percolante
+    \item Tamaño medio de cluster 
+    \item Distribución de tamaños de clusters 
+    \item Factor de estructura
+    \item Desplazamiento cuadrático medio
+    \item Vida media de enlaces
+\end{itemize}
+
+Según deepseek, esos parámetros relacionan los parámetros de profundidad del potencial y distancia de interacción con la estructura y estabilidad del gel.
+
+\end{document}
