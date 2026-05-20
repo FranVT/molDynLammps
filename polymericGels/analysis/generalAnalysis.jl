@@ -15,7 +15,7 @@ include("functions_graphs.jl")
 
 # Activate functions
 up=0;
-Sq=1;
+Sq=0;
 
 # Update the data file with new systems
 if up ==1 
@@ -40,7 +40,6 @@ end
 #figureCompareSl(dat_files)
 
 
-#=
 # Grafica del factor de estructura
 MAIN_DIR=pwd();
 SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
@@ -82,11 +81,11 @@ fig=Figure()
     ax=Axis(fig[1:6,1:3],
         title=latexstring("\\mathrm{Structure~factor}"),
         #subtitle=latexstring(subtitle),
-        xlabel=L"\lambda",
+        xlabel=L"\vec{q}",
         ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(0,10,0,10),
+        limits=(0,nothing,0,10),
         #xscale=log10,
         #yscale=log10
     )
@@ -100,10 +99,10 @@ fig=Figure()
     #vlines!(ax,1.2,linestyle=:dash,color=:grey)
     #vlines!(ax,5*1.2,linestyle=:dash,color=:grey)
 
-    selec=1;
+    selec=2;
 
     for it in 1:N_instants
-        lines!(ax,(2*pi)./qdomain_plot[selec][it],Sq_plot[selec][it],
+        lines!(ax,qdomain_plot[selec][it],Sq_plot[selec][it],
             label=latexstring(0.001*time_domains[selec][it]))
     
         p1=plot!(ax_f,[0],[-1],
@@ -113,7 +112,7 @@ fig=Figure()
             label=latexstring(dict_T[unique(Sq[it].id)[1]])
             )
         p3=plot!(ax_f3,[0],[-1],
-            label=latexstring(1)
+            label=latexstring(100*dict_T[unique(Sq[selec].id)[1]])
             )
 
     p1.visible = false
@@ -123,11 +122,9 @@ fig=Figure()
 
     end
 
-    Legend(fig[1:3,4],ax,L"\mathrm{Time}")
-    
-    Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
-    Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
-    Legend(fig[6,4],ax_f3,L"\phi",merge=true)
+    Legend(fig[1:2,4],ax,L"\mathrm{Time}")
+    Legend(fig[3,4],ax_f,L"\mathrm{CL}~\%",merge=true)
+    Legend(fig[4,4],ax_f2,L"\mathrm{T}",merge=true)
+    Legend(fig[5,4],ax_f3,L"\phi",merge=true)
 
-save(string("fig_Slcomp_phi_",1,".png"), fig, px_per_unit = 300/inch)
-=#
+save(string("fig_Sqcomp_phi_",100*dict_T[unique(Sq[selec].id)[1]],".png"), fig, px_per_unit = 300/inch)
