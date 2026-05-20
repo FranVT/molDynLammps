@@ -122,6 +122,71 @@ function computeDensity(pp)
         return mapreduce(s->cos(s),+,pp)^2 + mapreduce(s->sin(s),+,pp)^2
 end
 
+function computeStructureFactor_PBC(L, Rmax, N_lambda, lambda_o, lambda_f, time_instant, dump_paths, N_part)
+    """
+        Factor de estructura usando solo vectores de onda compatibles con PBC.
+        L: lado de la caja periódica.
+        Rmax: máximo entero para nx,ny,nz tal que q_max ≈ (2π/L)*Rmax.
+    """
+    # 1. Dominio de magnitudes q (exactamente como en tu código original)
+    q_min = 2π / lambda_f
+    q_max = 2π / lambda_o
+    q_dom = range(q_min, q_max, length=N_lambda)
+
+    # 2. Generar todos los vectores PBC-compatibles y su bin
+    qx_all = Float64[]
+    qy_all = Float64[]
+    qz_all = Float64[]
+    qbin   = Int[]            # índice del punto más cercano en q_dom
+
+    for nx in -Rmax:Rmax, ny in -Rmax:Rmax, nz in -Rmax:Rmax
+        n2 = nx^2 + ny^2 + nz^2
+        n2 == 0 && continue
+        n = sqrt(n2)
+        n > Rmax && continue
+        qvec = (2π/L) .* (nx, ny, nz)
+        push!(qx_all, qvec[1])
+        push!(qy_all, qvec[2])
+        push!(qz_all, qvec[3])
+        push!(qbin, argmin(abs.(norm(qvec) .- q_dom)))
+    end
+
+    # 3. Cargar posiciones de los experimentos (igual que antes)
+    r_exp = getPositions(time_instant, dump_paths)
+
+    # 4. Calcular S(q) instantáneo para cada experimento
+    S_q = [zeros(N_lambda) for _ in eachindex(r_exp)]
+
+    for (it_exp, dist0) in enumerate(r_exp)
+        dist = reduce(hcat, dist0)          # matriz N_part x 3
+        acum = zeros(Float64, N_lambda)
+        cont = zeros(Int, N_lambda)
+
+        # Iterar sobre los vectores precomputados
+        for i in eachindex(qx_all)
+            qv = [qx_all[i], qy_all[i], qz_all[i]]
+            fase = dist * qv               # vector de productos punto (N_part)
+            rho  = computeDensity(fase)    # |∑ exp(i·fase_j)|^2
+            idx  = qbin[i]
+            acum[idx] += rho
+            cont[idx] += 1
+        end
+
+        # Normalizar por número de vectores en la cáscara y por N_part
+        for k in 1:N_lambda
+            if cont[k] > 0
+                S_q[it_exp][k] = acum[k] / (N_part * cont[k])
+            else
+                S_q[it_exp][k] = 0.0
+            end
+        end
+        println("Experiment ", it_exp, " done")
+    end
+
+    return mean(S_q)
+end
+
+
 function computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instant,dump_paths,N_part)
     """
         Compute the structure factor of a time instant of one configuration
@@ -173,6 +238,54 @@ function computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instant,dum
     return mean(S_q)
 
 end
+
+function analyzeStructureFactorPBC(dat_DF)
+"""
+    Function that stores the structure factor of a system
+"""
+
+# Parametros para obtener el factor de estructura
+lambda_o=1; # Limites del rango a explorar (Monomero)
+lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
+N_part=Int(dat_DF.Npart[1]);
+N_qu=2^9; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
+N_lambda=2^9; # Cantidad de magnitudes
+N_instants=2;
+
+# Path to the dumps
+dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
+
+# Seleccion de time instants
+aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
+ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
+aux_id=aux_timeStep[ind];
+time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux_id];
+
+# Get the structure factor for different time intervals
+S_q=[zeros(N_lambda) for _ in eachindex(time_instants)];
+
+println("Start of Structure factor analysis")
+for it_t in eachindex(time_instants)
+    S_q[it_t]=computeStructureFactor_PBC(lambda_f, lambda_f, N_lambda, lambda_o, lambda_f, time_instants[it_t], dump_paths, N_part);
+    #computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instants[it_t],dump_paths,N_part);
+    println("One time step done")
+end
+
+Sq_df=DataFrame(;
+    timeStep = aux_id,
+    q_domain = fill(range(2*pi/lambda_f,2*pi/lambda_o,length=N_lambda), length(aux_id)),
+    Sq       = S_q,
+    lambda_o = fill(lambda_o, length(aux_id)),
+    lambda_f = fill(lambda_f, length(aux_id)),
+    id=unique(dat_DF.id)[1]
+)
+
+CSV.write(joinpath(joinpath(pwd(),"analyzedData"),string("structureFactorPBC",Sq_df.id[1],".csv")),Sq_df)
+println("Structure factor analysis done. File written.")
+
+end
+
+
 
 function analyzeStructureFactor(dat_DF)
 """

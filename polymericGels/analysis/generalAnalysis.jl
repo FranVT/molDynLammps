@@ -16,6 +16,8 @@ include("functions_graphs.jl")
 # Activate functions
 up=0;
 Sq=0;
+Sq_PBC=0;
+
 
 # Update the data file with new systems
 if up ==1 
@@ -36,19 +38,28 @@ if Sq == 1
     map(s->analyzeStructureFactor(data_bySystem[s]),1:length(data_bySystem));
 end
 
+if Sq_PBC == 1
+    map(s->analyzeStructureFactorPBC(data_bySystem[s]),1:2)
+    #map(s->computeStructureFactor_PBC(L, Rmax, N_lambda, lambda_o, lambda_f, time_instant, dump_paths, N_part) analyzeStructureFactor(data_bySystem[s]),1:length(data_bySystem));
+end
+
+
+
+
+
+
 #figureCompareSq(dat_files)
 #figureCompareSl(dat_files)
-
 
 # Grafica del factor de estructura
 MAIN_DIR=pwd();
 SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
 
 # File name of interested data
-filename_Sq="structureFactor*.csv";
+filename_Sq="structureFactorPBC*.csv";
 
 # Create the paths to the files
-file_paths=[joinpath(SAVE_DIR,replace(filename_Sq, "*" => it)) for it in unique(dat_files.id)];
+file_paths=[joinpath(SAVE_DIR,replace(filename_Sq, "*" => it)) for it in unique(dat_files.id)[1:2]];
 
 # Dictionaries to map id to info.
 dict_phi=Dict(dat_files.id.=>dat_files.phi);
@@ -73,6 +84,7 @@ Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)
 
 #Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
 
+println("Se inicia a graficar")
 fig=Figure()
     ax_f=Axis(fig[1:1,1:1])
     ax_f2=Axis(fig[1:1,1:1])
@@ -81,11 +93,11 @@ fig=Figure()
     ax=Axis(fig[1:6,1:3],
         title=latexstring("\\mathrm{Structure~factor}"),
         #subtitle=latexstring(subtitle),
-        xlabel=L"\vec{q}",
+        xlabel=L"|\vec{q}|",
         ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(0,nothing,0,10),
+        limits=(0,nothing,0,50),
         #xscale=log10,
         #yscale=log10
     )
@@ -112,7 +124,7 @@ fig=Figure()
             label=latexstring(dict_T[unique(Sq[it].id)[1]])
             )
         p3=plot!(ax_f3,[0],[-1],
-            label=latexstring(100*dict_T[unique(Sq[selec].id)[1]])
+            label=latexstring(100*dict_phi[unique(Sq[selec].id)[1]])
             )
 
     p1.visible = false
@@ -127,4 +139,4 @@ fig=Figure()
     Legend(fig[4,4],ax_f2,L"\mathrm{T}",merge=true)
     Legend(fig[5,4],ax_f3,L"\phi",merge=true)
 
-save(string("fig_Sqcomp_phi_",100*dict_T[unique(Sq[selec].id)[1]],".png"), fig, px_per_unit = 300/inch)
+save(string("fig_SqcompPBC_phi_",100*dict_phi[unique(Sq[selec].id)[1]],"_zoom.png"), fig, px_per_unit = 300/inch)
