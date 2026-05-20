@@ -249,7 +249,7 @@ lambda_o=1; # Limites del rango a explorar (Monomero)
 lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
 N_part=Int(dat_DF.Npart[1]);
 N_qu=2^9; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
-N_lambda=2^9; # Cantidad de magnitudes
+N_lambda=2^11; # Cantidad de magnitudes
 N_instants=2;
 
 # Path to the dumps

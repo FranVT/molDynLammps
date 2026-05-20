@@ -16,7 +16,7 @@ include("functions_graphs.jl")
 # Activate functions
 up=0;
 Sq=0;
-Sq_PBC=0;
+Sq_PBC=1;
 
 
 # Update the data file with new systems
@@ -39,14 +39,14 @@ if Sq == 1
 end
 
 if Sq_PBC == 1
-    map(s->analyzeStructureFactorPBC(data_bySystem[s]),1:2)
+    map(s->analyzeStructureFactorPBC(data_bySystem[s]),1:length(data_bySystem))
     #map(s->computeStructureFactor_PBC(L, Rmax, N_lambda, lambda_o, lambda_f, time_instant, dump_paths, N_part) analyzeStructureFactor(data_bySystem[s]),1:length(data_bySystem));
 end
 
 
 
 
-
+#=
 
 #figureCompareSq(dat_files)
 #figureCompareSl(dat_files)
@@ -140,3 +140,4 @@ fig=Figure()
     Legend(fig[5,4],ax_f3,L"\phi",merge=true)
 
 save(string("fig_SqcompPBC_phi_",100*dict_phi[unique(Sq[selec].id)[1]],"_zoom.png"), fig, px_per_unit = 300/inch)
+=#
