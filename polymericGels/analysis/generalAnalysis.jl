@@ -16,7 +16,7 @@ include("functions_graphs.jl")
 # Activate functions
 up=0;
 Sq=0;
-Sq_PBC=1;
+Sq_PBC=0;
 
 
 # Update the data file with new systems
@@ -46,7 +46,6 @@ end
 
 
 
-#=
 
 #figureCompareSq(dat_files)
 #figureCompareSl(dat_files)
@@ -59,7 +58,7 @@ SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
 filename_Sq="structureFactorPBC*.csv";
 
 # Create the paths to the files
-file_paths=[joinpath(SAVE_DIR,replace(filename_Sq, "*" => it)) for it in unique(dat_files.id)[1:2]];
+file_paths=[joinpath(SAVE_DIR,replace(filename_Sq, "*" => it)) for it in unique(dat_files.id)];
 
 # Dictionaries to map id to info.
 dict_phi=Dict(dat_files.id.=>dat_files.phi);
@@ -97,7 +96,7 @@ fig=Figure()
         ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(0,nothing,0,50),
+        limits=(0,2,0,25),
         #xscale=log10,
         #yscale=log10
     )
@@ -111,7 +110,7 @@ fig=Figure()
     #vlines!(ax,1.2,linestyle=:dash,color=:grey)
     #vlines!(ax,5*1.2,linestyle=:dash,color=:grey)
 
-    selec=2;
+    selec=1;
 
     for it in 1:N_instants
         lines!(ax,qdomain_plot[selec][it],Sq_plot[selec][it],
@@ -140,4 +139,3 @@ fig=Figure()
     Legend(fig[5,4],ax_f3,L"\phi",merge=true)
 
 save(string("fig_SqcompPBC_phi_",100*dict_phi[unique(Sq[selec].id)[1]],"_zoom.png"), fig, px_per_unit = 300/inch)
-=#

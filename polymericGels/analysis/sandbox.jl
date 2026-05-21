@@ -2,200 +2,120 @@
     Script to debug stuff
 """
 
-# Get directories 
-MAIN_DIR=pwd();
-DAT_PATH=joinpath(MAIN_DIR,"datFiles","experiments_dat.csv");
-SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
+using DataFrames, CSV
+using Statistics, StatsBase
+using LinearAlgebra , Random
+using GLMakie, LaTeXStrings, Typst_jll
+using SplitApplyCombine
 
-dat_files=CSV.read(DAT_PATH,DataFrame);
+include("functions.jl")
 
-# Selection of the system by parameters
-phi=0.05;
-Temp=0.05;
-N_part=5000.0;
-CL_con=0.05;
+function createNvector(n_max)
+"""
+    Create wave vector considering the periodic Boundary conditions restriction
+"""
+    # Crear los vectores por componentes enteras evitando el vector nulo
+    vectores = [[x,y,z] for x in -n_max:n_max, y in -n_max:n_max, z in -n_max:n_max if (x,y,z) != (0,0,0)]
 
-# Se filtra el dataframe 
-dat_DF = subset(dat_files,
-    :phi => ByRow(==(phi)),
-    :Temperature => ByRow(==(Temp)),
-    :Npart => ByRow(==(N_part)),
-    :"CL-Con" => ByRow(==(CL_con))
-)
+    # Agrupar los vectores por magnitud
+    return group(v -> v[1]^2 + v[2]^2 + v[3]^2, vectores)
+end
+
+
+# Extraer la información del dat file
+dat_files=extractDatFiles();
+
+# Selección de categorias
+categories=[:phi];
+
+# Creación de los subdataframes por sistema
+data_bySystem=groupby(dat_files,categories);
+
+
+# Argumentos de la función para analizar el factor de estructura
+id_system=5;
+
+# Dat file of the system to be analyzed
+dat_DF=data_bySystem[id_system];
+
+# Parameters of the system relevant to the structure factor
+L=2*dat_DF.L[1];    # Longitud de la caja
+N_instants=2;       # Instantes temporales a analizar
+n_max=2^3;          # Magnitud máxima de cada componente
+N_exp=nrow(dat_DF); # Cantidad de experimentos por sistema
+N_part=dat_DF.Npart[1];
+qo=2*pi/L;
+
+# Create time steps range
+aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
+
+# Get the index for the time instants that we are interested to analyzed
+ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
+
+# Get the time steps
+timeSteps=aux_timeStep[ind];
+
+# Create file names
+file_names=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in timeSteps];
 
 # Path to the dumps
 dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
 
-# Parametros para obtener el factor de estructura
-N_qu=2^7; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
-lambda_o=0.5; # Limites del rango a explorar (Monomero)
-lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
-N_lambda=2^9; # Cantidad de magnitudes
-N_instants=2;
-
-# Seleccion de time instants
-aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
-ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
-aux_id=aux_timeStep[ind];
-
-time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux_id];
-
-
-
-function dotSpherical(theta,phi,r)
-"""
-    Compute the dot product betwen a position and a unit vector r in psherical coordinates.
-"""
-    q_x=cos(theta)*sin(phi);
-    q_y=sin(theta)*sin(phi);
-    q_z=cos(phi);
-    return q_x*r[1]+q_y*r[2]+q_z*r[3]
-end
-
-function densityRhoQ(q_mag,dot_qr)
-"""
-    Compute the squared of the absolute value of the density at the reciprocal space.
-    |rho(r)|^2 = A(vec{q}cdotvec{r})^2 + B(vec{q}cdotvec{r}^2)
-    A = sumcos(); B = sumsin()
-"""
-    return sum(cos.(q_mag*dot_qr))^2 + sum(sin.(q_mag*dot_qr))^2
-end
-
-
-N_qu=2^7; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
-lambda_o=0.5; # Limites del rango a explorar (Monomero)
-lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
-N_lambda=2^9; # Cantidad de magnitudes
-N_instants=2;
-
-time_instant=time_instants[1];
-
-    # Vector unitario del vector de onda
-    N_phi=Int64(sqrt(div(N_qu,2)));
-    N_theta=Int64(2*N_phi);
-
-    theta=2*pi*rand(N_theta);
-    phi=pi*rand(N_phi); 
-
-    # Obtenemos los dumps de los N experimentos para un instante de tiempo
-    dumps=[getDump(path,time_instant) for path in dump_paths];
-
-    r_exp=[getPosition(df) for df in dumps];
-
-    r=r_exp[1];
-
-
-    # Calculo del producto punto
-    dot_qr=[dotSpherical(th,ph,r) for th in theta, ph in phi];
-
-    # Evaluación de la densidad y promedio
-    # [renglon x columna] -> [ mag x direccion ]
-    q_min=2*pi/lambda_f;
-    q_max=2*pi/lambda_o;
-    q_dom=range(q_min,q_max,length=N_lambda);
-
-    rho_q=[densityRhoQ(l,d) for l in q_dom, d in dot_qr];
-    rho_q=reduce(vcat,mean(mean(rho_q,dims=3),dims=2))./length(r[1]);
-
-
-    # Compute the average with the same magnitude, different directions
-    output= [q_dom,rho_q];
-
-
-
-
-
-
-
-
-
+# Crear los vectores n
+n=createNvector(n_max);
+mag_n=sort(collect(keys(n)));
 
 
 #=
-Sq_t=[getTimeEvolSq(N_qu,dump_paths,time_instant) for time_instant in time_instants];
-function getTimeEvolSq(N_qu,dump_paths,time_instant)
-"""
-    Compute the time evolution of the structure factor
-"""
-
-    # Vector unitario del vector de onda
-    N_phi=Int64(sqrt(div(N_qu,2)));
-    N_theta=Int64(2*N_phi);
-
-    theta=2*pi*rand(N_theta);
-    phi=pi*rand(N_phi); 
-
-    # Obtenemos los dumps de los N experimentos para un instante de tiempo
-    dumps=[getDump(path,time_instant) for path in dump_paths];
-
-    r_exp=[getPosition(df) for df in dumps];
-
-    Sq=structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
- function structureFactor(theta,phi,lambda_o,lambda_f,N_lambda,r_exp)
-"""
-    Compute the static structure factor
-"""
-    data=[computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r) for r in r_exp];
-    function computeDensity(theta,phi,lambda_o,lambda_f,N_lambda,r)
-"""
-    Function that computes the static structure factor de different wave vectors.
-    Returns a vector with the following interpretation of the values:
-    [row] -> [magnitude]}
-"""
-
-    # Calculo del producto punto
-    dot_qr=[dotSpherical(th,ph,r) for th in theta, ph in phi];
-function dotSpherical(theta,phi,r)
-"""
-    Compute the dot product betwen a position and a unit vector r in psherical coordinates.
-"""
-    q_x=cos(theta)*sin(phi);
-    q_y=sin(theta)*sin(phi);
-    q_z=cos(phi);
-    return q_x*r[1]+q_y*r[2]+q_z*r[3]
-end
-
-
-    # Evaluación de la densidad y promedio
-    # [renglon x columna] -> [ mag x direccion ]
-    q_min=2*pi/lambda_f;
-    q_max=2*pi/lambda_o;
-    q_dom=range(q_min,q_max,length=N_lambda);
-
-    rho_q=[densityRhoQ(l,d) for l in q_dom, d in dot_qr];
-function densityRhoQ(q_mag,dot_qr)
-"""
-    Compute the squared of the absolute value of the density at the reciprocal space.
-    |rho(r)|^2 = A(vec{q}cdotvec{r})^2 + B(vec{q}cdotvec{r}^2)
-    A = sumcos(); B = sumsin()
-"""
-    return sum(cos.(q_mag*dot_qr))^2 + sum(sin.(q_mag*dot_qr))^2
-end
-
-
-    # Compute the average with the same magnitude, different directions
-    return [q_dom,reduce(vcat,mean(rho_q,dims=2))]
-
-end
-
-
-    data=reduce(hcat,data);
-    q_domain=collect(first(unique(data[1,:])));
-
-    # Compute assembly average 
-    Sq=reduce(vcat,mean(reduce(hcat,data[2,:]),dims=2))./length(r_exp);
-
-    return [q_domain,Sq]
-end
-
-  
-    return Sq
-
-end
-
-
-
-
-
-
+    Start the analysis of the structure factor
 =#
+
+# Alocar memoria para el factor de estructura
+Sq_expval=zeros(length(n),length(file_names));
+
+
+for (it_time,~) in enumerate(timeSteps)
+    # Select one time step
+    file=file_names[it_time];
+
+    # Get the position of all experiments of the same system at the same time step 
+    # [x,y,z for all experiments]
+    r_exp = getPositions(file, dump_paths);
+
+    # Get all positions of all experiments at the same time step
+    pos_exp=[reduce(hcat, r_exp[it_exp]) for it_exp in 1:N_exp];
+    
+    # Iterar entre magnitudes
+    for (it_mag,mag) in enumerate(mag_n)
+        n_vec=n[mag];           # Get the vectors with same magnitude
+        n_dir=length(n_vec);    # Number of directions per magnitude
+        rho=zeros(n_dir,N_exp); # Alocar memoria para la densidad
+
+    
+        # Iterar entre experimentos para la misma magnitud
+        for it_exp in 1:N_exp
+            pos=pos_exp[it_exp];    # Position of particles of one experimen of one experimentt
+            # Calcular la densidad para todos los vectores de misma magnitud para un experimento
+            for it_vec in eachindex(n_vec)
+                pp=pos*(qo.*n_vec[it_vec]);             # Calcular producto
+                rho[it_vec,it_exp]=computeDensity(pp);  # Obtener la densidad
+            end
+        end
+
+    # Sq = mean(rho, dims=2) ./ N_part;  mean(Sq) == mean(rho) / N_part
+      
+    Sq_expval[it_mag,it_time]=mean(rho)/N_part; # Store the structure factor at the same magnitude
+
+    end
+
+end
+
+    # Valor esperado de misma magnitud, distintas direcciones 
+    #rho_expval=mean(rho)
+
+
+# Create the wave vector for periodic boundary conditions
+
+# Factor escala del vector de onda
+
+nothing

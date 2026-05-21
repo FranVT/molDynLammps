@@ -187,58 +187,6 @@ function computeStructureFactor_PBC(L, Rmax, N_lambda, lambda_o, lambda_f, time_
 end
 
 
-function computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instant,dump_paths,N_part)
-    """
-        Compute the structure factor of a time instant of one configuration
-        Returns the average of N experiments.
-    """
-
-    # Vector unitario del vector de onda
-    N_phi=Int64(sqrt(div(N_qu,2)));
-    N_theta=Int64(2*N_phi);
-
-    theta=2*pi*range(0,1,length=N_theta);
-    phi=pi*range(0,1,length=N_phi); 
-
-    # Calcular la densidad promedio de cada magnitud
-    q_min=2*pi/lambda_f;
-    q_max=2*pi/lambda_o;
-    q_dom=range(q_min,q_max,length=N_lambda);
-
-    # Para todas las posiciones/factor de estructura
-    # Crear los vectores unitarios del vector de onda
-    q_x=mapreduce(ph->map(th->cos(th)*sin(ph),theta),vcat,phi); 
-    q_y=mapreduce(ph->map(th->sin(th)*sin(ph),theta),vcat,phi);
-    q_z=mapreduce(ph->map(th->cos(ph),theta),vcat,phi); 
-
-    # Get the position of N experiments at a given time instant
-    r_exp=getPositions(time_instant,dump_paths);
-
-    # Allocate memory      
-    S_q=[zeros(N_lambda) for _ in eachindex(r_exp)];
-
-    for it_exp in eachindex(r_exp)
-        # Seleccionar un experimento
-        dist=reduce(hcat,r_exp[it_exp]);
-
-        for it_lambda in 1:N_lambda
-            # Seleccionar una sola magnitud
-            # Calcular el producto punto para todas las direcciones usando multiplicación matricial 
-            pp=map(s->dist*((q_dom[it_lambda]).*[q_x[s],q_y[s],q_z[s]]),1:N_qu);
-
-            # Calcular la densidad para una sola magnitud, dada N_qu direcciones
-            rho_q=map(s->computeDensity(s),pp);
-
-            # Obtener el factor de estructura para una sola magnitud y almacenar el resultado
-            S_q[it_exp][it_lambda]=mean(rho_q)/N_part;
-        end
-        println("Experiment ",it_exp," done")
-    end
-
-    return mean(S_q)
-
-end
-
 function analyzeStructureFactorPBC(dat_DF)
 """
     Function that stores the structure factor of a system
@@ -284,54 +232,6 @@ CSV.write(joinpath(joinpath(pwd(),"analyzedData"),string("structureFactorPBC",Sq
 println("Structure factor analysis done. File written.")
 
 end
-
-
-
-function analyzeStructureFactor(dat_DF)
-"""
-    Function that stores the structure factor of a system
-"""
-
-# Parametros para obtener el factor de estructura
-lambda_o=1; # Limites del rango a explorar (Monomero)
-lambda_f=2*dat_DF.L[1]; # Limites del rango a explorar (Tamaño de la caja)
-N_part=Int(dat_DF.Npart[1]);
-N_qu=2^9; # EXPONENTE DEBE SER IMPAR Cantidad de direcciones
-N_lambda=2^11; # Cantidad de magnitudes
-N_instants=2;
-
-# Path to the dumps
-dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
-
-# Seleccion de time instants
-aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
-ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
-aux_id=aux_timeStep[ind];
-time_instants=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in aux_id];
-
-# Get the structure factor for different time intervals
-S_q=[zeros(N_lambda) for _ in eachindex(time_instants)];
-
-println("Start of Structure factor analysis")
-for it_t in eachindex(time_instants)
-    S_q[it_t]=computeStructureFactor(N_qu,N_lambda,lambda_o,lambda_f,time_instants[it_t],dump_paths,N_part);
-    println("One time step done")
-end
-
-Sq_df=DataFrame(;
-    timeStep = aux_id,
-    q_domain = fill(range(2*pi/lambda_f,2*pi/lambda_o,length=N_lambda), length(aux_id)),
-    Sq       = S_q,
-    lambda_o = fill(lambda_o, length(aux_id)),
-    lambda_f = fill(lambda_f, length(aux_id)),
-    id=unique(dat_DF.id)[1]
-)
-
-CSV.write(joinpath(joinpath(pwd(),"analyzedData"),string("structureFactor",Sq_df.id[1],".csv")),Sq_df)
-println("Structure factor analysis done. File written.")
-
-end
-
 
 #######
 #   DUMP FUNCTIONS
