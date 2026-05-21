@@ -45,6 +45,61 @@ function structureFactor(pos_exp, mag_n, n, qo, N_part; N_exp=length(pos_exp))
     return sq
 end
 
+function dumpAnalysis(dat_DF)
+"""
+    Analysis that are done from the dump files information
+"""
+
+    # Parameters of the system relevant to the structure factor
+    L=2*dat_DF.L[1];    # Longitud de la caja
+    N_instants=2;       # Instantes temporales a analizar
+    n_max=2^3;          # Magnitud máxima de cada componente
+    N_exp=nrow(dat_DF); # Cantidad de experimentos por sistema
+    N_part=dat_DF.Npart[1];
+    qo=2*pi/L;
+
+    # Create time steps range
+    aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
+
+    # Get the index for the time instants that we are interested to analyzed
+    ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
+
+    # Get the time steps
+    timeSteps=aux_timeStep[ind];
+
+    # Create file names
+    file_names=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in timeSteps];
+
+    # Path to the dumps
+    dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
+
+    # Crear los vectores n
+    n=createNvector(n_max);
+    mag_n=sort(collect(keys(n)));
+
+    #=
+        Start the analysis of the structure factor
+    =#
+
+    # Alocar memoria para el factor de estructura
+    Sq_expval=zeros(length(n),length(file_names));
+
+    for (it_time,~) in enumerate(timeSteps)
+        file=file_names[it_time];   # Select one time step
+     
+        r_exp = getPositions(file, dump_paths); # Get the position of all experiments of the same system at the same time step
+        pos_exp=[reduce(hcat, r_exp[it_exp]) for it_exp in 1:N_exp];    # Get all positions of all experiments at the same time step
+    
+        # Calcular y almacenar S(q) para todas las magnitudes
+        Sq_expval[:, it_time] = structureFactor(pos_exp, mag_n, n, qo, N_part; N_exp=N_exp);
+
+    end
+
+    return Sq_expval
+
+end
+
+
 
 # Extraer la información del dat file
 dat_files=extractDatFiles();
@@ -55,58 +110,14 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
-
 # Argumentos de la función para analizar el factor de estructura
 id_system=5;
 
 # Dat file of the system to be analyzed
 dat_DF=data_bySystem[id_system];
 
-# Parameters of the system relevant to the structure factor
-L=2*dat_DF.L[1];    # Longitud de la caja
-N_instants=2;       # Instantes temporales a analizar
-n_max=2^3;          # Magnitud máxima de cada componente
-N_exp=nrow(dat_DF); # Cantidad de experimentos por sistema
-N_part=dat_DF.Npart[1];
-qo=2*pi/L;
 
-# Create time steps range
-aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
-
-# Get the index for the time instants that we are interested to analyzed
-ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
-
-# Get the time steps
-timeSteps=aux_timeStep[ind];
-
-# Create file names
-file_names=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in timeSteps];
-
-# Path to the dumps
-dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
-
-# Crear los vectores n
-n=createNvector(n_max);
-mag_n=sort(collect(keys(n)));
-
-
-#=
-    Start the analysis of the structure factor
-=#
-
-# Alocar memoria para el factor de estructura
-Sq_expval=zeros(length(n),length(file_names));
-
-for (it_time,~) in enumerate(timeSteps)
-    file=file_names[it_time];   # Select one time step
-     
-    r_exp = getPositions(file, dump_paths); # Get the position of all experiments of the same system at the same time step
-    pos_exp=[reduce(hcat, r_exp[it_exp]) for it_exp in 1:N_exp];    # Get all positions of all experiments at the same time step
-    
-    # Calcular y almacenar S(q) para todas las magnitudes
-    Sq_expval[:, it_time] = structureFactor(pos_exp, mag_n, n, qo, N_part; N_exp=N_exp);
-
-end
+Sq_exp=dumpAnalysis(dat_DF);
 
 
 nothing
