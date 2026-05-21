@@ -113,13 +113,23 @@ function getPositions(time_instant,dump_paths)
         return [getPosition(df) for df in dumps];
 end
 
-function computeDensity(pp)
+function computeDensity_old(pp)
     """
         Compute the density for the structure factor
         pp is the dot product.
-        pp is an array. Each row represent the dot product of onde direction with a distance
+        pp is an array. Each row represent the dot product of one direction with a distance
     """
         return mapreduce(s->cos(s),+,pp)^2 + mapreduce(s->sin(s),+,pp)^2
+end
+
+
+function computeDensity(pp::AbstractMatrix)
+    # Sumar cosenos y senos a lo largo de las filas (dimensión 1),
+    # obteniendo un vector fila 1×D con los resultados por columna.
+    sum_cos = sum(cos.(pp), dims=1)   # 1 × N_direcciones
+    sum_sin = sum(sin.(pp), dims=1)
+    # Elevar al cuadrado elemento a elemento y convertir a vector columna
+    return vec(sum_cos.^2 + sum_sin.^2)
 end
 
 function computeStructureFactor_PBC(L, Rmax, N_lambda, lambda_o, lambda_f, time_instant, dump_paths, N_part)

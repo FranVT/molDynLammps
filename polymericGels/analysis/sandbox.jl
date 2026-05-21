@@ -21,6 +21,30 @@ function createNvector(n_max)
     return group(v -> v[1]^2 + v[2]^2 + v[3]^2, vectores)
 end
 
+function structureFactor(pos_exp, mag_n, n, qo, N_part; N_exp=length(pos_exp))
+    n_mag = length(mag_n)
+    sq = zeros(n_mag)          # salida prealocada
+
+    for (i, mag) in enumerate(mag_n)
+        n_vec = n[mag]
+        n_dir = length(n_vec)
+        # Matriz de proyección: columnas son qo .* dirección
+        Q = reduce(hcat, [qo .* v for v in n_vec])   # tamaño (3, N_direcciones)
+
+        rho = zeros(n_dir, N_exp)   # densidad por dirección y experimento
+        for it_exp in 1:N_exp
+            pos = pos_exp[it_exp]           # (N_part, 3)
+            PP = pos * Q                    # (N_part, n_dir)
+            rho[:, it_exp] = computeDensity(PP)
+        end
+
+        # Sq = mean(rho, dims=2) ./ N_part;  mean(Sq) == mean(rho) / N_part
+        sq[i] = mean(rho) / N_part
+    end
+
+    return sq
+end
+
 
 # Extraer la información del dat file
 dat_files=extractDatFiles();
@@ -73,49 +97,16 @@ mag_n=sort(collect(keys(n)));
 # Alocar memoria para el factor de estructura
 Sq_expval=zeros(length(n),length(file_names));
 
-
 for (it_time,~) in enumerate(timeSteps)
-    # Select one time step
-    file=file_names[it_time];
-
-    # Get the position of all experiments of the same system at the same time step 
-    # [x,y,z for all experiments]
-    r_exp = getPositions(file, dump_paths);
-
-    # Get all positions of all experiments at the same time step
-    pos_exp=[reduce(hcat, r_exp[it_exp]) for it_exp in 1:N_exp];
+    file=file_names[it_time];   # Select one time step
+     
+    r_exp = getPositions(file, dump_paths); # Get the position of all experiments of the same system at the same time step
+    pos_exp=[reduce(hcat, r_exp[it_exp]) for it_exp in 1:N_exp];    # Get all positions of all experiments at the same time step
     
-    # Iterar entre magnitudes
-    for (it_mag,mag) in enumerate(mag_n)
-        n_vec=n[mag];           # Get the vectors with same magnitude
-        n_dir=length(n_vec);    # Number of directions per magnitude
-        rho=zeros(n_dir,N_exp); # Alocar memoria para la densidad
-
-    
-        # Iterar entre experimentos para la misma magnitud
-        for it_exp in 1:N_exp
-            pos=pos_exp[it_exp];    # Position of particles of one experimen of one experimentt
-            # Calcular la densidad para todos los vectores de misma magnitud para un experimento
-            for it_vec in eachindex(n_vec)
-                pp=pos*(qo.*n_vec[it_vec]);             # Calcular producto
-                rho[it_vec,it_exp]=computeDensity(pp);  # Obtener la densidad
-            end
-        end
-
-    # Sq = mean(rho, dims=2) ./ N_part;  mean(Sq) == mean(rho) / N_part
-      
-    Sq_expval[it_mag,it_time]=mean(rho)/N_part; # Store the structure factor at the same magnitude
-
-    end
+    # Calcular y almacenar S(q) para todas las magnitudes
+    Sq_expval[:, it_time] = structureFactor(pos_exp, mag_n, n, qo, N_part; N_exp=N_exp);
 
 end
 
-    # Valor esperado de misma magnitud, distintas direcciones 
-    #rho_expval=mean(rho)
-
-
-# Create the wave vector for periodic boundary conditions
-
-# Factor escala del vector de onda
 
 nothing
