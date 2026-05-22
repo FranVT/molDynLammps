@@ -53,7 +53,7 @@ function dumpAnalysis(dat_DF)
     # Parameters of the system relevant to the structure factor
     L=2*dat_DF.L[1];    # Longitud de la caja
     N_instants=2;       # Instantes temporales a analizar
-    n_max=2^3;          # Magnitud máxima de cada componente
+    n_max=2^5;          # Magnitud máxima de cada componente
     N_exp=nrow(dat_DF); # Cantidad de experimentos por sistema
     N_part=dat_DF.Npart[1];
     qo=2*pi/L;
@@ -94,8 +94,8 @@ function dumpAnalysis(dat_DF)
         Sq_expval[:, it_time] = structureFactor(pos_exp, mag_n, n, qo, N_part; N_exp=N_exp);
 
     end
-
-    return Sq_expval
+    
+    return [mag_n Sq_expval]
 
 end
 
@@ -110,14 +110,16 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
+#dump=zeros(length(data_bySystem));
+
 # Argumentos de la función para analizar el factor de estructura
-id_system=5;
+#id_system=5;
 
 # Dat file of the system to be analyzed
-dat_DF=data_bySystem[id_system];
+#dat_DF=data_bySystem[id_system];
 
-
-Sq_exp=dumpAnalysis(dat_DF);
+# Compute the analysis from dump files for all the systems
+Sq_exp=[dumpAnalysis(dat_DF) for dat_DF in data_bySystem];
 
 
 nothing
