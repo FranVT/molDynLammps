@@ -119,7 +119,7 @@ data_bySystem=groupby(dat_files,categories);
 #dat_DF=data_bySystem[id_system];
 
 # Compute the analysis from dump files for all the systems
-Sq_exp=[dumpAnalysis(dat_DF) for dat_DF in data_bySystem];
+#Sq_exp=[dumpAnalysis(dat_DF) for dat_DF in data_bySystem];
 
 
 nothing
