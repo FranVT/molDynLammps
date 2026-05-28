@@ -57,7 +57,7 @@ function dumpAnalysis(dat_DF)
     n_max=2^2;          # Magnitud máxima de cada componente
     N_exp=nrow(dat_DF); # Cantidad de experimentos por sistema
     N_part=dat_DF.Npart[1];
-    qo=2*pi/L;
+    qo=2*pi/L;          # Considera condiciones periódicas de frontera
 
     # Create time steps range
     aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
@@ -95,16 +95,24 @@ function dumpAnalysis(dat_DF)
         Sq_expval[:, it_time] = structureFactor(pos_exp, mag_n, n, qo, N_part; N_exp=N_exp);
 
     end
-    
-    return [mag_n Sq_expval]
+
+    df=DataFrame([mag_n Sq_expval],[:mag, Symbol.("Sq",timeSteps)... ])
+
+    return df #[mag_n Sq_expval]
 
 end
 
 
-#function avgSq(dat_DF)
-#    return mean([dumpAnalysis(dat_DF) for s in dat_DF])
-#end
+function storeAllSq(data_bySystem,Sq_all)
+"""
+    Function that stores all structure factores analyzed
+"""
+    file_path=joinpath(pwd(),"analyzedData");
+    files_name=map(s->string("structureFactorPBC",first(data_bySystem[s].id),".csv"),1:length(data_bySystem))
 
+    map(s->CSV.write(joinpath(file_path,files_name[s]),Sq_all[s]),1:length(data_bySystem))
+    println("Files written")
+end
 
 # Extraer la información del dat file
 dat_files=extractDatFiles();
@@ -118,8 +126,12 @@ data_bySystem=groupby(dat_files,categories);
 # Compute the analysis from dump files for all the systems
 Sq_all=[dumpAnalysis(dat_DF) for dat_DF in data_bySystem];
 
-# Pasar los resultados a un DataFrame
-df=map(s->DataFrame(s,[:nMag, :Sqo, :Sqf]),Sq_all);
+# Store the data
+storeAllSq(data_bySystem,Sq_all)
+
+
+
+
 
 
 nothing
