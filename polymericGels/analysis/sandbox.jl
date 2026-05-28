@@ -54,7 +54,7 @@ function dumpAnalysis(dat_DF)
     # Parameters of the system relevant to the structure factor
     L=2*dat_DF.L[1];    # Longitud de la caja
     N_instants=2;       # Instantes temporales a analizar
-    n_max=2^2;          # Magnitud máxima de cada componente
+    n_max=2^6;          # Magnitud máxima de cada componente
     N_exp=nrow(dat_DF); # Cantidad de experimentos por sistema
     N_part=dat_DF.Npart[1];
     qo=2*pi/L;          # Considera condiciones periódicas de frontera

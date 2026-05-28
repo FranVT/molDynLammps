@@ -34,17 +34,9 @@ categories=[:phi];
 data_bySystem=groupby(dat_files,categories);
 
 # Analyze the structure factor per system
-if Sq == 1
-    map(s->analyzeStructureFactor(data_bySystem[s]),1:length(data_bySystem));
-end
-
 if Sq_PBC == 1
-    map(s->analyzeStructureFactorPBC(data_bySystem[s]),1:length(data_bySystem))
-    #map(s->computeStructureFactor_PBC(L, Rmax, N_lambda, lambda_o, lambda_f, time_instant, dump_paths, N_part) analyzeStructureFactor(data_bySystem[s]),1:length(data_bySystem));
+    storeAllSq(data_bySystem,[dumpAnalysis(dat_DF) for dat_DF in data_bySystem])
 end
-
-
-
 
 
 #figureCompareSq(dat_files)
@@ -68,21 +60,7 @@ dict_T=Dict(dat_files.id.=>dat_files.Temperature);
 # Get the information
 Sq=[CSV.read(file,DataFrame) for file in file_paths];
 
-time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
-
-# Parameters to graph
-N_sims=length(Sq);
-N_instants=nrow(Sq[1]);
-
-qdomain_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].q_domain) for it in eachindex(Sq)];
-Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
-
-#Sq_plot=Sq_plot[end];
-#qdomain_tf=[qdomain_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-
-
-#Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-
+#=
 println("Se inicia a graficar")
 fig=Figure()
     ax_f=Axis(fig[1:1,1:1])
@@ -139,3 +117,5 @@ fig=Figure()
     Legend(fig[5,4],ax_f3,L"\phi",merge=true)
 
 save(string("fig_SqcompPBC_phi_",100*dict_phi[unique(Sq[selec].id)[1]],"_zoom.png"), fig, px_per_unit = 300/inch)
+
+=#
