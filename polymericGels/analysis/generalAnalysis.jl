@@ -6,6 +6,7 @@ using DataFrames, CSV
 using Statistics, StatsBase
 using LinearAlgebra , Random
 using GLMakie, LaTeXStrings, Typst_jll
+using SplitApplyCombine
 
 Random.seed!(1234)
 
@@ -16,7 +17,7 @@ include("functions_graphs.jl")
 # Activate functions
 up=0;
 Sq=0;
-Sq_PBC=0;
+Sq_PBC=1;
 
 
 # Update the data file with new systems
@@ -38,7 +39,7 @@ if Sq_PBC == 1
     storeAllSq(data_bySystem,[dumpAnalysis(dat_DF) for dat_DF in data_bySystem])
 end
 
-
+#=
 #figureCompareSq(dat_files)
 #figureCompareSl(dat_files)
 
@@ -59,6 +60,8 @@ dict_T=Dict(dat_files.id.=>dat_files.Temperature);
 
 # Get the information
 Sq=[CSV.read(file,DataFrame) for file in file_paths];
+=#
+
 
 #=
 println("Se inicia a graficar")
