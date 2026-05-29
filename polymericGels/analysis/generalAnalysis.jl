@@ -100,7 +100,16 @@ fig=Figure()
 
     Legend(fig[2,4],ax,L"\phi~\%",merge=true)
 
-    #=
+    p1=plot!(ax_f,[0],[-1],
+             label=L"t_f"
+            )
+    p1.visible = false
+    Legend(fig[4,4],ax_f,L"\mathrm{Time}")
+
+    
+save(string("fig_SqcompPBC_phi_q_tf.png"), fig, px_per_unit = 300/inch)
+
+#=
     selec=1;
 
     for it in 1:N_instants
@@ -130,5 +139,4 @@ fig=Figure()
     Legend(fig[5,4],ax_f3,L"\phi",merge=true)
 =#
 
-save(string("fig_SqcompPBC_phi_q.png"), fig, px_per_unit = 300/inch)
 
