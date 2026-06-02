@@ -17,7 +17,7 @@ include("functions_graphs.jl")
 # Activate functions
 up=0;
 Sq=0;
-Sq_PBC=0;
+Sq_PBC=1;
 
 
 # Update the data file with new systems
@@ -36,7 +36,9 @@ data_bySystem=groupby(dat_files,categories);
 
 # Analyze the structure factor per system
 if Sq_PBC == 1
+    println("Inicio análisis de S(q)")
     storeAllSq(data_bySystem,[dumpAnalysis(dat_DF) for dat_DF in data_bySystem])
+    println("Fin análisis de S(q)")
 end
 
 
@@ -76,9 +78,9 @@ fig=Figure()
         ylabel=L"S(q)",
         xminorticksvisible=true,
         xminorgridvisible=true,
-        limits=(0,nothing,0,nothing),
-        #xscale=log10,
-        #yscale=log10
+        limits=(nothing,nothing,nothing,nothing),
+        xscale=log10,
+        yscale=log10
     )
     hidespines!(ax_f)
     hidedecorations!(ax_f)
@@ -107,7 +109,7 @@ fig=Figure()
     Legend(fig[4,4],ax_f,L"\mathrm{Time}")
 
     
-save(string("fig_SqcompPBC_phi_q_tf.png"), fig, px_per_unit = 300/inch)
+#save(string("fig_SqcompPBC_phi_q_tf.png"), fig, px_per_unit = 300/inch)
 
 #=
     selec=1;

@@ -1,0 +1,5 @@
+phi_05 traj_assembly.10000000.dumpf	! dump file to read
+1 7 			! bin0,qmax
+1.0			! sigma 
+0			! ball
+1 1 0 0			! b1, b2, b3, b4
