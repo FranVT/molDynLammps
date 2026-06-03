@@ -63,11 +63,6 @@ function createqdom(qmax,rq0,dq0,bin0,numbin)
                 append!(qyhis[sbin],y)
                 append!(qzhis[sbin],z)
 
-                #qhis[sbin,1]=x
-                #qhis[sbin,2]=y
-                #qhis[sbin,3]=z
-                #qhis[sbin,4]=q
-                #qhis[sbin,5]+= 1
             end
         end
     end
@@ -76,6 +71,35 @@ function createqdom(qmax,rq0,dq0,bin0,numbin)
 end
 
 
+function computeSq(numbin,ntotav,qxhis,qyhis,qzhis,qhis,r)
+"""
+    Compute the structure factor of a set of positions
+"""
+
+    rho=[[] for _ in 1:numbin];
+    for it_bin in 1:numbin
+    
+        # Seleccion de las componentes del vector de onda
+        qx=qxhis[it_bin];
+        qy=qyhis[it_bin];
+        qz=qzhis[it_bin];
+        
+        # Calcular la densidad para cada bin
+        for it_q in eachindex(qx)
+            vq=[qx[it_q], qy[it_q], qz[it_q]];
+            dp=r*vq; # Producto punto del vector para cada partícula
+            rho_re=sum(cos.(dp));
+            rho_im=sum(sin.(dp));
+            sq=(rho_re^2 + rho_im^2)/ntotav;
+            append!(rho[it_bin],sq);
+        end
+    end
+
+    # Valor esperado del factor de estructura
+    Sq=sum.(rho)./length.(qhis);
+    
+    return Sq
+end
 
 # Extraer la información del dat file
 dat_files=extractDatFiles();
@@ -134,7 +158,7 @@ x2 = xc / 2.0 # mitad de la caja en x (no usada después, posible para centrar)
 y2 = yc / 2.0 # mitad de la caja en y
 z2 = zc / 2.0 # mitad de la caja en z
 bin0 = 1;
-qmax0 = 10;
+qmax0 = 7;
 ball=0;     # No se para que es esta variable
 
 
@@ -146,12 +170,32 @@ rq0 = qmax * dq0             # valor máximo real de |q| usado
 numbin = Int(floor(qmax * dq0 / bin0)) + 1  # número total de bines
 
 # Reserva de memoria
-r = reduce(hcat,r)              # posiciones (columnas 1:3)
 sfhis = zeros(numbin, 2)        # histograma: col1 = suma de |S(q)|^2, col2 = conteos de la misma magnitud
 kr = zeros(ntot)                # producto escalar q·r para cada partícula
 ntotav = ntot                   # Número total de particulas
 
 
+
+# Crea los dominios del vector de onda
+(qxhis,qyhis,qzhis,qhis)=createqdom(qmax,rq0,dq0,bin0,numbin);
+
+
+# SELECT ONE EXPERIMENT
+r_system = getPositions(file_names[2], dump_paths);
+
+Sq=[[] for _ in eachindex(r_system)];
+
+for it_exp in eachindex(r_system)
+    r = reduce(hcat,r_system[it_exp]);
+    Sq[it_exp]=computeSq(numbin,ntotav,qxhis,qyhis,qzhis,qhis,r);
+end
+
+
+
+
+
+
+#=
 # Aviso si alguna partícula está exactamente en el origen
 for i in 1:ntot
     if r[i,1] == 0.0 && r[i,2] == 0.0 && r[i,3] == 0.0
@@ -207,11 +251,7 @@ for iq in -qmax:qmax
         end
     end
 end
-
-
-
-(qxhis,qyhis,qzhis,qhis)=createqdom(qmax,rq0,dq0,bin0,numbin);
-#qmag=sum(qx.^2 + qy.^2 + qz.^2)
+=#
 
 
 
@@ -220,9 +260,7 @@ end
 
 
 
-
-
-
+#=
 
 
 
@@ -391,6 +429,6 @@ for ij in 1:numbin-1
     info[ij,2]=sq
     info[ij,3]=sq_norm
 end
-
+=#
 
 
