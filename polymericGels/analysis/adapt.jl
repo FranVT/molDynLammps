@@ -20,8 +20,13 @@ function createqdom(qmax,rq0,dq0,bin0,numbin)
     qy=(-qmax:qmax).*dq0;
     qz=(-qmax:qmax).*dq0;
 
-    qhis = zeros(numbin, 4);        # histograma: col1 = suma de |S(q)|^2, col2 = conteos de la misma magnitud
+    qhis = zeros(numbin, 5);        # histograma: col1 = suma de |S(q)|^2, col2 = conteos de la misma magnitud
     qhis .= 0.0;
+
+    qxhis = [[] for _ in 1:numbin]#zeros(numbin, 2)
+    qyhis = [[] for _ in 1:numbin]#zeros(numbin, 2)
+    qzhis = [[] for _ in 1:numbin]#zeros(numbin, 2)
+    qhis = [[] for _ in 1:numbin]
 
     # Calcular la magnitud cuadrada
     for x in qx
@@ -53,15 +58,21 @@ function createqdom(qmax,rq0,dq0,bin0,numbin)
                     continue
                 end
 
-                qhis[sbin,1]=x
-                qhis[sbin,2]=y
-                qhis[sbin,3]=z
-                qhis[sbin,4]=q
+                append!(qhis[sbin],q)
+                append!(qxhis[sbin],x)
+                append!(qyhis[sbin],y)
+                append!(qzhis[sbin],z)
+
+                #qhis[sbin,1]=x
+                #qhis[sbin,2]=y
+                #qhis[sbin,3]=z
+                #qhis[sbin,4]=q
+                #qhis[sbin,5]+= 1
             end
         end
     end
 
-    return qhis
+    return (qxhis,qyhis,qzhis,qhis) 
 end
 
 
@@ -199,7 +210,7 @@ end
 
 
 
-qhis=createqdom(qmax,rq0,dq0,bin0,numbin);
+(qxhis,qyhis,qzhis,qhis)=createqdom(qmax,rq0,dq0,bin0,numbin);
 #qmag=sum(qx.^2 + qy.^2 + qz.^2)
 
 
