@@ -205,11 +205,8 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
-"""
-    Inicio del script
-"""
 
-# Select one system
+# Main Parameters of the analysis
 N_systems=length(data_bySystem);
 N_instants=2;               # Instantes temporales a analizar
 qmax0 = 6;              # 3 es el min sin que cause problemas
