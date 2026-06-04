@@ -55,7 +55,7 @@ pattern=r"^structureFactor.*\.csv$";
 # Create the paths to the files
 file_names=filter(f->occursin(pattern,f),readdir(SAVE_DIR))
 
-file_paths=joinpath.(SAVE_DIR,file_names);
+file_paths=[joinpath(SAVE_DIR,file_names) for it in file_names];
 
 # Dictionaries to map id to info.
 dict_phi=Dict(dat_files.id.=>dat_files.phi);
@@ -63,15 +63,15 @@ dict_CL=Dict(dat_files.id.=>dat_files."CL-Con");
 dict_T=Dict(dat_files.id.=>dat_files.Temperature);
 
 
+
+
+
+
+#=
 # Get the information
 Sq=[CSV.read(file,DataFrame) for file in file_paths];
 
-Sq_1=Sq[1:2:end];
-Sq_2=Sq[2:2:end];
-
-ids=unique(map(s->match(r"C(.*?)t", s).captures[1],file_names))
-
-phis=map(s->first(data_bySystem[s].phi),(1,2,3,5))
+ids=unique(dat_files.id);
 
 println("Se inicia a graficar")
 fig=Figure()
@@ -87,8 +87,8 @@ fig=Figure()
         xminorticksvisible=true,
         xminorgridvisible=true,
         limits=(nothing,nothing,nothing,nothing),
-        #xscale=log10,
-        #yscale=log10
+        xscale=log10,
+        yscale=log10
     )
     hidespines!(ax_f)
     hidedecorations!(ax_f)
@@ -100,9 +100,11 @@ fig=Figure()
     #vlines!(ax,1.2,linestyle=:dash,color=:grey)
     #vlines!(ax,5*1.2,linestyle=:dash,color=:grey)
 
-    for it_sys in eachindex(ids) 
-        scatterlines!(ax,Sq_2[it_sys].qmean,Sq_2[it_sys].Sqmeannorm,
-                      label=latexstring(100*phis[it_sys])
+    for it_sys in 1:5
+        q=(2*pi).*sqrt.(Sq[it_sys].mag)./first(data_bySystem[it_sys].L)
+        lambda=2*pi./q
+        scatterlines!(ax,q,Sq[it_sys].Sq10000000,
+               label=latexstring(100*first(data_bySystem[it_sys].phi))
               )
     end
 
@@ -115,7 +117,8 @@ fig=Figure()
     Legend(fig[4,4],ax_f,L"\mathrm{Time}")
 
     
-save(string("fig_SqcompPBC_phi_q_tf.png"), fig, px_per_unit = 300/inch)
+#save(string("fig_SqcompPBC_phi_q_tf.png"), fig, px_per_unit = 300/inch)
+=#
 
 
 #=
