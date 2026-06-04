@@ -11,6 +11,29 @@ using SplitApplyCombine
 
 include("functions.jl")
 
+function getpathfilesSq(dat_DF,N_instants)
+"""
+    Get the names files 
+"""
+     # Create time steps range
+    aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
+
+    # Get the index for the time instants that we are interested to analyzed
+    ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
+
+    # Get the time steps
+    timeSteps=aux_timeStep[ind];
+
+    # Create file names
+    file_names=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in timeSteps];
+
+    # Path to the dumps
+    dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
+     return (timeSteps,dump_paths,file_names)
+end
+
+
+
 function createqdom(qmax,rq0,dq0,bin0,numbin)
 """
     Create the reciprocal space of wave vectors
@@ -76,6 +99,7 @@ function computeSq(numbin,ntotav,qxhis,qyhis,qzhis,qhis,r)
     Compute the structure factor of a set of positions
 """
 
+    Sq=zeros(numbin,2);
     rho=[[] for _ in 1:numbin];
     for it_bin in 1:numbin
     
@@ -95,13 +119,43 @@ function computeSq(numbin,ntotav,qxhis,qyhis,qzhis,qhis,r)
         end
     end
 
+    # Guardamos información
     # Valor esperado del factor de estructura
-    Sq=sum.(rho)./length.(qhis);
-    smax=maximum(Sq)
-    Sq_norm=Sq/smax
+    Sq[:,1]=sum.(rho)./length.(qhis);
+    smax=maximum(Sq[:,1])
+    Sq[:,2]=Sq[:,1]/smax
 
-    return [Sq, Sq_norm]
+    return Sq
 end
+
+function computeSqmean(file_names,timeStep,file_path,dump_paths,dat_DF,numbin,ntotav,qxhis,qyhis,qzhis,qhis,info)
+"""
+    Compute the avg structure factor of a system at a given time step
+"""
+     # Preparar informacion para el factor de estructura
+    r_system = getPositions(file_names, dump_paths);
+
+    # Calcular el factor de estructura para N experimentos del mismo sistema
+    for it_exp in eachindex(r_system)
+        r = reduce(hcat,r_system[it_exp]);
+        info[it_exp][:,2:3]=computeSq(numbin,ntotav,qxhis,qyhis,qzhis,qhis,r);
+        println("One experiment done")
+    end
+
+    # Se obtienen promedios
+    info=mean(info);        # Compute the assembly mean of the Sq
+    info[:,1]=mean.(qhis);  # Compute the mean of the wave vectors 
+
+    # Paths and file names and stuff
+    filename=string("structureFactorPBC",first(dat_DF.id),"time",timeStep,".csv");
+
+    # Create the data frame
+    df=DataFrame([repeat([timeStep],numbin) info],[:timeStep, :qmean, :Sqmean, :Sqmeannorm])
+
+    # Save the data frame
+    CSV.write(joinpath(file_path,filename),df)   
+end
+
 
 # Extraer la información del dat file
 dat_files=extractDatFiles();
@@ -112,91 +166,51 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
+"""
+    Inicio del script
+"""
+
+# Select one system
 dat_DF=data_bySystem[1];
 
-    # Parameters of the system relevant to the structure factor
-    L=2*dat_DF.L[1];    # Longitud de la caja
-    N_instants=2;       # Instantes temporales a analizar
-    N_exp=nrow(dat_DF); # Cantidad de experimentos por sistema
-    N_part=dat_DF.Npart[1];
-
-    # Create time steps range
-    aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
-
-    # Get the index for the time instants that we are interested to analyzed
-    ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
-
-    # Get the time steps
-    timeSteps=aux_timeStep[ind];
-
-    # Create file names
-    file_names=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in timeSteps];
-
-    # Path to the dumps
-    dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
-
-# SELECT ONE EXPERIMENT
-r_system = getPositions(file_names[2], dump_paths);
-
-
-r = r_system[1]
-
-# System information
-lxn=L;
-lyn=L;
-lzn=L;
-sigma=1;
-pi2=2*pi;
-ntot=Int(N_part); # Número total de partículas
-
-# Definition of parameters
-
-# --- Parámetros de la caja y de la rejilla en q ---
-xc = lxn      # longitud de la caja en x
-yc = lyn      # longitud de la caja en y
-zc = lzn      # longitud de la caja en z
-s = sigma     # factor de escala (sigma)
-x2 = xc / 2.0 # mitad de la caja en x (no usada después, posible para centrar)
-y2 = yc / 2.0 # mitad de la caja en y
-z2 = zc / 2.0 # mitad de la caja en z
-bin0 = 1;
-qmax0 = 3;
-ball=0;     # No se para que es esta variable
-
-
-# Espaciado mínimo en el espacio recíproco y ancho de bin escalado
-dq0 = pi2 / xc               # Δq fundamental
-bin0 = dq0 * bin0            # nuevo ancho de bin (bin0 original * dq0)
-qmax = Int(floor(qmax0 / dq0)) # número entero de pasos hasta qmax0
-rq0 = qmax * dq0             # valor máximo real de |q| usado
-numbin = Int(floor(qmax * dq0 / bin0)) + 1  # número total de bines
-
-# Reserva de memoria
-sfhis = zeros(numbin, 2)        # histograma: col1 = suma de |S(q)|^2, col2 = conteos de la misma magnitud
-kr = zeros(ntot)                # producto escalar q·r para cada partícula
-ntotav = ntot                   # Número total de particulas
-
-
+# Parameters of the system relevant to the structure factor
+L=2*dat_DF.L[1];            # Longitud de la caja
+N_instants=2;               # Instantes temporales a analizar
+N_exp=nrow(dat_DF);         # Cantidad de experimentos por sistema
+N_part=dat_DF.Npart[1];     # Numero de particulas centrales
 
 # Crea los dominios del vector de onda
-(qxhis,qyhis,qzhis,qhis)=createqdom(qmax,rq0,dq0,bin0,numbin);
+qmax0 = 3;              # 3 es el min sin que cause problemas
+xc = L;                 # longitud de la caja en x
+yc = L;                 # longitud de la caja en y
+zc = L;                 # longitud de la caja en z
+dq0 = 2*pi / xc;        # Δq fundamental
+qmax = Int(floor(qmax0 / dq0)) # número entero de pasos hasta qmax0
+rq0 = qmax * dq0;       # valor máximo real de |q| usado
+bin0 = dq0;             # nuevo ancho de bin (bin0 original * dq0)
+numbin = Int(floor(qmax * dq0 / bin0)) + 1;  # número total de bines
 
+# Parametros para el factor de estructura
+ntotav=Int(N_part); # Número total de partículas
+(qxhis,qyhis,qzhis,qhis)=createqdom(qmax,rq0,dq0,bin0,numbin);  # vector de onda
+file_path=joinpath(pwd(),"analyzedData");
 
-# SELECT ONE EXPERIMENT
-r_system = getPositions(file_names[2], dump_paths);
+# Obtener los paths y los nombres de los archivos a analizar
+(timeSteps,dump_paths,file_names)=getpathfilesSq(dat_DF,N_instants);
 
-Sq=[[] for _ in eachindex(r_system)];
+# Select one time step
+# Alocar memoria
+info=[zeros(numbin,3) for _ in 1:N_exp];
 
-for it_exp in eachindex(r_system)
-    r = reduce(hcat,r_system[it_exp]);
-    Sq[it_exp]=computeSq(numbin,ntotav,qxhis,qyhis,qzhis,qhis,r);
-    println("One experiment done")
+for it_time in eachindex(file_names)
+    computeSqmean(file_names[it_time],timeSteps[it_time],file_path,dump_paths,dat_DF,numbin,ntotav,qxhis,qyhis,qzhis,qhis,info)
+    println("One time step done")
 end
 
 
 
 
-
+#map(s->CSV.write(joinpath(file_path,files_name[s]),Sq_all[s]),1:length(data_bySystem))
 
 #=
 # Aviso si alguna partícula está exactamente en el origen
