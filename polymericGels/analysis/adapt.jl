@@ -97,8 +97,10 @@ function computeSq(numbin,ntotav,qxhis,qyhis,qzhis,qhis,r)
 
     # Valor esperado del factor de estructura
     Sq=sum.(rho)./length.(qhis);
-    
-    return Sq
+    smax=maximum(Sq)
+    Sq_norm=Sq/smax
+
+    return [Sq, Sq_norm]
 end
 
 # Extraer la información del dat file
@@ -158,7 +160,7 @@ x2 = xc / 2.0 # mitad de la caja en x (no usada después, posible para centrar)
 y2 = yc / 2.0 # mitad de la caja en y
 z2 = zc / 2.0 # mitad de la caja en z
 bin0 = 1;
-qmax0 = 7;
+qmax0 = 3;
 ball=0;     # No se para que es esta variable
 
 
@@ -188,6 +190,7 @@ Sq=[[] for _ in eachindex(r_system)];
 for it_exp in eachindex(r_system)
     r = reduce(hcat,r_system[it_exp]);
     Sq[it_exp]=computeSq(numbin,ntotav,qxhis,qyhis,qzhis,qhis,r);
+    println("One experiment done")
 end
 
 
