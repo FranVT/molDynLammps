@@ -115,7 +115,7 @@ fig=Figure()
     Legend(fig[4,4],ax_f,L"\mathrm{Time}")
 
     
-save(string("fig_SqcompPBC_phi_q_tf.png"), fig, px_per_unit = 300/inch)
+#save(string("fig_SqcompPBC_phi_q_tf.png"), fig, px_per_unit = 300/inch)
 
 
 #=

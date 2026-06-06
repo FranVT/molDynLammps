@@ -36,7 +36,7 @@ function createDatFiles()
 """
 # Get all directories in the data directory
 MAIN_DIR=dirname(pwd());
-DATA_DIR="/run/media/franvt/rogelio/DinMol/gel-batch-1/data";
+DATA_DIR="/run/media/franvt/rogelio/DinMol/gel-batch-2/data";
 STORE_DIR=joinpath(MAIN_DIR,"datFiles");
 
 # Read the directory where data is stored
