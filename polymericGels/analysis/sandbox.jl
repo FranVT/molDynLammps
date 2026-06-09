@@ -30,18 +30,20 @@ paths=[readdir(it) for it in dump_paths];
 # Time instants store in each directory
 time_instants=[[split(it,".")[2] for it in p] for p in paths];
 
+# Select N items equally spatially.
+
+N_instants=6;
+
+time_domain=sort!(parse.(Float64,time_instants[1]))
+time_size=length(time_domain);
+time_inds=floor.(Int64,range(stop=time_size, start=1, length=N_instants)|>collect);
+time2analyze=convert.(BigInt,time_domain[time_inds]);
 
 
 
 
 
 
-
-
-
-
-
-N_instants=1;
 
 
 #function getpathfilesSq(dat_DF,N_instants)
