@@ -8,6 +8,8 @@ using LinearAlgebra , Random
 using GLMakie, LaTeXStrings, Typst_jll
 using SplitApplyCombine
 
+include("functions.jl")
+
 # Extraer la información del dat file
 dat_files=extractDatFiles();
 
