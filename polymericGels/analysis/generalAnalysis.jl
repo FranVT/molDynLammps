@@ -57,6 +57,81 @@ file_names=filter(f->occursin(pattern,f),readdir(SAVE_DIR))
 
 file_paths=joinpath.(SAVE_DIR,file_names);
 
+ids=unique(map(s->match(r"C(.*?)t", s).captures[1],file_names))
+
+file_paths=[file_paths[occursin.(it,file_paths)] for it in ids]
+
+
+# Graficas por sistema
+dict_phi=Dict(dat_files.id.=>dat_files.phi);
+dict_CL=Dict(dat_files.id.=>dat_files."CL-Con");
+dict_T=Dict(dat_files.id.=>dat_files.Temperature);
+
+# Select one percentage
+id_selec=4;
+
+Sq=[CSV.read(file,DataFrame) for file in file_paths[id_selec]];
+
+timeDomain=convert.(BigInt,first.([s.timeStep for s in Sq]));
+t_max=maximum(timeDomain);
+t_min=minimum(timeDomain);
+
+timeDomain_norm=timeDomain./t_max;
+
+
+
+fig=Figure()
+    ax_f=Axis(fig[1:1,1:1])
+    ax_f2=Axis(fig[1:1,1:1])
+    ax_f3=Axis(fig[1:1,1:1])
+
+    ax=Axis(fig[1:6,1:3],
+        title=latexstring("\\mathrm{Structure~factor}"),
+        #subtitle=latexstring(subtitle),
+        xlabel=L"|\vec{q}|=\frac{2\pi}{L}|\vec{n}|",
+        ylabel=L"S(q)",
+        xminorticksvisible=true,
+        xminorgridvisible=true,
+        limits=(nothing,nothing,nothing,nothing),
+        xscale=log10,
+        yscale=log10
+    )
+    hidespines!(ax_f)
+    hidedecorations!(ax_f)
+    hidespines!(ax_f2)
+    hidedecorations!(ax_f2)
+    hidespines!(ax_f3)
+    hidedecorations!(ax_f3)
+
+    #vlines!(ax,1.2,linestyle=:dash,color=:grey)
+    #vlines!(ax,5*1.2,linestyle=:dash,color=:grey)
+
+    for it_sys in eachindex(Sq) 
+        scatterlines!(ax,Sq[it_sys].qmean,Sq[it_sys].Sqmeannorm,
+                      color=timeDomain_norm[it_sys],
+                      colorrange=(t_min/t_max,1)
+                      #label=latexstring(100*phis[it_sys])
+              )
+    end
+
+
+
+    #Legend(fig[2,4],ax,L"\phi~\%",merge=true)
+
+    p1=plot!(ax_f,[0],[-1],
+             label=latexstring(100*dict_phi[ids[id_selec]])
+            )
+    p1.visible = false
+    Legend(fig[5,4],ax_f,L"\phi")
+    Colorbar(fig[1:3,4],label=L"\mathrm{Time}",colormap=:viridis,limits=(t_min/1000,t_max/1000))
+
+save(string("fig_Sq_phi_",100*dict_phi[ids[id_selec]],"_timeseries.png"), fig, px_per_unit = 300/inch)
+
+
+
+
+#=
+
 # Dictionaries to map id to info.
 dict_phi=Dict(dat_files.id.=>dat_files.phi);
 dict_CL=Dict(dat_files.id.=>dat_files."CL-Con");
@@ -69,9 +144,12 @@ Sq=[CSV.read(file,DataFrame) for file in file_paths];
 Sq_1=Sq[1:2:end];
 Sq_2=Sq[2:2:end];
 
-ids=unique(map(s->match(r"C(.*?)t", s).captures[1],file_names))
 
 phis=map(s->first(data_bySystem[s].phi),(1,2,3,5))
+
+
+
+
 
 println("Se inicia a graficar")
 fig=Figure()
@@ -116,7 +194,7 @@ fig=Figure()
 
     
 save(string("fig_SqcompPBC_phi_q_tf10e6_loglog.png"), fig, px_per_unit = 300/inch)
-
+=#
 
 #=
     selec=1;
