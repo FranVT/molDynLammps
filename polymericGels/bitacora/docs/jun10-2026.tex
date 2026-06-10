@@ -1,0 +1,75 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Parameteros de control}
+
+\subsection{Red polimérica}
+
+\paragraph{Partículas patchy}
+Controla la definición de los monomeros a usar para representar/construir una red polimérica.
+
+\begin{itemize}
+    \item \(D_c\): Diámetro de la partícula central
+    \item \(D_p\): Diámetro de la partícula patchy
+    \item \(v\): Cantidad de partículas patchy (valencia)
+    \item \(s\): Separación del centro de la partícula patchy con el centro de la partícula central
+    \item \(\alpha\): Angulo entre los centros de de las partículas patchy. 
+\end{itemize}
+
+\paragraph{Potenciales de interacción}
+Controla parte de la interacción entre los monómeros.
+
+\begin{itemize}
+    \item \(\epsilon\): Pozo de potencial
+    \item \(r_{\min}\): Distancia en donde \(U(r_{\min})=-\epsilon\) 
+    \item \(r_c\): Distancia de corte
+\end{itemize}
+
+
+\paragraph{Red polimérica (Hidrogel)}\footnote{Restricción del sistema: \[\phi\leq 0.56\] \[\sum_{v=2}^{N}\chi_v=1\]}
+Contralan la topología de la red polimérica.
+
+\begin{itemize}
+    \item \(\phi\): Factor de empaquetamiento
+    \item \(\chi_v\): Concentración de partículas patchy con valencia \(v\)
+\end{itemize}
+
+\subsection{Sistema}
+
+\paragraph{Movimiento Browniano}
+Controla la interacción entre la red polimérica con un baño térmico.
+
+\begin{itemize}
+    \item \(T\): Temperatura 
+    \item \(\mathrm{damp}\): Relacionado a la viscosidad
+    \item \(m\): Masa de las partículas
+\end{itemize}
+
+\paragraph{Solución computacional}
+Controla la estabilidad del método numérico.
+
+\begin{itemize}
+    \item \(\Delta t\): Paso temporal 
+\end{itemize}
+
+\subsection{Parametros del experimento}
+
+\paragraph{Definición}
+Controla el \emph{tipo} de experimento.
+
+\begin{itemize}
+    \item \(t_{\mathrm{temp}}\): Tiempo en el que se eleva la temperatura de \(0\) a \(T\).
+    \item \(t_{\mathrm{temp}}\): Tiempo en que se deja interactuar las partículas patchy a una misma temperatura
+    \item \(N_p\): Número de partículas patchy totales.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+\end{document}
