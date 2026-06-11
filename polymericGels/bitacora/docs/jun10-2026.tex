@@ -28,7 +28,7 @@ Controla parte de la interacción entre los monómeros.
 
 
 \paragraph{Red polimérica (Hidrogel)}\footnote{Restricción del sistema: \[\phi\leq 0.56\] \[\sum_{v=2}^{N}\chi_v=1\]}
-Contralan la topología de la red polimérica.
+Controlan la topología de la red polimérica.
 
 \begin{itemize}
     \item \(\phi\): Factor de empaquetamiento
@@ -60,14 +60,45 @@ Controla el \emph{tipo} de experimento.
 
 \begin{itemize}
     \item \(t_{\mathrm{temp}}\): Tiempo en el que se eleva la temperatura de \(0\) a \(T\).
-    \item \(t_{\mathrm{temp}}\): Tiempo en que se deja interactuar las partículas patchy a una misma temperatura
+    \item \(t_{\mathrm{isot}}\): Tiempo en que se deja interactuar las partículas patchy a una misma temperatura
     \item \(N_p\): Número de partículas patchy totales.
 \end{itemize}
 
 
 
+\section{Análisis del sistema}
+
+Para cada experimento se piensa hacer una gráfica de:
+\begin{itemize}
+    \item Energía total del sistema con respecto al tiempo
+    \item Evolución temporal del factor de estructura 
+    \item Conectividad de la red?
+    \item Evolución temporal de la cantidad de partículas centrales en el cluster más grande
+    \item Velocidad promedio de las partículas centrales con respecto al tiempo?
+    \item Cantidad de cadenas sueltas/finales?
+    \item Cantidad de ciclos
+    \item Distribución de la cantidad de monomeros de valencia 2 enlazados a los monómeros de valencia 4
+    \item Direccionalidad de la red
+\end{itemize}
 
 
+\section{Parámetros a variar}
+
+\begin{enumerate}
+    \item Temperatura \(T\)
+    \item Porcentaje de CrossLinkers \(\chi_4\)
+    \item Fracción de empaquetamiento \(\phi\)
+    \item Pozo de potencial y distancia de interacción \(\epsilon, r_c\)
+    \item Cantidad de patches en monomeros \(v\)
+    \item Ubicación de los patches de los monomeros \(\alpha\)
+\end{enumerate}
+
+
+\section{Objetivos}
+
+\begin{itemize}
+    \item Caracterizar la red polimérica.
+\end{itemize}
 
 
 

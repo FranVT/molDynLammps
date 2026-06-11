@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1781132024.3215 "main.aux" "main.bbl" "main" 1781132066.00713 2
-  "main.aux" 1781132065.83253 1245 86e758cec81e6c6b7a066ad2760f1529 "pdflatex"
+["bibtex main"] 1781203488.93612 "main.aux" "main.bbl" "main" 1781203488.98819 2
+  "main.aux" 1781203488.75014 1547 63b682a0d3f984377e088b7fe67ec83c "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1781132064.46263 "main.tex" "main.pdf" "main" 1781132066.0073 0
+["pdflatex"] 1781203487.39205 "main.tex" "main.pdf" "main" 1781203488.98838 0
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1776097119.09146 128397 dc8cded2bbafe8195c86cdaea92e40b2 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1776097118.76811 127314 7c5efae986e60281c7ad546cf8ed9a14 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1776097121.1949 128950 b259fc34906ff4c20552f96907d63131 ""
@@ -209,11 +209,11 @@
   "/usr/share/texmf-dist/tex/luatex/luaotfload/luaotfload.lua" 1775415801 13566 16df94dd2de231b2bca0aaa0190941fe ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1780324190 5381098 9f966685d344a3d34adbc94f52661a01 ""
   "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1780324176 5657148 69ef0d4038477eab7c7e70d0272763fd ""
-  "docs/jun10-2026.tex" 1781132064.18952 2095 dc0a543091d1d41e1bc245ce6e4c88fa ""
-  "main.aux" 1781132065.83253 1245 86e758cec81e6c6b7a066ad2760f1529 "pdflatex"
-  "main.bbl" 1781132024.3657 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1781132065.83321 160 5dc02a54b5e2ab1de7d9d5d36e531056 "pdflatex"
-  "main.tex" 1781130892.55347 2624 3fd9adf728313136dfc4ae943a1957a6 ""
+  "docs/jun10-2026.tex" 1781203486.22081 3233 082025cf8c2a28176eecab14f40b6fae ""
+  "main.aux" 1781203488.75014 1547 63b682a0d3f984377e088b7fe67ec83c "pdflatex"
+  "main.bbl" 1781203488.98015 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1781203488.75444 553 0a141b6ca6129043af97b4d8d720f6e4 "pdflatex"
+  "main.tex" 1781132103.47904 2624 3fd9adf728313136dfc4ae943a1957a6 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
