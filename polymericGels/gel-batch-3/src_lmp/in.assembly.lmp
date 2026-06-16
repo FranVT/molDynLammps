@@ -71,20 +71,20 @@ compute stressVirial all reduce sum c_cstressVirial[*]
 compute stressVirialMod all reduce sum c_cstressVirialMod[*]
 
 # Get the number of central particles per cluster
-compute clusters all aggregate/atom 0.6                             # Create the clusters
+compute clusters all aggregate/atom ${r_cPP}                             # Create the clusters
 
 # DUMPS and FIXES
 
 thermo ${Ndump}
 
 # Save global energies and temperature
-fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
+fix Energy all ave/time 1 ${N_save} ${N_save} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
 
 # Save Pressure and Stress tensor
-fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+fix fixStress5 all ave/time 1 ${N_save} ${N_save} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
 
 # Save atom positions with cluster id
-dump dumpID all custom ${Ndump} ${Dir}/traj/${file3_name} id mol c_clusters type x y z vx vy vz
+dump dumpID all custom ${N_dump} ${Dir}/traj/${file3_name} id mol c_clusters type x y z vx vy vz
 dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
 
 # RUN SIMULATION
@@ -97,13 +97,13 @@ fix VelVerlet all nve # Use Velocity Verlet integrator
 
 # First elevate the temperature
 fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
-run ${stepsheat}
+run ${N_heat}
 
 unfix ThermoLng
 
 # Now we let the system to create the polymeric network
 fix ThermoLng all langevin ${temp} ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
-run ${steps}
+run ${N_isothermal}
 
 # Write data for deformation
 
