@@ -1,8 +1,8 @@
 # Script with all molecule information and create groups for computes
 
 # Read the molecule information
-molecule CL sysFiles/molecule.patchy.CL
-molecule MO sysFiles/molecule.patchy.MO
+molecule CL src_lmp/sysFiles/molecule.patchy.CL
+molecule MO src_lmp/sysFiles/molecule.patchy.MO
 
 # Introduce the molecules
 # ID style args keyword arg

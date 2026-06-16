@@ -11,8 +11,8 @@ pair_coeff 3 3 zero ${r_noInter}
 pair_coeff 1 1 lj/cut/omp ${E_CP} ${r_CP} ${r_cWCA}
 pair_coeff 2 2 lj/cut/omp ${E_CP} ${r_CP} ${r_cWCA}
 pair_coeff 1 2 lj/cut/omp ${E_CP} ${r_CP} ${r_cWCA}
-pair_coeff 3 4 table/omp sysFiles/pachTab.table POT ${r_cPP} # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB 
-pair_coeff 4 4 table/omp sysFiles/pachTab.table POT ${r_cPP} # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB
-pair_coeff * * threebody/table swapMech.3b NULL NULL PA PB
+pair_coeff 3 4 table/omp src_lmp/sysFiles/pachTab.table POT ${r_cPP} # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB 
+pair_coeff 4 4 table/omp src_lmp/sysFiles/pachTab.table POT ${r_cPP} # sw/omp sysFiles/patchyPot.sw NULL NULL PA PB
+pair_coeff * * threebody/table src_lmp/swapMech.3b NULL NULL PA PB
 pair_modify pair lj/cut/omp shift yes
 

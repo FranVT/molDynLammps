@@ -33,10 +33,10 @@ mass 3 ${m_PT}      # PA (CL)
 mass 4 ${m_PT}      # PB (MO)
 
 # Coefficients
-include potential.in
+include src_lmp/potential.in
 
 # Molecules
-include molecules.in
+include src_lmp/molecules.in
 
 # COMPUTES
 
@@ -75,7 +75,7 @@ compute clusters all aggregate/atom ${r_cPP}                             # Creat
 
 # DUMPS and FIXES
 
-thermo ${Ndump}
+thermo ${N_dump}
 
 # Save global energies and temperature
 fix Energy all ave/time 1 ${N_save} ${N_save} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
