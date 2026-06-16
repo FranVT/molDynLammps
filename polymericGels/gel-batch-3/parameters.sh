@@ -1,11 +1,21 @@
 #!/bin/bash
 
+# Control parameters
+export phi_o=0.01           # Inital packing fraction 
+export phi_f=0.05           # Final packing fraction
+export phi_delta=0.01       # Delta of packing fraction simulate
+export N_PP=5               # Total amount of patchy particles
+export N_exp=1              # Amount of experiments per each configuration
+export chi_4o=0.1           # Initial Crosslinker concentration
+export chi_4f=0.1           # Final Crosslinker concentration
+export chi_4delta=0.1       # Delta of Crosslinker concentration
+
 # System parameters
-export N_pCL=2              # Amount of crosslinkers particles
-export N_pMO=2              # Amount of monomers
-export L=5.0                # Length of the simulation box
 export temp=0.05            # Temperature of thermal bath
 export damp=1.0             # Damp, related with viscosity
+export N_pCL=1              # Amount of crosslinkers particles Initite value
+export N_pMO=1              # Amount of monomers Initite value
+export L=1                  # Length of the simulation box Initite value
 
 # Physics parameters
 export m_CP=1.0             # Mass of central particles
@@ -39,3 +49,7 @@ export file2_name="stress_assembly.fixf"       # Name for stress tensor file
 export file3_name="traj_assembly.*.dumpf"       # Name for dump files
 export file4_name="data.hydrogel"       # Name for the last configuration and restart
 
+# Extra
+export cs=6                 # Significant digits
+export Vol_MO=0.5376050428  # Volume of the monomer
+export Vol_CL=0.5516113101  # Volume of the CrossLinker
