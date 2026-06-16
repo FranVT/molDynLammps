@@ -1,5 +1,4 @@
 #!/bin/bash
-# Archivo de configuración de parámetros para LAMMPS
 
 # System parameters
 export N_pCL=2              # Amount of crosslinkers particles
@@ -11,14 +10,12 @@ export damp=1.0             # Damp, related with viscosity
 # Physics parameters
 export m_CP=1.0             # Mass of central particles
 export m_PT=1.0             # Mass of the patches
-
 export r_cWCA=1.12          # Cutoff distance of WCA potential
 export r_cPP=0.6            # Cutoff distance of patch-patch interaction
 export r_CP=1.0             # Distance of interaction between central particles
 export r_bondP=0.4          # Distance of bond
 export theta_PA=109.4712    # Angle between patches of monomers
 export theta_PB=180.0       # Angle between patches of monomers
-
 export E_CP=1.0             # Energy of interaction between central particles
 export E_bondP=100.0        # Bond energy between central particles and patches
 
@@ -35,4 +32,10 @@ export seed1=1              # Seed for random initial position
 export seed2=2              # Seed for random initial position
 export seed3=3              # Seed for the thermal bath
 export tstep=0.001          # Time step
+
+# File names and stuff
+export file1_name="system_assembly.fixf"          # Name for fix file
+export file2_name="stress_assembly.fixf"       # Name for stress tensor file
+export file3_name="traj_assembly.*.dumpf"       # Name for dump files
+export file4_name="data.hydrogel"       # Name for the last configuration and restart
 

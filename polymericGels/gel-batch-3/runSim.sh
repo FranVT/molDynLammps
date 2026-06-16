@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Main Directories
 dir_home="/home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3";
 dir_src="$dir_home/src";
@@ -16,12 +15,6 @@ dir_save="$dir_data/$id";
 # Create directory to save data
 mkdir "$dir_save";
 mkdir "$dir_save/traj";
-
-# File names and stuff
-file1_name="system_assembly.fixf"          # Name for fix file
-file2_name="stress_assembly.fixf"       # Name for stress tensor file
-file3_name="traj_assembly.*.dumpf"       # Name for dump files
-file4_name="data.hydrogel"       # Name for the last configuration and restart
 
 # Parameters
 source parameters.sh
