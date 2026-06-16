@@ -1,5 +1,7 @@
 # Directory for batch simulations
 
+Las simulaciones se realizaron en lavis fenix
+
 Batch de simulaciones con las siguientes configuraciones:
 \phi\in\{0.01, 0.05 \}
 CL\% = 5\% = 0.05

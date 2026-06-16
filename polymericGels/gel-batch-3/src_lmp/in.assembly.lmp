@@ -1,0 +1,110 @@
+# Input Script of lammps for assembly simulation of polimeric gel network.
+# Patchy particle script by Felipe Benavides: https://github.com/PipeB62/Hydrogel-Simulation
+# Assembly protocolo based on: https://doi.org/10.1021/acs.macromol.7b01600
+# Last Main modification: March 5, 2026 | Threebody interaction
+
+# Initialization
+units lj
+dimension 3
+boundary p p p
+
+# Styles of atoms and that stuff
+atom_style full 
+bond_style harmonic
+angle_style harmonic
+pair_style hybrid/overlay zero 0.0 lj/cut/omp ${r_cWCA} table/omp linear ${N_3body} threebody/table
+
+newton on
+
+# Create simulaiton box
+region simulation_box block -$L $L -$L $L -$L $L
+# N-atom-types region-ID keyword value Is necesesary the extra/special/per/atom (# of special neighbors per atom)
+create_box 4 simulation_box &
+    bond/types 1 &
+    angle/types 2 &
+    extra/bond/per/atom 10 &
+    extra/angle/per/atom 6 &
+    extra/special/per/atom 10
+
+# Atom types
+mass 1 ${m_CP}      # CL 
+mass 2 ${m_CP}      # MO
+mass 3 ${m_PT}      # PA (CL)
+mass 4 ${m_PT}      # PB (MO)
+
+# Coefficients
+include potential.in
+
+# Molecules
+include molecules.in
+
+# COMPUTES
+
+# Compute global kinetic and potential energy and temperature
+compute t all temp
+compute p all pressure t
+compute ep all pe
+compute ek all ke
+variable eT equal etotal
+variable eB equal ebond
+variable eA equal eangle
+variable eM equal emol
+variable ec equal ecouple
+variable eC equal econserve
+
+# Potencial energy per pair-wise interaction
+compute wcaPair all pair lj/cut/omp epair
+compute patchPair all pair table/omp epair
+compute swapPair all pair threebody/table epair
+
+# Compute the pressure
+compute press all pressure t ke virial
+compute pressVirial all pressure t virial
+compute pressVirialMod all pressure t pair bond angle
+
+# Computes for the stress
+compute cstress all stress/atom t ke pair bond angle
+compute cstressVirial all stress/atom t virial
+compute cstressVirialMod all stress/atom t pair bond angle
+compute stress all reduce sum c_cstress[*]
+compute stressVirial all reduce sum c_cstressVirial[*]
+compute stressVirialMod all reduce sum c_cstressVirialMod[*]
+
+# Get the number of central particles per cluster
+compute clusters all aggregate/atom 0.6                             # Create the clusters
+
+# DUMPS and FIXES
+
+thermo ${Ndump}
+
+# Save global energies and temperature
+fix Energy all ave/time 1 ${Nsave} ${Nsave} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
+
+# Save Pressure and Stress tensor
+fix fixStress5 all ave/time 1 ${NsaveStress} ${NsaveStress} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+
+# Save atom positions with cluster id
+dump dumpID all custom ${Ndump} ${Dir}/traj/${file3_name} id mol c_clusters type x y z vx vy vz
+dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
+
+# RUN SIMULATION
+
+# Brownian Dynamics using Langevin Thermostat
+
+timestep ${tstep}
+
+fix VelVerlet all nve # Use Velocity Verlet integrator
+
+# First elevate the temperature
+fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
+run ${stepsheat}
+
+unfix ThermoLng
+
+# Now we let the system to create the polymeric network
+fix ThermoLng all langevin ${temp} ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve 
+run ${steps}
+
+# Write data for deformation
+
+write_restart ${Dir}/${file4_name}

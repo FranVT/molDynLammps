@@ -1,0 +1,15 @@
+
+r_cWCA=1.12     # Cutoff distance of WCA potential 
+N_3body=128     # Points of evaluations for 3body table
+L=2.0             # Length of the simulation box
+m_CP=1.0          # Mass of central particles
+m_PT=1.0          # Mass of the patches
+
+E_bondP=100.0      # Bond energy between central particles and patches
+r_bondP=0.4         # Distance of bond
+theta_PA=109.4712          # Angle between patches of monomers
+theta_PB=180.0          # Angle between patches of monomers
+r_noInter=0.5       # Distance of no interacion zero potential lammps
+r_CP=1.0            # Distance of interaction between central particles
+E_CP=1.0            # Energy of interaction between central particles
+r_cPP=0.6           # Cutt of distance of patch-patch interaction
