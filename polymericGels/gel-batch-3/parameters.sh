@@ -4,11 +4,11 @@
 export phi_o=0.01           # Inital packing fraction 
 export phi_f=0.05           # Final packing fraction
 export phi_delta=0.01       # Delta of packing fraction simulate
+export chi_4o=0.5           # Initial Crosslinker concentration
+export chi_4f=0.5           # Final Crosslinker concentration
+export chi_4delta=0.1       # Delta of Crosslinker concentration
 export N_PP=5               # Total amount of patchy particles
 export N_exp=1              # Amount of experiments per each configuration
-export chi_4o=0.1           # Initial Crosslinker concentration
-export chi_4f=0.1           # Final Crosslinker concentration
-export chi_4delta=0.1       # Delta of Crosslinker concentration
 
 # System parameters
 export temp=0.05            # Temperature of thermal bath
