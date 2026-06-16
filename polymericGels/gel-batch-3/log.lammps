@@ -25,15 +25,15 @@ newton on
 
 # Create simulaiton box
 region simulation_box block -$L $L -$L $L -$L $L
-region simulation_box block -3.443873 $L -$L $L -$L $L
-region simulation_box block -3.443873 3.443873 -$L $L -$L $L
-region simulation_box block -3.443873 3.443873 -3.443873 $L -$L $L
-region simulation_box block -3.443873 3.443873 -3.443873 3.443873 -$L $L
-region simulation_box block -3.443873 3.443873 -3.443873 3.443873 -3.443873 $L
-region simulation_box block -3.443873 3.443873 -3.443873 3.443873 -3.443873 3.443873
+region simulation_box block -2.733404 $L -$L $L -$L $L
+region simulation_box block -2.733404 2.733404 -$L $L -$L $L
+region simulation_box block -2.733404 2.733404 -2.733404 $L -$L $L
+region simulation_box block -2.733404 2.733404 -2.733404 2.733404 -$L $L
+region simulation_box block -2.733404 2.733404 -2.733404 2.733404 -2.733404 $L
+region simulation_box block -2.733404 2.733404 -2.733404 2.733404 -2.733404 2.733404
 # N-atom-types region-ID keyword value Is necesesary the extra/special/per/atom (# of special neighbors per atom)
 create_box 4 simulation_box     bond/types 1     angle/types 2     extra/bond/per/atom 10     extra/angle/per/atom 6     extra/special/per/atom 10
-Created orthogonal box = (-3.443873 -3.443873 -3.443873) to (3.443873 3.443873 3.443873)
+Created orthogonal box = (-2.733404 -2.733404 -2.733404) to (2.733404 2.733404 2.733404)
   2 by 2 by 2 MPI processor grid
 
 # Atom types
@@ -91,4 +91,183 @@ pair_coeff 4 4 table/omp src_lmp/sysFiles/pachTab.table POT 0.6
 Reading pair table potential file src_lmp/sysFiles/pachTab.table with DATE: 2025-02-09
 WARNING: 1 of 128 force values in table POT are inconsistent with -dE/dr.
 WARNING:  Should only be flagged at inflection points (src/pair_table.cpp:469)
-pair_coeff * * threebody/table src_lmp/swapM
+pair_coeff * * threebody/table src_lmp/swapMech.3b NULL NULL PA PB
+pair_modify pair lj/cut/omp shift yes
+
+
+# Molecules
+include src_lmp/molecules.in
+# Script with all molecule information and create groups for computes
+
+# Read the molecule information
+molecule CL src_lmp/sysFiles/molecule.patchy.CL
+Read molecule template CL:
+# Patchy Cross-Linker
+  1 molecules
+  0 fragments
+  0 bodies
+  5 atoms with max type 3
+  4 bonds with max type 1
+  6 angles with max type 2
+  0 dihedrals with max type 0
+  0 impropers with max type 0
+molecule MO src_lmp/sysFiles/molecule.patchy.MO
+Read molecule template MO:
+# Patchy Monomer
+  1 molecules
+  0 fragments
+  0 bodies
+  3 atoms with max type 4
+  2 bonds with max type 1
+  1 angles with max type 1
+  0 dihedrals with max type 0
+  0 impropers with max type 0
+
+# Introduce the molecules
+# ID style args keyword arg
+region spawn_box block -$L $L -$L $L -$L $L
+region spawn_box block -2.733404 $L -$L $L -$L $L
+region spawn_box block -2.733404 2.733404 -$L $L -$L $L
+region spawn_box block -2.733404 2.733404 -2.733404 $L -$L $L
+region spawn_box block -2.733404 2.733404 -2.733404 2.733404 -$L $L
+region spawn_box block -2.733404 2.733404 -2.733404 2.733404 -2.733404 $L
+region spawn_box block -2.733404 2.733404 -2.733404 2.733404 -2.733404 2.733404
+
+# create_atoms type style args keyword values
+# style_random: N seed region-ID
+# keyword_mol: template-ID seed
+# keyword_overlap: overlap value = only insert if at least this distance from all existing atoms
+# keyword_maxtry: maxtry value = number of attempts to insert a particle before failure
+create_atoms 0 random ${N_pCL} ${seed1} spawn_box mol CL ${seed1} overlap 1.0 maxtry 5000 #xls
+create_atoms 0 random 3 ${seed1} spawn_box mol CL ${seed1} overlap 1.0 maxtry 5000 
+create_atoms 0 random 3 61 spawn_box mol CL ${seed1} overlap 1.0 maxtry 5000 
+create_atoms 0 random 3 61 spawn_box mol CL 61 overlap 1.0 maxtry 5000 
+Created 15 atoms
+  using lattice units in orthogonal box = (-2.733404 -2.733404 -2.733404) to (2.733404 2.733404 2.733404)
+  create_atoms CPU = 0.004 seconds
+create_atoms 0 random ${N_pMO} ${seed2} spawn_box mol MO ${seed2} overlap 1.0 maxtry 5000 #mon
+create_atoms 0 random 3 ${seed2} spawn_box mol MO ${seed2} overlap 1.0 maxtry 5000 
+create_atoms 0 random 3 62 spawn_box mol MO ${seed2} overlap 1.0 maxtry 5000 
+create_atoms 0 random 3 62 spawn_box mol MO 62 overlap 1.0 maxtry 5000 
+Created 9 atoms
+  using lattice units in orthogonal box = (-2.733404 -2.733404 -2.733404) to (2.733404 2.733404 2.733404)
+  create_atoms CPU = 0.002 seconds
+
+# Create groups for computes
+group CrossLinker type 1 3
+15 atoms in group CrossLinker
+group Monomer type 2 4
+9 atoms in group Monomer
+group Patches type 3 4
+18 atoms in group Patches
+group CL type 1
+3 atoms in group CL
+group MO type 2
+3 atoms in group MO
+group PA type 3
+12 atoms in group PA
+group PB type 4
+6 atoms in group PB
+group CM type 1 2
+6 atoms in group CM
+
+# Neighbor list
+neighbor ${r_cWCA} bin # extra-distance style
+neighbor 1.12 bin 
+
+# COMPUTES
+
+# Compute global kinetic and potential energy and temperature
+compute t all temp
+compute p all pressure t
+compute ep all pe
+compute ek all ke
+variable eT equal etotal
+variable eB equal ebond
+variable eA equal eangle
+variable eM equal emol
+variable ec equal ecouple
+variable eC equal econserve
+
+# Potencial energy per pair-wise interaction
+compute wcaPair all pair lj/cut/omp epair
+compute patchPair all pair table/omp epair
+compute swapPair all pair threebody/table epair
+
+# Compute the pressure
+compute press all pressure t ke virial
+compute pressVirial all pressure t virial
+compute pressVirialMod all pressure t pair bond angle
+
+# Computes for the stress
+compute cstress all stress/atom t ke pair bond angle
+compute cstressVirial all stress/atom t virial
+compute cstressVirialMod all stress/atom t pair bond angle
+compute stress all reduce sum c_cstress[*]
+compute stressVirial all reduce sum c_cstressVirial[*]
+compute stressVirialMod all reduce sum c_cstressVirialMod[*]
+
+# Get the number of central particles per cluster
+compute clusters all aggregate/atom ${r_cPP}                             # Create the clusters
+compute clusters all aggregate/atom 0.6                             
+
+# DUMPS and FIXES
+
+thermo ${N_dump}
+thermo 2000
+
+# Save global energies and temperature
+fix Energy all ave/time 1 ${N_save} ${N_save} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
+fix Energy all ave/time 1 1000 ${N_save} c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
+fix Energy all ave/time 1 1000 1000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file ${Dir}/${file1_name}
+fix Energy all ave/time 1 1000 1000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3/data/2026-06-16-155602_2_phi0.02_chi0.5/${file1_name}
+fix Energy all ave/time 1 1000 1000 c_t c_wcaPair c_patchPair c_swapPair c_ep c_ek v_eT v_ec v_eC c_p v_eB v_eA v_eM file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3/data/2026-06-16-155602_2_phi0.02_chi0.5/system_assembly.fixf
+
+# Save Pressure and Stress tensor
+fix fixStress5 all ave/time 1 ${N_save} ${N_save} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+fix fixStress5 all ave/time 1 1000 ${N_save} c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+fix fixStress5 all ave/time 1 1000 1000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file ${Dir}/${file2_name}
+fix fixStress5 all ave/time 1 1000 1000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3/data/2026-06-16-155602_2_phi0.02_chi0.5/${file2_name}
+fix fixStress5 all ave/time 1 1000 1000 c_p c_press[*] c_pressVirial[*] c_pressVirialMod[*] c_stress[*] c_stressVirial[*] c_stressVirialMod[*] file /home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3/data/2026-06-16-155602_2_phi0.02_chi0.5/stress_assembly.fixf
+
+# Save atom positions with cluster id
+dump dumpID all custom ${N_dump} ${Dir}/traj/${file3_name} id mol c_clusters type x y z vx vy vz
+dump dumpID all custom 2000 ${Dir}/traj/${file3_name} id mol c_clusters type x y z vx vy vz
+dump dumpID all custom 2000 /home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3/data/2026-06-16-155602_2_phi0.02_chi0.5/traj/${file3_name} id mol c_clusters type x y z vx vy vz
+dump dumpID all custom 2000 /home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3/data/2026-06-16-155602_2_phi0.02_chi0.5/traj/traj_assembly.*.dumpf id mol c_clusters type x y z vx vy vz
+dump_modify dumpID pbc yes # remap atoms via periodic boundary conditions
+
+# RUN SIMULATION
+
+# Brownian Dynamics using Langevin Thermostat
+
+timestep ${tstep}
+timestep 0.001
+
+fix VelVerlet all nve # Use Velocity Verlet integrator
+
+# First elevate the temperature
+fix ThermoLng all langevin 0.0 ${temp} ${damp} ${seed3} tally yes zero yes # Brownian Dynamics: langevin + nve
+fix ThermoLng all langevin 0.0 0.05 ${damp} ${seed3} tally yes zero yes 
+fix ThermoLng all langevin 0.0 0.05 1.0 ${seed3} tally yes zero yes 
+fix ThermoLng all langevin 0.0 0.05 1.0 63 tally yes zero yes 
+run ${N_heat}
+run 5000
+WARNING: Using a manybody potential with bonds/angles/dihedrals and special_bond exclusions (src/pair.cpp:250)
+Hybrid pair style last /omp style table/omp
+Last active /omp style is angle_style harmonic/omp
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.24
+  ghost atom cutoff = 2.24
+  binsize = 1.12, bins = 5 5 5
+  7 neighbor lists, perpetual/occasional/extra = 6 1 0
+  (1) pair zero, perpetual, skip from (7)
+      attributes: half, newton on, omp
+      pair build: skip/omp
+      stencil: none
+      bin: none
+  (2) pair lj/cut/omp, perpetual, skip from (7)
+      attributes: half, newton on, omp
+   

@@ -12,74 +12,7 @@ dir_data="$dir_home/data"
 # 2. Cargar parámetros por defecto
 # ------------------------------------------------------------------
 source parameters.sh
-
-# ------------------------------------------------------------------
-# 3. Función para generar semillas únicas basadas en fecha y contador
-# ------------------------------------------------------------------
-generate_seeds() {
-    local exp_num=$1
-    local seed_base=$(( exp_num + 10#$(date +%S) + 10#$(date +%M) ))
-    seed1=$(( seed_base + 1 ))
-    seed2=$(( seed_base + 2 ))
-    seed3=$(( seed_base + 3 ))
-    export seed1 seed2 seed3
-}
-
-# ------------------------------------------------------------------
-# Función para escribir todos los parámetros en un archivo de log
-# Uso: write_params <archivo_salida> [par_extra1=valor1 ...]
-# ------------------------------------------------------------------
-write_params() {
-    local output_file="$1"
-    shift  # ahora $@ contiene los pares extra (ej: "phi=$phi")
-
-    # Lista de todas las variables que queremos registrar
-    # (amplía o reduce según tus necesidades)
-    local all_vars=(
-        # Control parameters
-        phi_o phi_f phi_delta chi_4o chi_4f chi_4delta N_PP N_exp
-        # System parameters
-        temp damp N_pCL N_pMO L
-        # Physics parameters
-        m_CP m_PT r_cWCA r_cPP r_CP r_bondP theta_PA theta_PB E_CP E_bondP
-        # Analysis parameters
-        N_heat N_isothermal N_save N_dump
-        # Lammps parameters
-        N_3body r_noInter seed1 seed2 seed3 tstep
-        # File names (si quieres guardarlos)
-        file1_name file2_name file3_name file4_name
-        # Extra
-        cs Vol_MO Vol_CL
-    )
-
-    # Usar un array asociativo para almacenar (nombre -> valor)
-    declare -A params
-
-    # 1. Rellenar con los valores actuales de todas las variables listadas
-    for var in "${all_vars[@]}"; do
-        if [ -n "${!var}" ]; then
-            params["$var"]="${!var}"
-        fi
-    done
-
-    # 2. Sobrescribir con los pares extra pasados como argumentos
-    for pair in "$@"; do
-        # Separar en clave y valor (ej: "phi=0.05")
-        IFS='=' read -r key value <<< "$pair"
-        params["$key"]="$value"
-    done
-
-    # 3. Escribir el archivo de log
-    {
-        echo "# Parámetros usados en esta simulación"
-        echo "# Generado el $(date)"
-        echo "# ------------------------------------"
-        # Ordenar alfabéticamente para mejor legibilidad
-        for key in $(printf '%s\n' "${!params[@]}" | sort); do
-            echo "$key = ${params[$key]}"
-        done
-    } > "$output_file"
-}
+source utils.sh   # <--- NUEVA LÍNEA (asegúrate de que la ruta sea correcta)
 
 # ------------------------------------------------------------------
 # 4. Barrido de parámetros
@@ -103,8 +36,12 @@ for phi in $(seq $phi_o $phi_delta $phi_f); do
         # Exportar variables para que estén disponibles en LAMMPS
         export L N_pCL N_pMO
 
+        # --- 4d. Ejecutar N_exp réplicas ---
+        for (( exp=1; exp<=N_exp; exp++ )); do
+
         # --- 4c. Mostrar combinación actual ---
         echo "================================================"
+        echo "Nexp  = $exp"
         echo "phi   = $phi"
         echo "chi_4 = $chi_4"
         echo "N_pCL = $N_pCL"
@@ -112,8 +49,7 @@ for phi in $(seq $phi_o $phi_delta $phi_f); do
         echo "L     = $L"
         echo "================================================"
 
-        # --- 4d. Ejecutar N_exp réplicas ---
-        for (( exp=1; exp<=N_exp; exp++ )); do
+
 
             # Generar semillas únicas
             generate_seeds $exp
