@@ -74,6 +74,85 @@ function get_fixInfo(df,SAVE_DIR)
 end
 
 
+"""
+    Plot potential and kinetic energy for a series of systems.
+"""
+function figure_fixEnergy(dfs_fix, dat_files)
+    # Get the ids to create labels
+    ids_plot = map(s -> unique(s.id)[1], dfs_fix);
+
+    # Dictionaries to map id to info.
+    dict_phi = Dict(dat_files.id .=> dat_files.phi);
+    dict_CL  = Dict(dat_files.id .=> dat_files."CL-Con");
+    dict_T   = Dict(dat_files.id .=> dat_files.Temperature);
+
+    # Labels
+    phis      = 100 * map(s -> dict_phi[s], ids_plot);
+    phi_min   = minimum(phis);
+    phi_max   = maximum(phis);
+
+    # Prepare the color code
+    sys_domain  = eachindex(dfs_fix);
+    N_systems   = length(dfs_fix);
+    color_norm  = phis ./ N_systems;
+    color_min   = first(color_norm);
+    color_max   = last(color_norm);
+
+    # Prepare the time domain
+    dt = 0.001;
+    time_domains = map(s -> dt * (s.TimeStep), dfs_fix);
+
+    fig = Figure()
+    ax_plot = Axis(fig[1:1, 1:1],
+                   xlabel = L"\mathrm{Time~}[\tau]",
+                   ylabel = L"U(\tau)~[\epsilon]",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (nothing, nothing, nothing, nothing),
+                   xscale = log10
+                  )
+
+    # Plot the potential energy for each system
+    for it_sys in sys_domain
+        scatterlines!(ax_plot, time_domains[it_sys], dfs_fix[it_sys].c_ep,
+                      color = color_norm[it_sys],
+                      colorrange = (color_min, color_max)
+                     )
+    end
+
+    # Legends in terms of the packing fraction
+    Colorbar(fig[1, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+
+    save(string("fig_PotEnergy_phiseries.png"), fig, px_per_unit = 300 / inch)
+
+
+    fig = Figure()
+    ax_plot = Axis(fig[1:1, 1:1],
+                   xlabel = L"\mathrm{Time~}[\tau]",
+                   ylabel = L"K(\tau)~[\epsilon]",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (nothing, nothing, nothing, nothing),
+                   xscale = log10
+                  )
+
+    # Plot the potential energy for each system
+    for it_sys in sys_domain
+        scatterlines!(ax_plot, time_domains[it_sys], dfs_fix[it_sys].c_ek,
+                      color = color_norm[it_sys],
+                      colorrange = (color_min, color_max)
+                     )
+    end
+
+    # Legends in terms of the packing fraction
+    Colorbar(fig[1, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+
+    save(string("fig_KineticEnergy_phiseries.png"), fig, px_per_unit = 300 / inch)
+
+end
+
+
+
 
 
 
