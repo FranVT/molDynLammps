@@ -22,7 +22,7 @@ Sq_PBC=0;
 
 # Update the data file with new systems
 if up ==1 
-    createDatFiles();
+    createDat_ID("/run/media/franvt/rogelio/DinMol/gel-batch-2/data");
 end
 
 # Extraer la información del dat file
