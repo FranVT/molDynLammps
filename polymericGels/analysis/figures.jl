@@ -32,9 +32,68 @@ data_bySystem=groupby(dat_files,categories);
 dfs_fix = map(s->get_fixInfo(data_bySystem[s],SAVE_DIR),eachindex(data_bySystem));
 
 # Store the figure of the energy 
-figure_fixEnergy(dfs_fix,dat_files)
+#figure_fixEnergy(dfs_fix,dat_files)
+
+# Get the information of all systems of the structure factor files
+dfs_sf = map(s->get_sfInfo(data_bySystem[s],SAVE_DIR),eachindex(data_bySystem));
+
+# ids
+ids = map(s->unique(data_bySystem[s].id)[1],eachindex(data_bySystem));
 
 
+# Select one system
+it_sys=5;
+system=dfs_sf[it_sys];
+
+# Get the time steps of the S(q)
+time_aux=map(s->unique(s.timeStep)[1],system);
+
+# Sort the time steps 
+time_domain=sort(time_aux);
+
+# Get the index from the sorted order to the original file
+ind_sort=map(s->findall(x->x==s,time_aux)[1],time_domain);
+
+# Create the graph of the time evolution of the structure factor
+
+# Time domain label
+dt=0.001;
+time_domain=(dt).*time_domain;
+
+# Labels
+to=first(time_domain);
+tf=last(time_domain);
+
+
+# Prepare the color code
+color_ref=maximum(time_domain);
+color_norm=time_domain./color_ref;
+color_min=minimum(color_norm);
+color_max=maximum(color_norm);
+
+    fig = Figure()
+    ax_plot = Axis(fig[1:1, 1:1],
+                   xlabel = L"|\vec{q}|~[\frac{1}{x^*}]",
+                   ylabel = L"S(|\vec{q}|)",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (nothing, nothing, nothing, nothing),
+                   xscale = log10,
+                   yscale = log10
+                  )
+
+    # Plot the potential energy for each system
+    for (it_sort,it_og) in enumerate(ind_sort)
+        scatterlines!(ax_plot, system[it_og].qmean, system[it_og].Sqmean,
+                      color = color_norm[it_sort],
+                      colorrange = (color_min, color_max)
+                     )
+    end
+
+    # Legends in terms of the packing fraction
+    Colorbar(fig[1, 2], label = L"\tau", colormap = :viridis, limits = (to, tf))
+
+    save(string("fig_Sq_",ids[it_sys],"_timeDomain.png"), fig, px_per_unit = 300 / inch)
 
 
 #figureCompareSq(dat_files)
