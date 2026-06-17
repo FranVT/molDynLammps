@@ -144,14 +144,25 @@ end
 #   OTHER  FUNCTIONS
 #######
 
+function extract_FixScalar(path_file)
+"""
+    Function that extracts the information of fix files that stores global scalar values
+"""
+    aux=split.(readlines(path_file)," ");
+    header=aux[2][2:end];
+    info=reduce(hcat,map(s->parse.(Float64,s),aux[3:end]));
 
-function meanFixystem(dirs)
+    return DataFrame(info',header)
+end
+
+
+function mean_FixSystem(dirs)
 """
     Function that returns a dataframe with the mean of N experiments of the observables stored in a fix file.
 """
 
     # Obtener la información de lo fix files
-    data_fix=map(s->dataSystem=extractFixScalar(s,"system_assembly.fixf"),dirs);
+    data_fix=map(s->dataSystem=extract_FixScalar(s),dirs);
 
     # Variables auxiliares
     n_row = nrow(data_fix[1]);
@@ -171,15 +182,41 @@ function meanFixystem(dirs)
 end
 
 
-function extractFixScalar(path_system,file_name)
+function storeAvg_fix(df)
 """
-    Function that extracts the information of fix files that stores global scalar values
+    Store a csv file with the assembly avergage of a system of the fix file observables 
 """
-    aux=split.(readlines(joinpath(path_system,file_name))," ");
-    header=aux[2][2:end];
-    info=reduce(hcat,map(s->parse.(Float64,s),aux[3:end]));
 
-    return DataFrame(info',header)
+    # Extraer informacion del archivo de fix
+    col=[:PARENT_DIR,:dir,:file0];
+
+    # For each group of dataframes
+    files=unique(df[:,col]);
+
+    # Create the path to each fix file of each experiment of the same system
+    files.path=joinpath.(files.PARENT_DIR, files.dir, files.file0);
+
+    # Compute the assambly average of the fix file information
+    fix_info=mean_FixSystem(files.path);
+
+    # Get the id of the system
+    id_system=unique(df[:,:id]);
+
+    # Add the id 
+    fix_info.id.=id_system;
+
+    # Create file name to store the data
+    filename=string("fix_avg_",first(id_system),".csv");
+
+    # Directory to store the information
+    file_dir=joinpath(pwd(),"analyzedData");
+
+    # File path to store the data
+    file_path=joinpath(file_dir,filename);
+
+    # Save the average 
+    CSV.write(file_path,fix_info);
+
 end
 
 

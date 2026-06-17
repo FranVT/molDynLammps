@@ -16,11 +16,9 @@ include("functions_graphs.jl")
 
 # Activate functions
 up=0;
-Sq=0;
-Sq_PBC=0;
+selec_fixavg=0;
 
-
-# Update the data file with new systems
+# Assign a unique id to the dat files in the directory 
 if up ==1 
     createDat_ID("/run/media/franvt/rogelio/DinMol/gel-batch-2/data");
 end
@@ -34,16 +32,18 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
-# Analyze the structure factor per system
-if Sq_PBC == 1
-    #println("Inicio análisis de S(q)")
-    #storeAllSq(data_bySystem,[dumpAnalysis(dat_DF) for dat_DF in data_bySystem])
-    #println("Fin análisis de S(q)")
+if selec_fixavg ==1 
+    # Store all the assembly avg of the systems
+    map(s->storeAvg_fix(data_bySystem[s]),eachindex(data_bySystem))
 end
+
+
 
 
 #figureCompareSq(dat_files)
 #figureCompareSl(dat_files)
+
+#=
 
 # Grafica del factor de estructura
 MAIN_DIR=pwd();
@@ -127,7 +127,7 @@ fig=Figure()
 
 save(string("fig_Sq_phi_",100*dict_phi[ids[id_selec]],"_timeseries.png"), fig, px_per_unit = 300/inch)
 
-
+=#
 
 
 #=
