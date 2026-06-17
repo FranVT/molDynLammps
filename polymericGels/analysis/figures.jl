@@ -28,21 +28,10 @@ categories=[:id];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
-# Select one system 
-df=data_bySystem[1];
+# Get the information of all systems of the fix files 
+dfs_fix = map(s->get_fixInfo(data_bySystem[s],SAVE_DIR),eachindex(data_bySystem))
 
-# Get the id of the system
-ids = unique(df[:,[:id]]);
-ids = first(ids.id);
-
-# CReate a pattern to search all file with same id
-pattern = Regex("^*$ids*\\.csv\$")
-
-# Get all the files with the id of the system
-file_names=filter(f->occursin(pattern,f),readdir(SAVE_DIR))
-
-
-
+# Start the plot
 
 
 #figureCompareSq(dat_files)

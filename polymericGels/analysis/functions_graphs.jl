@@ -30,6 +30,60 @@ set_theme!(
     )
 )
 
+
+####
+#   INFORMATION ORGANIZATION
+####
+
+function classify_files(SAVE_DIR, id_str)
+    # Filtrar archivos CSV que contengan el id (escapando puntos para seguridad)
+    all_files = readdir(SAVE_DIR)
+    
+    # Get all the files with the id of the system
+    matched = filter(f -> occursin(id_str, f) && endswith(f, ".csv"), all_files)
+    
+    # Separar por prefijo
+    fix_files = filter(f -> startswith(f, "fix_avg_"), matched)
+    sf_files  = filter(f -> startswith(f, "structureFactorPBC"), matched)
+    
+    return (fix_files, sf_files)
+end
+
+"""
+    Get the information of the fix files
+"""
+function get_fixInfo(df,SAVE_DIR)
+    # Get the id of the system
+    id_str = string(first(unique(df[:, :id])));
+
+    # Get the list of all files
+    fix_list, sf_list = classify_files(SAVE_DIR, id_str);
+
+    # Create the paths to the files
+    fix_paths = joinpath.(SAVE_DIR, fix_list);
+    sf_paths  = joinpath.(SAVE_DIR, sf_list);
+
+    # Read the information of the fix files
+    df_fix=CSV.read(fix_paths[1],DataFrame);
+
+    # Select the categories needed to do the plots
+    categories_plot=[:id,:TimeStep,:c_t,:c_ep,:c_ek];
+
+    # Select the information to plot
+    return df_fix[:,categories_plot]
+end
+
+
+
+
+
+
+
+
+
+
+
+
 function figureCompareSl(dat_files)
 
 
