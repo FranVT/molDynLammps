@@ -19,53 +19,54 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
-# Main Parameters of the analysis
-N_systems=length(data_bySystem);
-N_instants=25;               # Instantes temporales a analizar
-qmax0 = 6;              # 3 es el min sin que cause problemas
+# Parameters
+N_instants=25; # Select the amount of timesteps to analyze
 
-it_system=4;
-
-#computeAllTimeSqmean(data_bySystem[it_system],N_instants,qmax0)
+# Cycle thru the different systems
+it_system=1;
 dat_DF=data_bySystem[it_system];
-N_instants=N_instants;
-qmax0=qmax0;
 
-    # Parameters of the system relevant to the structure factor
-    L = 2 * dat_DF.L[1]            # Longitud de la caja
-    N_exp = nrow(dat_DF)           # Cantidad de experimentos por sistema
-    N_part = dat_DF.Npart[1]       # Numero de particulas centrales
+# Get the paths to the data
+(timeSteps, dump_paths, file_names) = getpathfilesSq(dat_DF, N_instants);
 
-    # Crea los dominios del vector de onda
-    xc = L                 # longitud de la caja en x
-    yc = L                 # longitud de la caja en y
-    zc = L                 # longitud de la caja en z
-    dq0 = 2 * pi / xc      # Δq fundamental
-    qmax = Int(floor(qmax0 / dq0))   # número entero de pasos hasta qmax0
-    rq0 = qmax * dq0       # valor máximo real de |q| usado
-    bin0 = dq0             # nuevo ancho de bin (bin0 original * dq0)
-    numbin = Int(floor(qmax * dq0 / bin0)) + 1  # número total de bines
+# Get the position of all the experiments of the same system 
+N_exp=length(dat_DF.Nexp);  # Amount of experiments of the same system
 
-    # Parametros para el factor de estructura
-    ntotav = Int(N_part)   # Número total de partículas
-    (qxhis, qyhis, qzhis, qhis, qmean) = createqdom(qmax, rq0, dq0, bin0, numbin)  # vector de onda
-    
-    file_path = joinpath(pwd(), "analyzedData")
+# Save memory
+size_clusters=[[] for _ in 1:N_exp];
+N_clusters=[zeros(N_instants) for _ in 1:N_exp];
 
-    # Obtener los paths y los nombres de los archivos a analizar
-    (timeSteps, dump_paths, file_names) = getpathfilesSq(dat_DF, N_instants)
+it_exp=1;
+positions=map(s->getDump(dump_paths[it_exp], s),file_names)
 
-    # Select one time step
-    # Alocar memoria
-    info = [zeros(numbin, 3) for _ in 1:N_exp]
 
-    for it_time in eachindex(file_names)
-        computeSqmean(file_names[it_time], timeSteps[it_time], file_path, dump_paths, dat_DF,
-                      numbin, ntotav, qxhis, qyhis, qzhis, qhis, qmean, info)
-        println("One time step done")
-    end
+# Get the amount of clusters at each time step for all experiments
+# $ C_clusters is an id
+for it_exp in 1:N_exp
+    # Get the position of all time steps for one experiment
+    positions=map(s->getDump(dump_paths[it_exp], s),file_names);
 
-    #println("One system done")
+    # Get the amount of central particles in the clusters 
+    filtered = filter.(row -> row.type in (1, 2), positions);
+    counts = map(s->combine(groupby(s, :c_clusters), nrow => :count),filtered);
+
+    # Store the information
+    size_clusters[it_exp]=map(s->s.count,counts);
+
+    # Get the amount of clusters for each time step 
+    N_clusters[it_exp]=length.(size_clusters[it_exp]);
+end
+
+# Compute the time assemble average of amount of clusters
+N_clusters_mean=mean(N_clusters);
+
+# Compute the time assemble average of the amount of central particles in the biggest cluster
+max_particles=map(s-> maximum.(s),size_clusters);
+
+# For the histogram 
+hist_size=map(l->mapreduce(s->size_clusters[s][l],vcat,1:N_exp),eachindex(timeSteps))
+
+# Save the information per timeStep
 
 
 nothing

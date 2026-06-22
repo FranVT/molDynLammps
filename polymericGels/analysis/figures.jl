@@ -42,7 +42,7 @@ ids = map(s->unique(data_bySystem[s].id)[1],eachindex(data_bySystem));
 
 
 # Select one system
-it_sys=5;
+it_sys=4;
 system=dfs_sf[it_sys];
 
 # Get the time steps of the S(q)
@@ -77,14 +77,22 @@ color_max=maximum(color_norm);
                    ylabel = L"S(|\vec{q}|)",
                    xminorticksvisible = true,
                    xminorgridvisible = true,
-                   limits = (nothing, nothing, nothing, nothing),
+                   limits = (10^(-1.0), 10^1, 10^(-1.0), nothing),
                    xscale = log10,
                    yscale = log10
                   )
 
     # Plot the potential energy for each system
     for (it_sort,it_og) in enumerate(ind_sort)
-        scatterlines!(ax_plot, system[it_og].qmean, system[it_og].Sqmean,
+        x = system[it_og].qmean
+        y = system[it_og].Sqmean
+        
+        #idx = findall(x .!= 0.0)
+        #idy = findall(y .!= 0.0)
+
+        #println(idx)
+
+        scatterlines!(ax_plot, x, y,
                       color = color_norm[it_sort],
                       colorrange = (color_min, color_max)
                      )
