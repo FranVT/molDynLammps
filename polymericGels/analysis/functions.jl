@@ -276,7 +276,7 @@ function computeAllTimeSqmean(dat_DF, N_instants, qmax0)
 
     # Parametros para el factor de estructura
     ntotav = Int(N_part)   # Número total de partículas
-    (qxhis, qyhis, qzhis, qhis) = createqdom(qmax, rq0, dq0, bin0, numbin)  # vector de onda
+    (qxhis, qyhis, qzhis, qhis, qmean) = createqdom(qmax, rq0, dq0, bin0, numbin)  # vector de onda
     file_path = joinpath(pwd(), "analyzedData")
 
     # Obtener los paths y los nombres de los archivos a analizar
@@ -288,7 +288,7 @@ function computeAllTimeSqmean(dat_DF, N_instants, qmax0)
 
     for it_time in eachindex(file_names)
         computeSqmean(file_names[it_time], timeSteps[it_time], file_path, dump_paths, dat_DF,
-                      numbin, ntotav, qxhis, qyhis, qzhis, qhis, info)
+                      numbin, ntotav, qxhis, qyhis, qzhis, qhis, qmean, info)
         println("One time step done")
     end
 

@@ -14,7 +14,7 @@ include("functions.jl")
 
 # Activate functions
 up=0;
-selec_fixavg=1;
+selec_fixavg=0;
 selec_Sq=0;
 
 # Assign a unique id to the dat files in the directory 
