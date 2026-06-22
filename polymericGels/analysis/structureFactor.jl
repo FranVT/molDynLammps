@@ -24,7 +24,7 @@ N_systems=length(data_bySystem);
 N_instants=25;               # Instantes temporales a analizar
 qmax0 = 6;              # 3 es el min sin que cause problemas
 
-for it_system in (1,2,3,5) 
+for it_system in (4) 
     computeAllTimeSqmean(data_bySystem[it_system],N_instants,qmax0)
 end
 

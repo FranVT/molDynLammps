@@ -19,54 +19,53 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
+# Main Parameters of the analysis
+N_systems=length(data_bySystem);
+N_instants=25;               # Instantes temporales a analizar
+qmax0 = 6;              # 3 es el min sin que cause problemas
 
-dat_DF=data_bySystem[1];
+it_system=4;
 
-# get the paths to the dump files foer each experiment
-dump_paths=joinpath.(dat_DF.PARENT_DIR,dat_DF.dir,"traj");
+#computeAllTimeSqmean(data_bySystem[it_system],N_instants,qmax0)
+dat_DF=data_bySystem[it_system];
+N_instants=N_instants;
+qmax0=qmax0;
 
-paths=[readdir(it) for it in dump_paths];
+    # Parameters of the system relevant to the structure factor
+    L = 2 * dat_DF.L[1]            # Longitud de la caja
+    N_exp = nrow(dat_DF)           # Cantidad de experimentos por sistema
+    N_part = dat_DF.Npart[1]       # Numero de particulas centrales
 
-# Time instants store in each directory
-time_instants=[[split(it,".")[2] for it in p] for p in paths];
+    # Crea los dominios del vector de onda
+    xc = L                 # longitud de la caja en x
+    yc = L                 # longitud de la caja en y
+    zc = L                 # longitud de la caja en z
+    dq0 = 2 * pi / xc      # Δq fundamental
+    qmax = Int(floor(qmax0 / dq0))   # número entero de pasos hasta qmax0
+    rq0 = qmax * dq0       # valor máximo real de |q| usado
+    bin0 = dq0             # nuevo ancho de bin (bin0 original * dq0)
+    numbin = Int(floor(qmax * dq0 / bin0)) + 1  # número total de bines
 
-# Select N items equally spatially.
+    # Parametros para el factor de estructura
+    ntotav = Int(N_part)   # Número total de partículas
+    (qxhis, qyhis, qzhis, qhis, qmean) = createqdom(qmax, rq0, dq0, bin0, numbin)  # vector de onda
+    
+    file_path = joinpath(pwd(), "analyzedData")
 
-N_instants=6;
+    # Obtener los paths y los nombres de los archivos a analizar
+    (timeSteps, dump_paths, file_names) = getpathfilesSq(dat_DF, N_instants)
 
-time_domain=sort!(parse.(Float64,time_instants[1]))
-time_size=length(time_domain);
-time_inds=floor.(Int64,range(stop=time_size, start=1, length=N_instants)|>collect);
-time2analyze=convert.(BigInt,time_domain[time_inds]);
+    # Select one time step
+    # Alocar memoria
+    info = [zeros(numbin, 3) for _ in 1:N_exp]
 
+    for it_time in eachindex(file_names)
+        computeSqmean(file_names[it_time], timeSteps[it_time], file_path, dump_paths, dat_DF,
+                      numbin, ntotav, qxhis, qyhis, qzhis, qhis, qmean, info)
+        println("One time step done")
+    end
 
-
-
-
-
-
-
-#function getpathfilesSq(dat_DF,N_instants)
-"""
-    Get the names files 
-"""
-     # Create time steps range
-    #aux_timeStep=Int.((0:dat_DF."save-dump"[1]:(dat_DF."N_heat"[1] + dat_DF."N_isot"[1])));
-
-    # Get the index for the time instants that we are interested to analyzed
-    #ind=round.(Int, LinRange(1, length(aux_timeStep), N_instants));
-
-    # Get the time steps
-    #timeSteps=aux_timeStep[ind];
-
-    # Create file names
-    #file_names=[replace("traj_assembly.*.dumpf", "*" => string(it)) for it in timeSteps];
-
-    # Path to the dumps
-#     return (timeSteps,dump_paths,file_names)
-#end
-
-
+    #println("One system done")
 
 
 nothing

@@ -179,7 +179,10 @@ function createqdom(qmax, rq0, dq0, bin0, numbin)
         end
     end
 
-    return (qxhis, qyhis, qzhis, qhis)
+    # Compute the mean handeling the empty vectors
+    qmean=[isempty(v) ? 0.0 : mean(v) for v in qhis];
+
+    return (qxhis, qyhis, qzhis, qhis, qmean)
 end
 
 """
@@ -195,20 +198,26 @@ function computeSq(numbin, ntotav, qxhis, qyhis, qzhis, qhis, r)
         qy = qyhis[it_bin]
         qz = qzhis[it_bin]
 
-        # Calcular la densidad para cada bin
-        for it_q in eachindex(qx)
-            vq = [qx[it_q], qy[it_q], qz[it_q]]
-            dp = r * vq  # Producto punto del vector para cada partícula
-            rho_re = sum(cos.(dp))
-            rho_im = sum(sin.(dp))
-            sq = (rho_re^2 + rho_im^2) / ntotav
-            append!(rho[it_bin], sq)
-        end
+        # Manage null vectors
+        if isempty(qx) || isempty(qy) || isempty(qz)
+            append!(rho[it_bin], 0.0)
+        else
+                    # Calcular la densidad para cada bin
+            for it_q in eachindex(qx)
+                vq = [qx[it_q], qy[it_q], qz[it_q]]
+                dp = r * vq  # Producto punto del vector para cada partícula
+                rho_re = sum(cos.(dp))
+                rho_im = sum(sin.(dp))
+                sq = (rho_re^2 + rho_im^2) / ntotav
+                append!(rho[it_bin], sq)
+            end
+        end 
+
     end
 
     # Guardamos información
     # Valor esperado del factor de estructura
-    Sq[:, 1] = sum.(rho) ./ length.(qhis)
+    Sq[:, 1] = sum.(rho) ./ numbin 
     smax = maximum(Sq[:, 1])
     Sq[:, 2] = Sq[:, 1] / smax
 
@@ -219,7 +228,7 @@ end
     Compute the avg structure factor of a system at a given time step
 """
 function computeSqmean(file_names, timeStep, file_path, dump_paths, dat_DF, numbin, ntotav,
-                       qxhis, qyhis, qzhis, qhis, info)
+                       qxhis, qyhis, qzhis, qhis, qmean, info)
 
     # Preparar informacion para el factor de estructura
     r_system = getPositions(file_names, dump_paths)
@@ -233,7 +242,7 @@ function computeSqmean(file_names, timeStep, file_path, dump_paths, dat_DF, numb
 
     # Se obtienen promedios
     info = mean(info)        # Compute the assembly mean of the Sq
-    info[:, 1] = mean.(qhis) # Compute the mean of the wave vectors
+    info[:, 1] = qmean       # Store the mean of the wave vectors
 
     # Paths and file names and stuff
     filename = string("structureFactorPBC", first(dat_DF.id), "time", timeStep, ".csv")
@@ -290,7 +299,6 @@ end
 #   DUMP FUNCTIONS
 #######
 
-#=
 """
     Get the position of the central particles of a given dump
 """
@@ -312,7 +320,6 @@ function getDump(dir, file_name)
 
     return DataFrame(INFO, HEADERS)
 end
-=#
 
 #######
 #   FIX FUNCTIONS
