@@ -47,3 +47,10 @@ if selec_Sq == 1
     end
 end
 
+if selec_Cluster == 1
+    # Parameters
+    N_instants=25; # Select the amount of timesteps to analyze
+
+    # Cycle thru the different systems
+    map(s->clusterAnalysis(data_bySystem[s],N_instants),eachindex(data_bySystem))
+end
