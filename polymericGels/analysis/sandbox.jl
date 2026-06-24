@@ -19,11 +19,4 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
-# Parameters
-N_instants=25; # Select the amount of timesteps to analyze
-
-# Cycle thru the different systems
-map(s->clusterAnalysis(data_bySystem[s],N_instants),eachindex(data_bySystem))
-
-
 nothing

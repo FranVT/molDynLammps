@@ -364,7 +364,7 @@ function clusterAnalysis(dat_DF, N_instants)
     # row|col -> time|phi
     max_particles = mean(map(s -> maximum.(s), size_clusters))
 
-    # For the histogram
+    # For the histogram of the size of the clusters
     hist_size = map(l -> mapreduce(s -> size_clusters[s][l], vcat, 1:N_exp), eachindex(timeSteps))
 
     # Save the information per timeStep

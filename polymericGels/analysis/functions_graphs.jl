@@ -35,7 +35,7 @@ set_theme!(
 #   INFORMATION ORGANIZATION
 ####
 
-function classify_files(SAVE_DIR, id_str)
+function classify_files(SAVE_DIR, id_str, pattern)
     # Filtrar archivos CSV que contengan el id (escapando puntos para seguridad)
     all_files = readdir(SAVE_DIR)
     
@@ -43,10 +43,9 @@ function classify_files(SAVE_DIR, id_str)
     matched = filter(f -> occursin(id_str, f) && endswith(f, ".csv"), all_files)
     
     # Separar por prefijo
-    fix_files = filter(f -> startswith(f, "fix_avg_"), matched)
-    sf_files  = filter(f -> startswith(f, "structureFactorPBC"), matched)
+    files = filter(f -> startswith(f, pattern), matched)
     
-    return (fix_files, sf_files)
+    return files 
 end
 
 """
@@ -57,11 +56,10 @@ function get_fixInfo(df,SAVE_DIR)
     id_str = string(first(unique(df[:, :id])));
 
     # Get the list of all files
-    fix_list, sf_list = classify_files(SAVE_DIR, id_str);
+    fix_list = classify_files(SAVE_DIR, id_str, "fix_avg_");
 
     # Create the paths to the files
     fix_paths = joinpath.(SAVE_DIR, fix_list);
-    #sf_paths  = joinpath.(SAVE_DIR, sf_list);
 
     # Read the information of the fix files
     df_fix=CSV.read(fix_paths[1],DataFrame);
@@ -81,7 +79,7 @@ function get_sfInfo(df,SAVE_DIR)
     id_str = string(first(unique(df[:, :id])));
 
     # Get the list of all files
-    ~, sf_list = classify_files(SAVE_DIR, id_str);
+    sf_list = classify_files(SAVE_DIR, id_str, "structureFactorPBC");
 
     sf_paths = joinpath.(SAVE_DIR, sf_list);
 
@@ -90,6 +88,27 @@ function get_sfInfo(df,SAVE_DIR)
 
     return df_sf
 end
+
+###
+#   CLUSTER ANALYSIS
+###
+
+function get_cluster_paths(df)
+    # Get the id of the system
+    id_str = string(first(unique(df[:, :id])));
+
+    # Get the file paths
+    cluster_list=classify_files(SAVE_DIR, id_str, "clusterAnalysis")
+
+    if length(cluster_list) == 1
+        # Get the paths for the files
+        return joinpath(SAVE_DIR, cluster_list[1])
+    else
+        println("Error, no correct dimensions")
+    end
+
+end
+
 
 """
     Plot potential and kinetic energy for a series of systems.
@@ -234,4 +253,5 @@ color_max=maximum(color_norm);
     println("One time evolution of structure factor figure saved")
 
 end
+
 
