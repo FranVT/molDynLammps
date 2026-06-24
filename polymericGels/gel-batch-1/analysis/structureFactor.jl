@@ -1,5 +1,5 @@
 """
-    Script to debug stuff
+    Script en el que se adapta el código de FORTRAN de Claudia a Julia
 """
 
 using DataFrames, CSV
@@ -19,4 +19,12 @@ categories=[:phi];
 # Creación de los subdataframes por sistema
 data_bySystem=groupby(dat_files,categories);
 
-nothing
+# Main Parameters of the analysis
+N_systems=length(data_bySystem);
+N_instants=25;               # Instantes temporales a analizar
+qmax0 = 6;              # 3 es el min sin que cause problemas
+
+for it_system in (4) 
+    computeAllTimeSqmean(data_bySystem[it_system],N_instants,qmax0)
+end
+
