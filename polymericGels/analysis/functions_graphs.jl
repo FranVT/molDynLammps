@@ -168,200 +168,70 @@ function figure_fixEnergy(dfs_fix, dat_files)
 
 end
 
+###
+# STRUCTURE FACTOR
+###
 
+function figureSq_time_evol(system,id)
 
+# Get the time steps of the S(q)
+time_aux=map(s->unique(s.timeStep)[1],system);
 
+# Sort the time steps 
+time_domain=sort(time_aux);
 
+# Get the index from the sorted order to the original file
+ind_sort=map(s->findall(x->x==s,time_aux)[1],time_domain);
 
+# Create the graph of the time evolution of the structure factor
 
+# Time domain label
+dt=0.001;
+time_domain=(dt).*time_domain;
 
+# Labels
+to=first(time_domain);
+tf=last(time_domain);
 
+# Prepare the color code
+color_ref=maximum(time_domain);
+color_norm=time_domain./color_ref;
+color_min=minimum(color_norm);
+color_max=maximum(color_norm);
 
+    fig = Figure()
+    ax_plot = Axis(fig[1:1, 1:1],
+                   xlabel = L"|\vec{q}|",
+                   ylabel = L"S(|\vec{q}|)",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (10^(-1.0), 10^1, 10^(-1.0), nothing),
+                   xscale = log10,
+                   yscale = log10
+                  )
 
+    # Plot the potential energy for each system
+    for (it_sort,it_og) in enumerate(ind_sort)
+        x = system[it_og].qmean
+        y = system[it_og].Sqmean
+        
+        #idx = findall(x .!= 0.0)
+        #idy = findall(y .!= 0.0)
 
+        #println(idx)
 
-function figureCompareSl(dat_files)
-
-
-# Grafica del factor de estructura
-MAIN_DIR=pwd();
-SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
-
-# File name of interested data
-filename_Sq="structureFactor*.csv";
-
-# Create the paths to the files
-file_paths=[joinpath(SAVE_DIR,replace(filename_Sq, "*" => it)) for it in unique(dat_files.id)];
-
-# Dictionaries to map id to info.
-dict_phi=Dict(dat_files.id.=>dat_files.phi);
-dict_CL=Dict(dat_files.id.=>dat_files."CL-Con");
-dict_T=Dict(dat_files.id.=>dat_files.Temperature);
-
-# Get the information
-Sq=[CSV.read(file,DataFrame) for file in file_paths];
-
-time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
-
-# Parameters to graph
-N_sims=length(Sq);
-N_instants=nrow(Sq[1]);
-
-qdomain_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].q_domain) for it in eachindex(Sq)];
-Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
-
-id_time=1; #length(Sq_plot[1]);
-
-qdomain_tf=[qdomain_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-
-fig=Figure()
-    ax_f=Axis(fig[1:1,1:1])
-    ax_f2=Axis(fig[1:1,1:1])
-    ax_f3=Axis(fig[1:1,1:1])
-
-    ax=Axis(fig[1:6,1:3],
-        title=latexstring("\\mathrm{Structure~factor}"),
-        #subtitle=latexstring(subtitle),
-        xlabel=L"\lambda",
-        ylabel=L"S(q)",
-        xminorticksvisible=true,
-        xminorgridvisible=true,
-        limits=(0,10,0,10),
-        #xscale=log10,
-        #yscale=log10
-    )
-    hidespines!(ax_f)
-    hidedecorations!(ax_f)
-    hidespines!(ax_f2)
-    hidedecorations!(ax_f2)
-    hidespines!(ax_f3)
-    hidedecorations!(ax_f3)
-
-    #vlines!(ax,1.2,linestyle=:dash,color=:grey)
-    #vlines!(ax,5*1.2,linestyle=:dash,color=:grey)
-
-
-    for it in eachindex(Sq_tf)
-        lines!(ax,(2*pi)./qdomain_tf[it],Sq_tf[it],
-            label=latexstring(100*dict_phi[unique(Sq[it].id)[1]]))
-    
-        p1=plot!(ax_f,[0],[-1],
-            label=latexstring(100*dict_CL[unique(Sq[it].id)[1]])
-            )
-        p2=plot!(ax_f2,[0],[-1],
-            label=latexstring(dict_T[unique(Sq[it].id)[1]])
-            )
-        p3=plot!(ax_f3,[0],[-1],
-            label=latexstring(0.001*Sq[it].timeStep[id_time])
-            )
-
-    p1.visible = false
-    p2.visible = false
-    p3.visible = false
-
-
+        scatterlines!(ax_plot, x, y,
+                      color = color_norm[it_sort],
+                      colorrange = (color_min, color_max)
+                     )
     end
 
-    Legend(fig[1:3,4],ax,L"\phi~\%")
-    
-    Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
-    Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
-    Legend(fig[6,4],ax_f3,L"\mathrm{Time}",merge=true)
+    # Legends in terms of the packing fraction
+    Colorbar(fig[1, 2], label = L"\tau", colormap = :viridis, limits = (to, tf))
 
-save(string("fig_Slcomp_t_",time_domains[1][id_time],".png"), fig, px_per_unit = 300/inch)
+    save(string("fig_Sq_",id,"_timeDomain.png"), fig, px_per_unit = 300 / inch)
 
-end
-
-function figureCompareSq(dat_files)
-
-# Grafica del factor de estructura
-MAIN_DIR=pwd();
-SAVE_DIR=joinpath(MAIN_DIR,"analyzedData");
-
-# File name of interested data
-filename_Sq="structureFactor*.csv";
-
-# Create the paths to the files
-file_paths=[joinpath(SAVE_DIR,replace(filename_Sq, "*" => it)) for it in unique(dat_files.id)];
-
-# Dictionaries to map id to info.
-dict_phi=Dict(dat_files.id.=>dat_files.phi);
-dict_CL=Dict(dat_files.id.=>dat_files."CL-Con");
-dict_T=Dict(dat_files.id.=>dat_files.Temperature);
-
-# Get the information
-Sq=[CSV.read(file,DataFrame) for file in file_paths];
-
-time_domains=[Sq[i].timeStep for i in eachindex(Sq)];
-
-# Parameters to graph
-N_sims=length(Sq);
-N_instants=nrow(Sq[1]);
-
-qdomain_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].q_domain) for it in eachindex(Sq)];
-Sq_plot=[collect(eval(Meta.parse(s)) for s in Sq[it].Sq) for it in eachindex(Sq)];
-
-id_time=length(Sq_plot[1]);
-
-qdomain_tf=[qdomain_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-Sq_tf=[Sq_plot[id_exp][id_time] for id_exp in eachindex(Sq)];
-
-fig=Figure()
-    ax_f=Axis(fig[1:1,1:1])
-    ax_f2=Axis(fig[1:1,1:1])
-    ax_f3=Axis(fig[1:1,1:1])
-
-    ax=Axis(fig[1:6,1:3],
-        title=latexstring("\\mathrm{Structure~factor}"),
-        #subtitle=latexstring(subtitle),
-        xlabel=L"|\vec{q}|=\frac{2\pi}{\lambda}",
-        ylabel=L"S(q)",
-        xminorticksvisible=true,
-        xminorgridvisible=true,
-        limits=(nothing,nothing,0,10),
-        #xscale=log10,
-        #yscale=log10
-    )
-    hidespines!(ax_f)
-    hidedecorations!(ax_f)
-    hidespines!(ax_f2)
-    hidedecorations!(ax_f2)
-    hidespines!(ax_f3)
-    hidedecorations!(ax_f3)
-
-    for it in eachindex(Sq_tf)
-        lines!(ax,qdomain_tf[it],Sq_tf[it],
-            label=latexstring(100*dict_phi[unique(Sq[it].id)[1]]))
-    
-        p1=plot!(ax_f,[0],[-1],
-            label=latexstring(100*dict_CL[unique(Sq[it].id)[1]])
-            )
-        p2=plot!(ax_f2,[0],[-1],
-            label=latexstring(dict_T[unique(Sq[it].id)[1]])
-            )
-        p3=plot!(ax_f3,[0],[-1],
-            label=latexstring(0.001*Sq[it].timeStep[id_time])
-            )
-
-    p1.visible = false
-    p2.visible = false
-    p3.visible = false
-
-
-    end
-
-    Legend(fig[1:3,4],ax,L"\phi~\%")
-    
-    Legend(fig[4,4],ax_f,L"\mathrm{CL}~\%",merge=true)
-    Legend(fig[5,4],ax_f2,L"\mathrm{T}",merge=true)
-    Legend(fig[6,4],ax_f3,L"\mathrm{Time}",merge=true)
-
-save(string("fig_Sqcomp_t_",time_domains[1][id_time],".png"), fig, px_per_unit = 300/inch)
+    println("One time evolution of structure factor figure saved")
 
 end
-
-
-
-
 
