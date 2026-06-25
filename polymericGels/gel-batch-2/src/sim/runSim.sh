@@ -16,7 +16,6 @@ rm assembly*.config
 # Remove old slurm files
 rm slurm*.out
 
-
 # Load the parameters file
 source load_parameters.sh system.parameters
 
