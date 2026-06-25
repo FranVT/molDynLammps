@@ -114,9 +114,9 @@ cluster_df=map(s->CSV.read(s,DataFrame),cluster_paths);
                    xminorticksvisible = true,
                    xminorgridvisible = true,
                    #limits = (nothing,nothing,nothing,nothing),
-                   limits = (10^2, 10^6, 10^0, nothing),
+                   limits = (10^2, 10^6, nothing, nothing),
                    xscale = log10,
-                   yscale = log10
+                   #yscale = log10
                   )
 
     # Prepare the y axis
