@@ -432,6 +432,9 @@ end
     Store a csv file with the assembly avergage of a system of the fix file observables
 """
 function storeAvg_fix(df)
+    # Status
+    println("System with phi=",first(df.phi)," being analyzed")
+
     # Extraer informacion del archivo de fix
     col = [:PARENT_DIR, :dir, :file0]
 
@@ -461,6 +464,9 @@ function storeAvg_fix(df)
 
     # Save the average
     CSV.write(file_path, fix_info)
+
+    # Status
+    println("System with phi=",first(df.phi)," stored")
 end
 
 

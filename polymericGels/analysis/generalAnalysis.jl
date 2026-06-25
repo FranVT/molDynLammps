@@ -19,7 +19,7 @@ selec_Sq=0;
 
 # Assign a unique id to the dat files in the directory 
 if up ==1 
-    createDat_ID("/run/media/franvt/rogelio/DinMol/gel-batch-2/data");
+    createDat_ID("/run/media/franvt/rogelio/DinMol/gel-batch-1/data");
 end
 
 # Extraer la información del dat file

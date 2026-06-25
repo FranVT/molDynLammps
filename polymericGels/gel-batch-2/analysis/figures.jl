@@ -29,16 +29,17 @@ categories=[:id];
 data_bySystem=groupby(dat_files,categories);
 
 # Select the graphs to create
-figure_fix=0 
-figure_Sq_t=0
+figure_fix=1; 
+figure_Sq_t=0;
 
 # Fix graph
 if figure_fix == 1
     # Get the information of all systems of the fix files 
-    dfs_fix = map(s->get_fixInfo(data_bySystem[s],SAVE_DIR),eachindex(data_bySystem));
+    dfs_fix = map(s->get_fixInfo(data_bySystem[s],SAVE_DIR),2); #eachindex(data_bySystem));
 
     # Store the figure of the energy 
-    figure_fixEnergy(dfs_fix,dat_files)
+    figure_fixEnergy([dfs_fix],dat_files)
+
 end
 
 # Time evolution of the structure factor of a system 
@@ -84,7 +85,7 @@ cluster_df=map(s->CSV.read(s,DataFrame),cluster_paths);
                    xminorticksvisible = true,
                    xminorgridvisible = true,
                    #limits = (nothing,nothing,nothing,nothing),
-                   limits = (10^2, 10^4.5, nothing, nothing),
+                   limits = (10^2, 10^6, nothing, nothing),
                    xscale = log10,
                    yscale = log10
                   )
@@ -113,7 +114,7 @@ cluster_df=map(s->CSV.read(s,DataFrame),cluster_paths);
                    xminorticksvisible = true,
                    xminorgridvisible = true,
                    #limits = (nothing,nothing,nothing,nothing),
-                   limits = (10^2, 10^4.5, nothing, nothing),
+                   limits = (10^2, 10^6, 10^0, nothing),
                    xscale = log10,
                    yscale = log10
                   )
@@ -180,7 +181,7 @@ cluster_df=map(s->CSV.read(s,DataFrame),cluster_paths);
 # Time evolution of the histograms per concentration 
 
     # Selection of the concentration to plot
-    it_phi=5;
+    it_phi=1;
 
 
     fig = Figure()

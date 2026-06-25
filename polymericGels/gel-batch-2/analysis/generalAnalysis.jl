@@ -13,9 +13,10 @@ Random.seed!(1234)
 include("functions.jl")
 
 # Activate functions
-up=1;
-selec_fixavg=1;
+up=0;
+selec_fixavg=0;
 selec_Sq=0;
+selec_Cluster=1;
 
 # Assign a unique id to the dat files in the directory 
 if up ==1 
@@ -33,7 +34,8 @@ data_bySystem=groupby(dat_files,categories);
 
 if selec_fixavg == 1 
     # Store all the assembly avg of the systems
-    map(s->storeAvg_fix(data_bySystem[s]),eachindex(data_bySystem))
+    #map(s->storeAvg_fix(data_bySystem[s]),eachindex(data_bySystem))
+    storeAvg_fix(data_bySystem[2])
 end
 
 if selec_Sq == 1
@@ -42,7 +44,7 @@ if selec_Sq == 1
     N_instants=25;               # Instantes temporales a analizar
     qmax0 = 6;              # 3 es el min sin que cause problemas
 
-    for it_system in (1,2,3,5) 
+    for it_system in (2) 
         computeAllTimeSqmean(data_bySystem[it_system],N_instants,qmax0)
     end
 end
