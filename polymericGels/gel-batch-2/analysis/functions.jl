@@ -399,7 +399,9 @@ end
 function extract_FixScalar(path_file)
     aux = split.(readlines(path_file), " ")
     header = aux[2][2:end]
-    info = reduce(hcat, map(s -> parse.(Float64, s), aux[3:end]))
+   
+    aux_info = map(s -> parse.(Float64, s), aux[3:end])
+    info = reduce(hcat, aux_info)
 
     return DataFrame(info', header)
 end

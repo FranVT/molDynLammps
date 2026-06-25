@@ -35,10 +35,10 @@ figure_Sq_t=1;
 # Fix graph
 if figure_fix == 1
     # Get the information of all systems of the fix files 
-    dfs_fix = map(s->get_fixInfo(data_bySystem[s],SAVE_DIR),2); #eachindex(data_bySystem));
+    dfs_fix = map(s->get_fixInfo(data_bySystem[s],SAVE_DIR),eachindex(data_bySystem));
 
     # Store the figure of the energy 
-    figure_fixEnergy([dfs_fix],dat_files)
+    figure_fixEnergy(dfs_fix,dat_files)
 
 end
 
