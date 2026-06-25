@@ -14,9 +14,9 @@ include("functions.jl")
 
 # Activate functions
 up=0;
-selec_fixavg=0;
+selec_fixavg=1;
 selec_Sq=0;
-selec_Cluster=1;
+selec_Cluster=0;
 
 # Assign a unique id to the dat files in the directory 
 if up ==1 
@@ -34,8 +34,8 @@ data_bySystem=groupby(dat_files,categories);
 
 if selec_fixavg == 1 
     # Store all the assembly avg of the systems
-    #map(s->storeAvg_fix(data_bySystem[s]),eachindex(data_bySystem))
-    storeAvg_fix(data_bySystem[2])
+    map(s->storeAvg_fix(data_bySystem[s]),eachindex(data_bySystem))
+    #storeAvg_fix(data_bySystem[2])
 end
 
 if selec_Sq == 1

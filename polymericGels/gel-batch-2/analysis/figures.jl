@@ -29,8 +29,8 @@ categories=[:id];
 data_bySystem=groupby(dat_files,categories);
 
 # Select the graphs to create
-figure_fix=1; 
-figure_Sq_t=0;
+figure_fix=0; 
+figure_Sq_t=1;
 
 # Fix graph
 if figure_fix == 1
