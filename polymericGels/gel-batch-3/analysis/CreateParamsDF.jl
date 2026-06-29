@@ -1,13 +1,11 @@
+module CreateParamsDF
+
 #=
     Script to create dat files from the information stored 
 =#
 
 using DataFrames, CSV
 
-
-#=
-    Functions
-=#
 """
     parse_value(v::String)
 
@@ -49,7 +47,7 @@ julia> df = create_df_params("/ruta/experimento/params.log")
 1×44 DataFrame
 
 """
-function create_dfParams(path_file::String)
+function create_df_params(path_file::String)
     # Read the file
     info_params=readlines(path_file);
 
@@ -82,40 +80,32 @@ function create_dfParams(path_file::String)
 
 end
 
-#=
-    Start of the Script
-=#
+"""
+    collect_params_experiments(root_dir::String,log_filename::String="parapms.log") -> DataFrame
 
-# Directory where the data is
-dir_data="/run/media/franvt/rogelio/DinMol/gel-batch-3/data/";
+Recursively traverse the root_dir directory looking for all the log_filename files in the subfolders, and combine their DataFrames into one. log_filename in the subfolders, and combines their DataFrames into one.
 
-# This directory
-dir_main=pwd();
+# Arguments
+- root_dir::String: root directory that contains the folders of each experiment.
+- log_filename::String: name of the parameters file (default "params.log").
+"""
+function collect_experiments_metadata(root_dir::String, log_filename::String="params.log")
 
-# Read the directory and find subdirectories
-dirs_info=filter(isdir, readdir(dir_data, join = true));
+    # Get subdirectories of root_dir
+    subdirs=filter(isdir,readdir(root_dir, join = true));
 
-# Name of the file
-file_log="params.log";
+    # Create paths to the params.log files
+    file_paths=joinpath.(subdirs, log_filename);
 
-# Create the path to the data
-path_params=joinpath.(dir_data,dirs_info,file_log);
+    # Filter to get only the existing files
+    existing_paths=filter(isfile, file_paths);
 
-# Read the params.log file
-df_params=[create_df_params(s) for s in path_params];
+    # Create the data frame for each file 
+    dfs = [create_df_params(p) for p in existing_paths]
+    return reduce(vcat, dfs)
+end
 
-# Create a combine dataframe
-df_dat=reduce(vcat,df_params);
+# Export the functions that can be used in the public API
+export create_df_params, collect_experiments_metadata
 
-# Define a file name for the data file
-file_dat="dat.csv";
-
-# File path of dataframe data 
-file_path=joinpath(dir_main,file_dat);
-
-# Save the dataframe of the metadata of the experiments 
-CSV.write(file_path,df_dat)
-
-# Search for files in each path
-#files_info=map(s->filter(isfile, readdir(s, join = true)),path_info);
-
+end # Module
