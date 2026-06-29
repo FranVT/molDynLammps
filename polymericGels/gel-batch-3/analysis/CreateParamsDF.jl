@@ -71,7 +71,7 @@ function create_df_params(path_file::String)
     df_params[!,:id].=[id_system];
 
     # Split the path to create the dir
-    dir_experiment=joinpath(split(path_file,"/")[1:end-1]);
+    dir_experiment=dirname(path_file);
 
     # Add the dir
     df_params[!,:dir].=[dir_experiment];

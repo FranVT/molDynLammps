@@ -2,10 +2,11 @@
     Start of the Script
 =#
 
+include("CreateParamsDF.jl")
+
 using DataFrames, CSV
 
 # Load the module
-include("CreateParamsDF.jl")
 using .CreateParamsDF
 
 # Paths and directories
@@ -15,9 +16,8 @@ FILE_LOG = "params.log";
 FILE_DAT = "dat.csv";
 
 # Create a dataframe from all the experiments
-df_dat=CreateParamsDF.collect_experiments_metadata(DIR_DATA)
+df_dat=collect_experiments_metadata(DIR_DATA)
 
 # Save the dataframe of the metadata of the experiments 
 CSV.write(joinpath(DIR_MAIN,FILE_DAT),df_dat)
-
 
