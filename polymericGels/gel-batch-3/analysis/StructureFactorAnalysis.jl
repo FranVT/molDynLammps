@@ -295,10 +295,10 @@ FILE_FIX = "system_assembly.fixf";
 FILE_DUMP = "traj_assembly.*.dumpf";
 
 # Select the amount of time steps to analyze the structure factor
-n_steps_Sq=2;
+n_steps_Sq=8;
 
 # Define the maximum wave vector
-qmax_0=2;
+qmax_0=6;
 
 # Select the categories that define a system
 categories_system=[:phi,:chi_4,:temp,:damp];
@@ -320,5 +320,4 @@ for df_aux in df_systems
     # Save the mean of S(q) of an experiment given a set of simulation and a time domain 
     foreach(df_set->save_Sq_set(df_set,n_steps_Sq,categories_system,categories_experiment,DIR_SAVE) ,df_experiments)
 end
-
 
