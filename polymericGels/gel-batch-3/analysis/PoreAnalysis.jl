@@ -3,6 +3,7 @@
 =#
 
 using DataFrames, CSV
+using Statistics
 
 #=
     Functions
@@ -168,11 +169,11 @@ function compute_pore_histogram(n_samples::Integer, position_timestep_simulation
 end
 
 """
-    store_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_steps::Integer, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
+    save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_steps::Integer, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
 
 This function stores the histogram of pores of a set of simulations in a time domain
 """
-function store_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_steps::Integer, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
+function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_steps::Integer, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
 
     # Definition of parameters for the analysis
     R_CP=0.5*first(unique(df_set.r_CP));                           # Radius of the central particles
@@ -273,16 +274,17 @@ df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
 # Group by system 
 df_systems=groupby(df_dat,categories_system);
 
-# Select one system
-df_system=df_systems[2];
-
-# Group by Experiment
-df_experiments=groupby(df_system,categories_system);
-
-# Select one experiment. That is a set of simulations
-df_set=df_experiments[1];
-
+# Set the parameters
 n_steps=1;                          # Amount of time steps to analyzed
 n_samples=1000;                     # Amount of sphere samples to construct the histogram
 
-store_pore_histogram(df_set,n_samples,n_steps,categories_system,categories_experiment,DIR_SAVE)
+# Save the mean of S(q) of a system given a set of experiments and a time domain
+for df_system in df_systems
+    # Group by experiments
+    df_experiments=groupby(df_system,categories_experiment);
+
+    # Save the mean of S(q) of an experiment given a set of simulation and a time domain 
+    foreach(df_set->save_pore_histogram(df_set,n_samples,n_steps,categories_system,categories_experiment,DIR_SAVE) ,df_experiments)
+end
+
+
