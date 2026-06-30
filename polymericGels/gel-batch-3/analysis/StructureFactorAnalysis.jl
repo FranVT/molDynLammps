@@ -174,7 +174,7 @@ end
 
 Store a dataframe with the collective mean of S(q) of a set of simulations at a time step
 """
-function save_Sq_timestep_mean(paths_traj_timestep::Vector{String}, n_bin::Integer, n_exp::Integer, n_tot_av, qx_his, qy_his, qz_his, q_his, categories_system, categories_experiment, DIR_SAVE)
+function save_Sq_timestep_mean(paths_traj_timestep::Vector{String}, n_bin::Integer, n_exp::Integer, n_tot_av::Integer, qx_his::Vector{Vector{Any}}, qy_his::Vector{Vector{Any}}, qz_his::Vector{Vector{Any}}, q_his::Vector{Vector{Any}}, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
     println("Start one save\n")
 
     # Get the dump
@@ -234,43 +234,14 @@ function save_Sq_timestep_mean(paths_traj_timestep::Vector{String}, n_bin::Integ
 
     println("Experiment ",file_name," saved\n")
 end
-#=
-    Start of the script
-=#
 
-# Paths and directories
-DIR_MAIN = pwd();
-DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
-FILE_DAT = "dat.csv";
-FILE_FIX = "system_assembly.fixf";
-FILE_DUMP = "traj_assembly.*.dumpf";
+"""
+    save_Sq_set()
 
-# Select the amount of time steps to analyze the structure factor
-n_steps_Sq=2;
-
-# Define the maximum wave vector
-qmax_0=2;
-
-# Read the dat file
-df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
-
-# Select the categories that define a system
-categories_system=[:phi,:chi_4,:temp,:damp];
-
-# Create categories to select different experiments (Just in case)
-categories_experiment=[:N_heat,:N_isothermal];
-
-# Group by system 
-df_systems=groupby(df_dat,categories_system);
-
-# Select one system
-df_aux=df_systems[1];
-
-# Group by experiments
-df_experiments=groupby(df_aux,categories_experiment);
-
-# Select one set of experiments
-df_set=df_experiments[1];
+Save the collective mean structure factor of a set of simulations at a time domain 
+"""
+function save_Sq_set(df_set::AbstractDataFrame,n_steps_Sq::Integer, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
+    println("Start one time series")
 
     # Get the directories of all experiments of the system 
     dir_set=String.(df_set.dir);
@@ -310,5 +281,46 @@ df_set=df_experiments[1];
     # Store the assembly mean of a structure factor for the time steps selected
     foreach(s->save_Sq_timestep_mean(paths_dumpf_simulations[s,:],n_bin,n_exp,n_tot_av,qx_his,qy_his,qz_his,q_his,categories_system,categories_experiment,DIR_SAVE),1:n_steps_Sq)
 
+    println("End one time series")
+end
+#=
+    Start of the script
+=#
 
+# Paths and directories
+DIR_MAIN = pwd();
+DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
+FILE_DAT = "dat.csv";
+FILE_FIX = "system_assembly.fixf";
+FILE_DUMP = "traj_assembly.*.dumpf";
+
+# Select the amount of time steps to analyze the structure factor
+n_steps_Sq=2;
+
+# Define the maximum wave vector
+qmax_0=2;
+
+# Read the dat file
+df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
+
+# Select the categories that define a system
+categories_system=[:phi,:chi_4,:temp,:damp];
+
+# Create categories to select different experiments (Just in case)
+categories_experiment=[:N_heat,:N_isothermal];
+
+# Group by system 
+df_systems=groupby(df_dat,categories_system);
+
+# Select one system
+df_aux=df_systems[1];
+
+# Group by experiments
+df_experiments=groupby(df_aux,categories_experiment);
+
+# Select one set of experiments
+df_set=df_experiments[1];
+
+# Save the mean of S(q) of an experiment given a set of simulation and a time domain 
+foreach(df_set->save_Sq_set(df_set,n_steps_Sq,categories_system,categories_experiment,DIR_SAVE) ,df_experiments)
 
