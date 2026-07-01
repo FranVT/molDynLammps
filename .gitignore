@@ -2,3 +2,4 @@
 *.dumpf
 *.fixf
 *.log
+pore_analysis_*.csv
