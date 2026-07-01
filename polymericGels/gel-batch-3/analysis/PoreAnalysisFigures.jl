@@ -62,4 +62,65 @@ files=filter(s -> occursin("pore_analysis_og_", s), files);
 # Read the files
 df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
 
+# Group the Vector{DataFrame} into one DataFrame
+df_combo=reduce(vcat,df_files);
 
+# Get the time domain of the analysis
+time_domain=unique(df_combo.timeStep);
+
+# Group by the time domain 
+df_time_domain=groupby(df_combo,:timeStep);
+
+# Select one time step
+time_step=time_domain[1];
+df_time_step=df_time_domain[1];
+
+# Get the domain of the packing fraction
+phi_domain=unique(df_time_step.phi);
+
+# Get the data for the labels
+labels_plot=[df_time_step[1, col] for col in categories_figures] # Waring: This only works for one case
+
+    # Prepare some labels
+    phi_min=minimum(phi_domain);
+    phi_max=maximum(phi_domain);
+
+    # Prepare the color code
+    color_norm  = phi_domain ./ phi_max;
+    color_min   = first(color_norm);
+    color_max   = last(color_norm);
+
+# Categories
+categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal];
+
+# Group by systems
+df_time_step_systems=groupby(df_time_step,categories_figures);
+
+# Set the amount of bins
+n_bins=64;
+
+# Start the figure
+    fig = Figure()
+    ax_plot = Axis(fig[1:3, 1:1],
+                   xlabel = L"r",
+                   ylabel = L"\mathrm{pdf}",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                  )
+
+        for df_system in df_time_step_systems
+            # Get the mean value
+            mean_pore=first(df_system.mean_pore_set);
+
+            # Get the color
+            color_label=first(unique(df_system.phi))/phi_max;
+
+            # Plot the histogram
+            hist!(ax_plot,df_system.histogram_pore[:], bins=n_bins, normalization = :pdf,
+                color = color_label,
+                colorrange = (color_min, color_max)
+                )
+        end 
+
+    # Colobar to denote the time evolution 
+    Colorbar(fig[1:3, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
