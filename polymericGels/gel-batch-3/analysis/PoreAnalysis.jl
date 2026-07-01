@@ -216,7 +216,9 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
         histograms_pore[it].=hist_pore;
 
         # Store the mean
-        means_pore[it]=mean_pore;  
+        means_pore[it]=mean_pore;
+
+        println("One time step done")
     end
 
     # Reshape the array
@@ -276,7 +278,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=1;                          # Amount of time steps to analyzed
-n_samples=100000;                     # Amount of sphere samples to construct the histogram
+n_samples=1000000;                     # Amount of sphere samples to construct the histogram
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
