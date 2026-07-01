@@ -78,6 +78,9 @@ df_time_step=df_time_domain[1];
 # Get the domain of the packing fraction
 phi_domain=unique(df_time_step.phi);
 
+# Categories
+categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal];
+
 # Get the data for the labels
 labels_plot=[df_time_step[1, col] for col in categories_figures] # Waring: This only works for one case
 
@@ -89,9 +92,6 @@ labels_plot=[df_time_step[1, col] for col in categories_figures] # Waring: This 
     color_norm  = phi_domain ./ phi_max;
     color_min   = first(color_norm);
     color_max   = last(color_norm);
-
-# Categories
-categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal];
 
 # Group by systems
 df_time_step_systems=groupby(df_time_step,categories_figures);
@@ -106,6 +106,7 @@ n_bins=64;
                    ylabel = L"\mathrm{pdf}",
                    xminorticksvisible = true,
                    xminorgridvisible = true,
+                   limits = (0, nothing, 0, nothing)
                   )
 
         for df_system in df_time_step_systems
@@ -123,4 +124,25 @@ n_bins=64;
         end 
 
     # Colobar to denote the time evolution 
-    Colorbar(fig[1:3, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+    Colorbar(fig[2:3, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+
+        # Plots to add systems labels
+        legend_aux_1=plot!(ax_plot,[-1],[-1],color=:black);
+        legend_aux_2=plot!(ax_plot,[-1],[-1],color=:black);
+
+        # Create and auxliary variable for the legend
+        legend_aux=[legend_aux_1;legend_aux_2];
+
+        # Create the labels array 
+        legend_labels=[latexstring("t=",DT*time_step,"~\\tau");latexstring("T=",labels_plot[3])]
+
+        # Create the label
+        Legend(fig[1:1,2],legend_aux,legend_labels,
+              halign=:left,
+              valign=:top
+             )
+
+        # Crate a file name with the labels
+        file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_",time_step,".png");
+
+        save(file_name, fig, px_per_unit = 300 / INCH)
