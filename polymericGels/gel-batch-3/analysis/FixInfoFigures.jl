@@ -59,6 +59,9 @@ DT=0.001;
 # Read the directory 
 files=readdir(DIR_SAVE);
 
+# Get only those of the structure factor
+files=filter(s -> occursin("fix_mean_", s), files);
+
 # Read the files
 df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
 
