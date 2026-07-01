@@ -40,6 +40,7 @@ set_theme!(
 #=
     Functions 
 =#
+<<<<<<< HEAD
 """
     fig_sq_timeseries_loglog(df_systems::AbstractDataFrame, categories_figures::Vector{Symbol})
 
@@ -48,6 +49,44 @@ Function that creates a figure with the time evolution of a structure factor
 function fig_sq_timeseries_loglog(df_systems::GroupedDataFrame{DataFrame}, categories_figures::Vector{Symbol})
 # Create the figure for the time evolution for all systems 
 for df_system in df_systems
+=======
+
+
+#=
+    Start the script
+=#
+
+# Paths and directories
+DIR_MAIN = pwd();
+DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
+FILE_DAT = "dat.csv";
+
+# Constants
+DT=0.001;
+
+# Read the directory 
+files=readdir(DIR_SAVE);
+
+# Get only those of the structure factor
+files=filter(s -> occursin("structure_factor_", s), files);
+
+# Read the files
+df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
+
+# Group the Vector{DataFrame} into one DataFrame
+df_combo=reduce(vcat,df_files);
+
+# Select the categories that define a system
+categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal];
+
+# Group by system and experiments
+df_systems=groupby(df_combo,categories_figures);
+
+# Create the figure for the time evolution of one system
+
+    # Select one sysmtem
+    df_system=df_systems[1];
+>>>>>>> 83f2eaed1be30b9e0f250de81df4b50e746230d0
 
     # Get the time domain
     system_time_domain=sort((DT).*unique(df_system.timeStep));
@@ -109,6 +148,7 @@ for df_system in df_systems
         file_name=string("fig_Sq_loglog",join(string.(labels_plot)),".png");
 
         save(file_name, fig, px_per_unit = 300 / INCH)
+<<<<<<< HEAD
 end
 
 end
@@ -370,5 +410,7 @@ df_systems=groupby(df_combo,categories_figures);
 fig_sq_timeseries_semilog(df_systems,categories_figures)
 
 fig_sq_norm_timeseries_semilog(df_systems,categories_figures)
+=======
+>>>>>>> 83f2eaed1be30b9e0f250de81df4b50e746230d0
 
 
