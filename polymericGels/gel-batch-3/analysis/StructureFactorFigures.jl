@@ -607,10 +607,11 @@ df_systems=groupby(df_combo,categories_figures);
 
 #=
     Compare different concentrations at the last time step
+
+    fig_sq_phiseries_loglog(df_combo,categories_figures)
+
+    fig_sq_phiseries_semilog(df_combo,categories_figures)
+
 =#
-
-fig_sq_phiseries_loglog(df_combo,categories_figures)
-
-fig_sq_phiseries_semilog(df_combo,categories_figures)
 
 
