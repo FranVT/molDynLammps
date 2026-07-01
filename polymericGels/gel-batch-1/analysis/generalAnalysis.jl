@@ -13,17 +13,19 @@ Random.seed!(1234)
 include("functions.jl")
 
 # Activate functions
-up=0;
+up=1;
 selec_fixavg=0;
 selec_Sq=0;
 
 # Assign a unique id to the dat files in the directory 
 if up ==1 
-    createDat_ID("/run/media/franvt/rogelio/DinMol/gel-batch-2/data");
+    createDat_ID("/run/media/franvt/rogelio/DinMol/gel-batch-1/data");
 end
 
 # Extraer la información del dat file
 dat_files=extractDatFiles();
+
+#=
 
 # Selección de categorias
 categories=[:id];
@@ -54,3 +56,4 @@ if selec_Cluster == 1
     # Cycle thru the different systems
     map(s->clusterAnalysis(data_bySystem[s],N_instants),eachindex(data_bySystem))
 end
+=#
