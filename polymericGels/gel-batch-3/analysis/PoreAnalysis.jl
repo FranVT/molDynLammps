@@ -276,7 +276,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=1;                          # Amount of time steps to analyzed
-n_samples=1000;                     # Amount of sphere samples to construct the histogram
+n_samples=100000;                     # Amount of sphere samples to construct the histogram
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
@@ -285,6 +285,7 @@ for df_system in df_systems
 
     # Save the mean of S(q) of an experiment given a set of simulation and a time domain 
     foreach(df_set->save_pore_histogram(df_set,n_samples,n_steps,categories_system,categories_experiment,DIR_SAVE) ,df_experiments)
-end
 
+    println("One system done")
+end
 
