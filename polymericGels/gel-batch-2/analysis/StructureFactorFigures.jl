@@ -348,7 +348,7 @@ Creates a figure that compares the final configuration structure factor for diff
 """
 function fig_sq_phiseries_loglog(df_combo::DataFrame, categories_figures::Vector{Symbol})
 # Get the biggest timestep
-time_max= minimum(df_combo.timeStep);
+time_max= maximum(df_combo.timeStep);
 
 # Get all rows at the max time
 df_aux=df_combo[df_combo.timeStep .== time_max, :];
@@ -459,7 +459,7 @@ Creates a figure that compares the final configuration structure factor for diff
 """
 function fig_sq_phiseries_semilog(df_combo::DataFrame, categories_figures::Vector{Symbol})
 # Get the biggest timestep
-time_max= minimum(df_combo.timeStep);
+time_max= maximum(df_combo.timeStep);
 
 # Get all rows at the max time
 df_aux=df_combo[df_combo.timeStep .== time_max, :];
