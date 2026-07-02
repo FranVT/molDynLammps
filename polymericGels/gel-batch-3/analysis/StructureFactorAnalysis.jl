@@ -162,7 +162,7 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
 
     # Guardamos información
     # Valor esperado del factor de estructura
-    Sq[:, 1] = sum.(rho) ./ numbin 
+    Sq[:, 1] = sum.(rho) ./ length.(rho) 
     smax = maximum(Sq[:, 1])
     Sq[:, 2] = Sq[:, 1] / smax
 

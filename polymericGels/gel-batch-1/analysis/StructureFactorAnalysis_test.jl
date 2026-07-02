@@ -137,7 +137,7 @@ end
 
 Compute the structure factor of a set of positions
 """
-function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, r)
+function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, r::Matrix{Float64})
     Sq = zeros(numbin, 2)
     rho = [[] for _ in 1:numbin]
 
@@ -148,9 +148,9 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
         qz = qzhis[it_bin]
 
         # Manage null vectors
-        if isempty(qx) || isempty(qy) || isempty(qz)
-            append!(rho[it_bin], 0.0)
-        else
+        #if isempty(qx) || isempty(qy) || isempty(qz)
+        #    append!(rho[it_bin], 0.0)
+        #else
                     # Calcular la densidad para cada bin
             for it_q in eachindex(qx)
                 vq = [qx[it_q], qy[it_q], qz[it_q]]
@@ -160,7 +160,7 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
                 sq = (rho_re^2 + rho_im^2) / ntotav
                 append!(rho[it_bin], sq)
             end
-        end 
+        #end 
 
     end
 
@@ -318,9 +318,12 @@ df_dat=CSV.read(joinpath(DAT_PATH,FILE_DAT), DataFrame);
 # Group by system 
 df_systems=groupby(df_dat,categories_system);
 
-df_system=df_systems[4];
+df_system=df_systems[1];
 
-df_set=df_system[1];
+# Group by experiments
+df_experiments=groupby(df_system,categories_experiment);
+
+df_set=df_experiments[1];
 
     # Parameters
     l=2*first(unique(df_set.L));    # Compute the length of the simulation box of the experiments
@@ -332,10 +335,10 @@ df_set=df_system[1];
     y_c = l;                 # longitud de la caja en y
     z_c = l;                 # longitud de la caja en z
     dq_0 = 2 * pi / x_c;      # Δq fundamental
-    qmax = Int(floor(qmax_0 / dq_0));   # número entero de pasos hasta qmax0
-    rq_0 = qmax * dq_0;       # valor máximo real de |q| usado
+    q_max = Int(floor(qmax_0 / dq_0));   # número entero de pasos hasta qmax0
+    rq_0 = q_max * dq_0;       # valor máximo real de |q| usado
     bin_0 = dq_0;             # nuevo ancho de bin (bin0 original * dq0)
-    n_bin = Int(floor(qmax * dq_0 / bin_0)) + 1;  # número total de bines
+    n_bin = Int(floor(q_max * dq_0 / bin_0)) + 1;  # número total de bines
 
     # Parametros para el factor de estructura
     n_tot_av = Int(n_cp);   # Número total de partículas
@@ -344,19 +347,19 @@ df_set=df_system[1];
 
 #function createqdom(qmax::Real, rq0::Real, dq0::Real, bin0::Real, numbin::Integer)
     # Crear el espacio del vector recíproco para no definirlo en cada experimento
-    qx = (-qmax:qmax) .* dq0
-    qy = (-qmax:qmax) .* dq0
-    qz = (-qmax:qmax) .* dq0
+    q_x = (-q_max:q_max) .* dq_0
+    q_y = (-q_max:q_max) .* dq_0
+    q_z = (-q_max:q_max) .* dq_0
 
-    qhis   = [[] for _ in 1:numbin]
-    qxhis  = [[] for _ in 1:numbin]
-    qyhis  = [[] for _ in 1:numbin]
-    qzhis  = [[] for _ in 1:numbin]
+    q_his   = [[] for _ in 1:n_bin]
+    q_x_his  = [[] for _ in 1:n_bin]
+    q_y_his  = [[] for _ in 1:n_bin]
+    q_z_his  = [[] for _ in 1:n_bin]
 
     # Calcular la magnitud cuadrada
-    for x in qx
-        for y in qy
-            for z in qz
+    for x in q_x
+        for y in q_y
+            for z in q_z
                 # Excluir el origen del espacio recíproco
                 if x == 0 && y == 0 && z == 0
                     continue
@@ -365,36 +368,87 @@ df_set=df_system[1];
                 q = sqrt(x^2 + y^2 + z^2)
 
                 # Si la magnitud es grande que el maximo se salta
-                if q > rq0
+                if q > rq_0
                     continue
                 end
 
                 # Determinar el índice del bin (manejo especial del borde)
-                sbin = floor(Int, q / bin0) + 1
+                s_bin = trunc(Int, q / bin_0) + 1
 
                 # Coso para transformar de un dominio continuo a uno discreto
-                if q % bin0 == 0.0
-                    sbin -= 1
+                if q % bin_0 == 0.0
+                    s_bin -= 1
                 end
 
                 # Si la magnitud del vector supera la magnitud de interés se lo salta
-                if sbin > numbin
+                if s_bin > n_bin
                     continue
                 end
 
-                append!(qhis[sbin], q)
-                append!(qxhis[sbin], x)
-                append!(qyhis[sbin], y)
-                append!(qzhis[sbin], z)
+                append!(q_his[s_bin], q)
+                append!(q_x_his[s_bin], x)
+                append!(q_y_his[s_bin], y)
+                append!(q_z_his[s_bin], z)
             end
         end
     end
 
     # Compute the mean handeling the empty vectors
-    #qmean=[isempty(v) ? 0.0 : mean(v) for v in qhis];
+    #q_mean=[isempty(v) ? 0.0 : mean(v) for v in q_his];
+
+    display([length.(q_x_his) length.(q_y_his) length.(q_z_his)])
+
 
 #    return (qxhis, qyhis, qzhis, qhis, qmean)
 #end
+
+    # Get the dump
+#    df_timestep=get_dump.(paths_traj_timestep);
+
+    # Get the positions
+#    position_timestep_simulations=get_position_simulation.(df_timestep);
+
+    # Reduce
+#    position_timestep_simulations=reduce.(hcat,position_timestep_simulations);
+
+
+
+
+#S=computeSq(n_bin, n_tot_av, q_x_his, q_y_his, q_z_his, q_his, rand((-l:0.8:l),(5000,3)))
+r=rand((-l:0.8:l),(5000,3))
+
+    Sq = zeros(n_bin, 2)
+    rho = [[] for _ in 1:n_bin]
+
+    for it_bin in 1:n_bin
+        # Seleccion de las componentes del vector de onda
+        q_x = q_x_his[it_bin]
+        q_y = q_y_his[it_bin]
+        q_z = q_z_his[it_bin]
+
+        # Manage null vectors
+        #if isempty(qx) || isempty(qy) || isempty(qz)
+        #    append!(rho[it_bin], 0.0)
+        #else
+                    # Calcular la densidad para cada bin
+            for it_q in eachindex(q_x)
+                v_q = [q_x[it_q], q_y[it_q], q_z[it_q]]
+                dp = r * v_q  # Producto punto del vector para cada partícula
+                rho_re = sum(cos.(dp))
+                rho_im = sum(sin.(dp))
+                sq = (rho_re^2 + rho_im^2) / n_tot_av
+                append!(rho[it_bin], sq)
+            end
+        #end 
+
+    end
+
+    # Guardamos información
+    # Valor esperado del factor de estructura
+    #Sq[:, 1] = sum.(rho) ./ numbin 
+    #smax = maximum(Sq[:, 1])
+    #Sq[:, 2] = Sq[:, 1] / smax
+
 
 
 
