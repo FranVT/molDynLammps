@@ -318,7 +318,87 @@ df_dat=CSV.read(joinpath(DAT_PATH,FILE_DAT), DataFrame);
 # Group by system 
 df_systems=groupby(df_dat,categories_system);
 
+df_system=df_systems[4];
 
+df_set=df_system[1];
+
+    # Parameters
+    l=2*first(unique(df_set.L));    # Compute the length of the simulation box of the experiments
+    n_exp=nrow(df_set);    # Compute the amount of simulations
+    n_cp=first(unique(df_set.Npart));    # Amount of central particles
+
+    # Crea los dominios del vector de onda
+    x_c = l;                 # longitud de la caja en x
+    y_c = l;                 # longitud de la caja en y
+    z_c = l;                 # longitud de la caja en z
+    dq_0 = 2 * pi / x_c;      # Δq fundamental
+    qmax = Int(floor(qmax_0 / dq_0));   # número entero de pasos hasta qmax0
+    rq_0 = qmax * dq_0;       # valor máximo real de |q| usado
+    bin_0 = dq_0;             # nuevo ancho de bin (bin0 original * dq0)
+    n_bin = Int(floor(qmax * dq_0 / bin_0)) + 1;  # número total de bines
+
+    # Parametros para el factor de estructura
+    n_tot_av = Int(n_cp);   # Número total de partículas
+
+
+
+#function createqdom(qmax::Real, rq0::Real, dq0::Real, bin0::Real, numbin::Integer)
+    # Crear el espacio del vector recíproco para no definirlo en cada experimento
+    qx = (-qmax:qmax) .* dq0
+    qy = (-qmax:qmax) .* dq0
+    qz = (-qmax:qmax) .* dq0
+
+    qhis   = [[] for _ in 1:numbin]
+    qxhis  = [[] for _ in 1:numbin]
+    qyhis  = [[] for _ in 1:numbin]
+    qzhis  = [[] for _ in 1:numbin]
+
+    # Calcular la magnitud cuadrada
+    for x in qx
+        for y in qy
+            for z in qz
+                # Excluir el origen del espacio recíproco
+                if x == 0 && y == 0 && z == 0
+                    continue
+                end
+
+                q = sqrt(x^2 + y^2 + z^2)
+
+                # Si la magnitud es grande que el maximo se salta
+                if q > rq0
+                    continue
+                end
+
+                # Determinar el índice del bin (manejo especial del borde)
+                sbin = floor(Int, q / bin0) + 1
+
+                # Coso para transformar de un dominio continuo a uno discreto
+                if q % bin0 == 0.0
+                    sbin -= 1
+                end
+
+                # Si la magnitud del vector supera la magnitud de interés se lo salta
+                if sbin > numbin
+                    continue
+                end
+
+                append!(qhis[sbin], q)
+                append!(qxhis[sbin], x)
+                append!(qyhis[sbin], y)
+                append!(qzhis[sbin], z)
+            end
+        end
+    end
+
+    # Compute the mean handeling the empty vectors
+    #qmean=[isempty(v) ? 0.0 : mean(v) for v in qhis];
+
+#    return (qxhis, qyhis, qzhis, qhis, qmean)
+#end
+
+
+
+#=
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_aux in df_systems
     # Group by experiments
@@ -327,5 +407,5 @@ for df_aux in df_systems
     # Save the mean of S(q) of an experiment given a set of simulation and a time domain 
     foreach(df_set->save_Sq_set(df_set,n_steps_Sq,categories_system,categories_experiment,DIR_SAVE) ,df_experiments)
 end
-
+=#
 
