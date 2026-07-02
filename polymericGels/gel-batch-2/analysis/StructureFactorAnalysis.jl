@@ -133,11 +133,11 @@ function createqdom(qmax::Real, rq0::Real, dq0::Real, bin0::Real, numbin::Intege
 end
 
 """
-    computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, r)
+    computeSq(numbin::Integer, ntotav::Integer, qxhis::Vector{Vector{Any}}, qyhis::Vector{Vector{Any}}, qzhis::Vector{Vector{Any}}, qhis::Vector{Vector{Any}}, r::Matrix{Float64})
 
 Compute the structure factor of a set of positions
 """
-function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, r)
+function computeSq(numbin::Integer, ntotav::Integer, qxhis::Vector{Vector{Any}}, qyhis::Vector{Vector{Any}}, qzhis::Vector{Vector{Any}}, qhis::Vector{Vector{Any}}, r::Matrix{Float64})
     Sq = zeros(numbin, 2)
     rho = [[] for _ in 1:numbin]
 
@@ -166,7 +166,7 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
 
     # Guardamos información
     # Valor esperado del factor de estructura
-    Sq[:, 1] = sum.(rho) ./ numbin 
+    Sq[:, 1] =  sum.(rho) ./ length.(rho) 
     smax = maximum(Sq[:, 1])
     Sq[:, 2] = Sq[:, 1] / smax
 
@@ -174,7 +174,7 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
 end
 
 """
-    save_Sq_timestep_mean()
+    save_Sq_timestep_mean(df_set::AbstractDataFrame, paths_traj_timestep::Vector{String}, n_bin::Integer, n_exp::Integer, n_tot_av::Integer, qx_his::Vector{Vector{Any}}, qy_his::Vector{Vector{Any}}, qz_his::Vector{Vector{Any}}, q_his::Vector{Vector{Any}}, q_mean::Vector{Float64}, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
 
 Store a dataframe with the collective mean of S(q) of a set of simulations at a time step
 """

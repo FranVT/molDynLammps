@@ -133,11 +133,11 @@ function createqdom(qmax::Real, rq0::Real, dq0::Real, bin0::Real, numbin::Intege
 end
 
 """
-    computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, r)
+    computeSq(numbin::Integer, ntotav::Integer, qxhis::Vector{Vector{Any}}, qyhis::Vector{Vector{Any}}, qzhis::Vector{Vector{Any}}, qhis::Vector{Vector{Any}}, r::Matrix{Float64})
 
 Compute the structure factor of a set of positions
 """
-function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, r::Matrix{Float64})
+function computeSq(numbin::Integer, ntotav::Integer, qxhis::Vector{Vector{Any}}, qyhis::Vector{Vector{Any}}, qzhis::Vector{Vector{Any}}, qhis::Vector{Vector{Any}}, r::Matrix{Float64})
     Sq = zeros(numbin, 2)
     rho = [[] for _ in 1:numbin]
 
@@ -148,9 +148,9 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
         qz = qzhis[it_bin]
 
         # Manage null vectors
-        #if isempty(qx) || isempty(qy) || isempty(qz)
-        #    append!(rho[it_bin], 0.0)
-        #else
+        if isempty(qx) || isempty(qy) || isempty(qz)
+            append!(rho[it_bin], 0.0)
+        else
                     # Calcular la densidad para cada bin
             for it_q in eachindex(qx)
                 vq = [qx[it_q], qy[it_q], qz[it_q]]
@@ -166,7 +166,7 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
 
     # Guardamos información
     # Valor esperado del factor de estructura
-    Sq[:, 1] = sum.(rho) ./ numbin 
+    Sq[:, 1] = sum.(rho) ./ length.(rho)
     smax = maximum(Sq[:, 1])
     Sq[:, 2] = Sq[:, 1] / smax
 
@@ -450,6 +450,8 @@ r=rand((-l:0.8:l),(5000,3))
     #Sq[:, 2] = Sq[:, 1] / smax
 
 
+
+save_Sq_set(df_set,n_steps_Sq,categories_system,categories_experiment,DIR_SAVE)
 
 
 #=
