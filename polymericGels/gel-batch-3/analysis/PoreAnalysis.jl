@@ -25,8 +25,8 @@ function get_paths_simulation(path_dumpf_simulation::String,n_steps::Integer)
     time_step=sort(time_step);
 
     if n_steps == 1
-        # Get the time steps to analyse
-        time_step_analyze=time_step[end];
+        # Get the time steps to analyse last or first
+        time_step_analyze=time_step[1];
 
         # Re-create the filenane
         files_time_step = [replace(FILE_DUMP, "*" => string(it)) for it in time_step_analyze];
@@ -253,6 +253,9 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
 
     # Save the information
     CSV.write(joinpath(DIR_SAVE, file_name), df_pore_analysis)
+
+    # Print
+    println("Experiment ",file_name," saved\n")
 end
 
 
@@ -278,7 +281,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=1;                          # Amount of time steps to analyzed
-n_samples=1000000;                     # Amount of sphere samples to construct the histogram
+n_samples=100000;                     # Amount of sphere samples to construct the histogram
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
