@@ -228,7 +228,7 @@ for df_system in df_systems
                    ylabel = L"\langle S(|\vec{q}|)\rangle ",
                    xminorticksvisible = true,
                    xminorgridvisible = true,
-                   limits = (10^(-1.5), 10^1, nothing, nothing),
+                   limits = (10^(-1.5), 10^1, 0, 15),
                    xscale = log10
                   )
 
@@ -348,7 +348,7 @@ Creates a figure that compares the final configuration structure factor for diff
 """
 function fig_sq_phiseries_loglog(df_combo::DataFrame, categories_figures::Vector{Symbol})
 # Get the biggest timestep
-time_max= maximum(df_combo.timeStep);
+time_max= minimum(df_combo.timeStep);
 
 # Get all rows at the max time
 df_aux=df_combo[df_combo.timeStep .== time_max, :];
@@ -378,7 +378,7 @@ df_systems=groupby(df_aux,categories_figures);
                    ylabel = L"\langle S(|\vec{q}|)\rangle",
                    xminorticksvisible = true,
                    xminorgridvisible = true,
-                   limits = (10^(-1.5), 10^1, 10^(-1.5), nothing),
+                   limits = (10^(-1.5), 10^1, nothing, nothing),
                    xscale = log10,
                    yscale = log10
                   )
@@ -459,7 +459,7 @@ Creates a figure that compares the final configuration structure factor for diff
 """
 function fig_sq_phiseries_semilog(df_combo::DataFrame, categories_figures::Vector{Symbol})
 # Get the biggest timestep
-time_max= maximum(df_combo.timeStep);
+time_max= minimum(df_combo.timeStep);
 
 # Get all rows at the max time
 df_aux=df_combo[df_combo.timeStep .== time_max, :];
@@ -489,7 +489,7 @@ df_systems=groupby(df_aux,categories_figures);
                    ylabel = L"\langle S(|\vec{q}|)\rangle",
                    xminorticksvisible = true,
                    xminorgridvisible = true,
-                   limits = (10^(-1.5), 10^1, nothing, nothing),
+                   limits = (10^(-1.5), 10^1, 0, 2),
                    xscale = log10
                   )
 
@@ -594,11 +594,12 @@ df_systems=groupby(df_combo,categories_figures);
 #=
     Time series figures
 
-=#
     fig_sq_timeseries_loglog(df_systems,categories_figures)
 
     fig_sq_norm_timeseries_loglog(df_systems,categories_figures)
 
+
+=#
     fig_sq_timeseries_semilog(df_systems,categories_figures)
 
     fig_sq_norm_timeseries_semilog(df_systems,categories_figures)
@@ -607,8 +608,8 @@ df_systems=groupby(df_combo,categories_figures);
 #=
     Compare different concentrations at the last time step
 
-=#
     fig_sq_phiseries_loglog(df_combo,categories_figures)
+=#
 
     fig_sq_phiseries_semilog(df_combo,categories_figures)
 
