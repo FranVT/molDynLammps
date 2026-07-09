@@ -47,7 +47,7 @@ set_theme!(
 
 # Paths and directories
 DIR_MAIN = pwd();
-DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
+DIR_SAVE = joinpath(DIR_MAIN,"analyzedData");
 FILE_DAT = "dat.csv";
 
 # Constants
@@ -72,14 +72,14 @@ time_domain=unique(df_combo.timeStep);
 df_time_domain=groupby(df_combo,:timeStep);
 
 # Select one time step
-time_step=time_domain[1];
-df_time_step=df_time_domain[1];
+time_step=time_domain[end];
+df_time_step=df_time_domain[end];
 
 # Get the domain of the packing fraction
 phi_domain=unique(df_time_step.phi);
 
 # Categories
-categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal];
+categories_figures=[:phi,Symbol("CL-Con"),:Temperature,:damp,:N_heat,:N_isot];
 
 # Get the data for the labels
 labels_plot=[df_time_step[1, col] for col in categories_figures] # Waring: This only works for one case
