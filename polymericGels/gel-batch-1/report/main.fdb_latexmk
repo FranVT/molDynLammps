@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1783625945.58085 "main.aux" "main.bbl" "main" 1783630819.40189 2
-  "main.aux" 1783630819.16181 1813 3d1b3fabfda757627d5ded9e679cc15d "pdflatex"
+["bibtex main"] 1783637019.31539 "main.aux" "main.bbl" "main" 1783637019.38621 2
+  "main.aux" 1783637019.06917 2467 81ce4100aa1b3b0949995ad0ae03b229 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1783630816.44376 "main.tex" "main.pdf" "main" 1783630819.40212 0
+["pdflatex"] 1783637015.89084 "main.tex" "main.pdf" "main" 1783637019.38642 0
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1776097119.09146 128397 dc8cded2bbafe8195c86cdaea92e40b2 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1776097118.76811 127314 7c5efae986e60281c7ad546cf8ed9a14 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1776097121.1949 128950 b259fc34906ff4c20552f96907d63131 ""
@@ -209,15 +209,16 @@
   "/usr/share/texmf-dist/tex/luatex/luaotfload/luaotfload.lua" 1775415801 13566 16df94dd2de231b2bca0aaa0190941fe ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1780324190 5381098 9f966685d344a3d34adbc94f52661a01 ""
   "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1780324176 5657148 69ef0d4038477eab7c7e70d0272763fd ""
-  "docs/../Figures/StructureFactorCompare.png" 1783534275.81721 64700 d913d249377e7f8784952cc83751e230 ""
+  "docs/../Figures/NEW_fig_Sq_phi_series_loglog_time_initial_final.png" 1783636918.51104 274097 e3540a26ad177360206260cd2f369e80 ""
+  "docs/../Figures/NEW_fig_Sq_phi_series_semilog_time_initial_final.png" 1783636103.05507 282435 1eddf6c48056265e57ea1797b1234630 ""
   "docs/../Figures/fig_PotEnergy_phiseries.png" 1781722318.03433 225009 54e6b141cb3d2b9bc55101a8d71a62f9 ""
   "docs/../Figures/fig_pore_histogram_phiseries0.010.050.051.0500000.09.5e6_time_0.0.png" 1783622581.01518 79045 342cfdb4ecb19ce9148e8a6f89c9db1d ""
   "docs/../Figures/fig_pore_histogram_phiseries0.010.050.051.0500000.09.5e6_time_1.0e7.png" 1783623059.3839 88873 2f77ce43a415d204a16556f1740c5286 ""
-  "docs/file_1.tex" 1783630816.00562 4625 0a79aad9256fbefc2d6ebe3ea8ea65b6 ""
-  "main.aux" 1783630819.16181 1813 3d1b3fabfda757627d5ded9e679cc15d "pdflatex"
-  "main.bbl" 1783625945.65395 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1783630819.16576 462 e2f563c7dd5166ae5606b3cbf9b4df30 "pdflatex"
-  "main.tex" 1783624468.32447 2597 42fa4e3726e0353afd3aff156078b70e ""
+  "docs/file_1.tex" 1783637003.10175 5304 9338aefd19b322152fb78404f01d836e ""
+  "main.aux" 1783637019.06917 2467 81ce4100aa1b3b0949995ad0ae03b229 "pdflatex"
+  "main.bbl" 1783637019.37919 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1783637019.07187 462 cf1de738060e64b995ccd57a918a53d6 "pdflatex"
+  "main.tex" 1783630991.68639 2597 42fa4e3726e0353afd3aff156078b70e ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
