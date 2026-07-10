@@ -65,24 +65,25 @@ df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
 # Group the Vector{DataFrame} into one DataFrame
 df_combo=reduce(vcat,df_files);
 
+
+
+
 # Get the time domain of the analysis
 time_domain=unique(df_combo.timeStep);
 
 # Group by the time domain 
 df_time_domain=groupby(df_combo,:timeStep);
 
-# Select one time step
-time_step=time_domain[end];
-df_time_step=df_time_domain[end];
-
-# Get the domain of the packing fraction
-phi_domain=unique(df_time_step.phi);
-
 # Categories
 categories_figures=[:phi,Symbol("CL-Con"),:Temperature,:damp,:N_heat,:N_isot];
 
-# Get the data for the labels
-labels_plot=[df_time_step[1, col] for col in categories_figures] # Waring: This only works for one case
+
+# Select final configuration
+time_step_final=time_domain[end];
+df_time_step_final=df_time_domain[end];
+
+# Get the domain of the packing fraction
+phi_domain=unique(df_time_step_final.phi);
 
     # Prepare some labels
     phi_min=minimum(phi_domain);
@@ -93,15 +94,20 @@ labels_plot=[df_time_step[1, col] for col in categories_figures] # Waring: This 
     color_min   = first(color_norm);
     color_max   = last(color_norm);
 
+# Get the data for the labels
+labels_plot=[df_time_step_final[1, col] for col in categories_figures] # Waring: This only works for one case
+
 # Group by systems
-df_time_step_systems=groupby(df_time_step,categories_figures);
+df_time_step_systems_final=groupby(df_time_step_final,categories_figures);
 
 # Set the amount of bins
 n_bins=64;
 
 # Start the figure
     fig = Figure()
-    ax_plot = Axis(fig[1:3, 1:1],
+
+
+    ax_final_plot = Axis(fig[4:6, 1:1],
                    xlabel = L"r",
                    ylabel = L"\mathrm{pdf}",
                    xminorticksvisible = true,
@@ -109,7 +115,7 @@ n_bins=64;
                    limits = (0, nothing, 0, nothing)
                   )
 
-        for df_system in df_time_step_systems
+        for df_system in df_time_step_systems_final
             # Get the mean value
             mean_pore=first(df_system.mean_pore_set);
 
@@ -117,32 +123,91 @@ n_bins=64;
             color_label=first(unique(df_system.phi))/phi_max;
 
             # Plot the histogram
-            hist!(ax_plot,df_system.histogram_pore[:], bins=n_bins, normalization = :pdf,
+            hist!(ax_final_plot,df_system.histogram_pore[:], bins=n_bins, normalization = :pdf,
                 color = color_label,
                 colorrange = (color_min, color_max)
                 )
         end 
 
-    # Colobar to denote the time evolution 
-    Colorbar(fig[2:3, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+        # Plots to add systems labels
+        plot!(ax_final_plot,[-1],[-1],color=:black,markersize=0.0,label=latexstring("t=",DT*time_step_final,"~\\tau"));
+        plot!(ax_final_plot,[-1],[-1],color=:black,markersize=0.0,label=latexstring("T=",labels_plot[3]));
+
+        axislegend(ax_final_plot,
+                   position=:rt, 
+                   framevisible = true,
+                   framewidth = 0.0,
+                   padding=(0.0f0,4.0f0,1.0f0,1.0f0),
+                   patchsize=(0.0f0, 0.0f0)
+                  )
+
+
+# Select final configuration
+time_step_initial=time_domain[1];
+df_time_step_initial=df_time_domain[1];
+
+# Get the domain of the packing fraction
+phi_domain=unique(df_time_step_initial.phi);
+
+    # Prepare some labels
+    phi_min=minimum(phi_domain);
+    phi_max=maximum(phi_domain);
+
+    # Prepare the color code
+    color_norm  = phi_domain ./ phi_max;
+    color_min   = first(color_norm);
+    color_max   = last(color_norm);
+
+# Get the data for the labels
+labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Waring: This only works for one case
+
+# Group by systems
+df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
+
+    ax_initial_plot = Axis(fig[1:3, 1:1],
+                   xlabel = L"r",
+                   ylabel = L"\mathrm{pdf}",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (0, 7, 0, nothing)
+                  )
+
+        for df_system in df_time_step_systems_initial
+            # Get the mean value
+            mean_pore=first(df_system.mean_pore_set);
+
+            # Get the color
+            color_label=first(unique(df_system.phi))/phi_max;
+
+            # Plot the histogram
+            hist!(ax_initial_plot,df_system.histogram_pore[:], bins=n_bins, normalization = :pdf,
+                color = color_label,
+                colorrange = (color_min, color_max)
+                )
+        end 
+
+    # Linkaxes
+        linkyaxes!(ax_initial_plot,ax_final_plot)
+        linkxaxes!(ax_initial_plot,ax_final_plot)
 
         # Plots to add systems labels
-        legend_aux_1=plot!(ax_plot,[-1],[-1],color=:black);
-        legend_aux_2=plot!(ax_plot,[-1],[-1],color=:black);
+        plot!(ax_initial_plot,[-1],[-1],color=:black,markersize=0.0,label=latexstring("t=",DT*time_step_initial,"~\\tau"));
+        plot!(ax_initial_plot,[-1],[-1],color=:black,markersize=0.0,label=latexstring("T=",labels_plot[3]));
 
-        # Create and auxliary variable for the legend
-        legend_aux=[legend_aux_1;legend_aux_2];
+        axislegend(ax_initial_plot,
+                   position=:rt, 
+                   framevisible = true,
+                   framewidth = 0.0,
+                   padding=(0.0f0,4.0f0,1.0f0,1.0f0),
+                   patchsize=(0.0f0, 0.0f0)
+                  )
 
-        # Create the labels array 
-        legend_labels=[latexstring("t=",DT*time_step,"~\\tau");latexstring("T=",labels_plot[3])]
 
-        # Create the label
-        Legend(fig[1:1,2],legend_aux,legend_labels,
-              halign=:left,
-              valign=:top
-             )
+
+    # Colobar to denote the time evolution 
+    Colorbar(fig[1:6, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
 
         # Crate a file name with the labels
-        file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_",time_step,".png");
+        file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_initial_final.png");
 
         save(file_name, fig, px_per_unit = 300 / INCH)
