@@ -204,16 +204,16 @@ df_set=df_experiments[1]
         u_2=v_2/sqrt(v_2'*v_2);
 
         # Create the direction of the line
-        v_line=(0.5)*(u_2 .- u_1);
+        v_dir=u_2 .- u_1;
 
-        # Add the direction to the distances of particles
-        v_chole = v_ij .+ v_line;
+        # Move the vector distance into a random direction considering the radius of the particles 
+        v_line = v_ij .+ (R_CP).*v_dir;
 
         # Compute unit vector
-        d_chole = sqrt(v_chole'*v_chole);
-        u_chole = v_chole/d_chole;
+        d_line = sqrt(v_line'*v_line);
+        u_line = v_line/d_line;
 
-        id_bin = trunc(Int64,d_chole/bin_size);
+        id_bin = trunc(Int64,d_line/bin_size);
 
         if id_bin > n_bins 
             continue # Ignore if it is outside the domain
