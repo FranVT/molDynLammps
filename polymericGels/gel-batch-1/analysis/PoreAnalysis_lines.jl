@@ -176,7 +176,7 @@ df_set=df_experiments[1]
     position_simulation=position_timestep_simulations[1];
 
     # Start counter of crashes
-    choles=0;
+    choles = 0;
 
     
     while choles <= n_samples
@@ -197,10 +197,10 @@ df_set=df_experiments[1]
         v_ij = wrap.(pos_j .- pos_i , [l_x, l_y, l_z]);
 
         # Create two unit vectors
-        v_1=rand(-1:0.001:1,3);
+        v_1=2.0 .* randn(3) .- 1.0;
         u_1=v_1/sqrt(v_1'*v_1);
 
-        v_2=rand(-1:0.001:1,3);
+        v_2=2.0 .* randn(3) .- 1.0;
         u_2=v_2/sqrt(v_2'*v_2);
 
         # Create the direction of the line
