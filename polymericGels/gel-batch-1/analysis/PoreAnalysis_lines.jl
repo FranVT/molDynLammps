@@ -179,14 +179,14 @@ df_set=df_experiments[1]
     choles=0;
 
     
-    #while choles <= n_samples
+    while choles <= n_samples
         # Select one random particle
         ind_i = rand(1:n_cp);
 
         # Select another random particle
         ind_j = ind_i;
         while ind_j == ind_i
-            global ind_j = rand(1:n_cp);
+            ind_j = rand(1:n_cp);
         end
 
         # Get positions
@@ -210,14 +210,17 @@ df_set=df_experiments[1]
         v_line = v_ij .+ (R_CP).*v_dir;
 
         # Compute unit vector
-        d_line = sqrt(v_line'*v_line);
-        u_line = v_line/d_line;
+        d_line = sqrt(v_line'*v_line); # d_12
+        u_line = v_line/d_line; # eu12
 
         id_bin = trunc(Int64,d_line/bin_size);
 
         if id_bin > n_bins 
             continue # Ignore if it is outside the domain
         end
+
+        # Auxiliary to identify collisions
+        collision_1 = 0;
 
         # Check if it collides with intermediate spheres
         no_overlap = 0;     # Parameter
@@ -235,19 +238,75 @@ df_set=df_experiments[1]
             # Select one particle
             pos_k = position_simulation[ind_part];
 
-            # Start from position i
+        # Distance i-k 
             v_ik = wrap.(pos_k .- pos_i , [l_x, l_y, l_z]);
 
-            # No idea
-            v_ik_new = v_ik .+ (0.5)*u_1;
+            # Displace to the surface of the central particle 
+            vd_ik = v_ik .+ (R_CP)*u_1;
 
             # Compute distance
-            d_ij = sqrt(v_ik'*v_ik);
+            dd_ik = sqrt(vd_ik'*vd_ik); # d1
+            
+            # Unit vector
+            ud_ik = vd_ik/dd_ik; # r_ij
 
+            # Wierd proyection
+            test=ud_ik'*u_line; # eu1eu2
+
+            if test<=0.0 
+                # Collision
+                collision_2 += 1
+            else
+                aux = test*dd_ik; # dp
+                aux_ik = sqrt(dd_ik^2 - aux^2)
+                if aux_ik < R_CP && aux < d_line
+                    # Collision
+                    no_overlap += 1
+                    break # Break from the for
+                end
+            end
+
+        # Distance j-k
+            v_jk = wrap.(pos_k .- pos_j , [l_x, l_y, l_z]);
+
+            # Displace to the surface of the central particle 
+            vd_jk = v_jk .+ (R_CP)*u_2;
+
+            # Compute distance
+            dd_jk = sqrt(vd_jk'*vd_jk); # d1
+            
+            # Unit vector
+            ud_jk = vd_jk/dd_jk; # r_ij
+
+            # Wierd proyection
+            test=ud_jk'*-u_line; # eu1eu2
+
+            if test<=0.0 
+                # Collision
+                collision_2 += 1
+            else
+                aux = test*dd_jk; # dp
+                aux_jk = sqrt(dd_jk^2 - aux^2)
+                if aux_jk < R_CP && aux < d_line
+                    # Collision
+                    no_overlap += 1
+                    break # Break from the for
+                end
+            end
+
+            if collision_2 == 0
+                collision_1 += 1
+            end
 
         end
 
+        if no_overlap == 0 && collision_1 > 0
+            hist_pore_length[id_bin] += 1
+            global choles += 1
+        end
 
-    #end
+        println(choles)
+
+    end
 
 
