@@ -181,16 +181,20 @@ df_set=df_experiments[1]
     
     #while choles <= n_samples
         # Select one random particle
-        id_i = rand(1:n_cp);
+        ind_i = rand(1:n_cp);
 
         # Select another random particle
-        id_j = id_i;
-        while id_j == id_i
-            global id_j = rand(1:n_cp);
+        ind_j = ind_i;
+        while ind_j == ind_i
+            global ind_j = rand(1:n_cp);
         end
 
+        # Get positions
+        pos_i = position_simulation[ind_i,:];
+        pos_j = position_simulation[ind_j,:];
+
         # Compute the distance between particles with periodic boundary conditions
-        v_ij = wrap.(position_simulation[id_j,:] .-  position_simulation[id_i,:], [l_x, l_y, l_z]);
+        v_ij = wrap.(pos_j .- pos_i , [l_x, l_y, l_z]);
 
         # Create two unit vectors
         v_1=rand(-1:0.001:1,3);
@@ -214,6 +218,35 @@ df_set=df_experiments[1]
         if id_bin > n_bins 
             continue # Ignore if it is outside the domain
         end
+
+        # Check if it collides with intermediate spheres
+        no_overlap = 0;     # Parameter
+
+        # Run over all particles 
+        for ind_part in 1:n_cp 
+            # Pass over the reference particles
+            if ind_part == ind_i || ind_part == ind_j
+                continue
+            end
+    
+            # Auxiliary to identify collisions
+            collision_2=0;
+
+            # Select one particle
+            pos_k = position_simulation[ind_part];
+
+            # Start from position i
+            v_ik = wrap.(pos_k .- pos_i , [l_x, l_y, l_z]);
+
+            # No idea
+            v_ik_new = v_ik .+ (0.5)*u_1;
+
+            # Compute distance
+            d_ij = sqrt(v_ik'*v_ik);
+
+
+        end
+
 
     #end
 
