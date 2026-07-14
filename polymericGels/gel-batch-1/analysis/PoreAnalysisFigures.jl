@@ -96,7 +96,7 @@ df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
 max_total=maximum([maximum(df.histogram_pore[:]) for df in df_time_domain]);
 
 # Set the amount of bins
-n_bins=64;
+n_bins=45;
 
 # Domain of bins
 bins_domain=range(0,max_total,length=n_bins);
@@ -141,7 +141,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
                 color = color_label,
                 colorrange = (color_min, color_max),
                 step=:center,
-                linewidth=1.0
+                linewidth=2.5
                 )
         end 
 
@@ -179,7 +179,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
                 color = color_label,
                 colorrange = (color_min, color_max),
                 step=:center,
-                linewidth=1.0
+                linewidth=2.5
                 )
         end 
 
@@ -205,7 +205,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
     Colorbar(fig[1:6, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
 
         # Crate a file name with the labels
-        #file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_initial_final.png");
+        file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_initial_final.png");
 
-        #save(file_name, fig, px_per_unit = 300 / INCH)
+        save(file_name, fig, px_per_unit = 300 / INCH)
 
