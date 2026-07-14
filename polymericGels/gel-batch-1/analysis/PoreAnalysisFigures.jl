@@ -82,8 +82,27 @@ categories_figures=[:phi,Symbol("CL-Con"),:Temperature,:damp,:N_heat,:N_isot];
 time_step_final=time_domain[end];
 df_time_step_final=df_time_domain[end];
 
+# Group by systems
+df_time_step_systems_final=groupby(df_time_step_final,categories_figures);
+
+# Select the initial configuration
+time_step_initial=time_domain[1];
+df_time_step_initial=df_time_domain[1];
+
+# Group by systems
+df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
+
+# Prepare the domains for the histogram
+max_total=maximum([maximum(df.histogram_pore[:]) for df in df_time_domain]);
+
+# Set the amount of bins
+n_bins=64;
+
+# Domain of bins
+bins_domain=range(0,max_total,length=n_bins);
+
 # Get the domain of the packing fraction
-phi_domain=unique(df_time_step_final.phi);
+phi_domain=unique(df_time_step_initial.phi);
 
     # Prepare some labels
     phi_min=minimum(phi_domain);
@@ -95,13 +114,8 @@ phi_domain=unique(df_time_step_final.phi);
     color_max   = last(color_norm);
 
 # Get the data for the labels
-labels_plot=[df_time_step_final[1, col] for col in categories_figures] # Waring: This only works for one case
+labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Waring: This only works for one case
 
-# Group by systems
-df_time_step_systems_final=groupby(df_time_step_final,categories_figures);
-
-# Set the amount of bins
-n_bins=64;
 
 # Start the figure
     fig = Figure()
@@ -123,9 +137,11 @@ n_bins=64;
             color_label=first(unique(df_system.phi))/phi_max;
 
             # Plot the histogram
-            hist!(ax_final_plot,df_system.histogram_pore[:], bins=n_bins, normalization = :pdf,
+            stephist!(ax_final_plot,df_system.histogram_pore[:], bins=bins_domain, normalization = :pdf,
                 color = color_label,
-                colorrange = (color_min, color_max)
+                colorrange = (color_min, color_max),
+                step=:center,
+                linewidth=1.0
                 )
         end 
 
@@ -143,27 +159,6 @@ n_bins=64;
 
 
 # Select final configuration
-time_step_initial=time_domain[1];
-df_time_step_initial=df_time_domain[1];
-
-# Get the domain of the packing fraction
-phi_domain=unique(df_time_step_initial.phi);
-
-    # Prepare some labels
-    phi_min=minimum(phi_domain);
-    phi_max=maximum(phi_domain);
-
-    # Prepare the color code
-    color_norm  = phi_domain ./ phi_max;
-    color_min   = first(color_norm);
-    color_max   = last(color_norm);
-
-# Get the data for the labels
-labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Waring: This only works for one case
-
-# Group by systems
-df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
-
     ax_initial_plot = Axis(fig[1:3, 1:1],
                    xlabel = L"r",
                    ylabel = L"\mathrm{pdf}",
@@ -180,9 +175,11 @@ df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
             color_label=first(unique(df_system.phi))/phi_max;
 
             # Plot the histogram
-            hist!(ax_initial_plot,df_system.histogram_pore[:], bins=n_bins, normalization = :pdf,
+            stephist!(ax_initial_plot,df_system.histogram_pore[:], bins=bins_domain, normalization = :pdf,
                 color = color_label,
-                colorrange = (color_min, color_max)
+                colorrange = (color_min, color_max),
+                step=:center,
+                linewidth=1.0
                 )
         end 
 
@@ -208,6 +205,7 @@ df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
     Colorbar(fig[1:6, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
 
         # Crate a file name with the labels
-        file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_initial_final.png");
+        #file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_initial_final.png");
 
-        save(file_name, fig, px_per_unit = 300 / INCH)
+        #save(file_name, fig, px_per_unit = 300 / INCH)
+
