@@ -267,7 +267,7 @@ df_dat=CSV.read(joinpath(DAT_PATH,FILE_DAT), DataFrame);
 df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
-n_steps=1;                          # Amount of time steps to analyzed
+n_steps=2;                          # Amount of time steps to analyzed
 n_samples=10000;                    # Amount of tries per simulation
 
 # Select one system: same categories of system
@@ -298,57 +298,64 @@ df_set=df_experiments[1]
 # Get the directories of all experiments of the system 
     dir_set=String.(joinpath.(df_set.PARENT_DIR,df_set.dir));
 
+    # Amount of simulations
+    n_sim=length(dir_set);
+
     # Create the paths to the files
     path_dumpf=joinpath.(dir_set,"traj");
 
     # Get all central particles position of all simulations at a given time domain 
     paths_dumpf_simulations=get_paths_simulation.(path_dumpf,n_steps);
 
-    # Get the dump
-    df_dump_timestep=get_dump.(paths_dumpf_simulations);
-
-    # Get the positions
-    position_timestep_simulations=get_position_simulation.(df_dump_timestep);
-
-    # Amount of simulations
-    n_sim=length(position_timestep_simulations);
-
-    # Allcoate memory
-    hist_pore_length = zeros(n_sim,n_bins);    # Histogram of the lengths of the pores
-
-    # Compute the pore length histogram per each simulation in the experiment set.
-    for (it,position_simulation) in enumerate(position_timestep_simulations)
-        hist_pore_length[it,:] = detect_collision(position_simulation,R_CP,l_x,l_y,l_z,n_cp,bin_size,n_bins);
-        println(it," simulation done of ",n_sim," simulations.")
-    end
-
     # Create the domain for the bins
     pore_domain=range(start=0,length=n_bins,step=bin_size);
 
-    # Create the dataframe to store de information
-    df_pore_analysis=DataFrame(hist_pore_length',:auto);
-
-    # Add the doamin
-    df_pore_analysis[!,:poreDomain] = pore_domain;
-
-    # Add other identifiers
-   # Define a set of categories
+    # Define a set of categories
     categories_total=[categories_system; categories_experiment];
 
     # Create a file name from the categories_total
     ids_set_info=[df_set[1, col] for col in categories_total];
 
-    # Add the values of the categories to the dataframe 
-    for (col, val) in zip(categories_total, ids_set_info)
-        df_pore_analysis[!, col] .= val 
-    end
+    # Iterate per each time step in each simulation 
+    for (it_sim,paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
 
-    # Create a file name from the ids 
-    file_name=string("pore_length_histogram_",join(string.(ids_set_info)),"_step_",id_time_step,".csv");
+        # Get the time step analyzed from the files
+        ids_time_step=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in paths_dumpf_simulation];
 
-    # Save the information
-    CSV.write(joinpath(DIR_SAVE, file_name), df_pore_analysis)
+        # Allcoate memory
+        hist_pore_length = zeros(n_steps,n_bins);    # Histogram of the lengths of the pores
 
-    # Print
+        # Iterate thru all the desired time steps
+        for (it,path_dumpf_simulation) in enumerate(paths_dumpf_simulation)
+            # Get the dump
+            df_dump_timestep=get_dump(path_dumpf_simulation);
+
+            # Get the positions
+            position_simulation=get_position_simulation(df_dump_timestep);
+
+            hist_pore_length[it,:] = detect_collision(position_simulation,R_CP,l_x,l_y,l_z,n_cp,bin_size,n_bins);
+            println(it," time step done of ",n_steps," time steps.")
+        end # for of histogram per time step
+
+        # Store the information per timestep
+        for it_time in eachindex(ids_time_step)
+            df_to_store=DataFrame([pore_domain, hist_pore_length[it_time,:]],[:poreDomain, :histLength]);
+            for (col, val) in zip(categories_total, ids_set_info)
+                df_to_store[!, col] .= val 
+            end
+
+            # Create a file name from the ids 
+            file_name=string("pore_length_histogram_",join(string.(ids_set_info)),"_step_",ids_time_step[it_time],"_simulation_",it_sim,".csv");
+
+            # Save the information
+            CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
+
+            println(file_name," stored.")
+        end # for of dave dataframes
+
+    end # For per simulation
+
+
+#=
     println("Experiment ",file_name," saved\n")
-
+=#
