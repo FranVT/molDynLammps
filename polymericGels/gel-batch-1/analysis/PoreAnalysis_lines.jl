@@ -96,7 +96,9 @@ function wrap(dr::Real, L::Real)
 end
 
 """
-    Create a histogram of the length of the pores 
+    detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l_x::Float64, l_y::Float64, l_z::Float64, n_cp::Int64, bin_size::Float64, n_bins::Int64)
+
+Create a histogram of the length of the pores 
 """
 function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l_x::Float64, l_y::Float64, l_z::Float64, n_cp::Int64, bin_size::Float64, n_bins::Int64)
    
@@ -239,47 +241,13 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
     return hist_pore_length
 end
 
+"""
+    store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::Int64, n_samples::Int64, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
 
-
-#=
-    Script
-=#
-
-# Set sed
-Random.seed!(1234)
-
-# Paths and directories
-DIR_MAIN = pwd();
-DAT_PATH   = joinpath(DIR_MAIN, "datFiles")
-DIR_SAVE = joinpath(DIR_MAIN,"analyzedData");
-FILE_DAT = "systemDatfiles.csv";
-FILE_FIX = "system_assembly.fixf";
-FILE_DUMP = "traj_assembly.*.dumpf";
-
-
-categories_system=[:phi,Symbol("CL-Con"),:Temperature,:damp];    # Select the categories that define a system
-categories_experiment=[:N_heat,:N_isot];  # Create categories to select different experiments (Just in case)
-
-# Read the dat file
-df_dat=CSV.read(joinpath(DAT_PATH,FILE_DAT), DataFrame);
-
-# Group by system 
-df_systems=groupby(df_dat,categories_system);
-
-# Set the parameters
-n_steps=2;                          # Amount of time steps to analyzed
-n_samples=10000;                    # Amount of tries per simulation
-
-# Select one system: same categories of system
-df_system=df_systems[1]
+Store pore length histogram per experiment
+"""
+function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::Int64, n_samples::Int64, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
     
-# Group by experiments: same categories of experiment
-df_experiments=groupby(df_system,categories_experiment);
-
-# Select one experiment: Number of simulations
-df_set=df_experiments[1]
-
-
     # Definition of parameters for the analysis
     R_CP=0.5;                           # Radius of the central particles
     l_half=first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
@@ -297,9 +265,6 @@ df_set=df_experiments[1]
 
 # Get the directories of all experiments of the system 
     dir_set=String.(joinpath.(df_set.PARENT_DIR,df_set.dir));
-
-    # Amount of simulations
-    n_sim=length(dir_set);
 
     # Create the paths to the files
     path_dumpf=joinpath.(dir_set,"traj");
@@ -355,7 +320,46 @@ df_set=df_experiments[1]
 
     end # For per simulation
 
+end # Of the function
+
 
 #=
-    println("Experiment ",file_name," saved\n")
+    Script
 =#
+
+# Set sed
+Random.seed!(1234)
+
+# Paths and directories
+DIR_MAIN = pwd();
+DAT_PATH   = joinpath(DIR_MAIN, "datFiles")
+DIR_SAVE = joinpath(DIR_MAIN,"analyzedData");
+FILE_DAT = "systemDatfiles.csv";
+FILE_FIX = "system_assembly.fixf";
+FILE_DUMP = "traj_assembly.*.dumpf";
+
+
+categories_system=[:phi,Symbol("CL-Con"),:Temperature,:damp];    # Select the categories that define a system
+categories_experiment=[:N_heat,:N_isot];  # Create categories to select different experiments (Just in case)
+
+# Read the dat file
+df_dat=CSV.read(joinpath(DAT_PATH,FILE_DAT), DataFrame);
+
+# Group by system 
+df_systems=groupby(df_dat,categories_system);
+
+# Set the parameters
+n_steps=2;                          # Amount of time steps to analyzed
+n_samples=10000;                    # Amount of tries per simulation
+
+# Save the mean of S(q) of a system given a set of experiments and a time domain
+for df_system in df_systems
+    # Group by experiments
+    df_experiments=groupby(df_system,categories_experiment);
+
+    # Store per each set of experiments
+    foreach(df_set->store_pore_length_hist_experiment(df_set,n_steps,n_samples,categories_system,categories_experiment,DIR_SAVE), df_experiments)
+
+    println("One system done")
+end
+
