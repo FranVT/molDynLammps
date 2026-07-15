@@ -95,89 +95,16 @@ function wrap(dr::Real, L::Real)
     return dr - round(dr / L) * L
 end
 
-
-
-#=
-    Script
-=#
-
-# Set sed
-Random.seed!(1234)
-
-# Paths and directories
-DIR_MAIN = pwd();
-DAT_PATH   = joinpath(DIR_MAIN, "datFiles")
-DIR_SAVE = joinpath(DIR_MAIN,"analyzedData");
-FILE_DAT = "systemDatfiles.csv";
-FILE_FIX = "system_assembly.fixf";
-FILE_DUMP = "traj_assembly.*.dumpf";
-
-
-categories_system=[:phi,Symbol("CL-Con"),:Temperature,:damp];    # Select the categories that define a system
-categories_experiment=[:N_heat,:N_isot];  # Create categories to select different experiments (Just in case)
-
-# Read the dat file
-df_dat=CSV.read(joinpath(DAT_PATH,FILE_DAT), DataFrame);
-
-# Group by system 
-df_systems=groupby(df_dat,categories_system);
-
-# Set the parameters
-n_steps=1;                          # Amount of time steps to analyzed
-n_samples=10000;                    # Amount of tries per simulation
-
-# Select one system: same categories of system
-df_system=df_systems[1]
-    
-# Group by experiments: same categories of experiment
-df_experiments=groupby(df_system,categories_experiment);
-
-# Select one experiment: Number of simulations
-df_set=df_experiments[1]
-
-
-    # Definition of parameters for the analysis
-    R_CP=0.5;                           # Radius of the central particles
-    l_half=first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
-    l_half_x = l_half;
-    l_half_y = l_half;
-    l_half_z = l_half;
-    l_x = 2*l_half_x;                            # Length of the box at x 
-    l_y = 2*l_half_y;                            # Length of the box at y 
-    l_z = 2*l_half_z;                            # Length of the box at z
-    n_cp=Int64(first(unique(df_set.Npart)));    # Amount of central particles
-    bin_size=0.2;       # Size of the bins. Is equal to the patches radius
-
-    # Compute the amount of bins
-    n_bins = trunc(Int64,sqrt(4*l_x^2 + l_y^2 + l_z^2)/bin_size) + 1;
-
-# Get the directories of all experiments of the system 
-    dir_set=String.(joinpath.(df_set.PARENT_DIR,df_set.dir));
-
-    # Create the paths to the files
-    path_dumpf=joinpath.(dir_set,"traj");
-
-    # Get all central particles position of all simulations at a given time domain 
-    paths_dumpf_simulations=get_paths_simulation.(path_dumpf,n_steps);
-
-    # Get the dump
-    df_dump_timestep=get_dump.(paths_dumpf_simulations);
-
-    # Get the positions
-    position_timestep_simulations=get_position_simulation.(df_dump_timestep);
-
-    # Amount of simulations
-    n_sim=length(position_timestep_simulations);
-
-    # Allcoate memory
-    hist_pore_length = zeros(n_bins);    # Histogram of the lengths of the pores
-    
-    # Select one set of positions
-    position_simulation=position_timestep_simulations[1];
+"""
+    Create a histogram of the length of the pores 
+"""
+function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l_x::Float64, l_y::Float64, l_z::Float64, n_cp::Int64, bin_size::Float64, n_bins::Int64)
+   
+    # Allocate memory
+    hist_pore_length = zeros(n_bins);
 
     # Start counter of crashes
     choles = 0;
-
     
     while choles <= n_samples
         # Select one random particle
@@ -196,7 +123,7 @@ df_set=df_experiments[1]
         # Compute the distance between particles with periodic boundary conditions
         v_ij = wrap.(pos_j .- pos_i , [l_x, l_y, l_z]);
 
-        # Create two unit vectors
+    # Create two unit vectors
         v_1=2.0 .* randn(3) .- 1.0;
         u_1=v_1/sqrt(v_1'*v_1);
 
@@ -218,6 +145,8 @@ df_set=df_experiments[1]
         if id_bin > n_bins 
             continue # Ignore if it is outside the domain
         end
+
+# Check if there is a collision 
 
         # Auxiliary to identify collisions
         collision_1 = 0;
@@ -298,15 +227,128 @@ df_set=df_experiments[1]
                 collision_1 += 1
             end
 
-        end
+        end # End of the for
 
         if no_overlap == 0 && collision_1 > 0
             hist_pore_length[id_bin] += 1
-            global choles += 1
+            choles += 1
         end
-
-        println(choles)
 
     end
 
+    return hist_pore_length
+end
+
+
+
+#=
+    Script
+=#
+
+# Set sed
+Random.seed!(1234)
+
+# Paths and directories
+DIR_MAIN = pwd();
+DAT_PATH   = joinpath(DIR_MAIN, "datFiles")
+DIR_SAVE = joinpath(DIR_MAIN,"analyzedData");
+FILE_DAT = "systemDatfiles.csv";
+FILE_FIX = "system_assembly.fixf";
+FILE_DUMP = "traj_assembly.*.dumpf";
+
+
+categories_system=[:phi,Symbol("CL-Con"),:Temperature,:damp];    # Select the categories that define a system
+categories_experiment=[:N_heat,:N_isot];  # Create categories to select different experiments (Just in case)
+
+# Read the dat file
+df_dat=CSV.read(joinpath(DAT_PATH,FILE_DAT), DataFrame);
+
+# Group by system 
+df_systems=groupby(df_dat,categories_system);
+
+# Set the parameters
+n_steps=1;                          # Amount of time steps to analyzed
+n_samples=10000;                    # Amount of tries per simulation
+
+# Select one system: same categories of system
+df_system=df_systems[1]
+    
+# Group by experiments: same categories of experiment
+df_experiments=groupby(df_system,categories_experiment);
+
+# Select one experiment: Number of simulations
+df_set=df_experiments[1]
+
+
+    # Definition of parameters for the analysis
+    R_CP=0.5;                           # Radius of the central particles
+    l_half=first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
+    l_half_x = l_half;
+    l_half_y = l_half;
+    l_half_z = l_half;
+    l_x = 2*l_half_x;                            # Length of the box at x 
+    l_y = 2*l_half_y;                            # Length of the box at y 
+    l_z = 2*l_half_z;                            # Length of the box at z
+    n_cp=Int64(first(unique(df_set.Npart)));    # Amount of central particles
+    bin_size=0.2;       # Size of the bins. Is equal to the patches radius
+
+    # Compute the amount of bins
+    n_bins = trunc(Int64,sqrt(4*l_x^2 + l_y^2 + l_z^2)/bin_size) + 1;
+
+# Get the directories of all experiments of the system 
+    dir_set=String.(joinpath.(df_set.PARENT_DIR,df_set.dir));
+
+    # Create the paths to the files
+    path_dumpf=joinpath.(dir_set,"traj");
+
+    # Get all central particles position of all simulations at a given time domain 
+    paths_dumpf_simulations=get_paths_simulation.(path_dumpf,n_steps);
+
+    # Get the dump
+    df_dump_timestep=get_dump.(paths_dumpf_simulations);
+
+    # Get the positions
+    position_timestep_simulations=get_position_simulation.(df_dump_timestep);
+
+    # Amount of simulations
+    n_sim=length(position_timestep_simulations);
+
+    # Allcoate memory
+    hist_pore_length = zeros(n_sim,n_bins);    # Histogram of the lengths of the pores
+
+    # Compute the pore length histogram per each simulation in the experiment set.
+    for (it,position_simulation) in enumerate(position_timestep_simulations)
+        hist_pore_length[it,:] = detect_collision(position_simulation,R_CP,l_x,l_y,l_z,n_cp,bin_size,n_bins);
+        println(it," simulation done of ",n_sim," simulations.")
+    end
+
+    # Create the domain for the bins
+    pore_domain=range(start=0,length=n_bins,step=bin_size);
+
+    # Create the dataframe to store de information
+    df_pore_analysis=DataFrame(hist_pore_length',:auto);
+
+    # Add the doamin
+    df_pore_analysis[!,:poreDomain] = pore_domain;
+
+    # Add other identifiers
+   # Define a set of categories
+    categories_total=[categories_system; categories_experiment];
+
+    # Create a file name from the categories_total
+    ids_set_info=[df_set[1, col] for col in categories_total];
+
+    # Add the values of the categories to the dataframe 
+    for (col, val) in zip(categories_total, ids_set_info)
+        df_pore_analysis[!, col] .= val 
+    end
+
+    # Create a file name from the ids 
+    file_name=string("pore_length_histogram_",join(string.(ids_set_info)),"_step_",id_time_step,".csv");
+
+    # Save the information
+    CSV.write(joinpath(DIR_SAVE, file_name), df_pore_analysis)
+
+    # Print
+    println("Experiment ",file_name," saved\n")
 
