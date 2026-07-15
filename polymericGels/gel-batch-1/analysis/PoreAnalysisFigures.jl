@@ -104,14 +104,21 @@ bins_domain=range(0,max_total,length=n_bins);
 # Get the domain of the packing fraction
 phi_domain=unique(df_time_step_initial.phi);
 
-    # Prepare some labels
+    # prepare some labels
     phi_min=minimum(phi_domain);
     phi_max=maximum(phi_domain);
 
-    # Prepare the color code
+    # prepare the color code
     color_norm  = phi_domain ./ phi_max;
     color_min   = first(color_norm);
     color_max   = last(color_norm);
+
+    # create the color manually
+    color_grad=cgrad(:viridis);
+
+    # create the dictionary
+    phi_to_color=Dict(phi_domain .=> trunc.(Int64,range(1,length(color_grad),length=length(phi_domain))))
+
 
 # Get the data for the labels
 labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Waring: This only works for one case
@@ -134,15 +141,18 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
             mean_pore=first(df_system.mean_pore_set);
 
             # Get the color
-            color_label=first(unique(df_system.phi))/phi_max;
+            color_label=phi_to_color[first(unique(df_system.phi))];
 
-            # Plot the histogram
-            stephist!(ax_final_plot,df_system.histogram_pore[:], bins=bins_domain, normalization = :pdf,
-                color = color_label,
-                colorrange = (color_min, color_max),
-                step=:center,
-                linewidth=2.5
-                )
+            density!(ax_final_plot,df_system.histogram_pore[:],
+                     colormap = :viridis,
+                     colorrange = (color_min, color_max),
+                     #alpha=0.0,
+                     color = (:white,0.0),
+                     strokecolor = color_grad[color_label],
+                     strokewidth = 1.5
+                    )
+
+
         end 
 
         # Plots to add systems labels
@@ -172,23 +182,15 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
             mean_pore=first(df_system.mean_pore_set);
 
             # Get the color
-            color_label=first(unique(df_system.phi))/phi_max;
+            color_label=phi_to_color[first(unique(df_system.phi))];
 
-            #=
-            # Plot the histogram
-            stephist!(ax_initial_plot,df_system.histogram_pore[:], bins=bins_domain, normalization = :pdf,
-                color = color_label,
-                colorrange = (color_min, color_max),
-                step=:center,
-                linewidth=2.5
-                )
-            =#
             density!(ax_initial_plot,df_system.histogram_pore[:],
-                     color = color_label,
-                     #alpha = 0.5,
-                     strokecolor = :black,
-                     strokewidth = 1.5,
-                     colorrange = (color_min, color_max)
+                     colormap = :viridis,
+                     colorrange = (color_min, color_max),
+                     #alpha=0.0,
+                     color = (:white,0.0),
+                     strokecolor = color_grad[color_label],
+                     strokewidth = 1.5
                     )
         end 
 
@@ -214,7 +216,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
     Colorbar(fig[1:6, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
 
         # Crate a file name with the labels
-        #file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_initial_final.png");
+        file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_initial_final.png");
 
-        #save(file_name, fig, px_per_unit = 300 / INCH)
+        save(file_name, fig, px_per_unit = 300 / INCH)
 

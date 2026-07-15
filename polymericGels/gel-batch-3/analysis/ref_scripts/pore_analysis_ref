@@ -127,6 +127,7 @@ ik0=ik0+1
 		r12=r1-r2
                 r12(1)=r12(1)-r12(2)*xy/yc!quita esta linea si la caja no está siendo deformada
 
+                !condiciones periodicas de frontera
 	        r12(1)=r12(1)- xc * int ( (r12(1))/x2 )
 	        r12(2)=r12(2)- yc * int ( (r12(2))/y2 )
 	        r12(3)=r12(3)- zc * int ( (r12(3))/z2 )
