@@ -42,8 +42,17 @@ function compute_mean_set_fixf(df_set::AbstractDataFrame, FILE_FIX::String="syst
     # Extract all the information from the fix files
     info_fixf=extract_fix_scalar.(path_fixf)
 
+    # Get the data to compute the mean 
+    data_info_fix = last.(info_fixf);
+
+    # Get the minimum time step 
+    min_time_step = minimum(last.(size.(data_info_fix)))
+
+    # Format to create the array to compute the mean 
+    data_info_fix = [data[:,1:min_time_step] for data in data_info_fix];
+
     # Compute the average of the set of experiments
-    mean_set=first(mean(last.(info_fixf),dims=1));
+    mean_set=first(mean(data_info_fix,dims=1));
 
     # Get the headers
     headers_set=String.(first.(info_fixf)[1]);

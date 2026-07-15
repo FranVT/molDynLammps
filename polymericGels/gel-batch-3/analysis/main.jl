@@ -10,8 +10,9 @@ using DataFrames, CSV
 using .CreateParamsDF
 
 # Paths and directories
-DIR_DATA = "/home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3/data/";
+#DIR_DATA = "/home/franvt/GitRepos/molDynLammps/polymericGels/gel-batch-3/data/";
 #"/run/media/franvt/rogelio/DinMol/gel-batch-3/data/";
+DIR_DATA = "/run/media/franvt/rogelio/DinMol/gel-batch-3-long/data/";
 DIR_MAIN = pwd();
 FILE_LOG = "params.log";
 FILE_DAT = "dat.csv";
