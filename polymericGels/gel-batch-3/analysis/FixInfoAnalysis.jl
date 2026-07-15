@@ -108,7 +108,7 @@ FILE_FIX = "system_assembly.fixf";
 df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
 
 # Select the categories that define a system
-categories_system=[:phi,:chi_4,:temp,:damp];
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
 
 # Create categories to select different experiments (Just in case)
 categories_experiment=[:N_heat,:N_isothermal];
