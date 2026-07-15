@@ -309,6 +309,9 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
                 df_to_store[!, col] .= val 
             end
 
+            # Add the time step to the dataframe
+            df_to_store[!,:timeStep] .= ids_time_step[it_time]
+
             # Create a file name from the ids 
             file_name=string("pore_length_histogram_",join(string.(ids_set_info)),"_step_",ids_time_step[it_time],"_simulation_",it_sim,".csv");
 
@@ -350,7 +353,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=2;                          # Amount of time steps to analyzed
-n_samples=10000;                    # Amount of tries per simulation
+n_samples=1000;                    # Amount of tries per simulation
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
