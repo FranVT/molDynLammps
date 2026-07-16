@@ -238,7 +238,7 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
 
         # Store the information per timestep
         for it_time in eachindex(ids_time_step)
-            df_to_store=DataFrame([repeat([id_time_step], n_samples*n_steps) repeat([mean_pore_set], n_samples*n_steps) histograms_pore_set],
+            df_to_store=DataFrame([repeat([ids_time_step[it_time]], n_samples*n_steps) repeat([mean_pore_set], n_samples*n_steps) histograms_pore_set],
                    [:timeStep, :mean_pore_set, :histogram_pore]);
             
             for (col, val) in zip(categories_total, ids_set_info)
@@ -249,7 +249,7 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
             file_name=string("pore_analysis_",join(string.(ids_set_info)),"_step_",ids_time_step[it_time],"_simulation_",it_sim,".csv");
 
             # Save the information
-            CSV.write(joinpath(DIR_SAVE, file_name), df_pore_analysis)
+            CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
 
             println(file_name," stored.")
         end # For each time step
@@ -283,13 +283,6 @@ df_systems=groupby(df_dat,categories_system);
 n_steps=2;                          # Amount of time steps to analyzed
 n_samples=100000;                     # Amount of sphere samples to construct the histogram
 
-
-
-df_experiments=groupby(df_systems[1],categories_experiment)
-df_set=df_experiments[1]
-save_pore_histogram(df_set,n_samples,n_steps,categories_system,categories_experiment,DIR_SAVE)
-
-#=
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
     # Group by experiments
@@ -300,61 +293,4 @@ for df_system in df_systems
 
     println("One system done")
 end
-=#
 
-#=
-    # Get the positions
-    position_timestep_simulations=get_position_simulation.(df_dump_timestep);
-
-    # Amount of simulations
-    n_sim=length(position_timestep_simulations);
-
-    for (it,position_timestep_simulation) in enumerate(position_timestep_simulations)
-        # Get the histogram and mean pore of a configuration
-        (hist_pore, mean_pore)=compute_pore_histogram(n_samples,position_timestep_simulation,l_x,l_y,l_z,delta_rad,R_CP);
-
-        # Store the histogram
-        histograms_pore[it].=hist_pore;
-
-        # Store the mean
-        means_pore[it]=mean_pore;
-
-        println("One time step done")
-    end
-
-    # Reshape the array
-    histograms_pore_set=reduce(vcat,histograms_pore);
-
-    # Compute the mean of the set
-    mean_pore_set=mean(means_pore);
-
-    # Get the time step analyzed from the files
-    id_time_step=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in paths_dumpf_simulations];
-    
-    # Get the number
-    id_time_step=first(unique(id_time_step));
-
-    # Create a DataFrame to store the infomration
-    df_pore_analysis=DataFrame([repeat([id_time_step], n_samples*n_sim) repeat([mean_pore_set], n_samples*n_sim) histograms_pore_set],
-                   [:timeStep, :mean_pore_set, :histogram_pore]);
-
-   # Define a set of categories
-    categories_total=[categories_system; categories_experiment];
-
-    # Create a file name from the categories_total
-    ids_set_info=[df_set[1, col] for col in categories_total];
-
-    # Add the values of the categories to the dataframe 
-    for (col, val) in zip(categories_total, ids_set_info)
-        df_pore_analysis[!, col] .= val 
-    end
-
-    # Create a file name from the ids 
-    file_name=string("pore_analysis_",join(string.(ids_set_info)),"_step_",id_time_step,".csv");
-
-    # Save the information
-    CSV.write(joinpath(DIR_SAVE, file_name), df_pore_analysis)
-
-    # Print
-    println("Experiment ",file_name," saved\n")
-=#
