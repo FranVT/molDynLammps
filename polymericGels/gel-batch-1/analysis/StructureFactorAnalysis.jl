@@ -301,7 +301,7 @@ FILE_FIX = "system_assembly.fixf";
 FILE_DUMP = "traj_assembly.*.dumpf";
 
 # Select the amount of time steps to analyze the structure factor
-n_steps_Sq=2;
+n_steps_Sq=8;
 
 # Define the maximum wave vector
 qmax_0=6;
