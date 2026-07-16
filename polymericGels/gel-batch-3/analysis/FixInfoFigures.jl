@@ -65,13 +65,42 @@ files=filter(s -> occursin("fix_mean_", s), files);
 # Read the files
 df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
 
+# Combine the dataframes
+df_group=reduce(vcat,df_files)
+
+# Prepare for a separation by system
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
+
+# Separate by systems
+df_systems=groupby(df_group,categories_system);
+
+# Prepare labels for the systems
+
+    # Packing fraction domain
+    phi_domain=unique(df_group.phi);
+
+    # Time step domain
+    tstep_domain=unique(df_group.tstep);
+
+# Create labels
+
+    # Packing fraction 
+    phi_domain =(100).*phi_domain;
+    phi_min   = minimum(phis);
+    phi_max   = maximum(phis);
+    color_phi_norm  = phi_domain ./ length(phi_domain);
+    color_phi_min   = first(color_phi_norm);
+    color_phi_max   = last(color_phi_norm);
+
+    # Time step
+    line_styles=[:solid, :dash];
+    tstep_label=Dict(tstep_domain .=> line_styles)
+
+
+#=
+
 # Prepare time domains
 time_domains=(DT).*[df[!,:TimeStep] for df in df_files];
-
-
-
-
-
 
 # Prepare the labels
     phis      = (100).*[first(unique(df[!,:phi])) for df in df_files];
@@ -153,3 +182,5 @@ time_domains=(DT).*[df[!,:TimeStep] for df in df_files];
     Colorbar(fig[1, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
 
     save(string("fig_Temperature_phiseries.png"), fig, px_per_unit = 300 / INCH)
+
+=#
