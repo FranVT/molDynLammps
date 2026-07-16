@@ -341,7 +341,6 @@ FILE_DAT = "systemDatfiles.csv";
 FILE_FIX = "system_assembly.fixf";
 FILE_DUMP = "traj_assembly.*.dumpf";
 
-
 categories_system=[:phi,Symbol("CL-Con"),:Temperature,:damp];    # Select the categories that define a system
 categories_experiment=[:N_heat,:N_isot];  # Create categories to select different experiments (Just in case)
 

@@ -75,27 +75,18 @@ time_domain=unique(df_combo.timeStep);
 df_time_domain=groupby(df_combo,:timeStep);
 
 # Select final configuration
-time_step_final=time_domain[end];
-df_time_step_final=df_time_domain[end];
+    time_step_final=time_domain[end];
+    df_time_step_final=df_time_domain[end];
 
-# Group by systems
-df_time_step_systems_final=groupby(df_time_step_final,categories_figures);
+    # Group by systems
+    df_time_step_systems_final=groupby(df_time_step_final,categories_figures);
 
 # Select the initial configuration
-time_step_initial=time_domain[1];
-df_time_step_initial=df_time_domain[1];
+    time_step_initial=time_domain[1];
+    df_time_step_initial=df_time_domain[1];
 
-# Group by systems
-df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
-
-# Prepare the domains for the histogram
-#max_total=maximum([maximum(df.histLength[:]) for df in df_time_domain]);
-
-# Set the amount of bins
-n_bins=45;
-
-# Domain of bins
-#bins_domain=range(0,max_total,length=n_bins);
+    # Group by systems
+    df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
 
 # Get the domain of the packing fraction
 phi_domain=unique(df_time_step_initial.phi);
@@ -125,7 +116,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
 
 
     ax_final_plot = Axis(fig[4:6, 1:1],
-                   xlabel = L"r",
+                   xlabel = L"\mathrm{Length~of~line}",
                    ylabel = L"\mathrm{pdf}",
                    xminorticksvisible = true,
                    xminorgridvisible = true,
@@ -133,13 +124,13 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
                   )
 
         for df_system in df_time_step_systems_final
-            # Get the mean value
-            #mean_pore=first(df_system.mean_pore_set);
+            # Compute the histogram 
+            hist=mapreduce(s-> repeat([df_system.poreDomain[s]],Int64(df_system.histLength[s])),vcat, eachindex(df_system.poreDomain[:]))
 
             # Get the color
             color_label=phi_to_color[first(unique(df_system.phi))];
 
-            density!(ax_final_plot,df_system.histLength[:],
+            density!(ax_final_plot,hist,
                      colormap = :viridis,
                      colorrange = (color_min, color_max),
                      #alpha=0.0,
@@ -166,21 +157,21 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
 
 # Select final configuration
     ax_initial_plot = Axis(fig[1:3, 1:1],
-                   xlabel = L"r",
+                   xlabel = L"\mathrm{Length~of~line}",
                    ylabel = L"\mathrm{pdf}",
                    xminorticksvisible = true,
                    xminorgridvisible = true,
-                   limits = (0, 7, 0, nothing)
+                   limits = (0, nothing, 0, nothing)
                   )
 
         for df_system in df_time_step_systems_initial
-            # Get the mean value
-            #mean_pore=first(df_system.mean_pore_set);
+            # Compute the histogram 
+            hist=mapreduce(s-> repeat([df_system.poreDomain[s]],Int64(df_system.histLength[s])),vcat, eachindex(df_system.poreDomain[:]))
 
             # Get the color
             color_label=phi_to_color[first(unique(df_system.phi))];
 
-            density!(ax_initial_plot,df_system.histLength[:],
+            density!(ax_initial_plot,hist,
                      colormap = :viridis,
                      colorrange = (color_min, color_max),
                      #alpha=0.0,
@@ -212,8 +203,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
     Colorbar(fig[1:6, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
 
         # Crate a file name with the labels
-        #file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_initial_final.png");
+        file_name=string("fig_pore_histogram_phiseries_line_length",join(string.(labels_plot)),"_time_initial_final.png");
 
-        #save(file_name, fig, px_per_unit = 300 / INCH)
-
+        save(file_name, fig, px_per_unit = 300 / INCH)
 
