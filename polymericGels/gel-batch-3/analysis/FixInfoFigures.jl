@@ -85,35 +85,18 @@ df_systems=groupby(df_group,categories_system);
 # Create labels
 
     # Packing fraction 
-    phi_domain =(100).*phi_domain;
-    phi_min   = minimum(phis);
-    phi_max   = maximum(phis);
+    phi_min   = 100*minimum(phi_domain);
+    phi_max   = 100*maximum(phi_domain);
     color_phi_norm  = phi_domain ./ length(phi_domain);
     color_phi_min   = first(color_phi_norm);
     color_phi_max   = last(color_phi_norm);
+    color_phi_label = Dict(phi_domain .=> color_phi_norm)
 
     # Time step
     line_styles=[:solid, :dash];
     tstep_label=Dict(tstep_domain .=> line_styles)
 
-
-#=
-
-# Prepare time domains
-time_domains=(DT).*[df[!,:TimeStep] for df in df_files];
-
 # Prepare the labels
-    phis      = (100).*[first(unique(df[!,:phi])) for df in df_files];
-    phi_min   = minimum(phis);
-    phi_max   = maximum(phis);
-
-    # Prepare the color code
-    sys_domain  = eachindex(df_files);
-    N_systems   = length(df_files);
-    color_norm  = phis ./ N_systems;
-    color_min   = first(color_norm);
-    color_max   = last(color_norm);
-
     fig = Figure()
     ax_plot = Axis(fig[1:1, 1:1],
                    xlabel = L"\mathrm{Time~}[\tau]",
@@ -124,16 +107,44 @@ time_domains=(DT).*[df[!,:TimeStep] for df in df_files];
                    xscale = log10
                   )
 
-    # Plot the potential energy for each system
-    for it_sys in sys_domain
-        scatterlines!(ax_plot, time_domains[it_sys], df_files[it_sys].c_ek,
-                      color = color_norm[it_sys],
-                      colorrange = (color_min, color_max)
+    # Plot the kinetick energy for each system
+    for df_system in df_systems 
+        # Prepate time domain
+        time_domain=(df_system.tstep).*df_system.TimeStep
+
+        aux_phi = first(df_system.phi);
+        aux_tstep = first(df_system.tstep);
+
+        lines!(ax_plot, time_domain, df_system.c_ek,
+                      color = color_phi_label[aux_phi],
+                      colorrange = (color_phi_min, color_phi_max),
+                      linestyle = tstep_label[aux_tstep],
+                      linewidth = 3 
                      )
     end
 
+# System legends
+
     # Legends in terms of the packing fraction
-    Colorbar(fig[1, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+    Colorbar(fig[1, 2], label = L"\phi\%", colormap = :viridis, limits = (phi_min, phi_max))
+
+    # Time step lebel 
+     for df_system in df_systems
+        aux_tstep = first(df_system.tstep);
+
+        lines!(ax_plot,[0],[0],
+                color = :black,
+                linestyle = tstep_label[aux_tstep],
+                linewidth = 3,
+                label=latexstring("\\Delta t=",aux_tstep,"~\\tau")
+              );
+     end
+    
+        axislegend(ax_plot,
+                   merge = true,
+                   position=:rt, 
+                   framevisible = false,
+                  )
 
     save(string("fig_KineticEnergy_phiseries.png"), fig, px_per_unit = 300 / INCH)
 
@@ -148,15 +159,41 @@ time_domains=(DT).*[df[!,:TimeStep] for df in df_files];
                   )
 
     # Plot the potential energy for each system
-    for it_sys in sys_domain
-        scatterlines!(ax_plot, time_domains[it_sys], df_files[it_sys].c_ep,
-                      color = color_norm[it_sys],
-                      colorrange = (color_min, color_max)
+    for df_system in df_systems 
+        # Prepate time domain
+        time_domain=(df_system.tstep).*df_system.TimeStep
+
+        aux_phi = first(df_system.phi);
+        aux_tstep = first(df_system.tstep);
+
+        lines!(ax_plot, time_domain, df_system.c_ep,
+                      color = color_phi_label[aux_phi],
+                      colorrange = (color_phi_min, color_phi_max),
+                      linestyle = tstep_label[aux_tstep],
+                      linewidth = 3 
                      )
     end
 
     # Legends in terms of the packing fraction
-    Colorbar(fig[1, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+    Colorbar(fig[1, 2], label = L"\phi\%", colormap = :viridis, limits = (phi_min, phi_max))
+
+    # Time step lebel 
+     for df_system in df_systems
+        aux_tstep = first(df_system.tstep);
+
+        lines!(ax_plot,[0],[0],
+                color = :black,
+                linestyle = tstep_label[aux_tstep],
+                linewidth = 3,
+                label=latexstring("\\Delta t=",aux_tstep,"~\\tau")
+              );
+     end
+    
+        axislegend(ax_plot,
+                   merge = true,
+                   position=:rt, 
+                   framevisible = false,
+                  )
 
     save(string("fig_PotentialEnergy_phiseries.png"), fig, px_per_unit = 300 / INCH)
 
@@ -170,17 +207,42 @@ time_domains=(DT).*[df[!,:TimeStep] for df in df_files];
                    xscale = log10
                   )
 
-    # Plot the potential energy for each system
-    for it_sys in sys_domain
-        scatterlines!(ax_plot, time_domains[it_sys], df_files[it_sys].c_t,
-                      color = color_norm[it_sys],
-                      colorrange = (color_min, color_max)
+    # Plot the temperature for each system
+    for df_system in df_systems 
+        # Prepate time domain
+        time_domain=(df_system.tstep).*df_system.TimeStep
+
+        aux_phi = first(df_system.phi);
+        aux_tstep = first(df_system.tstep);
+
+        lines!(ax_plot, time_domain, df_system.c_t,
+                      color = color_phi_label[aux_phi],
+                      colorrange = (color_phi_min, color_phi_max),
+                      linestyle = tstep_label[aux_tstep],
+                      linewidth = 3 
                      )
     end
 
     # Legends in terms of the packing fraction
-    Colorbar(fig[1, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+    Colorbar(fig[1, 2], label = L"\phi\%", colormap = :viridis, limits = (phi_min, phi_max))
+
+    # Time step lebel 
+     for df_system in df_systems
+        aux_tstep = first(df_system.tstep);
+
+        lines!(ax_plot,[0],[0],
+                color = :black,
+                linestyle = tstep_label[aux_tstep],
+                linewidth = 3,
+                label=latexstring("\\Delta t=",aux_tstep,"~\\tau")
+              );
+     end
+    
+        axislegend(ax_plot,
+                   merge = true,
+                   position=:rt, 
+                   framevisible = false,
+                  )
 
     save(string("fig_Temperature_phiseries.png"), fig, px_per_unit = 300 / INCH)
 
-=#
