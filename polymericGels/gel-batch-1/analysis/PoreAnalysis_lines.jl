@@ -126,10 +126,10 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
         v_ij = wrap.(pos_j .- pos_i , [l_x, l_y, l_z]);
 
     # Create two unit vectors
-        v_1=2.0 .* randn(3) .- 1.0;
+        v_1=2.0 .* rand(3) .- 1.0;
         u_1=v_1/sqrt(v_1'*v_1);
 
-        v_2=2.0 .* randn(3) .- 1.0;
+        v_2=2.0 .* rand(3) .- 1.0;
         u_2=v_2/sqrt(v_2'*v_2);
 
         # Create the direction of the line
@@ -142,7 +142,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
         d_line = sqrt(v_line'*v_line); # d_12
         u_line = v_line/d_line; # eu12
 
-        id_bin = trunc(Int64,d_line/bin_size);
+        id_bin = floor(Int, d_line / bin_size) + 1;
 
         if id_bin > n_bins 
             continue # Ignore if it is outside the domain
@@ -185,7 +185,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             test=ud_ik'*u_line; # eu1eu2
 
             if test<=0.0 
-                # Collision
+                # No Collision
                 collision_2 += 1
             else
                 aux = test*dd_ik; # dp
@@ -201,7 +201,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             v_jk = wrap.(pos_k .- pos_j , [l_x, l_y, l_z]);
 
             # Displace to the surface of the central particle 
-            vd_jk = v_jk .+ (R_CP)*u_2;
+            vd_jk = v_jk .- (R_CP)*u_2;
 
             # Compute distance
             dd_jk = sqrt(vd_jk'*vd_jk); # d1
@@ -210,7 +210,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             ud_jk = vd_jk/dd_jk; # r_ij
 
             # Wierd proyection
-            test=ud_jk'*-u_line; # eu1eu2
+            test=ud_jk'*u_line; # eu1eu2
 
             if test<=0.0 
                 # Collision
@@ -226,6 +226,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             end
 
             if collision_2 == 0
+                # Implies one particle is behind the extremes
                 collision_1 += 1
             end
 
