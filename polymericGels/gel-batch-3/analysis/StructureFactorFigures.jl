@@ -561,6 +561,143 @@ df_systems=groupby(df_aux,categories_figures);
 end
 
 
+"""
+    fig_sq_phiseries_loglog_initial_final(df_combo::DataFrame, categories_figures::Vector{Symbol})
+
+Creates a figure that compares the initial and final configurations structure factor for different packing fractions
+"""
+function fig_sq_phiseries_semilog_loglog_final(df_combo::DataFrame, categories_figures::Vector{Symbol})
+
+# Define length regimes
+alpha_colors=0.3;
+q_mins_regimes=[10^(-1.5), 10^(-0.5), 10^(0.5)];
+q_maxs_regimes=[10^(-0.5), 10^(0.5), 10^(1.0)];
+q_colors_regimes=[(:black,alpha_colors),(:blue,alpha_colors),(:red,alpha_colors)];
+
+
+# Get the biggest timestep
+time_max=maximum(df_combo.timeStep);
+
+# Get all rows at the max time
+df_aux_max=df_combo[df_combo.timeStep .== time_max, :];
+
+# Group by system and experiments
+df_systems=groupby(df_aux_max,categories_figures);
+
+# Get the domain of the packing fraction
+phi_domain_max=unique(df_aux_max.phi);
+
+# Get the data for the labels
+labels_plot=[df_aux_max[1, col] for col in categories_figures] # Waring: This only works for one case
+
+    # Prepare some labels
+    phi_min=minimum(phi_domain_max);
+    phi_max=maximum(phi_domain_max);
+
+    # Prepare the color code
+    color_norm  = phi_domain_max ./ phi_max;
+    color_min   = first(color_norm);
+    color_max   = last(color_norm);
+
+    # Starts the figure
+    fig = Figure()
+    ax_semilog_plot = Axis(fig[1:3, 1:2],
+                   xlabel = L"|\vec{q}|",
+                   #ylabel = L"\langle S(|\vec{q}|)\rangle",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (10^(-1.5), 10^1, 0, 250),
+                   xscale = log10
+                  )
+
+    vspan!(ax_semilog_plot,q_mins_regimes,q_maxs_regimes,color=q_colors_regimes)
+
+    for df_plot in df_systems
+        # Get the domain
+        domain=df_plot.q_mean[:];
+    
+        # Get the range
+        range=df_plot.Sq_mean[:];
+
+        # Get the color
+        color_label=first(unique(df_plot.phi))/phi_max;
+
+        # Plot
+        scatterlines!(ax_semilog_plot,domain,range,
+                      color = color_label,
+                      colorrange = (color_min, color_max))
+    end
+
+        plot!(ax_semilog_plot,[100],[100],color=:black,label=latexstring("t=",DT*time_max,"~\\tau"),markersize=0.0);
+        plot!(ax_semilog_plot,[100],[100],color=:black,label=latexstring("T=",labels_plot[3]),markersize=0.0);
+
+        axislegend(ax_semilog_plot,
+                   position=:lt, 
+                   framevisible = true,
+                   framewidth = 0.0,
+                   padding=(0.0f0,4.0f0,1.0f0,1.0f0),
+                   patchsize=(0.0f0, 0.0f0)
+                  )
+
+
+    ax_loglog_plot = Axis(fig[1:3, 1:2],
+                   #xlabel = L"|\vec{q}|",
+                   #ylabel = L"\langle S(|\vec{q}|)\rangle",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (10^(-1.5), 10^1, 10^(-0.5), 10^(3)),
+                   xscale = log10,
+                   yscale = log10,
+                   yaxisposition = :right
+                  )
+    hidespines!(ax_loglog_plot)
+    hidexdecorations!(ax_loglog_plot)
+
+    #vspan!(ax_loglog_plot,q_mins_regimes,q_maxs_regimes,color=q_colors_regimes)
+
+    for df_plot in df_systems
+        # Get the domain
+        domain=df_plot.q_mean[:];
+    
+        # Get the range
+        range=df_plot.Sq_mean[:];
+
+        # Get the color
+        color_label=first(unique(df_plot.phi))/phi_max;
+
+        # Plot
+        scatterlines!(ax_loglog_plot,domain,range,
+                      color = color_label,
+                      colorrange = (color_min, color_max),
+                      marker = :utriangle,
+                      markersize = 15
+                     )
+    end
+
+        scatterlines!(ax_loglog_plot,[100],[100],color=:black,label=L"S(|\vec{q}|)");
+        scatterlines!(ax_loglog_plot,[100],[100],color=:black,marker = :utriangle,label=L"\log(S(|\vec{q}|))");
+
+        axislegend(ax_loglog_plot,
+                   position=:rt, 
+                   framevisible = true,
+                   #framewidth = 0.0,
+                   #padding=(0.0f0,4.0f0,1.0f0,1.0f0),
+                   #patchsize=(0.0f0, 0.0f0)
+                  )
+
+
+       
+
+        # Colobar to denote the time evolution 
+        Colorbar(fig[1:3, 3], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+
+        # Crate a file name with the labels
+        file_name=string("NEW_fig_Sq_phi_series__semilog_loglog_time_final.png");
+
+        save(file_name, fig, px_per_unit = 300 / INCH)
+
+end
+
 
 #=
     Start the script
@@ -594,9 +731,6 @@ df_systems=groupby(df_combo,categories_figures);
 
 #=
     Time series figures
-
-=#
-
     fig_sq_timeseries_loglog(df_systems,categories_figures)
 
     fig_sq_norm_timeseries_loglog(df_systems,categories_figures)
@@ -606,14 +740,18 @@ df_systems=groupby(df_combo,categories_figures);
     fig_sq_norm_timeseries_semilog(df_systems,categories_figures)
 
 
+=#
+
+
 
 #=
     Compare different concentrations at the last time step
-
-=#
-
     fig_sq_phiseries_loglog(df_combo,categories_figures)
 
     fig_sq_phiseries_semilog(df_combo,categories_figures)
 
 
+=#
+
+
+fig_sq_phiseries_semilog_loglog_final(df_combo, categories_figures)
