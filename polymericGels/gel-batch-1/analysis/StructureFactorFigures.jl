@@ -1035,7 +1035,7 @@ time_max=minimum(df_combo.timeStep);
 =#
 
 #fig_sq_phiseries_semilog_initial_final(df_combo, categories_figures)
-#fig_sq_phiseries_loglog_initial_final(df_combo, categories_figures)
+fig_sq_phiseries_loglog_initial_final(df_combo, categories_figures)
 #fig_sq_phiseries_semilog_loglog_final(df_combo, categories_figures)
 
 

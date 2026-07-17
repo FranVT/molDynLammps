@@ -41,6 +41,43 @@ set_theme!(
     Functions 
 =#
 
+"""
+    collect_df(files::Vector{String})
+
+Collect the total histogram of N experiments
+"""
+function collect_df(files::Vector{String}, categories_figures::Vector{Symbol})
+
+    # Read the files of one experiment
+    df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
+
+    # Get the poreDomain
+    pore_domain=df_files[1].poreDomain;
+
+    # Get the histogram
+    hist=mapreduce(s->s.histLength,hcat,df_files);
+
+    # Combine the results
+    hist=sum(hist,dims=2)[:];
+
+    # GEt ids
+    ids=map(col->df_files[1][!, col],categories_figures)
+
+    # Create a dataframe to plot
+    df_to_store=DataFrame([pore_domain, hist],[:poreDomain, :histLength]);
+
+    for (col, val) in zip(categories_figures, ids)
+        df_to_store[!, col] = val 
+    end
+    
+    # Add the time step to the dataframe
+    df_to_store[!,:timeStep] .= df_files[1].timeStep
+
+    return df_to_store
+end
+
+
+
 #=
     Start the script
 =#
@@ -59,14 +96,39 @@ files=readdir(DIR_SAVE);
 # Get only those of the structure factor
 files=filter(s -> occursin("pore_length_histogram_", s), files);
 
-# Read the files
-df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
+# Prepare for reading the information
+patron = r"pore_length_histogram_(.+)_step_(\d+)_simulation_\d+\.csv"
 
-# Group the Vector{DataFrame} into one DataFrame
-df_combo=reduce(vcat,df_files);
+# Read by experiments
+grupos = Dict{Tuple{String, Int}, Vector{String}}()
+for f in files 
+    m = match(patron, f)
+    if m !== nothing
+        sistema = m.captures[1]   # cadena con los parámetros
+        step = parse(Int, m.captures[2])
+        clave = (sistema, step)
+        # Agregar al grupo correspondiente
+        if haskey(grupos, clave)
+            push!(grupos[clave], f)
+        else
+            grupos[clave] = [f]
+        end
+    else
+        @warn "Nombre no coincide con el patrón: $f"
+    end
+end
 
 # Categories
 categories_figures=[:phi,Symbol("CL-Con"),:Temperature,:damp,:N_heat,:N_isot];
+
+# Collect the files names by experiment 
+files = collect(values(grupos));
+
+
+df_data=map(s->collect_df(s,categories_figures),files)
+
+# Group the Vector{DataFrame} into one DataFrame
+df_combo=reduce(vcat,df_data);
 
 # Get the time domain of the analysis
 time_domain=unique(df_combo.timeStep);
@@ -75,15 +137,15 @@ time_domain=unique(df_combo.timeStep);
 df_time_domain=groupby(df_combo,:timeStep);
 
 # Select final configuration
-    time_step_final=time_domain[end];
-    df_time_step_final=df_time_domain[end];
+    time_step_final=time_domain[1];
+    df_time_step_final=df_time_domain[1];
 
     # Group by systems
     df_time_step_systems_final=groupby(df_time_step_final,categories_figures);
 
 # Select the initial configuration
-    time_step_initial=time_domain[1];
-    df_time_step_initial=df_time_domain[1];
+    time_step_initial=time_domain[end];
+    df_time_step_initial=df_time_domain[end];
 
     # Group by systems
     df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
@@ -124,13 +186,20 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
                   )
 
         for df_system in df_time_step_systems_final
-            # Compute the histogram 
-            hist=mapreduce(s-> repeat([df_system.poreDomain[s]],Int64(df_system.histLength[s])),vcat, eachindex(df_system.poreDomain[:]))
 
             # Get the color
             color_label=phi_to_color[first(unique(df_system.phi))];
 
-            density!(ax_final_plot,hist,
+            lines!(ax_final_plot,df_system.poreDomain,df_system.histLength[:]./sum(df_system.histLength[:]),
+                      #bins = df_system.poreDomain,
+                      colormap = :viridis,
+                      colorrange = (color_min, color_max),
+                      color = color_grad[color_label],
+                      #normalization = :pdf
+                     )            
+            
+            #=
+            density!(ax_final_plot,df_system.histLength,
                      colormap = :viridis,
                      colorrange = (color_min, color_max),
                      #alpha=0.0,
@@ -138,7 +207,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
                      strokecolor = color_grad[color_label],
                      strokewidth = 1.5
                     )
-
+            =#
 
         end 
 
@@ -165,13 +234,20 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
                   )
 
         for df_system in df_time_step_systems_initial
-            # Compute the histogram 
-            hist=mapreduce(s-> repeat([df_system.poreDomain[s]],Int64(df_system.histLength[s])),vcat, eachindex(df_system.poreDomain[:]))
 
             # Get the color
             color_label=phi_to_color[first(unique(df_system.phi))];
 
-            density!(ax_initial_plot,hist,
+            lines!(ax_initial_plot,df_system.poreDomain,df_system.histLength[:]./sum(df_system.histLength[:]),
+                      #bins = df_system.poreDomain,
+                      colormap = :viridis,
+                      colorrange = (color_min, color_max),
+                      color = color_grad[color_label],
+                      #normalization = :pdf
+                     )
+ 
+            #=
+            density!(ax_initial_plot,df_system.histLength,
                      colormap = :viridis,
                      colorrange = (color_min, color_max),
                      #alpha=0.0,
@@ -179,6 +255,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
                      strokecolor = color_grad[color_label],
                      strokewidth = 1.5
                     )
+            =#
         end 
 
     # Linkaxes
@@ -205,5 +282,4 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
         # Crate a file name with the labels
         file_name=string("fig_pore_histogram_phiseries_line_length",join(string.(labels_plot)),"_time_initial_final.png");
 
-        save(file_name, fig, px_per_unit = 300 / INCH)
-
+        #save(file_name, fig, px_per_unit = 300 / INCH)
