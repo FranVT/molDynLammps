@@ -123,7 +123,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
         pos_j = position_simulation[ind_j,:];
 
         # Compute the distance between particles with periodic boundary conditions
-        v_ij = wrap.(pos_j .- pos_i , [l_x, l_y, l_z]);
+        v_ji = wrap.(pos_i .- pos_j , [l_x, l_y, l_z]);
 
     # Create two unit vectors
         v_1=2.0 .* rand(3) .- 1.0;
@@ -133,10 +133,10 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
         u_2=v_2/sqrt(v_2'*v_2);
 
         # Create the direction of the line
-        v_dir=u_2 .- u_1;
+        v_dir=u_1 .- u_2;
 
         # Move the vector distance into a random direction considering the radius of the particles 
-        v_line = v_ij .+ (R_CP).*v_dir;
+        v_line = v_ji .+ (R_CP).*v_dir;
 
         # Compute unit vector
         d_line = sqrt(v_line'*v_line); # d_12
@@ -170,26 +170,26 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             pos_k = position_simulation[ind_part];
 
         # Distance i-k 
-            v_ik = wrap.(pos_k .- pos_i , [l_x, l_y, l_z]);
+            v_ki = wrap.(pos_i .- pos_k , [l_x, l_y, l_z]);
 
             # Displace to the surface of the central particle 
-            vd_ik = v_ik .+ (R_CP)*u_1;
+            vd_ki = v_ki .+ (R_CP)*u_1;
 
             # Compute distance
-            dd_ik = sqrt(vd_ik'*vd_ik); # d1
+            dd_ki = sqrt(vd_ki'*vd_ki); # d1
             
             # Unit vector
             ud_ik = vd_ik/dd_ik; # r_ij
 
             # Wierd proyection
-            test=ud_ik'*u_line; # eu1eu2
+            test=-ud_ki'*-u_line; # eu1eu2
 
             if test<=0.0 
                 # No Collision
                 collision_2 += 1
             else
-                aux = test*dd_ik; # dp
-                aux_ik = sqrt(dd_ik^2 - aux^2)
+                aux = test*dd_ki; # dp
+                aux_ik = sqrt(dd_ki^2 - aux^2)
                 if aux_ik < R_CP && aux < d_line
                     # Collision
                     no_overlap += 1
@@ -198,27 +198,27 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             end
 
         # Distance j-k
-            v_jk = wrap.(pos_k .- pos_j , [l_x, l_y, l_z]);
+            v_kj = wrap.(pos_j .- pos_k , [l_x, l_y, l_z]);
 
             # Displace to the surface of the central particle 
-            vd_jk = v_jk .- (R_CP)*u_2;
+            vd_kj = v_kj .+ (R_CP)*u_2;
 
             # Compute distance
-            dd_jk = sqrt(vd_jk'*vd_jk); # d1
+            dd_kj = sqrt(vd_kj'*vd_kj); # d1
             
             # Unit vector
-            ud_jk = vd_jk/dd_jk; # r_ij
+            ud_kj = vd_kj/dd_kj; # r_ij
 
             # Wierd proyection
-            test=ud_jk'*u_line; # eu1eu2
+            test=ud_kj'*-u_line; # eu1eu2
 
             if test<=0.0 
                 # Collision
                 collision_2 += 1
             else
-                aux = test*dd_jk; # dp
+                aux = test*dd_kj; # dp
                 aux_jk = sqrt(dd_jk^2 - aux^2)
-                if aux_jk < R_CP && aux < d_line
+                if aux_kj < R_CP && aux < d_line
                     # Collision
                     no_overlap += 1
                     break # Break from the for
@@ -353,7 +353,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=2;                          # Amount of time steps to analyzed
-n_samples=10000;                    # Amount of tries per simulation
+n_samples=100000;                    # Amount of tries per simulation
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems

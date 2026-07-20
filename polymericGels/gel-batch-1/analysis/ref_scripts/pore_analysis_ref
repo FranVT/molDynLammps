@@ -1,0 +1,265 @@
+program readdumpspheres
+
+implicit none
+
+integer :: ik,ij,ntot,ii,numbin,natomsik,ik0,itype,i,j,psamples,idum,nrbin,ntypes,rbin
+integer :: qmax,iq,jq,kq,sbin,ikjump,ikini,ikfinal,tjump,c1,c2,noverlap,bin0,choles
+real(8) :: ln1,ln2,lnx1,lnx2,lxn,lyn,lzn,xc,yc,zc,x2,y2,z2,timestp,xy,xz,yz,deltay
+real(8) :: dq0,sfsum1,sfsum2,qr(3),r1(3),r2(3),r12(3),rj(3),rij(3),eu1(3),eu2(3),eu12(3),ee,&
+        d1,d2,pbin,d12,eu1eu2,rx,ry,rz,r12y,dp,dij
+
+character(60) :: dummy
+character (250) :: filedumpread,filename,filedump, filedumpread0
+
+
+real(8), parameter :: pi=acos(-1.0d00), pi2= 2.0d00* pi
+
+
+integer, dimension(:), allocatable :: totaltype
+real(8), dimension(:,:), allocatable :: r,bc
+real(8), dimension(:), allocatable :: pl
+
+!filedump=name of the files to read
+!it is assumed that the names to be read include the time step
+!iktjump= periodicity in the files
+!ikini= firts time step to be read
+!ikfinal= last time step to be read
+!tjump= can be used to skip some files
+
+
+idum = -1997
+!print*, "1"
+
+open(44,  file = "datareadp.in",action = "read", status = "old" )
+read(44,*), filedump
+read(44,*), ikjump,ikini,ikfinal
+read(44,*), tjump
+read(44,*), ntypes
+read(44,*), psamples,pbin
+	allocate(totaltype(ntypes))
+close(44)
+
+
+ik0=0
+do ik=ikini,ikfinal,ikjump*tjump
+ik0=ik0+1
+
+!	print*,"2", ik
+!this part creates the file names to be read, with "tjump" you can select which ones to read
+	write (filedumpread0, '("_",I0,".lammpstrj")') ik
+	filedumpread=trim(filedump)//trim(filedumpread0)
+	filedumpread0="conf/"
+	filedumpread=trim(filedumpread0)//trim(filedumpread)
+
+	open(45, file = filedumpread,action = "read", status = "old" )
+
+	read(45,*), dummy
+	read(45,*), timestp
+	read(45,*), dummy
+	read(45,*), natomsik
+	read(45,*), dummy
+	read(45,*), lnx1,lnx2,xy! estas "xy", "xz", y "yz" son para cuando se deforma la caja
+	lxn=lnx2-lnx1
+	read(45,*), ln1,ln2,xz
+	lyn=ln2-ln1
+	read(45,*), ln1,ln2,yz
+	lzn=ln2-ln1
+	read(45,*), dummy
+	if (ik0==1) then
+		ntot=natomsik
+		xc=lxn
+		yc=lyn
+		zc=lzn
+		x2=xc/2.0
+		y2=yc/2.0
+		z2=zc/2.0
+		nrbin=int(sqrt(4.0*xc**2.0+yc**2.0+zc**2.0)/pbin)+1
+		bin0=int(1.0/pbin)+1
+		allocate(r(ntot,4),bc(ntot,ntypes),pl(nrbin))
+
+	end if
+
+
+	totaltype=0
+	bc=0
+
+	do ij=1,ntot
+! reads: "particle number, x, y, z", and sorts them in case they are not dump in order
+		read(45,*), ii,r(ii,4),rx,ry,rz
+		rx=rx-sign(xc,rx)*int(rx/xc+1.d0-sign(1.d0,rx))
+		ry=ry-sign(xc,ry)*int(ry/xc+1.d0-sign(1.d0,ry))
+		rz=rz-sign(xc,rz)*int(rz/xc+1.d0-sign(1.d0,rz))
+		r(ii,1)=rx
+		r(ii,2)=ry
+		r(ii,3)=rz
+		itype=r(ii,4)
+		totaltype(itype)=totaltype(itype)+1	
+		bc(ii,itype)=1
+	end do
+	close(45)
+
+	pl=0.0
+	choles=0
+	do while (choles<=psamples)
+		!selecciona una particula
+        i=int((ntot-1)*rando(idum))+1
+		j=i
+		do while (i==j)
+            !selecciones una segunda particula
+			j=int((ntot-1)*rando(idum))+1
+		end do
+        !crear vectores unitarios para cada particula
+		eu1(1)=rando(idum)*2.0d0-1.0d0
+		eu1(2)=rando(idum)*2.0d0-1.0d0
+		eu1(3)=rando(idum)*2.0d0-1.0d0
+		ee=sqrt(dot_product(eu1,eu1))
+		eu1=eu1/ee
+		!posicion de la particula "i"
+        r1=r(i,:)
+
+        !segundo vector unitario
+                eu2(1)=rando(idum)*2.0d0-1.0d0
+                eu2(2)=rando(idum)*2.0d0-1.0d0
+                eu2(3)=rando(idum)*2.0d0-1.0d0
+                ee=sqrt(dot_product(eu2,eu2))
+                eu2=eu2/ee
+
+        !posicion de la segunda particula
+                r2=r(j,:)
+
+        !distancia. La segunda particula es de referencia
+		r12=r1-r2
+
+                !condiciones periodicas de frontera
+	        r12(1)=r12(1)- xc * int ( (r12(1))/x2 )
+	        r12(2)=r12(2)- yc * int ( (r12(2))/y2 )
+	        r12(3)=r12(3)- zc * int ( (r12(3))/z2 )
+
+        !desplazar segun los radios de las esferas
+		r12=r12+(eu1-eu2)*0.5
+                d12=sqrt(dot_product(r12,r12))
+                eu12=r12/d12
+		rbin=int(d12/pbin)+1
+		if (rbin > nrbin) print*, rbin,nrbin, d12, xc,yc,zc
+		c1=0
+
+
+! checks if the line passes trhough the spheres
+
+		noverlap=0
+
+		do ij=1, ntot
+			if (ij==i .or. ij==j) cycle
+			c2=0
+			
+            !posicion de una tercera particula
+            rj=r(ij,:)		
+
+! line from sphere 1 to sphere ij
+			rij=r1-rj
+		        rij(1)=rij(1)- xc * int ( (rij(1))/x2 )
+		        rij(2)=rij(2)- yc * int ( (rij(2))/y2 )
+		        rij(3)=rij(3)- zc * int ( (rij(3))/z2 )
+			rij=rij+eu1*0.5
+
+			d1=sqrt(dot_product(rij,rij))
+			rij=rij/d1
+			eu1eu2=dot_product(-rij,-eu12)
+			if (eu1eu2<=0.0)  then
+				c2=c2+1
+			else
+				dp=eu1eu2*d1
+				dij=sqrt(d1**2.0-dp**2.0)
+				if (dij<0.5 .and. dp<d12)   then
+					noverlap=noverlap+1
+					exit
+				end if
+			end if
+
+! line from sphere 2 to sphere ij
+			rij=r2-rj
+		        rij(1)=rij(1)- xc * int ( (rij(1))/x2 )
+		        rij(2)=rij(2)- yc * int ( (rij(2))/y2 )
+		        rij(3)=rij(3)- zc * int ( (rij(3))/z2 )
+			rij=rij+eu2*0.5
+
+			d2=sqrt(dot_product(rij,rij))
+			rij=rij/d2
+			eu1eu2=dot_product(-rij,eu12)
+
+			if (eu1eu2<=0.0)  then
+				c2=c2+1
+			else
+				dp=eu1eu2*d2
+				dij=sqrt(d2**2.0-dp**2.0)
+				if (dij<0.5 .and. dp<d12)   then
+					noverlap=noverlap+1
+					exit
+				end if
+			end if
+
+			if (c2==0) c1=c1+1
+
+		end do
+		if (noverlap==0 .and. c1>0 )  then
+			pl(rbin)=pl(rbin)+1.0
+			choles=choles+1
+		end if
+
+
+	end do
+
+	write (filename, '("p_dist/pl_",f4.2,".out")') (ik0-1)*tjump*0.01
+
+	open(22, file=filename, action = "write", status="unknown")
+	write(22,*), "# total=", choles,sum(pl)
+	do ij = 1,nrbin
+		write(22,133) ij*pbin," ",pl(ij)," ",pl(ij)/(choles*1.0)
+	end do
+	close(22)
+
+
+	133 format(F8.2,A,F12.2,A,F12.8)
+
+
+end do
+
+
+
+CONTAINS
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! RANDOM NUMBER GENERATOR FROM NR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+! Fast & accurate ran1_s(harvest) random number generator from nr (uses several modules from nr)
+! including gasdev generator for Gaussian random distribution with zero mean and unit variance
+
+
+
+	FUNCTION rando(idum)
+	IMPLICIT NONE
+	INTEGER, PARAMETER :: K4B=selected_int_kind(9)
+	INTEGER(K4B), INTENT(INOUT) :: idum
+	REAL :: rando
+	INTEGER(K4B), PARAMETER :: IA=16807,IM=2147483647,IQ=127773,IR=2836
+	REAL, SAVE :: am
+	INTEGER(K4B), SAVE :: ix=-1,iy=-1,k
+	if (idum <= 0 .or. iy < 0) then
+		am=nearest(1.0,-1.0)/IM
+		iy=ior(ieor(888889999,abs(idum)),1)
+		ix=ieor(777755555,abs(idum))
+		idum=abs(idum)+1
+	end if
+	ix=ieor(ix,ishft(ix,13))
+	ix=ieor(ix,ishft(ix,-17))
+	ix=ieor(ix,ishft(ix,5))
+	k=iy/IQ
+	iy=IA*(iy-k*IQ)-IR*k
+	if (iy < 0) iy=iy+IM
+	rando=am*ior(iand(IM,ieor(ix,iy)),1)
+	END FUNCTION rando
+
+
+
+
+end program
+

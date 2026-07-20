@@ -1,0 +1,104 @@
+program size
+  implicit none
+  double precision :: temp, boxx, boxy, boxz, u, rran(3), deltar, rad, dist, dx, dy, dz, ave
+  double precision, allocatable :: r(:,:), distr(:)
+  double precision :: maxi
+  integer :: number_part, i,j, n, counter, nooverlap
+  character(64) :: filename
+
+  call getarg(1,filename)
+  print *, "Init filename ", filename
+
+  open(10, FILE=filename)
+  read(10,*)
+  read(10,*) number_part
+  deltar=0.2
+  print *, "Total number of atoms", n
+  allocate(r(number_part,3))
+  DO i=1, 5
+    read(10,*)
+  END DO
+  read(10,*) temp, boxx
+  read(10,*) temp, boxy
+  read(10,*) temp, boxz
+  print *, "Size of the box", boxx, boxy, boxz
+  DO i=1, 7
+    read(10,*)
+    END DO
+  DO i=1, number_part
+    read(10,*) temp, temp, temp, r(i,1), r(i,2), r(i,3)
+!    print *, r(i,:)
+  END DO
+  close(10)
+  n=100000
+  allocate(distr(n))
+  call initseed()
+  counter=1
+  open(35, FILE="dist_rad.dat")
+  ave=0
+  DO j=1, n
+    if(mod(j,1000)==0) print *, j
+!    print *, "Dist", j
+    call random_number(u)
+    rran(1)=u*boxx
+    call random_number(u)
+    rran(2)=u*boxy
+    call random_number(u)
+    rran(3)=u*boxz
+    nooverlap=1
+    rad=0.0
+!    print *, "RAN", rran(1), rran(2), rran(3)
+!    print *, "HERE", rad
+    DO while(nooverlap==1)
+      rad=rad+deltar
+!      print *, "HERE", rad
+      DO i=1, number_part
+        dx=rran(1)-r(i,1)
+        dy=rran(2)-r(i,2)
+        dz=rran(3)-r(i,3)
+        call VWrap(dx,boxx)
+        call VWrap(dy, boxy)
+        call VWrap(dz, boxz)
+        dist=Sqrt(dx*dx+dy*dy+dz*dz)
+        if (dist<=(0.5+rad)) then
+           nooverlap=0
+           distr(counter)=rad
+           ave=ave+rad
+           counter=counter+1
+           exit
+        end if
+      END DO
+    END DO
+    write(35, *) rad
+  END DO
+  ave=ave/n
+  maxi=0
+  DO i=1, n
+   if(distr(i)>maxi) maxi=distr(i)
+  END DO
+  print *, "Average rad ", ave
+  open(40, FILE="ave.dat")
+  write(40,*) ave, maxi
+  close(35)
+  close(40)
+
+  CONTAINS
+subroutine initseed()
+        integer :: i, num, clock
+        integer, dimension(:), allocatable :: seed
+        call random_seed(size=num)
+        allocate(seed(num))
+        call system_clock(count=clock)
+        seed=clock+37*(/(i-1,i=1,num)/)
+!        seed=1234
+        call random_seed(put=seed)
+        deallocate(seed)
+end subroutine
+
+subroutine VWrap(dr, box)
+  double precision :: dr, box
+
+  if(dr>=0.5*box) dr=dr-box
+  if(dr<=-0.5*box) dr=dr+box
+end subroutine
+end program
