@@ -87,11 +87,12 @@ ik0=ik0+1
 ! reads: "particle number, x, y, z", and sorts them in case they are not dump in order
 		read(45,*), ii,r(ii,4),rx,ry,rz
 		
-        ! Consider periodic voundary conditions
+        ! Wrap particles. This is similar to mod(rx,xc) 
         rx=rx-sign(xc,rx)*int(rx/xc+1.d0-sign(1.d0,rx))
 		ry=ry-sign(xc,ry)*int(ry/xc+1.d0-sign(1.d0,ry))
 		rz=rz-sign(xc,rz)*int(rz/xc+1.d0-sign(1.d0,rz))
-		r(ii,1)=rx
+		
+        r(ii,1)=rx
 		r(ii,2)=ry
 		r(ii,3)=rz
 		itype=r(ii,4)
