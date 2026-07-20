@@ -86,7 +86,9 @@ ik0=ik0+1
 	do ij=1,ntot
 ! reads: "particle number, x, y, z", and sorts them in case they are not dump in order
 		read(45,*), ii,r(ii,4),rx,ry,rz
-		rx=rx-sign(xc,rx)*int(rx/xc+1.d0-sign(1.d0,rx))
+		
+        ! Consider periodic voundary conditions
+        rx=rx-sign(xc,rx)*int(rx/xc+1.d0-sign(1.d0,rx))
 		ry=ry-sign(xc,ry)*int(ry/xc+1.d0-sign(1.d0,ry))
 		rz=rz-sign(xc,rz)*int(rz/xc+1.d0-sign(1.d0,rz))
 		r(ii,1)=rx
@@ -112,9 +114,12 @@ ik0=ik0+1
 		eu1(1)=rando(idum)*2.0d0-1.0d0
 		eu1(2)=rando(idum)*2.0d0-1.0d0
 		eu1(3)=rando(idum)*2.0d0-1.0d0
-		ee=sqrt(dot_product(eu1,eu1))
+		
+        !Unit vector
+        ee=sqrt(dot_product(eu1,eu1))
 		eu1=eu1/ee
-		!posicion de la particula "i"
+		
+        !posicion de la particula "i"
         r1=r(i,:)
 
         !segundo vector unitario
@@ -137,11 +142,21 @@ ik0=ik0+1
 
         !desplazar segun los radios de las esferas
 		r12=r12+(eu1-eu2)*0.5
-                d12=sqrt(dot_product(r12,r12))
-                eu12=r12/d12
+
+        ! Distancia
+        d12=sqrt(dot_product(r12,r12))
+        
+        ! Unitario
+        eu12=r12/d12
+
+        ! Obtener el bin
 		rbin=int(d12/pbin)+1
-		if (rbin > nrbin) print*, rbin,nrbin, d12, xc,yc,zc
-		c1=0
+		
+        ! Si se excede se descarta
+        if (rbin > nrbin) print*, rbin,nrbin, d12, xc,yc,zc
+		
+        ! Iniciar auxiliar de colision
+        c1=0
 
 
 ! checks if the line passes trhough the spheres
@@ -149,7 +164,7 @@ ik0=ik0+1
 		noverlap=0
 
 		do ij=1, ntot
-			if (ij==i .or. ij==j) cycle
+			if (ij==i .or. ij==j) cycle ! interrumpe el ciclo do
 			c2=0
 			
             !posicion de una tercera particula

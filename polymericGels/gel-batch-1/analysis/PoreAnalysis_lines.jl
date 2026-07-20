@@ -80,7 +80,7 @@ end
 Get the position of the central particles of a given dump
 """
 function get_position_simulation(dump::DataFrame)
-    mask = (dump.type .== 1) .| (dump.type .== 2.0)
+    mask = (dump.type .== 1) .| (dump.type .== 2.0) .| (dump.type .== 3.0) .| (dump.type .== 4.0)
     dump_filtered = dump[mask, :]
 
     return reduce(hcat,[dump_filtered.x, dump_filtered.y, dump_filtered.z])
@@ -92,7 +92,7 @@ end
 Compute distance tacking into account periodic boundary conditions
 """
 function wrap(dr::Real, L::Real)
-    return dr - round(dr / L) * L
+    return dr - L * round(dr / L/2)
 end
 
 """
@@ -118,9 +118,9 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             ind_j = rand(1:n_cp);
         end
 
-        # Get positions
-        pos_i = position_simulation[ind_i,:];
-        pos_j = position_simulation[ind_j,:];
+        # Get wrapped positions
+        pos_i = mod.(position_simulation[ind_i,:], [l_x, l_y, l_z]);
+        pos_j = mod.(position_simulation[ind_j,:], [l_x, l_y, l_z]);
 
         # Compute the distance between particles with periodic boundary conditions
         v_ji = wrap.(pos_i .- pos_j , [l_x, l_y, l_z]);
@@ -145,7 +145,8 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
         id_bin = floor(Int, d_line / bin_size) + 1;
 
         if id_bin > n_bins 
-            continue # Ignore if it is outside the domain
+            println(d_line)
+            #continue # Ignore if it is outside the domain
         end
 
 # Check if there is a collision 
@@ -161,13 +162,13 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             # Pass over the reference particles
             if ind_part == ind_i || ind_part == ind_j
                 continue
-            end
+            end # Got to the next index
     
             # Auxiliary to identify collisions
             collision_2=0;
 
-            # Select one particle
-            pos_k = position_simulation[ind_part];
+            # Get wrapped position of the third particle 
+            pos_k = mod.(position_simulation[ind_part], [l_x, l_y, l_z]);
 
         # Distance i-k 
             v_ki = wrap.(pos_i .- pos_k , [l_x, l_y, l_z]);
@@ -189,8 +190,8 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
                 collision_2 += 1
             else
                 aux = test*dd_ki; # dp
-                aux_ik = sqrt(dd_ki^2 - aux^2)
-                if aux_ik < R_CP && aux < d_line
+                aux_ki = sqrt(dd_ki^2 - aux^2)
+                if aux_ki < R_CP && aux < d_line
                     # Collision
                     no_overlap += 1
                     break # Break from the for
@@ -264,14 +265,18 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
     # Compute the amount of bins
     n_bins = trunc(Int64,sqrt(4*l_x^2 + l_y^2 + l_z^2)/bin_size) + 1;
 
-# Get the directories of all experiments of the system 
+# Get the directories of all simulations of the same experiment of the system 
     dir_set=String.(joinpath.(df_set.PARENT_DIR,df_set.dir));
+
+    # For debug, only consider one experiment
+    dir_set=dir_set[1:1];
 
     # Create the paths to the files
     path_dumpf=joinpath.(dir_set,"traj");
 
     # Get all central particles position of all simulations at a given time domain 
     paths_dumpf_simulations=get_paths_simulation.(path_dumpf,n_steps);
+
 
     # Create the domain for the bins
     pore_domain=range(start=0,length=n_bins,step=bin_size);
@@ -293,6 +298,7 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
 
         # Iterate thru all the desired time steps
         for (it,path_dumpf_simulation) in enumerate(paths_dumpf_simulation)
+            
             # Get the dump
             df_dump_timestep=get_dump(path_dumpf_simulation);
 
