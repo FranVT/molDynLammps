@@ -179,7 +179,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             dd_ki = sqrt(vd_ki'*vd_ki); # d1
             
             # Unit vector
-            ud_ik = vd_ik/dd_ik; # r_ij
+            ud_ki = vd_ki/dd_ki; # r_ij
 
             # Wierd proyection
             test=-ud_ki'*-u_line; # eu1eu2
@@ -217,8 +217,8 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
                 collision_2 += 1
             else
                 aux = test*dd_kj; # dp
-                aux_jk = sqrt(dd_jk^2 - aux^2)
-                if aux_kj < R_CP && aux < d_line
+                aux_jk = sqrt(dd_kj^2 - aux^2)
+                if aux_jk < R_CP && aux < d_line
                     # Collision
                     no_overlap += 1
                     break # Break from the for
@@ -353,7 +353,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=2;                          # Amount of time steps to analyzed
-n_samples=100000;                    # Amount of tries per simulation
+n_samples=10000;                    # Amount of tries per simulation
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems

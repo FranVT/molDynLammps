@@ -4,12 +4,17 @@
 
 using DataFrames, CSV
 using GLMakie, LaTeXStrings 
+
 #=
     Set figures 
 =#
 INCH = 96;
 PT = 4/3;
 CM = INCH / 2.54;
+
+aspect_ratio = 1.6;
+width = 18*CM;
+height = width/aspect_ratio;
 
 set_theme!(
     backgroundcolor = :white,
@@ -33,7 +38,7 @@ set_theme!(
         ticklabelsize = 12PT,
     ),
     Figure = (
-        size = (15CM, 12CM)                 # tamaño de la figura (ancho, alto)
+        size = (width, height)                 # tamaño de la figura (ancho, alto)
     )
 )
 

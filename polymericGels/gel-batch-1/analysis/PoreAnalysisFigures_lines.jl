@@ -11,6 +11,10 @@ INCH = 96;
 PT = 4/3;
 CM = INCH / 2.54;
 
+aspect_ratio = 1.6;
+width = 18*CM;
+height = width/aspect_ratio;
+
 set_theme!(
     backgroundcolor = :white,
     fontsize = 16PT,                     # tamaño de letra base
@@ -33,7 +37,7 @@ set_theme!(
         ticklabelsize = 12PT,
     ),
     Figure = (
-        size = (15CM, 12CM)                 # tamaño de la figura (ancho, alto)
+        size = (width, height)                 # tamaño de la figura (ancho, alto)
     )
 )
 
@@ -176,56 +180,8 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
 # Start the figure
     fig = Figure()
 
-
-    ax_final_plot = Axis(fig[4:6, 1:1],
-                   xlabel = L"\mathrm{Length~of~line}",
-                   ylabel = L"\mathrm{pdf}",
-                   xminorticksvisible = true,
-                   xminorgridvisible = true,
-                   limits = (0, nothing, 0, nothing)
-                  )
-
-        for df_system in df_time_step_systems_final
-
-            # Get the color
-            color_label=phi_to_color[first(unique(df_system.phi))];
-
-            lines!(ax_final_plot,df_system.poreDomain,df_system.histLength[:]./sum(df_system.histLength[:]),
-                      #bins = df_system.poreDomain,
-                      colormap = :viridis,
-                      colorrange = (color_min, color_max),
-                      color = color_grad[color_label],
-                      #normalization = :pdf
-                     )            
-            
-            #=
-            density!(ax_final_plot,df_system.histLength,
-                     colormap = :viridis,
-                     colorrange = (color_min, color_max),
-                     #alpha=0.0,
-                     color = (:white,0.0),
-                     strokecolor = color_grad[color_label],
-                     strokewidth = 1.5
-                    )
-            =#
-
-        end 
-
-        # Plots to add systems labels
-        plot!(ax_final_plot,[-1],[-1],color=:black,markersize=0.0,label=latexstring("t=",DT*time_step_final,"~\\tau"));
-        plot!(ax_final_plot,[-1],[-1],color=:black,markersize=0.0,label=latexstring("T=",labels_plot[3]));
-
-        axislegend(ax_final_plot,
-                   position=:rt, 
-                   framevisible = true,
-                   framewidth = 0.0,
-                   padding=(0.0f0,4.0f0,1.0f0,1.0f0),
-                   patchsize=(0.0f0, 0.0f0)
-                  )
-
-
 # Select final configuration
-    ax_initial_plot = Axis(fig[1:3, 1:1],
+    ax_plot = Axis(fig[1:1, 1:1],
                    xlabel = L"\mathrm{Length~of~line}",
                    ylabel = L"\mathrm{pdf}",
                    xminorticksvisible = true,
@@ -238,46 +194,48 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
             # Get the color
             color_label=phi_to_color[first(unique(df_system.phi))];
 
-            lines!(ax_initial_plot,df_system.poreDomain,df_system.histLength[:]./sum(df_system.histLength[:]),
+            lines!(ax_plot,df_system.poreDomain,df_system.histLength[:]./sum(df_system.histLength[:]),
                       #bins = df_system.poreDomain,
+                      linestyle = :solid,
                       colormap = :viridis,
                       colorrange = (color_min, color_max),
                       color = color_grad[color_label],
                       #normalization = :pdf
                      )
  
-            #=
-            density!(ax_initial_plot,df_system.histLength,
-                     colormap = :viridis,
-                     colorrange = (color_min, color_max),
-                     #alpha=0.0,
-                     color = (:white,0.0),
-                     strokecolor = color_grad[color_label],
-                     strokewidth = 1.5
-                    )
-            =#
         end 
 
-    # Linkaxes
-        linkyaxes!(ax_initial_plot,ax_final_plot)
-        linkxaxes!(ax_initial_plot,ax_final_plot)
+        for df_system in df_time_step_systems_final
+
+            # Get the color
+            color_label=phi_to_color[first(unique(df_system.phi))];
+
+            lines!(ax_plot,df_system.poreDomain,df_system.histLength[:]./sum(df_system.histLength[:]),
+                      #bins = df_system.poreDomain,
+                      linestyle = :dash,
+                      colormap = :viridis,
+                      colorrange = (color_min, color_max),
+                      color = color_grad[color_label],
+                      #normalization = :pdf
+                     )            
+        end 
 
         # Plots to add systems labels
-        plot!(ax_initial_plot,[-1],[-1],color=:black,markersize=0.0,label=latexstring("t=",DT*time_step_initial,"~\\tau"));
-        plot!(ax_initial_plot,[-1],[-1],color=:black,markersize=0.0,label=latexstring("T=",labels_plot[3]));
+        lines!(ax_plot,[-1],[-1],color=:black,linestyle=:solid,label=latexstring("t=",DT*time_step_initial,"~\\tau"));
+        lines!(ax_plot,[-1],[-1],color=:black,linestyle=:dash,label=latexstring("t=",DT*time_step_final,"~\\tau"));
 
-        axislegend(ax_initial_plot,
+        axislegend(ax_plot,
                    position=:rt, 
                    framevisible = true,
-                   framewidth = 0.0,
-                   padding=(0.0f0,4.0f0,1.0f0,1.0f0),
-                   patchsize=(0.0f0, 0.0f0)
+                   #framewidth = 0.0,
+                   #padding=(0.0f0,4.0f0,1.0f0,1.0f0),
+                   #patchsize=(0.0f0, 0.0f0)
                   )
 
 
 
     # Colobar to denote the time evolution 
-    Colorbar(fig[1:6, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+    Colorbar(fig[1:1, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
 
         # Crate a file name with the labels
         file_name=string("fig_pore_histogram_phiseries_line_length",join(string.(labels_plot)),"_time_initial_final.png");
