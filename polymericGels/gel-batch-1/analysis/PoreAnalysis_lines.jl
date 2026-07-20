@@ -259,7 +259,7 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
     l_y = 2*l_half_y;                            # Length of the box at y 
     l_z = 2*l_half_z;                            # Length of the box at z
     n_cp=Int64(first(unique(df_set.Npart)));    # Amount of central particles
-    bin_size=0.2;       # Size of the bins. Is equal to the patches radius
+    bin_size=0.5;       # Size of the bins. Is equal to the patches radius
 
     # Compute the amount of bins
     n_bins = trunc(Int64,sqrt(4*l_x^2 + l_y^2 + l_z^2)/bin_size) + 1;
@@ -353,7 +353,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=2;                          # Amount of time steps to analyzed
-n_samples=100000;                    # Amount of tries per simulation
+n_samples=10000;                    # Amount of tries per simulation
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
