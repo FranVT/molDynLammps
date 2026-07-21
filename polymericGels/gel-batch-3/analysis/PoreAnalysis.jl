@@ -129,8 +129,6 @@ function probe_sphere(position_timestep_simulation::Vector{Vector{Float64}},l_x:
             no_overlap=false;
             return rad
             break
-        else
-            continue
         end
     end
 end

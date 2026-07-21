@@ -7,9 +7,14 @@ using GLMakie, LaTeXStrings
 #=
     Set figures 
 =#
+
 INCH = 96;
 PT = 4/3;
 CM = INCH / 2.54;
+
+aspect_ratio = 1.6;
+width = 18*CM;
+height = width/aspect_ratio;
 
 set_theme!(
     backgroundcolor = :white,
@@ -33,7 +38,7 @@ set_theme!(
         ticklabelsize = 12PT,
     ),
     Figure = (
-        size = (15CM, 12CM)                 # tamaño de la figura (ancho, alto)
+        size = (width, height)                 # tamaño de la figura (ancho, alto)
     )
 )
 
@@ -347,6 +352,22 @@ end
 Creates a figure that compares the final configuration structure factor for different packing fractions
 """
 function fig_sq_phiseries_loglog(df_combo::DataFrame, categories_figures::Vector{Symbol})
+# Limits of the exponents
+exp_min = -2.0; 
+exp_max = 1.0; 
+
+# Define length regimes
+alpha_colors=0.3;
+q_mins_regimes=[10^(exp_min), 10^(-0.5), 10^(0.5)];
+q_maxs_regimes=[10^(-0.5), 10^(0.5), 10^(exp_max)];
+q_colors_regimes=[(:black,alpha_colors),(:blue,alpha_colors),(:red,alpha_colors)];
+
+# Exponents for the ticks domain
+exp_ticks = range(exp_min,exp_max,step=1);
+
+# Create ticks domain
+x_ticks_domain = map(s->10^s,exp_ticks);
+
 # Get the biggest timestep
 time_max= maximum(df_combo.timeStep);
 
@@ -380,8 +401,11 @@ df_systems=groupby(df_aux,categories_figures);
                    xminorgridvisible = true,
                    limits = (10^(-1.5), 10^1, 10^(-1.5), nothing),
                    xscale = log10,
-                   yscale = log10
+                   yscale = log10,
+                   xticks = (x_ticks_domain,map(s->latexstring("10^{",s,"}"),exp_ticks))
                   )
+
+    vspan!(ax_raw_plot,q_mins_regimes,q_maxs_regimes,color=q_colors_regimes)
 
     for df_plot in df_systems
         # Get the domain
@@ -406,8 +430,11 @@ df_systems=groupby(df_aux,categories_figures);
                    xminorgridvisible = true,
                    limits = (10^(-1.5), 10^1, nothing, nothing),
                    xscale = log10,
-                   yscale = log10
+                   yscale = log10,
+                   xticks = (x_ticks_domain,map(s->latexstring("10^{",s,"}"),exp_ticks))
                   )
+
+    vspan!(ax_norm_plot,q_mins_regimes,q_maxs_regimes,color=q_colors_regimes)
 
     for df_plot in df_systems
         # Get the domain
@@ -568,12 +595,21 @@ Creates a figure that compares the initial and final configurations structure fa
 """
 function fig_sq_phiseries_semilog_loglog_final(df_combo::DataFrame, categories_figures::Vector{Symbol})
 
+# Limits of the exponents
+exp_min = -2.0; 
+exp_max = 1.0; 
+
 # Define length regimes
 alpha_colors=0.3;
-q_mins_regimes=[10^(-1.5), 10^(-0.5), 10^(0.5)];
-q_maxs_regimes=[10^(-0.5), 10^(0.5), 10^(1.0)];
+q_mins_regimes=[10^(exp_min), 10^(-0.5), 10^(0.5)];
+q_maxs_regimes=[10^(-0.5), 10^(0.5), 10^(exp_max)];
 q_colors_regimes=[(:black,alpha_colors),(:blue,alpha_colors),(:red,alpha_colors)];
 
+# Exponents for the ticks domain
+exp_ticks = range(exp_min,exp_max,step=1);
+
+# Create ticks domain
+x_ticks_domain = map(s->10^s,exp_ticks);
 
 # Get the biggest timestep
 time_max=maximum(df_combo.timeStep);
@@ -607,6 +643,7 @@ labels_plot=[df_aux_max[1, col] for col in categories_figures] # Waring: This on
                    xminorticksvisible = true,
                    xminorgridvisible = true,
                    limits = (10^(-1.5), 10^1, 0, 250),
+                   xticks = x_ticks_domain,
                    xscale = log10
                   )
 
@@ -742,16 +779,113 @@ df_systems=groupby(df_combo,categories_figures);
 
 =#
 
-
-
 #=
     Compare different concentrations at the last time step
     fig_sq_phiseries_loglog(df_combo,categories_figures)
 
     fig_sq_phiseries_semilog(df_combo,categories_figures)
 
-
+    fig_sq_phiseries_semilog_loglog_final(df_combo, categories_figures)
 =#
 
+# Limits of the exponents
+exp_x_min = -2.0; 
+exp_x_max = 1.0; 
+exp_y_min = -1.0; 
+exp_y_max = 3.0; 
 
-fig_sq_phiseries_semilog_loglog_final(df_combo, categories_figures)
+# Define length regimes
+alpha_colors=0.3;
+q_mins_regimes=[10^(exp_x_min), 10^(-0.5), 10^(0.5)];
+q_maxs_regimes=[10^(-0.5), 10^(0.5), 10^(exp_x_max)];
+q_colors_regimes=[(:black,alpha_colors),(:blue,alpha_colors),(:red,alpha_colors)];
+
+# Exponents for the ticks domain
+exp_x_ticks = range(exp_x_min,exp_x_max,step=1);
+exp_y_ticks = range(exp_y_min,exp_y_max,step=1);
+
+
+# Create ticks domain
+x_ticks_domain = map(s->10^s,exp_x_ticks);
+y_ticks_domain = map(s->10^s,exp_y_ticks);
+
+
+# Get the biggest timestep
+time_max= maximum(df_combo.timeStep);
+
+# Get all rows at the max time
+df_aux=df_combo[df_combo.timeStep .== time_max, :];
+
+# Get the domain of the packing fraction
+phi_domain=unique(df_aux.phi);
+
+# Get the data for the labels
+labels_plot=[df_aux[1, col] for col in categories_figures] # Waring: This only works for one case
+
+    # Prepare some labels
+    phi_min=minimum(phi_domain);
+    phi_max=maximum(phi_domain);
+
+    # Prepare the color code
+    color_norm  = phi_domain ./ phi_max;
+    color_min   = first(color_norm);
+    color_max   = last(color_norm);
+
+# Group by system and experiments
+df_systems=groupby(df_aux,categories_figures);
+
+    # Starts the figure
+    fig = Figure()
+    ax_raw_plot = Axis(fig[1:3, 1:1],
+                   #xlabel = L"|\vec{q}|",
+                   ylabel = L"\langle S(|\vec{q}|)\rangle",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (10^(-1.5), 10^1, 10^(-1.5), nothing),
+                   xscale = log10,
+                   yscale = log10,
+                   xticks = (x_ticks_domain,map(s->latexstring("10^{",s,"}"),exp_x_ticks)),
+                   yticks = (y_ticks_domain,map(s->latexstring("10^{",s,"}"),exp_y_ticks))
+                  )
+
+    vspan!(ax_raw_plot,q_mins_regimes,q_maxs_regimes,color=q_colors_regimes)
+
+    for df_plot in df_systems
+        # Get the domain
+        domain=df_plot.q_mean[:];
+    
+        # Get the range
+        range=df_plot.Sq_mean[:];
+
+        # Get the color
+        color_label=first(unique(df_plot.phi))/phi_max;
+
+        # Plot
+        scatterlines!(ax_raw_plot,domain,range,
+                      color = color_label,
+                      colorrange = (color_min, color_max))
+    end
+      
+        # Plots to add systems labels
+        scatterlines!(ax_raw_plot,[10^2.0],[1],color=:black,linestyle=:solid,label=latexstring("t=",DT*time_max,"~\\tau"));
+        #lines!(ax_plot,[-1],[-1],color=:black,linestyle=:dash,label=latexstring("t=",DT*time_step_final,"~\\tau"));
+
+        axislegend(ax_raw_plot,
+                   position=:rt, 
+                   framevisible = true,
+                   #framewidth = 0.0,
+                   #padding=(0.0f0,4.0f0,1.0f0,1.0f0),
+                   #patchsize=(0.0f0, 0.0f0)
+                  )
+
+        # Colobar to denote the time evolution 
+        Colorbar(fig[1:3, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+
+        # Crate a file name with the labels
+        file_name=string("fig_Sq_phi_series_loglog",join(string.(labels_plot)),"_time_",time_max,".png");
+
+        #save(file_name, fig, px_per_unit = 300 / INCH)
+
+
+
+

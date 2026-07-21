@@ -80,7 +80,7 @@ end
 Get the position of the central particles of a given dump
 """
 function get_position_simulation(dump::DataFrame)
-    mask = (dump.type .== 1) .| (dump.type .== 2.0) .| (dump.type .== 3.0) .| (dump.type .== 4.0)
+    mask = (dump.type .== 1) .| (dump.type .== 2.0) 
     dump_filtered = dump[mask, :]
 
     return reduce(hcat,[dump_filtered.x, dump_filtered.y, dump_filtered.z])
@@ -101,7 +101,7 @@ end
 Create a histogram of the length of the pores 
 """
 function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l_x::Float64, l_y::Float64, l_z::Float64, n_cp::Int64, bin_size::Float64, n_bins::Int64)
-   
+
     # Allocate memory
     hist_pore_length = zeros(n_bins);
 
@@ -140,13 +140,13 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
 
         # Compute unit vector
         d_line = sqrt(v_line'*v_line); # d_12
-        u_line = v_line/d_line; # eu12
+        u_line = v_line/d_line; # eu_12
 
         id_bin = floor(Int, d_line / bin_size) + 1;
 
         if id_bin > n_bins 
             println(d_line)
-            #continue # Ignore if it is outside the domain
+            continue # Ignore if it is outside the domain
         end
 
 # Check if there is a collision 
@@ -161,8 +161,8 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
         for ind_part in 1:n_cp 
             # Pass over the reference particles
             if ind_part == ind_i || ind_part == ind_j
-                continue
-            end # Got to the next index
+                continue # Got to the next index
+            end
     
             # Auxiliary to identify collisions
             collision_2=0;
@@ -211,7 +211,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
             ud_kj = vd_kj/dd_kj; # r_ij
 
             # Wierd proyection
-            test=ud_kj'*-u_line; # eu1eu2
+            test=-ud_kj'*u_line; # eu1eu2
 
             if test<=0.0 
                 # Collision
@@ -260,7 +260,7 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
     l_y = 2*l_half_y;                            # Length of the box at y 
     l_z = 2*l_half_z;                            # Length of the box at z
     n_cp=Int64(first(unique(df_set.Npart)));    # Amount of central particles
-    bin_size=0.5;       # Size of the bins. Is equal to the patches radius
+    bin_size=0.2;       # Size of the bins. Is equal to the patches radius
 
     # Compute the amount of bins
     n_bins = trunc(Int64,sqrt(4*l_x^2 + l_y^2 + l_z^2)/bin_size) + 1;
