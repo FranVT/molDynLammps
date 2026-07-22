@@ -128,8 +128,7 @@ categories_figures=[:phi,Symbol("CL-Con"),:Temperature,:damp,:N_heat,:N_isot];
 # Collect the files names by experiment 
 files = collect(values(grupos));
 
-
-df_data=map(s->collect_df(s,categories_figures),files)
+df_data=map(s->collect_df(s[1:1],categories_figures),files)
 
 # Group the Vector{DataFrame} into one DataFrame
 df_combo=reduce(vcat,df_data);

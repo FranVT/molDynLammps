@@ -80,7 +80,7 @@ end
 Get the position of the central particles of a given dump
 """
 function get_position_simulation(dump::DataFrame)
-    mask = (dump.type .== 1) .| (dump.type .== 2.0) 
+    mask = (dump.type .== 1.0) .| (dump.type .== 2.0)
     dump_filtered = dump[mask, :]
 
     return reduce(hcat,[dump_filtered.x, dump_filtered.y, dump_filtered.z])
@@ -100,7 +100,10 @@ end
 
 Create a histogram of the length of the pores 
 """
-function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l_x::Float64, l_y::Float64, l_z::Float64, n_cp::Int64, bin_size::Float64, n_bins::Int64)
+function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l_x::Float64, l_y::Float64, l_z::Float64, bin_size::Float64, n_bins::Int64)
+
+    # Get the amoun of particles
+    n_cp=first(size(position_simulation));
 
     # Allocate memory
     hist_pore_length = zeros(n_bins);
@@ -259,8 +262,7 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
     l_x = 2*l_half_x;                            # Length of the box at x 
     l_y = 2*l_half_y;                            # Length of the box at y 
     l_z = 2*l_half_z;                            # Length of the box at z
-    n_cp=Int64(first(unique(df_set.Npart)));    # Amount of central particles
-    bin_size=0.2;       # Size of the bins. Is equal to the patches radius
+    bin_size=0.5;       # Size of the bins. Is equal to the patches radius
 
     # Compute the amount of bins
     n_bins = trunc(Int64,sqrt(4*l_x^2 + l_y^2 + l_z^2)/bin_size) + 1;
@@ -305,7 +307,7 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
             # Get the positions
             position_simulation=get_position_simulation(df_dump_timestep);
 
-            hist_pore_length[it,:] = detect_collision(position_simulation,R_CP,l_x,l_y,l_z,n_cp,bin_size,n_bins);
+            hist_pore_length[it,:] = detect_collision(position_simulation,R_CP,l_x,l_y,l_z,bin_size,n_bins);
             println(it," time step done of ",n_steps," time steps.")
         end # for of histogram per time step
 

@@ -45,27 +45,6 @@ set_theme!(
     Functions 
 =#
 
-function collect_df(DIR_SAVE::String, files::Vector{String})
-    return [CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files]
-end
-
-"""
-    create_histogram(low_bin::Float64,bin_size::Float64,high_bin::Float64,data::Vector{Float64})
-
-Function that retuns the counts of each bins
-"""
-function create_histogram(low_bin::Float64,bin_size::Float64,high_bin::Float64,data::Vector{Float64})
-    
-    # Create the bounds of the bins
-    low_bins = (low_bin:bin_size:high_bin);
-    high_bins = (low_bin+bin_size:bin_size:high_bin+bin_size);
-
-
-    return map(bin->length(findall(x-> low_bins[bin] .<=  x .<high_bins[bin],  sort(data))), eachindex(high_bins))
-end
-
-
-
 #=
     Start the script
 =#
@@ -90,7 +69,7 @@ pattern = r"pore_analysis_(.+)_step_(\d+)_simulation_\d+\.csv"
 # Read by experiments
 grupos = Dict{Tuple{String, Int}, Vector{String}}()
 for f in files 
-    m = match(pattern, f)
+    m = match(patron, f)
     if m !== nothing
         sistema = m.captures[1]   # cadena con los parámetros
         step = parse(Int, m.captures[2])
@@ -106,104 +85,13 @@ for f in files
     end
 end
 
-categories_system=[:phi,:chi_4,:temp,:damp,:tstep];    # Select the categories that define a system
-categories_experiment=[:N_heat,:N_isothermal];  # Create categories to select different experiments (Just in case)
-
 # Categories
-categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal,:timeStep];
+categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal];
 
 # Collect the files names by experiment 
 files = collect(values(grupos));
 
-# Read the files of one experiment
-df_data=mapreduce(s->collect_df(DIR_SAVE,s),vcat,files)
-
-# Group the Vector{DataFrame} into one DataFrame
-df_combo=reduce(vcat,df_data);
-
-# Group by system
-df_systems=groupby(df_combo,categories_system);
-
-# Group each system by experiment
-df_experiments=[groupby(s,categories_experiment) for s in df_systems];
-
-# domain for tha bins
-bin_size = 0.2;
-low_bin = 0.0;
-high_bin = 15.0;
-bins_domain = (low_bin:bin_size:high_bin);
-
-# Prepare tha labels
-labels=unique(df_combo[!,categories_system]);
-
-phi_domain=unique(labels.phi);
-
-    # Prepare some labels
-    phi_min=minimum(phi_domain);
-    phi_max=maximum(phi_domain);
-
-    # Prepare the color code
-    color_norm  = phi_domain ./ phi_max;
-    color_min   = first(color_norm);
-    color_max   = last(color_norm);
-
-
-    fig = Figure()
-    ax_plot = Axis(fig[1:1, 1:1],
-                   xlabel = L"r",
-                   ylabel = L"\mathrm{pdf}",
-                   xminorticksvisible = true,
-                   xminorgridvisible = true,
-                   limits = (0, high_bin, 0, nothing)
-                  )
-
-        for df_sets in df_experiments 
-            for df_experiment in df_sets
-
-                # Get the color
-                color_label=first(unique(df_experiment.phi))/phi_max;
-
-                # Get the time steps available
-                time_domain=unique(df_experiment.timeStep);
-            
-                # Get the initial and final configurations
-                time_initial=minimum(time_domain);
-                time_final=maximum(time_domain);
-
-                # Group by time step
-                df_time=groupby(df_experiment,:timeStep);
-         
-                # Select the initial and final configuration
-                df_time_intial = subset(df_time, :timeStep => (x -> x .== time_initial)) 
-                df_time_final = subset(df_time, :timeStep => (x -> x .== time_final))
-        
-                hist_initial=create_histogram(low_bin,bin_size,high_bin,df_time_intial.histogram_pore)
-                hist_final=create_histogram(low_bin,bin_size,high_bin,df_time_final.histogram_pore)
-
-                lines!(ax_plot,bins_domain,hist_initial./sum(hist_initial),
-                        linestyle=:solid,
-                        linewidth=3,
-                        color = color_label,
-                        colorrange = (color_min, color_max)
-                       )
-                lines!(ax_plot,bins_domain,hist_final./sum(hist_final),
-                        linestyle=:dash,
-                        linewidth=3,
-                        color = color_label,
-                        colorrange = (color_min, color_max)
-                       )
-            end
-        end 
-
-
-
-
-
-#hist=create_histogram(low_bin,bin_size,high_bin,df_data[1].histogram_pore)
-
-
-
-
+df_data=map(s->collect_df(s[1:1],categories_figures),files)
 
 
 
@@ -293,6 +181,5 @@ n_bins=64;
 
         # Crate a file name with the labels
         file_name=string("fig_pore_histogram_phiseries",join(string.(labels_plot)),"_time_",time_step,".png");
-        #save(file_name, fig, px_per_unit = 300 / INCH)
 =#
-
+        #save(file_name, fig, px_per_unit = 300 / INCH)
