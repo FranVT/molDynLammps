@@ -96,6 +96,28 @@ function wrap(dr::Real, L::Real)
 end
 
 """
+    distinct_3randoms(n::Integer)
+
+Return 3 random numbers between 1 and n.
+"""
+function distinct_3randoms(n::Int64)
+    # Select three random index
+    ind_i=rand(1:n);
+
+    ind_j=ind_i;
+    while ind_j == ind_i
+        ind_j = rand(1:n)
+    end
+
+    ind_k=ind_j
+    while ind_k == ind_i || ind_k == ind_j
+        ind_k = rand(1:n)
+    end
+
+    return (ind_i, ind_j, ind_k)
+end
+
+"""
     detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l_x::Float64, l_y::Float64, l_z::Float64, n_cp::Int64, bin_size::Float64, n_bins::Int64)
 
 Create a histogram of the length of the pores 
@@ -113,17 +135,7 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
     
     while choles <= n_samples
         # Select three random index
-        ind_i=rand(1:n_cp);
-
-        ind_j=ind_i;
-        while ind_j == ind_i
-            ind_j = rand(1:n_cp)
-        end
-
-        ind_k=ind_j
-        while ind_k == ind_i || ind_k == ind_j
-            ind_k = rand(1:n_cp)
-        end
+        (ind_i, ind_j, ind_k) = distinct_3randoms(n_cp);
 
         # Get positions
         pos_i = position_simulation[ind_i,:];
@@ -247,7 +259,6 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
 
     # Get all central particles position of all simulations at a given time domain 
     paths_dumpf_simulations=get_paths_simulation.(path_dumpf,n_steps);
-
 
     # Create the domain for the bins
     pore_domain=range(start=0,length=n_bins,step=bin_size);
