@@ -92,29 +92,7 @@ end
 Compute distance tacking into account periodic boundary conditions
 """
 function wrap(dr::Real, L::Real)
-    return dr - L * round(dr / L)
-end
-
-"""
-    distinct_3randoms(n::Integer)
-
-Return 3 random numbers between 1 and n.
-"""
-function distinct_3randoms(n::Int64)
-    # Select three random index
-    ind_i=rand(1:n);
-
-    ind_j=ind_i;
-    while ind_j == ind_i
-        ind_j = rand(1:n)
-    end
-
-    ind_k=ind_j
-    while ind_k == ind_i || ind_k == ind_j
-        ind_k = rand(1:n)
-    end
-
-    return (ind_i, ind_j, ind_k)
+    return dr - L * round(dr / L/2)
 end
 
 """
@@ -134,95 +112,136 @@ function detect_collision(position_simulation::Matrix{Float64}, R_CP::Float64, l
     choles = 0;
     
     while choles <= n_samples
-        # Select three random index
-        (ind_i, ind_j, ind_k) = distinct_3randoms(n_cp);
+        # Select one random particle
+        ind_i = rand(1:n_cp);
 
-        # Get positions
-        pos_i = position_simulation[ind_i,:];
-        pos_j = position_simulation[ind_j,:];
-        pos_k = position_simulation[ind_k,:];
+        # Select another random particle
+        ind_j = ind_i;
+        while ind_j == ind_i
+            ind_j = rand(1:n_cp);
+        end
+
+        # Get wrapped positions
+        pos_i = mod.(position_simulation[ind_i,:], [l_x, l_y, l_z]);
+        pos_j = mod.(position_simulation[ind_j,:], [l_x, l_y, l_z]);
 
         # Compute the distance between particles with periodic boundary conditions
-        v_ij = wrap.(pos_j .- pos_i , [l_x, l_y, l_z]);
-        v_ik = wrap.(pos_k .- pos_i , [l_x, l_y, l_z]);
+        v_ji = wrap.(pos_i .- pos_j , [l_x, l_y, l_z]);
 
-        # Compute parameter t
-        t_n = v_ij'*v_ik;
-        t_d = v_ij'*v_ij;
-        t = t_n / t_d; 
+    # Create two unit vectors
+        v_1=2.0 .* rand(3) .- 1.0;
+        u_1=v_1/sqrt(v_1'*v_1);
 
-        # Compute nearest point to the line v_ij
-        if t <= 0
-            # Implies pos_k is behind pos_i 
-            p = pos_i
+        v_2=2.0 .* rand(3) .- 1.0;
+        u_2=v_2/sqrt(v_2'*v_2);
 
-            # No collision, then compute id bin
-            d_line = sqrt(v_ij'*v_ij);
-            id_bin = floor(Int, d_line / bin_size) + 1;
+        # Create the direction of the line
+        v_dir=u_1 .- u_2;
 
-            if id_bin > n_bins 
-                println(d_line)
-                continue # Ignore if it is outside the domain
+        # Move the vector distance into a random direction considering the radius of the particles 
+        v_line = v_ji .+ (R_CP).*v_dir;
+
+        # Compute unit vector
+        d_line = sqrt(v_line'*v_line); # d_12
+        u_line = v_line/d_line; # eu_12
+
+        id_bin = floor(Int, d_line / bin_size) + 1;
+
+        if id_bin > n_bins 
+            println(d_line)
+            continue # Ignore if it is outside the domain
+        end
+
+# Check if there is a collision 
+
+        # Auxiliary to identify collisions
+        collision_1 = 0;
+
+        # Check if it collides with intermediate spheres
+        no_overlap = 0;     # Parameter
+
+        # Run over all particles 
+        for ind_part in 1:n_cp 
+            # Pass over the reference particles
+            if ind_part == ind_i || ind_part == ind_j
+                continue # Got to the next index
             end
+    
+            # Auxiliary to identify collisions
+            collision_2=0;
 
-            # Store the length into the histogram
-            hist_pore_length[id_bin] += 1
+            # Get wrapped position of the third particle 
+            pos_k = mod.(position_simulation[ind_part], [l_x, l_y, l_z]);
+
+        # Distance i-k 
+            v_ki = wrap.(pos_i .- pos_k , [l_x, l_y, l_z]);
+
+            # Displace to the surface of the central particle 
+            vd_ki = v_ki .+ (R_CP)*u_1;
+
+            # Compute distance
+            dd_ki = sqrt(vd_ki'*vd_ki); # d1
             
-            # Increase success counter
-            choles += 1
+            # Unit vector
+            ud_ki = vd_ki/dd_ki; # r_ij
 
-        elseif 0 < t < 1
-            # Implies pos_k is between pos_i and pos_j 
-            p = pos_i + t*v_ij
+            # Wierd proyection
+            test=-ud_ki'*-u_line; # eu1eu2
 
-            # Compute perpedicular distance from pos_k to line v_ij
-            v_d = p - pos_k;
-            d = sqrt(v_d'*v_d);
-
-            # Test if there is a collision
-            if d < R_CP
-                continue # Got to the next index due to collision
+            if test<=0.0 
+                # No Collision
+                collision_2 += 1
+            else
+                aux = test*dd_ki; # dp
+                aux_ki = sqrt(dd_ki^2 - aux^2)
+                if aux_ki < R_CP && aux < d_line
+                    # Collision
+                    no_overlap += 1
+                    break # Break from the for
+                end
             end
 
-            # No collision, then compute id bin
-            d_line = sqrt(v_ij'*v_ij);
-            id_bin = floor(Int, d_line / bin_size) + 1;
+        # Distance j-k
+            v_kj = wrap.(pos_j .- pos_k , [l_x, l_y, l_z]);
 
-            if id_bin > n_bins 
-                println(d_line)
-                continue # Ignore if it is outside the domain
-            end
+            # Displace to the surface of the central particle 
+            vd_kj = v_kj .+ (R_CP)*u_2;
 
-            # Store the length into the histogram
-            hist_pore_length[id_bin] += 1
+            # Compute distance
+            dd_kj = sqrt(vd_kj'*vd_kj); # d1
             
-            # Increase success counter
-            choles += 1
+            # Unit vector
+            ud_kj = vd_kj/dd_kj; # r_ij
 
+            # Wierd proyection
+            test=-ud_kj'*u_line; # eu1eu2
 
-        elseif t >= 1
-            # Implies pos_k is behind pos_j
-            p = pos_j
-
-                        # No collision, then compute id bin
-            d_line = sqrt(v_ij'*v_ij);
-            id_bin = floor(Int, d_line / bin_size) + 1;
-
-            if id_bin > n_bins 
-                println(d_line)
-                continue # Ignore if it is outside the domain
+            if test<=0.0 
+                # Collision
+                collision_2 += 1
+            else
+                aux = test*dd_kj; # dp
+                aux_jk = sqrt(dd_kj^2 - aux^2)
+                if aux_jk < R_CP && aux < d_line
+                    # Collision
+                    no_overlap += 1
+                    break # Break from the for
+                end
             end
 
-            # Store the length into the histogram
+            if collision_2 == 0
+                # Implies one particle is behind the extremes
+                collision_1 += 1
+            end
+
+        end # End of the for
+
+        if no_overlap == 0 && collision_1 > 0
             hist_pore_length[id_bin] += 1
-            
-            # Increase success counter
             choles += 1
+        end
 
-
-        end # End if of collision
-
-    end #End of the while
+    end
 
     return hist_pore_length
 end
@@ -243,12 +262,12 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
     l_x = 2*l_half_x;                            # Length of the box at x 
     l_y = 2*l_half_y;                            # Length of the box at y 
     l_z = 2*l_half_z;                            # Length of the box at z
-    bin_size=0.1;       # Size of the bins. Is equal to the patches radius
+    bin_size=0.5;       # Size of the bins. Is equal to the patches radius
 
     # Compute the amount of bins
-    n_bins = trunc(Int64,l_x*sqrt(3)/bin_size) + 1;
+    n_bins = trunc(Int64,sqrt(4*l_x^2 + l_y^2 + l_z^2)/bin_size) + 1;
 
-    # Get the directories of all simulations of the same experiment of the system 
+# Get the directories of all simulations of the same experiment of the system 
     dir_set=String.(joinpath.(df_set.PARENT_DIR,df_set.dir));
 
     # For debug, only consider one experiment
@@ -259,6 +278,7 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
 
     # Get all central particles position of all simulations at a given time domain 
     paths_dumpf_simulations=get_paths_simulation.(path_dumpf,n_steps);
+
 
     # Create the domain for the bins
     pore_domain=range(start=0,length=n_bins,step=bin_size);
@@ -275,6 +295,9 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
         # Get the time step analyzed from the files
         ids_time_step=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in paths_dumpf_simulation];
 
+        # Allcoate memory
+        hist_pore_length = zeros(n_steps,n_bins);    # Histogram of the lengths of the pores
+
         # Iterate thru all the desired time steps
         for (it,path_dumpf_simulation) in enumerate(paths_dumpf_simulation)
             
@@ -284,29 +307,28 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
             # Get the positions
             position_simulation=get_position_simulation(df_dump_timestep);
 
-            hist_pore_length = detect_collision(position_simulation,R_CP,l_x,l_y,l_z,bin_size,n_bins);
+            hist_pore_length[it,:] = detect_collision(position_simulation,R_CP,l_x,l_y,l_z,bin_size,n_bins);
             println(it," time step done of ",n_steps," time steps.")
-        
-            # Create the DataFrame to store
-            df_to_store=DataFrame([pore_domain, hist_pore_length],[:poreDomain, :histLength]);
-            
-            # Add the other ids
+        end # for of histogram per time step
+
+        # Store the information per timestep
+        for it_time in eachindex(ids_time_step)
+            df_to_store=DataFrame([pore_domain, hist_pore_length[it_time,:]],[:poreDomain, :histLength]);
             for (col, val) in zip(categories_total, ids_set_info)
                 df_to_store[!, col] .= val 
             end
 
             # Add the time step to the dataframe
-            df_to_store[!,:timeStep] .= ids_time_step[it]
+            df_to_store[!,:timeStep] .= ids_time_step[it_time]
 
             # Create a file name from the ids 
-            file_name=string("pore_analysis_lines_NEW_",join(string.(ids_set_info)),"_step_",ids_time_step[it],"_simulation_",it_sim,".csv");
+            file_name=string("pore_length_histogram_",join(string.(ids_set_info)),"_step_",ids_time_step[it_time],"_simulation_",it_sim,".csv");
 
             # Save the information
             CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
 
             println(file_name," stored.")
-
-        end # for of histogram per time step
+        end # for of dave dataframes
 
     end # For per simulation
 
@@ -339,7 +361,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=2;                          # Amount of time steps to analyzed
-n_samples=1000000;                    # Amount of tries per simulation
+n_samples=10000;                    # Amount of tries per simulation
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
@@ -351,3 +373,4 @@ for df_system in df_systems
 
     println("One system done")
 end
+
