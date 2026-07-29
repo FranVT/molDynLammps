@@ -98,10 +98,10 @@ DT=0.001;
 files=readdir(DIR_SAVE);
 
 # Get only those of the structure factor
-files=filter(s -> occursin("pore_length_histogram_", s), files);
+files=filter(s -> occursin("pore_analysis_lines_NEW_", s), files);
 
 # Prepare for reading the information
-patron = r"pore_length_histogram_(.+)_step_(\d+)_simulation_\d+\.csv"
+patron = r"pore_analysis_lines_NEW_(.+)_step_(\d+)_simulation_\d+\.csv"
 
 # Read by experiments
 grupos = Dict{Tuple{String, Int}, Vector{String}}()

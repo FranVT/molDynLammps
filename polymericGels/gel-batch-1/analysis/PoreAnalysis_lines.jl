@@ -252,7 +252,7 @@ function store_pore_length_hist_experiment(df_set::AbstractDataFrame, n_steps::I
     dir_set=String.(joinpath.(df_set.PARENT_DIR,df_set.dir));
 
     # For debug, only consider one experiment
-    dir_set=dir_set[1:1];
+    #dir_set=dir_set[1:1];
 
     # Create the paths to the files
     path_dumpf=joinpath.(dir_set,"traj");
