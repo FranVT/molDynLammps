@@ -198,7 +198,7 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
     # Create the bin domain
     bin_domain = bin_size.*(1:n_bins);
 
-# Get the directories of all experiments of the system 
+    # Get the directories of all simulations of the system 
     dir_set=String.(df_set.dir);
 
     # Create the paths to the files
@@ -251,7 +251,6 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
     end # For each simulation
 
 end
-
 
 #=
     Script
