@@ -8,6 +8,7 @@ using Statistics
 #=
     Functions
 =#
+
 """
     get_paths_simulation(path_dumpf_simulation::String,N_steps_Sq::Integer)
 
@@ -26,7 +27,7 @@ function get_paths_simulation(path_dumpf_simulation::String,n_steps::Integer)
 
     if n_steps == 1
         # Get the time steps to analyse last or first
-        time_step_analyze=time_step[1];
+        time_step_analyze=time_step[end];
 
         # Re-create the filenane
         files_time_step = [replace(FILE_DUMP, "*" => string(it)) for it in time_step_analyze];
@@ -138,30 +139,38 @@ end
 
 Function that probes spheres enough times to create a histogram in order to get a pore distribution
 """
-function compute_pore_histogram(n_samples::Integer, position_timestep_simulation::Vector{Vector{Float64}}, l_x::Real, l_y::Real, l_z::Real, delta_rad::Real, R_CP::Real)
+function compute_pore_histogram(n_samples::Integer, position_timestep_simulation::Vector{Vector{Float64}}, l_x::Real, l_y::Real, l_z::Real, delta_rad::Real, R_CP::Real,n_bins::Int64,bin_size::Real)
     
     # Initialize the variable 
-    hist_pore=zeros(n_samples);
+    hist_pore=zeros(n_bins);
 
     # Initialize auxiliary variables
     aux_count=1;        # Counts
     aux_ave=0.0;        # Average
 
-    for _ in 1:n_samples 
-        rad=probe_sphere(position_timestep_simulation,l_x,l_y,l_z,delta_rad,R_CP)
+    while aux_count <= n_samples
+        rad = probe_sphere(position_timestep_simulation,l_x,l_y,l_z,delta_rad,R_CP)
+
+        # Compute the bin id
+        bin_id = floor(Int, rad / bin_size) + 1;
+
+        if bin_id > n_bins 
+           println(d_line)
+           continue # Ignore if it is outside the domain
+        end
 
         # Store the information at the counter
-        hist_pore[aux_count]=rad;
+        hist_pore[bin_id] += 1;
 
         # Increase the counter
-        aux_count+=1;
+        aux_count += 1;
 
         # Update the average varaible
-        aux_ave+=rad;
+        aux_ave += rad;
     end
 
     # Compute the mean radius
-    mean_pore=aux_ave/aux_count;
+    mean_pore = aux_ave/aux_count;
 
     return (hist_pore, mean_pore)
 end
@@ -174,13 +183,20 @@ This function stores the histogram of pores of a set of simulations in a time do
 function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_steps::Integer, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
 
     # Definition of parameters for the analysis
-    R_CP=0.5*first(unique(df_set.r_CP));                           # Radius of the central particles
+    R_CP=0.5;                           # Radius of the central particles
     delta_rad=0.2;                      # Increment of the radius
     l=2*first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
     l_x = l;                            # Length of the box at x 
     l_y = l;                            # Length of the box at y 
     l_z = l;                            # Length of the box at z
     n_cp=first(unique(df_set.N_PP));    # Amount of central particles
+    bin_size=delta_rad;       # Size of the bins. Is equal to the patches radius
+
+    # Compute the amount of bins
+    n_bins = trunc(Int64,l_x*sqrt(3)/bin_size) + 1;
+
+    # Create the bin domain
+    bin_domain = bin_size.*(1:n_bins);
 
 # Get the directories of all experiments of the system 
     dir_set=String.(df_set.dir);
@@ -203,12 +219,6 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
         # Get the time step analyzed from the files
         ids_time_step=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in paths_dumpf_simulation];
 
-        # Initialize a variable to store histograms
-        histograms_pore=[zeros(n_samples) for _ in 1:n_steps];
-
-        # Initialize a variable to mean pore 
-        means_pore=zeros(n_steps);
-
         # Data frame of the dump
         df_dump_timestep=get_dump.(paths_dumpf_simulation);
 
@@ -217,44 +227,31 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
 
         for (it,position_timestep_simulation) in enumerate(position_timestep_simulations)
             # Get the histogram and mean pore of a configuration
-            (hist_pore, mean_pore)=compute_pore_histogram(n_samples,position_timestep_simulation,l_x,l_y,l_z,delta_rad,R_CP);
-
-            # Store the histogram
-            histograms_pore[it].=hist_pore;
-
-            # Store the mean
-            means_pore[it]=mean_pore;
+            (hist_pore, mean_pore)=compute_pore_histogram(n_samples,position_timestep_simulation,l_x,l_y,l_z,delta_rad,R_CP,n_bins,bin_size);
 
             println(it," time step done of ",n_steps," time steps.")
-        end # for each time step
 
-        # Reshape the array
-        histograms_pore_set=reduce(vcat,histograms_pore);
+            # Create DataFrame to store information 
+            df_to_store=DataFrame([repeat([ids_time_step[it]], n_bins) bin_domain repeat([mean_pore], n_bins) hist_pore],[:timeStep, :bins, :mean_pore, :histogram_pore]);
 
-        # Compute the mean of the set
-        mean_pore_set=mean(means_pore);
-
-        # Store the information per timestep
-        for it_time in eachindex(ids_time_step)
-            df_to_store=DataFrame([repeat([ids_time_step[it_time]], n_samples*n_steps) repeat([mean_pore_set], n_samples*n_steps) histograms_pore_set],
-                   [:timeStep, :mean_pore_set, :histogram_pore]);
-            
+            # Add the ids to the DataFrame
             for (col, val) in zip(categories_total, ids_set_info)
                 df_to_store[!, col] .= val 
             end
 
             # Create a file name from the ids 
-            file_name=string("pore_analysis_",join(string.(ids_set_info)),"_step_",ids_time_step[it_time],"_simulation_",it_sim,".csv");
+            file_name=string("pore_analysis_spheres_",join(string.(ids_set_info)),"_step_",ids_time_step[it],"_simulation_",it_sim,".csv");
 
             # Save the information
             CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
 
             println(file_name," stored.")
-        end # For each time step
+        end # for each time step
 
     end # For each simulation
 
 end
+
 
 #=
     Script
