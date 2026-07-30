@@ -48,7 +48,7 @@ set_theme!(
 """
     collect_df(files::Vector{String})
 
-Collect the total histogram of N experiments
+Collect and combine the total histogram of N experiments
 """
 function collect_df(files::Vector{String}, categories_figures::Vector{Symbol})
 
@@ -128,7 +128,8 @@ categories_figures=[:phi,Symbol("CL-Con"),:Temperature,:damp,:N_heat,:N_isot];
 # Collect the files names by experiment 
 files = collect(values(grupos));
 
-df_data=map(s->collect_df(s[1:1],categories_figures),files)
+
+df_data=map(s->collect_df(s,categories_figures),files)
 
 # Group the Vector{DataFrame} into one DataFrame
 df_combo=reduce(vcat,df_data);
@@ -154,7 +155,7 @@ df_time_domain=groupby(df_combo,:timeStep);
     df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
 
 # Get the domain of the packing fraction
-phi_domain=unique(df_time_step_initial.phi);
+phi_domain=sort(unique(df_time_step_initial.phi));
 
     # prepare some labels
     phi_min=minimum(phi_domain);
@@ -182,10 +183,10 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
 # Select final configuration
     ax_plot = Axis(fig[1:1, 1:1],
                    xlabel = L"\mathrm{Length~of~line}",
-                   ylabel = L"\mathrm{pdf}",
+                   ylabel = L"\mathrm{Counts}/\mathrm{total}",
                    xminorticksvisible = true,
                    xminorgridvisible = true,
-                   limits = (0, nothing, 0, nothing)
+                   limits = (0, 55, 0, 0.01)
                   )
 
         for df_system in df_time_step_systems_initial
@@ -194,7 +195,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
             color_label=phi_to_color[first(unique(df_system.phi))];
 
             lines!(ax_plot,df_system.poreDomain,df_system.histLength[:]./sum(df_system.histLength[:]),
-                      #bins = df_system.poreDomain,
+                      linewidth = 3,
                       linestyle = :solid,
                       colormap = :viridis,
                       colorrange = (color_min, color_max),
@@ -210,7 +211,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
             color_label=phi_to_color[first(unique(df_system.phi))];
 
             lines!(ax_plot,df_system.poreDomain,df_system.histLength[:]./sum(df_system.histLength[:]),
-                      #bins = df_system.poreDomain,
+                      linewidth = 3,
                       linestyle = :dash,
                       colormap = :viridis,
                       colorrange = (color_min, color_max),
@@ -239,4 +240,4 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
         # Crate a file name with the labels
         file_name=string("fig_pore_histogram_phiseries_line_length",join(string.(labels_plot)),"_time_initial_final.png");
 
-        #save(file_name, fig, px_per_unit = 300 / INCH)
+        save(file_name, fig, px_per_unit = 300 / INCH)
