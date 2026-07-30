@@ -130,6 +130,7 @@ files=filter(s -> occursin("pore_analysis_lines_NEW_", s), files);
 # Prepare for reading the information
 pattern = r"pore_analysis_lines_NEW_(.+)_step_(\d+)_simulation_\d+\.csv"
 
+# Get the group the simulations by expriment and time domain
 groups = get_group_files(pattern,files)
 
 # Categories
