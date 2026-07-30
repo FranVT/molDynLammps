@@ -76,6 +76,34 @@ function collect_df(files::Vector{String}, categories_figures::Vector{Symbol})
     return df_to_store
 end
 
+"""
+    get_group_files(pattern::string,files::Vector{String})
+
+Function that return and array of arrays of names of files of the same experiment at different time steps given an array of files names
+"""
+function get_group_files(pattern::string,files::Vector{String})
+
+    # Read by experiments
+    grupos = Dict{Tuple{String, Int}, Vector{String}}()
+    for f in files 
+        m = match(patron, f)
+        if m !== nothing
+            sistema = m.captures[1]   # cadena con los parámetros
+            step = parse(Int, m.captures[2])
+            clave = (sistema, step)
+            # Agregar al grupo correspondiente
+            if haskey(grupos, clave)
+                push!(grupos[clave], f)
+            else
+                grupos[clave] = [f]
+            end
+        else
+            @warn "Nombre no coincide con el patrón: $f"
+        end
+    end
+
+    return grupos
+end
 
 
 #=
@@ -97,34 +125,18 @@ files=readdir(DIR_SAVE);
 files=filter(s -> occursin("pore_analysis_spheres_NEW_", s), files);
 
 # Prepare for reading the information
-patron = r"pore_analysis_spheres_NEW_(.+)_step_(\d+)_simulation_\d+\.csv"
+pattern = r"pore_analysis_spheres_NEW_(.+)_step_(\d+)_simulation_\d+\.csv"
 
-# Read by experiments
-grupos = Dict{Tuple{String, Int}, Vector{String}}()
-for f in files 
-    m = match(patron, f)
-    if m !== nothing
-        sistema = m.captures[1]   # cadena con los parámetros
-        step = parse(Int, m.captures[2])
-        clave = (sistema, step)
-        # Agregar al grupo correspondiente
-        if haskey(grupos, clave)
-            push!(grupos[clave], f)
-        else
-            grupos[clave] = [f]
-        end
-    else
-        @warn "Nombre no coincide con el patrón: $f"
-    end
-end
+# Get the group the simulations by expriment and time domain
+groups = get_group_files(pattern,files)
 
 # Categories
 categories_figures=[:phi,Symbol("CL-Con"),:Temperature,:damp,:N_heat,:N_isot];
 
 # Collect the files names by experiment 
-files = collect(values(grupos));
+files = collect(values(groups));
 
-
+# Collect and combine the analysis of N simulations
 df_data=map(s->collect_df(s,categories_figures),files)
 
 # Group the Vector{DataFrame} into one DataFrame
