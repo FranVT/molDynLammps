@@ -117,7 +117,7 @@ function explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict
             mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
  
             # Filter by distance
-            mask_distance = dists_neigh .> 1.0; 
+            mask_distance = 1.4 .>= dists_neigh .> 1.0; 
 
             # Combine masks
             mask = mask_ids .& mask_distance;
@@ -142,6 +142,69 @@ function explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict
 
 end
  
+"""
+    explore_nodes(id_cl,graph,visited_id,tree_pbc)
+
+Explore the chains around each node (Cross Linkers)
+"""
+function explore_nodes(id_cl,graph,visited_id,tree_pbc)
+
+        # Add the id to the vissited
+        push!(visited_id,id_cl)
+
+        # Get its position
+        pos_id = id_to_pos[id_cl];
+
+        # Get the first nearest neighbors
+        inds_neigh, dists_neigh = knn(tree_pbc,pos_id,5) # Get the 4 patches
+
+        # Pass from index to id
+        ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
+
+        # Filter by visited ids and stuff
+        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
+ 
+        # Filter by distance
+        mask_distance = 1.4 .>= dists_neigh .> 1.0; 
+
+        # Combine masks
+        mask = mask_ids .& mask_distance;
+
+        # Update the array with the filters
+        inds_neigh_filter = inds_neigh[mask];
+        ids_neigh_filter = ids_neigh[mask];
+        dists_neigh_filter = dists_neigh[mask];
+
+        # Know the types of the neighbors
+        type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
+
+        # Check if there is a Crosslinker
+        #if isempty(findall(==(1),type_neigh_filter)) == false
+        #    println("Two crosslinkers as neighbors")
+        #end
+
+        # Add the connections
+        foreach(s-> add_edge!(graph,id_to_ind[id_cl], id_to_ind[s]), ids_neigh_filter)
+
+    # Search each neighbor
+       # Inicializar la cola con los primeros vecinos
+        to_explore_id = copy(ids_neigh_filter);
+       
+        while !isempty(to_explore_id);
+
+            id_neigh = popfirst!(to_explore_id);
+
+        #for id_neigh in ids_neigh_filter
+            graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
+        #end
+
+            append!(to_explore_id, new_ids)         
+
+        end
+
+        return (id_cl,graph,visited_id,tree_pbc)
+end
+
 
 
 #=
@@ -272,65 +335,11 @@ df_system = df_systems[1];
     # tests 
 
         # Start with one crosslinker
-        id_cl = ids_cl[1];
+        #id_cl = ids_cl[1];
 
-        # Add the id to the vissited
-        push!(visited_id,id_cl)
-
-        # Get its position
-        pos_id = id_to_pos[id_cl];
-
-        # Get the first nearest neighbors
-        inds_neigh, dists_neigh = knn(tree_pbc,pos_id,5) # Get the 4 patches
-
-        # Pass from index to id
-        ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
-
-        # Filter by visited ids and stuff
-        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
- 
-        # Filter by distance
-        mask_distance = dists_neigh .> 1.0; 
-
-        # Combine masks
-        mask = mask_ids .& mask_distance;
-
-        # Update the array with the filters
-        inds_neigh_filter = inds_neigh[mask];
-        ids_neigh_filter = ids_neigh[mask];
-        dists_neigh_filter = dists_neigh[mask];
-
-        # Know the types of the neighbors
-        type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
-
-        # Check if there is a Crosslinker
-        #if isempty(findall(==(1),type_neigh_filter)) == false
-        #    println("Two crosslinkers as neighbors")
-        #end
-
-        # Add the connections
-        foreach(s-> add_edge!(graph,id_to_ind[id_cl], id_to_ind[s]), ids_neigh_filter)
-
-
-    # Search each neighbor
-       # Inicializar la cola con los primeros vecinos
-        to_explore_id = copy(ids_neigh_filter);
-       
-        while !isempty(to_explore_id);
-
-            id_neigh = popfirst!(to_explore_id);
-
-        #for id_neigh in ids_neigh_filter
-            global graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
-        #end
-
-            append!(to_explore_id, new_ids)         
-
-            println(length(to_explore_id))
-
+        for id_cl in ids_cl
+            global ~,graph,visited_id,tree_pbc = explore_nodes(id_cl,graph,visited_id,tree_pbc)
         end
-
-
 
 
      #end # For enumerate(paths_dumpf_simulations)
