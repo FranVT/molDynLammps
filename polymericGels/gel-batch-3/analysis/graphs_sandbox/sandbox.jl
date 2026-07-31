@@ -2,7 +2,9 @@
 
 
 using DataFrames, CSV
-using NearestNeighbors
+using NearestNeighbors, Graphs
+using GLMakie, GraphMakie
+
 
 #=
     FUNCTIONS
@@ -93,6 +95,54 @@ function dist_pbc(dr::Real, L::Real)
     return dr - round(dr / L) * L
 end
 
+"""
+    explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict{Int64, Vector{Float64}},ind_to_id::Dict{Int64, Int64},id_to_type::Dict{Int64, Int64},graph::SimpleGraph{Int64})
+
+Explore nearest neighbors and add edges to a graph 
+"""
+function explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict{Int64, Vector{Float64}},id_to_ind::Dict{Int64, Int64},ind_to_id::Dict{Int64, Int64},id_to_type::Dict{Int64, Int64},graph::SimpleGraph{Int64},tree_pbc)
+            # Add the id to the vissited
+            push!(visited_id,id_neigh)
+
+            # Get its position
+            pos_id = id_to_pos[id_neigh];
+
+            # Get the first nearest neighbors
+            inds_neigh, dists_neigh = knn(tree_pbc,pos_id,3) # For monomers
+
+            # Pass from index to id
+            ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
+
+            # Filter by visited ids and stuff
+            mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
+ 
+            # Filter by distance
+            mask_distance = dists_neigh .> 1.0; 
+
+            # Combine masks
+            mask = mask_ids .& mask_distance;
+
+            # Update the array with the filters
+            inds_neigh_filter = inds_neigh[mask];
+            ids_neigh_filter = ids_neigh[mask];
+            dists_neigh_filter = dists_neigh[mask];
+
+            # Know the types of the neighbors
+            type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
+
+            # Check if there is a Crosslinker
+            #if isempty(findall(==(1),type_neigh_filter)) == false
+            #    println("Found a Crosslinker")
+            #end
+
+            # Add the connections
+            foreach(s-> add_edge!(graph,id_to_ind[id_neigh], id_to_ind[s]), ids_neigh_filter)
+
+    return (graph,visited_id,ids_neigh_filter)
+
+end
+ 
+
 
 #=
     SCRIPT 
@@ -126,6 +176,7 @@ df_system = df_systems[1];
     # Select all simulations of one experiment
     df_set = df_experiments[1];
 
+    N_cpart =  first(df_set.N_PP);
     l=first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
     l_x = 2*l;                            # Length of the box at x 
     l_y = 2*l;                            # Length of the box at y 
@@ -178,7 +229,10 @@ df_system = df_systems[1];
         ind_to_id =  Dict{Int64, Int64}();
 
         # fill the Dictionary
-        foreach(s->ind_to_id[s] = df_dump.id[s] ,eachindex(positions[1,:]));
+        foreach(s->ind_to_id[s] = df_dump.id[s], 1:N_cpart);
+
+        # Dictionary from ind to id
+        id_to_ind = Dict(zip(values(ind_to_id), keys(ind_to_id)));
 
         # Dictionary from id to type
         id_to_type = Dict(zip(df_dump.id,df_dump.type));
@@ -187,13 +241,10 @@ df_system = df_systems[1];
         pos_to_id = Dict{Vector{Float64}, Int64}();
 
         # Create the dictirionary
-        foreach(s->pos_to_id[positions[:,s]] = df_dump.id[s] ,eachindex(positions[1,:]));
+        foreach(s->pos_to_id[positions[:,s]] = df_dump.id[s], 1:N_cpart);
 
         # Dictionary from id to positions
-        id_to_pos = Dict{Int64, Vector{Float64}}();
-
-        # Create the dictirionary
-        foreach(s->id_to_pos[df_dump.id[s]] = positions[:,s] ,eachindex(positions[1,:]));
+        id_to_pos = Dict(zip(values(pos_to_id), keys(pos_to_id)));
 
         # Create a tree
         tree=KDTree(positions)
@@ -209,10 +260,22 @@ df_system = df_systems[1];
 
         ids_mo = df_by_types[2].id[:];;
 
+
+        # Start the graph
+        graph=SimpleGraph(N_cpart); # Based on index
+
+        # Create an array with id visited
+        visited_id=Array{Int64,1}();
+
+        #explore_id=Array{Int64,1}();
+
     # tests 
 
         # Start with one crosslinker
         id_cl = ids_cl[1];
+
+        # Add the id to the vissited
+        push!(visited_id,id_cl)
 
         # Get its position
         pos_id = id_to_pos[id_cl];
@@ -223,22 +286,51 @@ df_system = df_systems[1];
         # Pass from index to id
         ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
 
-        # Filter the same id
-        filter!(s-> s != id_cl, ids_neigh)
+        # Filter by visited ids and stuff
+        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
+ 
+        # Filter by distance
+        mask_distance = dists_neigh .> 1.0; 
 
-        # Filter the distance
-        filter!(s-> s > 1.0, dists_neigh)
+        # Combine masks
+        mask = mask_ids .& mask_distance;
+
+        # Update the array with the filters
+        inds_neigh_filter = inds_neigh[mask];
+        ids_neigh_filter = ids_neigh[mask];
+        dists_neigh_filter = dists_neigh[mask];
 
         # Know the types of the neighbors
-        type_neigh = map(s-> id_to_type[s],ids_neigh);
+        type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
 
         # Check if there is a Crosslinker
-        if isempty(findall(==(1),type_neigh)) == false
-            println("Two crosslinkers as neighbors")
+        #if isempty(findall(==(1),type_neigh_filter)) == false
+        #    println("Two crosslinkers as neighbors")
+        #end
+
+        # Add the connections
+        foreach(s-> add_edge!(graph,id_to_ind[id_cl], id_to_ind[s]), ids_neigh_filter)
+
+
+    # Search each neighbor
+       # Inicializar la cola con los primeros vecinos
+        to_explore_id = copy(ids_neigh_filter);
+       
+        while !isempty(to_explore_id);
+
+            id_neigh = popfirst!(to_explore_id);
+
+        #for id_neigh in ids_neigh_filter
+            global graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
+        #end
+
+            append!(to_explore_id, new_ids)         
+
+            println(length(to_explore_id))
+
         end
 
-       # Ahora hay que explorar las cadenas de patches hasta encontrar otro Cl o un final
-       # Buscar una forma de como almacenar la secuencia de patches
+
 
 
      #end # For enumerate(paths_dumpf_simulations)
