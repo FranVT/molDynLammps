@@ -81,7 +81,7 @@ end
 
 Function that return and array of arrays of names of files of the same experiment at different time steps given an array of files names
 """
-function get_group_files(pattern::string,files::Vector{String})
+function get_group_files(patron::Regex,files::Vector{String})
 
     # Read by experiments
     grupos = Dict{Tuple{String, Int}, Vector{String}}()

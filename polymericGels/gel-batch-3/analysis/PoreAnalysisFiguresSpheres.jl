@@ -45,9 +45,77 @@ set_theme!(
     Functions 
 =#
 
+
+"""
+    collect_df(files::Vector{String})
+
+Collect and combine the total histogram of N experiments
+"""
+function collect_df(files::Vector{String}, categories_figures::Vector{Symbol})
+
+    # Read the files of one experiment
+    df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
+
+    # Get the poreDomain
+    pore_domain=df_files[1].bins;
+
+    # Get the histogram
+    hist=mapreduce(s->s.histogram_pore,hcat,df_files);
+
+    # Combine the results
+    hist=sum(hist,dims=2)[:];
+
+    # GEt ids
+    ids=map(col->df_files[1][!, col],categories_figures)
+
+    # Create a dataframe to plot
+    df_to_store=DataFrame([pore_domain, hist],[:poreDomain, :histRadius]);
+
+    for (col, val) in zip(categories_figures, ids)
+        df_to_store[!, col] = val 
+    end
+    
+    # Add the time step to the dataframe
+    df_to_store[!,:timeStep] .= df_files[1].timeStep
+
+    return df_to_store
+end
+
+#=
 function collect_df(DIR_SAVE::String, files::Vector{String})
     return [CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files]
 end
+=#
+
+"""
+    get_group_files(pattern::string,files::Vector{String})
+
+Function that return and array of arrays of names of files of the same experiment at different time steps given an array of files names
+"""
+function get_group_files(patron::Regex,files::Vector{String})
+
+    # Read by experiments
+    grupos = Dict{Tuple{String, Int}, Vector{String}}()
+    for f in files 
+        m = match(patron, f)
+        if m !== nothing
+            sistema = m.captures[1]   # cadena con los parámetros
+            step = parse(Int, m.captures[2])
+            clave = (sistema, step)
+            # Agregar al grupo correspondiente
+            if haskey(grupos, clave)
+                push!(grupos[clave], f)
+            else
+                grupos[clave] = [f]
+            end
+        else
+            @warn "Nombre no coincide con el patrón: $f"
+        end
+    end
+
+    return grupos
+end
+
 
 """
     create_histogram(low_bin::Float64,bin_size::Float64,high_bin::Float64,data::Vector{Float64})
@@ -82,72 +150,142 @@ DT=0.001;
 files=readdir(DIR_SAVE);
 
 # Get only those of the structure factor
-files=filter(s -> occursin("pore_analysis_", s), files);
+files=filter(s -> occursin("pore_analysis_spheres_", s), files);
+
+#"pore_analysis_spheres_"
 
 # Prepare for reading the information
-pattern = r"pore_analysis_(.+)_step_(\d+)_simulation_\d+\.csv"
+pattern = r"pore_analysis_spheres_(.+)_step_(\d+)_simulation_\d+\.csv"
 
-# Read by experiments
-grupos = Dict{Tuple{String, Int}, Vector{String}}()
-for f in files 
-    m = match(pattern, f)
-    if m !== nothing
-        sistema = m.captures[1]   # cadena con los parámetros
-        step = parse(Int, m.captures[2])
-        clave = (sistema, step)
-        # Agregar al grupo correspondiente
-        if haskey(grupos, clave)
-            push!(grupos[clave], f)
-        else
-            grupos[clave] = [f]
-        end
-    else
-        @warn "Nombre no coincide con el patrón: $f"
-    end
-end
+# Get the group the simulations by expriment and time domain
+groups = get_group_files(pattern,files)
 
 categories_system=[:phi,:chi_4,:temp,:damp,:tstep];    # Select the categories that define a system
 categories_experiment=[:N_heat,:N_isothermal];  # Create categories to select different experiments (Just in case)
 
 # Categories
-categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal,:timeStep];
+categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal,:timeStep,:tstep];
 
 # Collect the files names by experiment 
-files = collect(values(grupos));
+files = collect(values(groups));
 
-# Read the files of one experiment
-df_data=mapreduce(s->collect_df(DIR_SAVE,s),vcat,files)
+# Collect and combine the analysis of N simulations
+df_data=map(s->collect_df(s,categories_figures),files)
 
 # Group the Vector{DataFrame} into one DataFrame
 df_combo=reduce(vcat,df_data);
 
-# Group by system
-df_systems=groupby(df_combo,categories_system);
+# Get the time domain of the analysis
+time_domain=unique(df_combo.timeStep);
 
-# Group each system by experiment
-df_experiments=[groupby(s,categories_experiment) for s in df_systems];
+# Group by the time domain 
+df_time_domain=groupby(df_combo,:timeStep);
 
-# domain for tha bins
-bin_size = 0.2;
-low_bin = 0.0;
-high_bin = 15.0;
-bins_domain = (low_bin:bin_size:high_bin);
+# Select final configuration
+    time_step_final=time_domain[1];
+    df_time_step_final=df_time_domain[1];
+
+    # Group by systems
+    df_time_step_systems_final=groupby(df_time_step_final,categories_figures);
+
+# Select the initial configuration
+    time_step_initial=time_domain[end];
+    df_time_step_initial=df_time_domain[end];
+
+    # Group by systems
+    df_time_step_systems_initial=groupby(df_time_step_initial,categories_figures);
 
 # Prepare tha labels
 labels=unique(df_combo[!,categories_system]);
 
-phi_domain=unique(labels.phi);
+# Get the domain of the packing fraction
+phi_domain=sort(unique(labels.phi));
 
-    # Prepare some labels
+    # prepare some labels
     phi_min=minimum(phi_domain);
     phi_max=maximum(phi_domain);
 
-    # Prepare the color code
+    # prepare the color code
     color_norm  = phi_domain ./ phi_max;
     color_min   = first(color_norm);
     color_max   = last(color_norm);
 
+    # create the color manually
+    color_grad=cgrad(:viridis);
 
+    # create the dictionary
+    phi_to_color=Dict(phi_domain .=> trunc.(Int64,range(1,length(color_grad),length=length(phi_domain))))
+
+
+# Get the data for the labels
+labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Waring: This only works for one case
+
+# Start the figure
+    fig = Figure()
+
+# Select final configuration
+    ax_plot = Axis(fig[1:1, 1:1],
+                   xlabel = L"\mathrm{Radius}",
+                   ylabel = L"\mathrm{Counts}/\mathrm{total}",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (0, 10, 0, nothing)
+                  )
+
+        for df_system in df_time_step_systems_initial
+
+            # Get the color
+            color_label=phi_to_color[first(unique(df_system.phi))];
+
+            lines!(ax_plot,df_system.poreDomain,df_system.histRadius[:]./sum(df_system.histRadius[:]),
+                      linewidth = 3,
+                      linestyle = :solid,
+                      colormap = :viridis,
+                      colorrange = (color_min, color_max),
+                      color = color_grad[color_label],
+                      #normalization = :pdf
+                     )
+ 
+        end 
+
+        for df_system in df_time_step_systems_final
+
+            # Get the color
+            color_label=phi_to_color[first(unique(df_system.phi))];
+
+            lines!(ax_plot,df_system.poreDomain,df_system.histRadius[:]./sum(df_system.histRadius[:]),
+                      linewidth = 3,
+                      linestyle = :dash,
+                      colormap = :viridis,
+                      colorrange = (color_min, color_max),
+                      color = color_grad[color_label],
+                      #normalization = :pdf
+                     )            
+        end 
+
+        # Plots to add systems labels
+        lines!(ax_plot,[-1],[-1],color=:black,linestyle=:solid,label=latexstring("t=",DT*time_step_initial,"~\\tau"));
+        lines!(ax_plot,[-1],[-1],color=:black,linestyle=:dash,label=latexstring("t=",DT*time_step_final,"~\\tau"));
+
+        axislegend(ax_plot,
+                   position=:rt, 
+                   framevisible = true,
+                   #framewidth = 0.0,
+                   #padding=(0.0f0,4.0f0,1.0f0,1.0f0),
+                   #patchsize=(0.0f0, 0.0f0)
+                  )
+
+
+
+    # Colobar to denote the time evolution 
+    Colorbar(fig[1:1, 2], label = L"\phi", colormap = :viridis, limits = (phi_min, phi_max))
+
+        # Crate a file name with the labels
+        file_name=string("fig_pore_histogram_phiseries_spheres",join(string.(labels_plot)),"_time_initial_final.png");
+
+
+
+#=
     fig = Figure()
     ax_plot = Axis(fig[1:1, 1:1],
                    xlabel = L"r",
@@ -201,7 +339,7 @@ phi_domain=unique(labels.phi);
 
 #hist=create_histogram(low_bin,bin_size,high_bin,df_data[1].histogram_pore)
 
-
+=#
 
 
 
