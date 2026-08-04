@@ -128,7 +128,7 @@ function explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict
             dists_neigh_filter = dists_neigh[mask];
 
             # Know the types of the neighbors
-            type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
+            #type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
 
             # Check if there is a Crosslinker
             #if isempty(findall(==(1),type_neigh_filter)) == false
@@ -136,7 +136,20 @@ function explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict
             #end
 
             # Add the connections
-            foreach(s-> add_edge!(graph,id_to_ind[id_neigh], id_to_ind[s]), ids_neigh_filter)
+            #foreach(s-> add_edge!(graph,id_to_ind[id_neigh], id_to_ind[s]), ids_neigh_filter)
+
+        for s in ids_neigh_filter
+            # Skip the crosslinkers as neighbors
+            if id_to_type[s] == 1  
+                continue
+            end
+            
+            # Add the bond with a monomer
+            add_edge!(graph,id_to_ind[id_neigh], id_to_ind[s])
+        end
+
+
+
 
     return (graph,visited_id,ids_neigh_filter)
 
@@ -156,7 +169,7 @@ function explore_nodes(id_cl,graph,visited_id,tree_pbc)
         pos_id = id_to_pos[id_cl];
 
         # Get the first nearest neighbors
-        inds_neigh, dists_neigh = knn(tree_pbc,pos_id,5) # Get the 4 patches
+        inds_neigh, dists_neigh = knn(tree_pbc,pos_id,6) # Get the 4 patches
 
         # Pass from index to id
         ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
@@ -176,15 +189,20 @@ function explore_nodes(id_cl,graph,visited_id,tree_pbc)
         dists_neigh_filter = dists_neigh[mask];
 
         # Know the types of the neighbors
-        type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
+        #type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
 
-        # Check if there is a Crosslinker
-        #if isempty(findall(==(1),type_neigh_filter)) == false
-        #    println("Two crosslinkers as neighbors")
-        #end
+        for s in ids_neigh_filter
+            # Skip the crosslinkers as neighbors
+            if id_to_type[s] == 1  
+                println("Warning: Two crosslinkers as neighbors") 
+            end
+            
+            # Add the bond with a monomer
+            add_edge!(graph,id_to_ind[id_cl], id_to_ind[s])
+        end
 
         # Add the connections
-        foreach(s-> add_edge!(graph,id_to_ind[id_cl], id_to_ind[s]), ids_neigh_filter)
+        #foreach(s-> add_edge!(graph,id_to_ind[id_cl], id_to_ind[s]), ids_neigh_filter)
 
     # Search each neighbor
        # Inicializar la cola con los primeros vecinos
@@ -198,11 +216,13 @@ function explore_nodes(id_cl,graph,visited_id,tree_pbc)
             graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
         #end
 
+            new_ids = setdiff(new_ids,visited_id);
+
             append!(to_explore_id, new_ids)         
 
         end
 
-        return (id_cl,graph,visited_id,tree_pbc)
+        return (graph,visited_id)
 end
 
 
@@ -321,7 +341,7 @@ df_system = df_systems[1];
         # The initial nodes are going to be all the crosslinkers
         ids_cl = df_by_types[1].id[:];
 
-        ids_mo = df_by_types[2].id[:];;
+        ids_mo = df_by_types[2].id[:];
 
 
         # Start the graph
@@ -332,15 +352,65 @@ df_system = df_systems[1];
 
         #explore_id=Array{Int64,1}();
 
-    # tests 
+# tests 
 
         # Start with one crosslinker
         #id_cl = ids_cl[1];
 
+        # Create tha graphs with only the crosslinkers
         for id_cl in ids_cl
-            global ~,graph,visited_id,tree_pbc = explore_nodes(id_cl,graph,visited_id,tree_pbc)
+            global graph,visited_id = explore_nodes(id_cl,graph,visited_id,tree_pbc)
         end
 
+        # Create a copy of the graph for further modification
+        graph_cl = deepcopy(graph);
+
+    # Clean the graph created by the crosslinkers
+        # Find all particles with degree 0 (There are isolated)
+        inds_isolated = findall(degree(graph_cl).==0)
+
+        # Remove isolated particles
+        rem_vertices!(graph_cl,inds_isolated)
+
+        if (length(visited_id) - length(unique(visited_id))) != 0
+            println("Three body particle bonds found")
+        end
+
+
+    # Continue creating monomers chains
+        notvisited_ids=setdiff([ids_cl; ids_mo], unique(visited_id))
+       
+        # Finish the lonely polymer chains        
+        to_explore_id = copy(notvisited_ids);
+       
+        while !isempty(to_explore_id);
+
+            id_neigh = popfirst!(to_explore_id);
+
+        #for id_neigh in ids_neigh_filter
+            global graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
+        #end
+
+            new_ids = setdiff(new_ids,visited_id);
+
+            append!(to_explore_id, new_ids)         
+
+        end
+
+        # Create a list with the inds of particles in a cluster
+        list_inds_clusters=connected_components(graph);
+
+    # Remove clusters of one elements
+
+        # Create a mask of one
+        
+
+
+        #for id_notvisited in notvisited_ids
+        #    global graph,visited_id,new_ids = explore_chain(id_notvisited,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
+        #end
+
+#explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict{Int64, Vector{Float64}},id_to_ind::Dict{Int64, Int64},ind_to_id::Dict{Int64, Int64},id_to_type::Dict{Int64, Int64},graph::SimpleGraph{Int64},tree_pbc)
 
      #end # For enumerate(paths_dumpf_simulations)
 
