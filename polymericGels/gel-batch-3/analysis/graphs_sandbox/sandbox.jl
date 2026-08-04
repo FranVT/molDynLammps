@@ -403,7 +403,9 @@ df_system = df_systems[1];
     # Remove clusters of one elements
 
         # Create a mask of one
-        
+        mask_cluster = length.(list_inds_clusters) .!= 1;
+
+        list_inds_clusters=list_inds_clusters[mask_cluster];
 
 
         #for id_notvisited in notvisited_ids
