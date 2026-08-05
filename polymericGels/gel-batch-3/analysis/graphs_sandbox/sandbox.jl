@@ -108,7 +108,7 @@ function explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict
             pos_id = id_to_pos[id_neigh];
 
             # Get the first nearest neighbors
-            inds_neigh, dists_neigh = knn(tree_pbc,pos_id,3) # For monomers
+            inds_neigh, dists_neigh = knn(tree_pbc,pos_id,4) # For monomers
 
             # Pass from index to id
             ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
@@ -136,20 +136,7 @@ function explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict
             #end
 
             # Add the connections
-            #foreach(s-> add_edge!(graph,id_to_ind[id_neigh], id_to_ind[s]), ids_neigh_filter)
-
-        for s in ids_neigh_filter
-            # Skip the crosslinkers as neighbors
-            if id_to_type[s] == 1  
-                continue
-            end
-            
-            # Add the bond with a monomer
-            add_edge!(graph,id_to_ind[id_neigh], id_to_ind[s])
-        end
-
-
-
+            foreach(s-> add_edge!(graph,id_to_ind[id_neigh], id_to_ind[s]), ids_neigh_filter)
 
     return (graph,visited_id,ids_neigh_filter)
 
@@ -197,7 +184,7 @@ function explore_nodes(id_cl,graph,visited_id,tree_pbc)
                 println("Warning: Two crosslinkers as neighbors") 
             end
             
-            # Add the bond with a monomer
+            # Add the bond of a cl with a monomer
             add_edge!(graph,id_to_ind[id_cl], id_to_ind[s])
         end
 
@@ -210,15 +197,21 @@ function explore_nodes(id_cl,graph,visited_id,tree_pbc)
        
         while !isempty(to_explore_id);
 
+            # Select one monomer
             id_neigh = popfirst!(to_explore_id);
 
         #for id_neigh in ids_neigh_filter
+            # Find neighbor of the monomer that is neighbor of the cl 
             graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
         #end
 
-            new_ids = setdiff(new_ids,visited_id);
+            # Select those that are not already visited
+            mask_new = mapreduce(s->new_ids .!= s,.&,visited_id)
 
-            append!(to_explore_id, new_ids)         
+            # Compute the mask
+            new_ids_filter = new_ids[mask_new]; #setdiff(new_ids,visited_id)
+
+            append!(to_explore_id, new_ids_filter);
 
         end
 
@@ -372,13 +365,95 @@ df_system = df_systems[1];
         # Remove isolated particles
         rem_vertices!(graph_cl,inds_isolated)
 
-        if (length(visited_id) - length(unique(visited_id))) != 0
-            println("Three body particle bonds found")
-        end
+        # Create a list with the inds of particles in a cluster
+        list_inds_clusters_cl=connected_components(graph_cl);
+
+    # Remove clusters of one elements
+
+        # Create a mask that select clusters bigger than one particle 
+        mask_cluster_cl = length.(list_inds_clusters_cl) .!= 1;
+
+        list_inds_clusters_cl=list_inds_clusters_cl[mask_cluster_cl];
+
+    # Analysis of the cluster
+
+        # Number of clusters in the system
+        N_clusters_cl = length(list_inds_clusters_cl);
+
+        # Biggest cluster
+        Max_cluster_cl = maximum(length.(list_inds_clusters_cl));
+
+        # Compute distance between crosslinkers
+
+        # Find shortest patch from one cl to another
+        to_explore_id_cl=copy(ids_cl);
+
+        # Initialize and array of arrays to store the data
+        store_paths=[];
+        store_distances=[];
+
+        while !isempty(to_explore_id_cl)
+
+            # Select one id
+            id_start=popfirst!(to_explore_id_cl);
+
+            for id_final in to_explore_id_cl
+                # Get the shortest patch between the ids
+                path_edge=a_star(graph_cl,id_start,id_final);
+
+                # Check if it is empty
+                if isempty(path_edge)
+                    continue
+                end
+            
+                # Store the path
+                append!(store_paths,[path_edge])
+
+            end # for
+        end # while 
+
+        # Select one path
+        path = store_paths[1];
+
+        for path in store_paths
+
+            distance_path=0;
+
+            for edge in path
+        
+                # source index
+                ind_src = src(edge);
+
+                # Destiniy index
+                ind_dst = dst(edge);
+
+                # Convert to id
+                id_src = ind_to_id[ind_src];
+                id_dst = ind_to_id[ind_dst];
+
+                # Get the positions
+                pos_src=id_to_pos[id_src];
+                pos_dst=id_to_pos[id_dst];
+
+                # Get the distance from src to dst
+                distance = sqrt(sum(dist_pbc.(pos_dst .- pos_src,[l; l; l]).^2));
+        
+                # Add the distance
+                distance_path+=distance;
+            end # for path 
+
+            append!(store_distances,distance_path)
+        end # for store_paths
+
+#=
 
 
     # Continue creating monomers chains
-        notvisited_ids=setdiff([ids_cl; ids_mo], unique(visited_id))
+        all_ids =  [ids_cl; ids_mo];
+
+        mask_aux = mapreduce(s->all_ids .!= s,.&,visited_id);
+
+        notvisited_ids=all_ids[mask_aux];
        
         # Finish the lonely polymer chains        
         to_explore_id = copy(notvisited_ids);
@@ -391,9 +466,13 @@ df_system = df_systems[1];
             global graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
         #end
 
-            new_ids = setdiff(new_ids,visited_id);
+            # Select those that are not already visited
+            mask_new = mapreduce(s->new_ids .!= s,.&,visited_id)
 
-            append!(to_explore_id, new_ids)         
+            # Compute the mask
+            new_ids_filter = new_ids[mask_new]; #setdiff(new_ids,visited_id)
+
+            append!(to_explore_id, new_ids_filter);
 
         end
 
@@ -402,17 +481,18 @@ df_system = df_systems[1];
 
     # Remove clusters of one elements
 
-        # Create a mask of one
+        # Create a mask that select clusters bigger than one particle 
         mask_cluster = length.(list_inds_clusters) .!= 1;
 
         list_inds_clusters=list_inds_clusters[mask_cluster];
 
+        # Number of clusters in the system
+        N_clusters = length(list_inds_clusters);
 
-        #for id_notvisited in notvisited_ids
-        #    global graph,visited_id,new_ids = explore_chain(id_notvisited,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
-        #end
+        # Biggest cluster
+        Max_cluster = maximum(length.(list_inds_clusters));
+=#
 
-#explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict{Int64, Vector{Float64}},id_to_ind::Dict{Int64, Int64},ind_to_id::Dict{Int64, Int64},id_to_type::Dict{Int64, Int64},graph::SimpleGraph{Int64},tree_pbc)
 
      #end # For enumerate(paths_dumpf_simulations)
 
