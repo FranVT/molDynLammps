@@ -71,7 +71,7 @@ function get_dump(path::String)
     df = DataFrame(INFO, HEADERS)
 
     # Filter the data frame to only give the central particle information
-    mask = (df.type .== 1) .| (df.type .== 2.0)
+    mask = (df.type .== 1) .| (df.type .== 2.0) .| (df.type .== 3.0) .| (df.type .== 4.0)
     dump_filtered = df[mask, :]
     
     return dump_filtered
@@ -94,6 +94,79 @@ Compute distance tacking into account periodic boundary conditions
 function dist_pbc(dr::Real, L::Real)
     return dr - round(dr / L) * L
 end
+
+"""
+    get_patches_cl(visited_id::Vector{Int64}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, pos_id::Vector{Float64}, tree_pbc)
+
+Function that return the patches information of a crosslinker
+"""
+function get_patches_cl(visited_id::Vector{Int64}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, pos_id::Vector{Float64}, tree_pbc)
+        # Get the first nearest neighbors
+        inds_neigh, dists_neigh = knn(tree_pbc,pos_id,5) # Get the 4 patches
+
+        # Pass from index to id
+        ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
+
+        # Get types
+        types_neigh = map(s-> id_to_type[s], ids_neigh); 
+
+        # Filter by type, only patches of crosslinkers
+        mask_types = types_neigh .== 3
+
+        # Filter by visited ids and stuff
+        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
+ 
+        # Filter by distance of pathces
+        mask_distance = 0.5 .>= dists_neigh .> 0.2; 
+
+        # Combine masks
+        mask = mask_ids .& mask_distance .& mask_types;
+
+        # Update the array with the filters
+        inds_neigh_filter = inds_neigh[mask];
+        ids_neigh_filter = ids_neigh[mask];
+        dists_neigh_filter = dists_neigh[mask];
+
+        return (inds_neigh_filter, ids_neigh_filter)
+end
+
+"""
+    get_patch_patch
+
+Functions that retunr patch information bonded with the patch given by pos_id
+"""
+function get_patch_patch(visited_id::Vector{Int64}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, pos_id::Vector{Float64}, tree_pbc)
+        # Get the first nearest neighbors
+        inds_neigh, dists_neigh = knn(tree_pbc,pos_id,4) # Get the 4 patches
+
+        # Pass from index to id
+        ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
+
+        # Get types
+        types_neigh = map(s-> id_to_type[s], ids_neigh); 
+
+        # Filter by type, only patches of monomers 
+        mask_types = (types_neigh .== 4) .| (types_neigh .== 3);
+
+        # Filter by visited ids and stuff
+        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
+ 
+        # Filter by distance of patches
+        mask_distance = 0.6 .>= dists_neigh .> 0.3; 
+
+        # Combine masks
+        mask = mask_ids .& mask_distance .& mask_types;
+
+        # Update the array with the filters
+        inds_neigh_filter = inds_neigh[mask];
+        ids_neigh_filter = ids_neigh[mask];
+        dists_neigh_filter = dists_neigh[mask];
+
+        return (inds_neigh_filter, ids_neigh_filter)
+end
+
+
+
 
 """
     explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict{Int64, Vector{Float64}},ind_to_id::Dict{Int64, Int64},id_to_type::Dict{Int64, Int64},graph::SimpleGraph{Int64})
@@ -252,7 +325,6 @@ df_system = df_systems[1];
     # Select all simulations of one experiment
     df_set = df_experiments[1];
 
-    N_cpart =  first(df_set.N_PP);
     l=first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
     l_x = 2*l;                            # Length of the box at x 
     l_y = 2*l;                            # Length of the box at y 
@@ -279,8 +351,11 @@ df_system = df_systems[1];
         # Data frame of the dump
         df_dump_timesteps=get_dump.(paths_dumpf_simulation);
 
-        # Select one time step
+# Select one time step
         df_dump = df_dump_timesteps[1];
+
+        # Get the number of particles to analyse
+        N_part = nrow(df_dump);
 
         # Parse the id floeat64 to Int64
         df_dump.id = Int64.(df_dump.id)
@@ -305,7 +380,7 @@ df_system = df_systems[1];
         ind_to_id =  Dict{Int64, Int64}();
 
         # fill the Dictionary
-        foreach(s->ind_to_id[s] = df_dump.id[s], 1:N_cpart);
+        foreach(s->ind_to_id[s] = df_dump.id[s], 1:N_part);
 
         # Dictionary from ind to id
         id_to_ind = Dict(zip(values(ind_to_id), keys(ind_to_id)));
@@ -317,12 +392,12 @@ df_system = df_systems[1];
         pos_to_id = Dict{Vector{Float64}, Int64}();
 
         # Create the dictirionary
-        foreach(s->pos_to_id[positions[:,s]] = df_dump.id[s], 1:N_cpart);
+        foreach(s->pos_to_id[positions[:,s]] = df_dump.id[s], 1:N_part);
 
         # Dictionary from id to positions
         id_to_pos = Dict(zip(values(pos_to_id), keys(pos_to_id)));
 
-        # Create a tree
+        # Create a tree NearestNeighbors and distances
         tree=KDTree(positions)
 
         # Consider periodic boundary conditions
@@ -333,28 +408,75 @@ df_system = df_systems[1];
 
         # The initial nodes are going to be all the crosslinkers
         ids_cl = df_by_types[1].id[:];
-
         ids_mo = df_by_types[2].id[:];
-
+        ids_pc = df_by_types[3].id[:];
+        ids_pm = df_by_types[4].id[:];
 
         # Start the graph
-        graph=SimpleGraph(N_cpart); # Based on index
+        graph=SimpleGraph(N_part); # Based on index
 
         # Create an array with id visited
         visited_id=Array{Int64,1}();
 
-        #explore_id=Array{Int64,1}();
-
 # tests 
 
         # Start with one crosslinker
-        #id_cl = ids_cl[1];
+        id_cl = ids_cl[1];
+
+        # Add the crosslinker id
+        push!(visited_id,id_cl);
+
+        # Get its position
+        pos_id = id_to_pos[id_cl];
+
+        # Get the index and ids of the patches of the crosslinker
+        (inds_neigh, ids_neigh)=get_patches_cl(visited_id, ind_to_id, id_to_type, pos_id, tree_pbc)
+
+        # Create the bonds
+        foreach(s-> add_edge!(graph,id_to_ind[id_cl], id_to_ind[s]), ids_neigh);
+
+        # Search for patches that are neighbors for each patch
+
+        id_patch = ids_neigh[1];
+
+        # Add the patch id
+        push!(visited_id,id_patch);
+
+        # Get its position
+        pos_id = id_to_pos[id_patch];
+
+        # Get the index and ids of the patches in bond with the other patch
+        (inds_neigh, ids_neigh)=get_patch_patch(visited_id,ind_to_id,id_to_type,pos_id,tree_pbc)
+
+        # Create the bonds
+        foreach(s-> add_edge!(graph,id_to_ind[id_patch], id_to_ind[s]), ids_neigh);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         # Create tha graphs with only the crosslinkers
-        for id_cl in ids_cl
-            global graph,visited_id = explore_nodes(id_cl,graph,visited_id,tree_pbc)
-        end
+#        for id_cl in ids_cl
+#            global graph,visited_id = explore_nodes(id_cl,graph,visited_id,tree_pbc)
+#        end
 
+#=
         # Create a copy of the graph for further modification
         graph_cl = deepcopy(graph);
 
@@ -444,6 +566,8 @@ df_system = df_systems[1];
 
             append!(store_distances,distance_path)
         end # for store_paths
+=#
+
 
 #=
 
