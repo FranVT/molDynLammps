@@ -96,13 +96,13 @@ function dist_pbc(dr::Real, L::Real)
 end
 
 """
-    get_patches_cl(visited_id::Vector{Int64}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, pos_id::Vector{Float64}, tree_pbc)
+    get_patches(visited_id::Vector{Int64}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, pos_id::Vector{Float64}, tree_pbc)
 
 Function that return the patches information of a crosslinker
 """
-function get_patches_cl(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id_cl::Int64, tree_pbc)
+function get_patches(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id::Int64, tree_pbc)
         # Get its position
-        pos_id = id_to_pos[id_cl];
+        pos_id = id_to_pos[id];
 
         # Get the first nearest neighbors
         inds_neigh, dists_neigh = knn(tree_pbc,pos_id,5) # Get the 4 patches
@@ -114,7 +114,7 @@ function get_patches_cl(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector
         types_neigh = map(s-> id_to_type[s], ids_neigh); 
 
         # Filter by type, only patches of crosslinkers
-        mask_types = types_neigh .== 3
+        mask_types = (types_neigh .== 4) .| (types_neigh .== 3)
 
         # Filter by visited ids and stuff
         mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
@@ -132,6 +132,7 @@ function get_patches_cl(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector
 
         return (inds_neigh_filter, ids_neigh_filter)
 end
+
 
 """
     get_patch_patch
@@ -168,14 +169,12 @@ function get_patch_patch(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vecto
         ids_neigh_filter = ids_neigh[mask];
         dists_neigh_filter = dists_neigh[mask];
 
-        if (length(inds_neigh_filter) | length(ids_neigh_filter)) != 1
+        if (length(inds_neigh_filter) | length(ids_neigh_filter)) > 1
             println("Warning: Three or more patch interaction.")
-            #break
         end
 
         return (inds_neigh_filter, ids_neigh_filter)
 end
-
 
 """
     get_cp(visited_id::Vector{Int64}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, pos_id::Vector{Float64}, tree_pbc)
@@ -212,13 +211,12 @@ function get_cp(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64
         ids_neigh_filter = ids_neigh[mask];
         dists_neigh_filter = dists_neigh[mask];
 
-        if (length(inds_neigh_filter) | length(ids_neigh_filter)) != 1
-            println("Two central particles for one patch.")
-            #break
-        end
-
-        return (first(inds_neigh_filter), first(ids_neigh_filter))
+        return (inds_neigh_filter,ids_neigh_filter)
 end
+
+
+
+
 
 
 
@@ -473,35 +471,115 @@ df_system = df_systems[1];
         # Create an array with id visited
         visited_id=Array{Int64,1}();
 
+        # To store ids to explore 
+        ids_central=deepcopy(ids_cl);    
+#        ids_patches=Array{Int64,1}();
+
+
+
 # tests 
 
+    while !isempty(ids_central)
         # Start with one crosslinker
-        id_cl = ids_cl[1];
+        id_central = popfirst!(ids_central);
 
         # Add the crosslinker id
-        push!(visited_id,id_cl);
+        push!(visited_id,id_central);
 
+# cl -> patch
         # Get the index and ids of the patches of the crosslinker
-        (inds_patch_cl, ids_patch_cl)=get_patches_cl(visited_id,id_to_pos,ind_to_id,id_to_type,id_cl,tree_pbc)
+        (inds_patch, ids_patch)=get_patches(visited_id,id_to_pos,ind_to_id,id_to_type,id_central,tree_pbc)
 
         # Add bonds to the graph 
-        foreach(s-> add_edge!(graph,id_to_ind[id_cl], s), inds_patch_cl);
+        foreach(s-> add_edge!(graph,id_to_ind[id_central], s), inds_patch);
 
-        # Select one patch
-        id_patch_explore = ids_patch_cl[1];
+        # Explore the patches of one central particle 
+        for id_patch_explore in ids_patch
 
-        # Get the index and ids  of the neighbors of the patch
-        (inds_neigh, ids_neigh)=get_patch_patch(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
+            # Add the patch
+            push!(visited_id,id_patch_explore);
 
-        # Get the central particles for each patch
-        ids_central=[];
-        inds_central=[];
+# patch-patch
+            # Get the index and ids  of the neighbors of the patch
+            (inds_neigh, ids_neigh)=get_patch_patch(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
 
-        for id_patch in ids_neigh
-            (ind_neigh, id_neigh)=get_cp(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch,tree_pbc)
-            append!(ids_central,id_neigh)
-            append!(inds_central,ids_neigh)
-        end
+            # Add bonds to the graph 
+            foreach(s-> add_edge!(graph,id_to_ind[id_patch_explore], s), ids_neigh);
+
+            # explore the patches to find central particles 
+            for id_patch in ids_neigh
+                # Add the crosslinker id
+                push!(visited_id,id_patch)
+
+# patch - central
+                (ind_neigh, id_neigh)=get_cp(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch,tree_pbc)
+
+                if length(id_neigh) == 0
+                    println("Chain end")
+                    continue
+                elseif length(id_neigh) > 1
+                    println("Two central particles for one patch.")
+                    ind_neigh = first(ind_neigh);
+                    id_neigh = first(id_neigh);
+                else
+                    ind_neigh = first(ind_neigh);
+                    id_neigh = first(id_neigh);
+                end # if
+           
+                # Add the bond
+                add_edge!(graph,id_to_ind[id_patch], ind_neigh)
+
+                # Add the id central particle to explore
+                append!(ids_central,id_neigh)
+            end # for central
+        end # for patches 
+    end # while central
+
+
+#=
+
+
+# Start to explore the chain
+
+        while !isempty(ids_central)
+
+            # Select one central particle
+            id_central = popfirst!(ids_central);
+
+            # Add the crosslinker id
+            push!(visited_id,id_central)
+
+# central - patch
+            # Get the patches
+            (inds_neigh_c_p,ids_neigh_c_p)=get_patches(visited_id,id_to_pos,ind_to_id,id_to_type,id_central,tree_pbc);
+
+
+            # If there is a cl
+            for id_patch in ids_neigh_c_p
+                push!(visited_id,id_patch)
+
+#patch - patch
+                (inds_neigh_aux, ids_neigh_aux)=get_patch_patch(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
+
+                # Add bonds to the graph 
+                foreach(s-> add_edge!(graph,id_to_ind[id_patch], s), inds_neigh_aux);
+
+                # Add patches to explore
+                append!(ids_patches,ids_neigh_aux)
+            end # for patches
+        
+            if isempty(ids_patches)
+                println("No more patch-patch interaction")
+                println(length(ids_central))
+            end
+
+        end #while central
+
+=#
+
+
+
+
 
 
 
