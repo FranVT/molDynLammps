@@ -117,13 +117,13 @@ function get_patches(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Fl
         mask_types = (types_neigh .== 4) .| (types_neigh .== 3)
 
         # Filter by visited ids and stuff
-        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
+        #mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
  
         # Filter by distance of pathces
         mask_distance = 0.5 .>= dists_neigh .> 0.2; 
 
         # Combine masks
-        mask = mask_ids .& mask_distance .& mask_types;
+        mask = mask_distance .& mask_types;
 
         # Update the array with the filters
         inds_neigh_filter = inds_neigh[mask];
@@ -156,22 +156,18 @@ function get_patch_patch(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vecto
         mask_types = (types_neigh .== 4) .| (types_neigh .== 3);
 
         # Filter by visited ids and stuff
-        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
+        #mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
  
         # Filter by distance of patches
         mask_distance = 0.6 .>= dists_neigh .> 0.3; 
 
         # Combine masks
-        mask = mask_ids .& mask_distance .& mask_types;
+        mask = mask_distance .& mask_types;
 
         # Update the array with the filters
         inds_neigh_filter = inds_neigh[mask];
         ids_neigh_filter = ids_neigh[mask];
         dists_neigh_filter = dists_neigh[mask];
-
-        if (length(inds_neigh_filter) | length(ids_neigh_filter)) > 1
-            println("Warning: Three or more patch interaction.")
-        end
 
         return (inds_neigh_filter, ids_neigh_filter)
 end
@@ -198,13 +194,13 @@ function get_cp(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64
         mask_types = (types_neigh .== 1) .| (types_neigh .== 2)
 
         # Filter by visited ids and stuff
-        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
+        #mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
  
         # Filter by distance of pathces
         mask_distance = 0.5 .>= dists_neigh .> 0.2; 
 
         # Combine masks
-        mask = mask_ids .& mask_distance .& mask_types;
+        mask = mask_distance .& mask_types;
 
         # Update the array with the filters
         inds_neigh_filter = inds_neigh[mask];
@@ -472,10 +468,11 @@ df_system = df_systems[1];
         visited_id=Array{Int64,1}();
 
         # To store ids to explore 
-        ids_central=deepcopy(ids_cl);    
+        ids_central=deepcopy([ids_cl; ids_mo]);    
 #        ids_patches=Array{Int64,1}();
 
-
+        # Count the interaction that are between three patches.
+        count_threebody=0;
 
 # tests 
 
@@ -503,8 +500,12 @@ df_system = df_systems[1];
             # Get the index and ids  of the neighbors of the patch
             (inds_neigh, ids_neigh)=get_patch_patch(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
 
+            if length(ids_neigh) > 1
+                global count_threebody += 1;
+            end
+
             # Add bonds to the graph 
-            foreach(s-> add_edge!(graph,id_to_ind[id_patch_explore], s), ids_neigh);
+            foreach(s-> add_edge!(graph,id_to_ind[id_patch_explore], s), inds_neigh);
 
             # explore the patches to find central particles 
             for id_patch in ids_neigh
@@ -530,133 +531,36 @@ df_system = df_systems[1];
                 add_edge!(graph,id_to_ind[id_patch], ind_neigh)
 
                 # Add the id central particle to explore
-                append!(ids_central,id_neigh)
-            end # for central
-        end # for patches 
+                #append!(ids_central,id_neigh)
+            end # for patch - central
+        end # for patch - patch 
     end # while central
 
+# Analysis of the graph
 
-#=
+        # Find all particles with degree 0 (There are isolated)
+        inds_isolated = findall(degree(graph).==0);
 
+        # Create a list with the inds of particles in a cluster
+        list_inds_clusters=connected_components(graph);
 
-# Start to explore the chain
+    # Remove clusters of one elements
 
-        while !isempty(ids_central)
+        # Create a mask that select clusters bigger than one particle 
+        mask_cluster = length.(list_inds_clusters) .!= 1;
 
-            # Select one central particle
-            id_central = popfirst!(ids_central);
+        list_inds_clusters=list_inds_clusters[mask_cluster];
 
-            # Add the crosslinker id
-            push!(visited_id,id_central)
+        # Number of clusters in the system
+        N_clusters = length(list_inds_clusters);
 
-# central - patch
-            # Get the patches
-            (inds_neigh_c_p,ids_neigh_c_p)=get_patches(visited_id,id_to_pos,ind_to_id,id_to_type,id_central,tree_pbc);
-
-
-            # If there is a cl
-            for id_patch in ids_neigh_c_p
-                push!(visited_id,id_patch)
-
-#patch - patch
-                (inds_neigh_aux, ids_neigh_aux)=get_patch_patch(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
-
-                # Add bonds to the graph 
-                foreach(s-> add_edge!(graph,id_to_ind[id_patch], s), inds_neigh_aux);
-
-                # Add patches to explore
-                append!(ids_patches,ids_neigh_aux)
-            end # for patches
-        
-            if isempty(ids_patches)
-                println("No more patch-patch interaction")
-                println(length(ids_central))
-            end
-
-        end #while central
-
-=#
+        # Biggest cluster
+        Max_cluster = maximum(length.(list_inds_clusters));
 
 
 
 
 
-
-
-
-
-
-
-#=
-
-        # Search for patches that are neighbors for each patch
-        id_patch_cl = ids_neigh_cl[1];
-
-        #for id_patch in ids_neigh
-            # Add the patch id
-            push!(visited_id,id_patch_cl);
-
-            # Get its position
-            pos_patch_cl = id_to_pos[id_patch_cl];
-
-            # Get the index and ids of the patches in bond with the other patch
-            (inds_neigh_patch_cl, ids_neigh_patch_cl)=get_patch_patch(visited_id,ind_to_id,id_to_type,pos_patch_cl,tree_pbc)
-
-            # Create the bonds
-            foreach(s-> add_edge!(graph,id_to_ind[id_patch_cl], id_to_ind[s]), ids_neigh_patch_cl)
-
-            # Select one patch 
-            id_neigh_patch = ids_neigh_patch_cl[1];
-
-            # Add the patch
-            push!(visited_id,id_neigh_patch);
-
-            # Get its position
-            pos_neigh_id = id_to_pos[id_neigh_patch];
-
-            # Get the index and ids of the central particle of the monomer 
-            (ind_neigh_cp, id_neigh_cp)=get_cp(visited_id,ind_to_id,id_to_type,pos_neigh_id,tree_pbc);
-       
-            # Create the bonds
-            add_edge!(graph,id_to_ind[id_neigh_patch], id_to_ind[id_neigh_cp]);
-=#
-            #
-
-
-
-#=
-cl->patch->patch->central->patch->patch->central->patch->patch
-
-=#
-
-
-
-        #end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # Create tha graphs with only the crosslinkers
-#        for id_cl in ids_cl
-#            global graph,visited_id = explore_nodes(id_cl,graph,visited_id,tree_pbc)
-#        end
 
 #=
         # Create a copy of the graph for further modification
