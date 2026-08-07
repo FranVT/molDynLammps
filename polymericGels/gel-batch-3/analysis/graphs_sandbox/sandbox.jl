@@ -201,6 +201,74 @@ function get_cp(id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, 
         return (inds_neigh_filter,ids_neigh_filter)
 end
 
+"""
+    create_clusters(N_part::Int64, ids_central::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, tree_pbc)
+
+Function that return a graph with all connection between particles
+"""
+
+
+function create_clusters(N_part::Int64, ids_central::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, tree_pbc)
+
+    # Start the graph
+    graph=SimpleGraph(N_part); # Based on index
+
+    # Count the interaction that are between three patches.
+    count_threebody=0;
+
+    while !isempty(ids_central)
+        # Start with one crosslinker
+        id_central = popfirst!(ids_central);
+
+    # cl -> patch
+        # Get the index and ids of the patches of the crosslinker
+        (inds_patch, ids_patch)=get_patches(id_to_pos,ind_to_id,id_to_type,id_central,tree_pbc)
+
+        # Add bonds to the graph 
+        foreach(s-> add_edge!(graph,id_to_ind[id_central], s), inds_patch);
+
+        # Explore the patches of one central particle 
+        for id_patch_explore in ids_patch
+    # patch-patch
+            # Get the index and ids  of the neighbors of the patch
+            (inds_neigh, ids_neigh)=get_patch_patch(id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
+
+            if length(ids_neigh) > 1
+                count_threebody += 1;
+            end
+
+            # Add bonds to the graph 
+            foreach(s-> add_edge!(graph,id_to_ind[id_patch_explore], s), inds_neigh);
+
+            # explore the patches to find central particles 
+            for id_patch in ids_neigh
+    # patch - central
+                (ind_neigh, id_neigh)=get_cp(id_to_pos,ind_to_id,id_to_type,id_patch,tree_pbc)
+
+                if length(id_neigh) == 0
+                    println("Chain end")
+                    continue
+                elseif length(id_neigh) > 1
+                    println("Two central particles for one patch.")
+                    ind_neigh = first(ind_neigh);
+                    id_neigh = first(id_neigh);
+                else
+                    ind_neigh = first(ind_neigh);
+                    id_neigh = first(id_neigh);
+                end # if
+           
+                # Add the bond
+                add_edge!(graph,id_to_ind[id_patch], ind_neigh)
+
+            end # for patch - central
+        end # for patch - patch 
+    end # while central
+
+    return (graph, count_threebody)
+
+end
+
+
 
 #=
     SCRIPT 
@@ -321,77 +389,13 @@ df_system = df_systems[1];
         ids_pc = df_by_types[3].id[:];
         ids_pm = df_by_types[4].id[:];
 
-        # Start the graph
-        graph=SimpleGraph(N_part); # Based on index
-
         # To store ids to explore 
         ids_central=deepcopy([ids_cl; ids_mo]);    
 #        ids_patches=Array{Int64,1}();
 
-        # Count the interaction that are between three patches.
-        count_threebody=0;
 
-# tests 
+        (graph, count_threebody) = create_clusters(N_part,ids_central,id_to_pos,ind_to_id,id_to_type,tree_pbc)
 
-    while !isempty(ids_central)
-        # Start with one crosslinker
-        id_central = popfirst!(ids_central);
-
-        # Add the crosslinker id
-        push!(visited_id,id_central);
-
-# cl -> patch
-        # Get the index and ids of the patches of the crosslinker
-        (inds_patch, ids_patch)=get_patches(id_to_pos,ind_to_id,id_to_type,id_central,tree_pbc)
-
-        # Add bonds to the graph 
-        foreach(s-> add_edge!(graph,id_to_ind[id_central], s), inds_patch);
-
-        # Explore the patches of one central particle 
-        for id_patch_explore in ids_patch
-
-            # Add the patch
-            push!(visited_id,id_patch_explore);
-
-# patch-patch
-            # Get the index and ids  of the neighbors of the patch
-            (inds_neigh, ids_neigh)=get_patch_patch(id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
-
-            if length(ids_neigh) > 1
-                global count_threebody += 1;
-            end
-
-            # Add bonds to the graph 
-            foreach(s-> add_edge!(graph,id_to_ind[id_patch_explore], s), inds_neigh);
-
-            # explore the patches to find central particles 
-            for id_patch in ids_neigh
-                # Add the crosslinker id
-                push!(visited_id,id_patch)
-
-# patch - central
-                (ind_neigh, id_neigh)=get_cp(id_to_pos,ind_to_id,id_to_type,id_patch,tree_pbc)
-
-                if length(id_neigh) == 0
-                    println("Chain end")
-                    continue
-                elseif length(id_neigh) > 1
-                    println("Two central particles for one patch.")
-                    ind_neigh = first(ind_neigh);
-                    id_neigh = first(id_neigh);
-                else
-                    ind_neigh = first(ind_neigh);
-                    id_neigh = first(id_neigh);
-                end # if
-           
-                # Add the bond
-                add_edge!(graph,id_to_ind[id_patch], ind_neigh)
-
-                # Add the id central particle to explore
-                #append!(ids_central,id_neigh)
-            end # for patch - central
-        end # for patch - patch 
-    end # while central
 
 # Analysis of the graph
 
