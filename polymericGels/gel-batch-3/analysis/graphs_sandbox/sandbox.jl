@@ -100,7 +100,7 @@ end
 
 Function that return the patches information of a crosslinker
 """
-function get_patches(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id::Int64, tree_pbc)
+function get_patches(id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id::Int64, tree_pbc)
         # Get its position
         pos_id = id_to_pos[id];
 
@@ -116,9 +116,6 @@ function get_patches(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Fl
         # Filter by type, only patches of crosslinkers
         mask_types = (types_neigh .== 4) .| (types_neigh .== 3)
 
-        # Filter by visited ids and stuff
-        #mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
- 
         # Filter by distance of pathces
         mask_distance = 0.5 .>= dists_neigh .> 0.2; 
 
@@ -139,7 +136,7 @@ end
 
 Functions that retunr patch information bonded with the patch given by pos_id
 """
-function get_patch_patch(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id::Int64, tree_pbc)
+function get_patch_patch(id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id::Int64, tree_pbc)
         # Get the position
         pos_id = id_to_pos[id];
 
@@ -155,9 +152,6 @@ function get_patch_patch(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vecto
         # Filter by type, only patches of monomers 
         mask_types = (types_neigh .== 4) .| (types_neigh .== 3);
 
-        # Filter by visited ids and stuff
-        #mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
- 
         # Filter by distance of patches
         mask_distance = 0.6 .>= dists_neigh .> 0.3; 
 
@@ -177,7 +171,7 @@ end
 
 Function that return the central particle neihgbors information 
 """
-function get_cp(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id::Int64, tree_pbc)
+function get_cp(id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id::Int64, tree_pbc)
         # Get its position
         pos_id = id_to_pos[id];
 
@@ -193,9 +187,6 @@ function get_cp(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64
         # Filter by type, only patches of crosslinkers
         mask_types = (types_neigh .== 1) .| (types_neigh .== 2)
 
-        # Filter by visited ids and stuff
-        #mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
- 
         # Filter by distance of pathces
         mask_distance = 0.5 .>= dists_neigh .> 0.2; 
 
@@ -209,137 +200,6 @@ function get_cp(visited_id::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64
 
         return (inds_neigh_filter,ids_neigh_filter)
 end
-
-
-
-
-
-
-
-
-"""
-    explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict{Int64, Vector{Float64}},ind_to_id::Dict{Int64, Int64},id_to_type::Dict{Int64, Int64},graph::SimpleGraph{Int64})
-
-Explore nearest neighbors and add edges to a graph 
-"""
-function explore_chain(id_neigh::Int64,visited_id::Vector{Int64},id_to_pos::Dict{Int64, Vector{Float64}},id_to_ind::Dict{Int64, Int64},ind_to_id::Dict{Int64, Int64},id_to_type::Dict{Int64, Int64},graph::SimpleGraph{Int64},tree_pbc)
-            # Add the id to the vissited
-            push!(visited_id,id_neigh)
-
-            # Get its position
-            pos_id = id_to_pos[id_neigh];
-
-            # Get the first nearest neighbors
-            inds_neigh, dists_neigh = knn(tree_pbc,pos_id,4) # For monomers
-
-            # Pass from index to id
-            ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
-
-            # Filter by visited ids and stuff
-            mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
- 
-            # Filter by distance
-            mask_distance = 1.4 .>= dists_neigh .> 1.0; 
-
-            # Combine masks
-            mask = mask_ids .& mask_distance;
-
-            # Update the array with the filters
-            inds_neigh_filter = inds_neigh[mask];
-            ids_neigh_filter = ids_neigh[mask];
-            dists_neigh_filter = dists_neigh[mask];
-
-            # Know the types of the neighbors
-            #type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
-
-            # Check if there is a Crosslinker
-            #if isempty(findall(==(1),type_neigh_filter)) == false
-            #    println("Found a Crosslinker")
-            #end
-
-            # Add the connections
-            foreach(s-> add_edge!(graph,id_to_ind[id_neigh], id_to_ind[s]), ids_neigh_filter)
-
-    return (graph,visited_id,ids_neigh_filter)
-
-end
- 
-"""
-    explore_nodes(id_cl,graph,visited_id,tree_pbc)
-
-Explore the chains around each node (Cross Linkers)
-"""
-function explore_nodes(id_cl,graph,visited_id,tree_pbc)
-
-        # Add the id to the vissited
-        push!(visited_id,id_cl)
-
-        # Get its position
-        pos_id = id_to_pos[id_cl];
-
-        # Get the first nearest neighbors
-        inds_neigh, dists_neigh = knn(tree_pbc,pos_id,6) # Get the 4 patches
-
-        # Pass from index to id
-        ids_neigh = map(s-> ind_to_id[s], inds_neigh); 
-
-        # Filter by visited ids and stuff
-        mask_ids = mapreduce(s->ids_neigh .!= s,.&,visited_id);
- 
-        # Filter by distance
-        mask_distance = 1.4 .>= dists_neigh .> 1.0; 
-
-        # Combine masks
-        mask = mask_ids .& mask_distance;
-
-        # Update the array with the filters
-        inds_neigh_filter = inds_neigh[mask];
-        ids_neigh_filter = ids_neigh[mask];
-        dists_neigh_filter = dists_neigh[mask];
-
-        # Know the types of the neighbors
-        #type_neigh_filter = map(s-> id_to_type[s],ids_neigh_filter);
-
-        for s in ids_neigh_filter
-            # Skip the crosslinkers as neighbors
-            if id_to_type[s] == 1  
-                println("Warning: Two crosslinkers as neighbors") 
-            end
-            
-            # Add the bond of a cl with a monomer
-            add_edge!(graph,id_to_ind[id_cl], id_to_ind[s])
-        end
-
-        # Add the connections
-        #foreach(s-> add_edge!(graph,id_to_ind[id_cl], id_to_ind[s]), ids_neigh_filter)
-
-    # Search each neighbor
-       # Inicializar la cola con los primeros vecinos
-        to_explore_id = copy(ids_neigh_filter);
-       
-        while !isempty(to_explore_id);
-
-            # Select one monomer
-            id_neigh = popfirst!(to_explore_id);
-
-        #for id_neigh in ids_neigh_filter
-            # Find neighbor of the monomer that is neighbor of the cl 
-            graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
-        #end
-
-            # Select those that are not already visited
-            mask_new = mapreduce(s->new_ids .!= s,.&,visited_id)
-
-            # Compute the mask
-            new_ids_filter = new_ids[mask_new]; #setdiff(new_ids,visited_id)
-
-            append!(to_explore_id, new_ids_filter);
-
-        end
-
-        return (graph,visited_id)
-end
-
 
 
 #=
@@ -464,9 +324,6 @@ df_system = df_systems[1];
         # Start the graph
         graph=SimpleGraph(N_part); # Based on index
 
-        # Create an array with id visited
-        visited_id=Array{Int64,1}();
-
         # To store ids to explore 
         ids_central=deepcopy([ids_cl; ids_mo]);    
 #        ids_patches=Array{Int64,1}();
@@ -485,7 +342,7 @@ df_system = df_systems[1];
 
 # cl -> patch
         # Get the index and ids of the patches of the crosslinker
-        (inds_patch, ids_patch)=get_patches(visited_id,id_to_pos,ind_to_id,id_to_type,id_central,tree_pbc)
+        (inds_patch, ids_patch)=get_patches(id_to_pos,ind_to_id,id_to_type,id_central,tree_pbc)
 
         # Add bonds to the graph 
         foreach(s-> add_edge!(graph,id_to_ind[id_central], s), inds_patch);
@@ -498,7 +355,7 @@ df_system = df_systems[1];
 
 # patch-patch
             # Get the index and ids  of the neighbors of the patch
-            (inds_neigh, ids_neigh)=get_patch_patch(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
+            (inds_neigh, ids_neigh)=get_patch_patch(id_to_pos,ind_to_id,id_to_type,id_patch_explore,tree_pbc)
 
             if length(ids_neigh) > 1
                 global count_threebody += 1;
@@ -513,7 +370,7 @@ df_system = df_systems[1];
                 push!(visited_id,id_patch)
 
 # patch - central
-                (ind_neigh, id_neigh)=get_cp(visited_id,id_to_pos,ind_to_id,id_to_type,id_patch,tree_pbc)
+                (ind_neigh, id_neigh)=get_cp(id_to_pos,ind_to_id,id_to_type,id_patch,tree_pbc)
 
                 if length(id_neigh) == 0
                     println("Chain end")
