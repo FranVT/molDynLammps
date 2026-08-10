@@ -273,7 +273,7 @@ df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
 df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
-n_steps=2;                          # Amount of time steps to analyzed
+n_steps=32;                          # Amount of time steps to analyzed
 n_samples=100000;                     # Amount of sphere samples to construct the histogram
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain

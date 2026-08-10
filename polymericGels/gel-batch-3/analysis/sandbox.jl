@@ -85,23 +85,40 @@ df_system = df_systems[1];
     # Group by experiment
     df_experiments = groupby(df_system,categories_experiment);
 
+    # Amount of experiments
+    N_exp = length(df_experiments);
+
     # Create a list with line styles
-    lines_sytles = [:solid; :dot; :dash; :dashdot];
+    lines_styles = [:solid; :dot; :dash; :dashdot];
 
-    # Select the domain for each experiment
+    # Prepare for the domain
+    domains=[[] for _ in 1:N_exp];
 
+    # Get the domain
+    for (it,df) in enumerate(df_experiments)
+        domains[it] =cat_to_value[:tstep].*df.TimeStep
+    end
 
+    # Prepare for the range 
+    range=[[] for _ in 1:length(df_experiments)];
 
-#=
+    # Get the range 
+    for (it,df) in enumerate(df_experiments)
+        range[it] = df.c_ep
+    end
+
     # Start the figure
     fig = Figure();
 
     ax_plot = Axis(fig[1:1, 1:1],
-                xlabel = L"\mathrm{Radius}",
-                ylabel = L"\mathrm{Counts}/\mathrm{total}",
+                xlabel = L"t~[\tau]",
+                ylabel = L"U(t)~[\epsilon]",
                 xminorticksvisible = true,
                 xminorgridvisible = true,
-                limits = (0, 10, 0, nothing)
+                #limits = (0, 10, 0, nothing)
                 )
-=#
 
+    # Add the plots
+    for it in 1:N_exp
+        lines!(ax_plot,domains[it],range[it],linestyle=lines_styles[it],color=:black)
+    end
