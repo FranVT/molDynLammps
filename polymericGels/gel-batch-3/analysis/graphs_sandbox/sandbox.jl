@@ -246,7 +246,7 @@ function create_clusters(N_part::Int64, ids_central::Vector{Int64}, id_to_pos::D
                 (ind_neigh, id_neigh)=get_cp(id_to_pos,ind_to_id,id_to_type,id_patch,tree_pbc)
 
                 if length(id_neigh) == 0
-                    println("Chain end")
+                    #println("Chain end")
                     continue
                 elseif length(id_neigh) > 1
                     println("Two central particles for one patch.")
@@ -393,22 +393,19 @@ df_system = df_systems[1];
         ids_central=deepcopy([ids_cl; ids_mo]);    
 #        ids_patches=Array{Int64,1}();
 
-
+        # Create a graph with the position of the particles and cutoff distances of the potentials
         (graph, count_threebody) = create_clusters(N_part,ids_central,id_to_pos,ind_to_id,id_to_type,tree_pbc)
 
 
 # Analysis of the graph
 
-        # Find all particles with degree 0 (There are isolated)
-        inds_isolated = findall(degree(graph).==0);
-
         # Create a list with the inds of particles in a cluster
         list_inds_clusters=connected_components(graph);
 
-    # Remove clusters of one elements
+    # Quantify the amount of clusters 
 
         # Create a mask that select clusters bigger than one particle 
-        mask_cluster = length.(list_inds_clusters) .!= 1;
+        mask_cluster = length.(list_inds_clusters) .> 3;
 
         list_inds_clusters=list_inds_clusters[mask_cluster];
 
@@ -419,7 +416,51 @@ df_system = df_systems[1];
         Max_cluster = maximum(length.(list_inds_clusters));
 
 
+    # Compute the arithmetic distances between crosslinkers inside a cluster
 
+        # Distance between crosslinkers
+        distances = Array{Float64,1}();
+
+
+        for cluster in list_inds_clusters
+            # Create mask for central particles
+            cluster_type = map(s->id_to_type[ind_to_id[s]],cluster)
+            mask_type = cluster_type .== 1;
+
+            # Filter thru the mask
+            cluster_type = cluster[mask_type];
+
+            # Create a copy to compute the distances between Cl without repeat.
+            aux = deepcopy(cluster_type);
+
+            while !isempty(aux)
+
+                # Select one particle and delete it from the list
+                ind_i = popfirst!(aux);
+
+                # Get the position
+                pos_i = id_to_pos[ind_to_id[ind_i]];
+                pos = map(s->id_to_pos[ind_to_id[s]],aux);
+
+                # Compute the distances with the rest
+                dist = map(s->dist_pbc.(pos_i.-s,[l_x; l_y; l_z]),pos);
+
+                # Append the distances
+                append!(distances,map(s-> sqrt(s'*s),dist));
+            end # while 
+        end # for
+
+    # Create a histogram of the distances between CL
+        
+        # Define a bin size
+        bin_size = 1.4;
+
+        # Maximum number of bins
+        N_bins = ceil(Int64,ceil(div(maximum(distances),bin_size))) + 1;
+
+        # Create the bins
+        bins = bin_size.*(0:N_bins)
+        
 
 
 
