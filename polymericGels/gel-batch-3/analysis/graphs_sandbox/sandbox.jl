@@ -268,6 +268,74 @@ function create_clusters(N_part::Int64, ids_central::Vector{Int64}, id_to_pos::D
 
 end
 
+"""
+    get_CL_cistances_euclidean(list_inds_clusters::Vector{Vector{Int64}}, id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, l_x::Float64, l_y::Float64, l_z::Float64)
+
+Compute the arithmetic distances between crosslinkers inside a cluster
+"""
+function get_CL_cistances_euclidean(list_inds_clusters::Vector{Vector{Int64}}, id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, l_x::Float64, l_y::Float64, l_z::Float64)
+
+        # Distance between crosslinkers
+        distances = Array{Float64,1}();
+
+        for cluster in list_inds_clusters
+            # Create mask for central particles
+            cluster_type = map(s->id_to_type[ind_to_id[s]],cluster)
+            mask_type = cluster_type .== 1;
+
+            # Filter thru the mask
+            cluster_type = cluster[mask_type];
+
+            while !isempty(cluster_type)
+
+                # Select one particle and delete it from the list
+                ind_i = popfirst!(cluster_type);
+
+                # Get the position
+                pos_i = id_to_pos[ind_to_id[ind_i]];
+                pos = map(s->id_to_pos[ind_to_id[s]],cluster_type);
+
+                # Compute the distances with the rest
+                dist = map(s->dist_pbc.(pos_i.-s,[l_x; l_y; l_z]),pos);
+
+                # Append the distances
+                append!(distances,map(s-> sqrt(s'*s),dist));
+            end # while 
+        end # for
+
+    return distances
+end
+
+"""
+    create_hist_CL_euclidian(distances::Vector{Float64})
+
+Create a histogram with the euclidean distances
+"""
+function create_hist_CL_euclidian(distances::Vector{Float64})
+
+    # Create a histogram of the distances between CL
+        
+        # Define a bin size
+        bin_size = 1.4;
+
+        # Maximum number of bins
+        N_bins = ceil(Int64,ceil(div(maximum(distances),bin_size))) + 1;
+
+        # Create the bins
+        bins = bin_size.*(0:N_bins);
+
+        # Compute bins id
+        bins_id = floor.(Int64,distances./bin_size).+1;
+
+        # Create the histogram
+        hist_distances=map(s->count(==(s),bins_id),eachindex(bins));
+
+        return (domain=bins,range=hist_distances)
+
+end
+
+
+
 
 
 #=
@@ -415,84 +483,18 @@ df_system = df_systems[1];
         # Biggest cluster
         Max_cluster = maximum(length.(list_inds_clusters));
 
-
-    # Compute the arithmetic distances between crosslinkers inside a cluster
-
-        # Distance between crosslinkers
-        distances = Array{Float64,1}();
+        distances = get_CL_cistances_euclidean(list_inds_clusters,id_to_type,ind_to_id,id_to_pos,l_x,l_y,l_z)
 
 
-        for cluster in list_inds_clusters
-            # Create mask for central particles
-            cluster_type = map(s->id_to_type[ind_to_id[s]],cluster)
-            mask_type = cluster_type .== 1;
+        hist_dist_euclidean = create_hist_CL_euclidian(distances);
 
-            # Filter thru the mask
-            cluster_type = cluster[mask_type];
+    # Compute the distances between CL
+    # Going thru the monomer chain
 
-            # Create a copy to compute the distances between Cl without repeat.
-            aux = deepcopy(cluster_type);
-
-            while !isempty(aux)
-
-                # Select one particle and delete it from the list
-                ind_i = popfirst!(aux);
-
-                # Get the position
-                pos_i = id_to_pos[ind_to_id[ind_i]];
-                pos = map(s->id_to_pos[ind_to_id[s]],aux);
-
-                # Compute the distances with the rest
-                dist = map(s->dist_pbc.(pos_i.-s,[l_x; l_y; l_z]),pos);
-
-                # Append the distances
-                append!(distances,map(s-> sqrt(s'*s),dist));
-            end # while 
-        end # for
-
-    # Create a histogram of the distances between CL
         
-        # Define a bin size
-        bin_size = 1.4;
-
-        # Maximum number of bins
-        N_bins = ceil(Int64,ceil(div(maximum(distances),bin_size))) + 1;
-
-        # Create the bins
-        bins = bin_size.*(0:N_bins)
-        
-
 
 
 #=
-        # Create a copy of the graph for further modification
-        graph_cl = deepcopy(graph);
-
-    # Clean the graph created by the crosslinkers
-        # Find all particles with degree 0 (There are isolated)
-        inds_isolated = findall(degree(graph_cl).==0)
-
-        # Remove isolated particles
-        rem_vertices!(graph_cl,inds_isolated)
-
-        # Create a list with the inds of particles in a cluster
-        list_inds_clusters_cl=connected_components(graph_cl);
-
-    # Remove clusters of one elements
-
-        # Create a mask that select clusters bigger than one particle 
-        mask_cluster_cl = length.(list_inds_clusters_cl) .!= 1;
-
-        list_inds_clusters_cl=list_inds_clusters_cl[mask_cluster_cl];
-
-    # Analysis of the cluster
-
-        # Number of clusters in the system
-        N_clusters_cl = length(list_inds_clusters_cl);
-
-        # Biggest cluster
-        Max_cluster_cl = maximum(length.(list_inds_clusters_cl));
-
         # Compute distance between crosslinkers
 
         # Find shortest patch from one cl to another
@@ -556,54 +558,6 @@ df_system = df_systems[1];
         end # for store_paths
 =#
 
-
-#=
-
-
-    # Continue creating monomers chains
-        all_ids =  [ids_cl; ids_mo];
-
-        mask_aux = mapreduce(s->all_ids .!= s,.&,visited_id);
-
-        notvisited_ids=all_ids[mask_aux];
-       
-        # Finish the lonely polymer chains        
-        to_explore_id = copy(notvisited_ids);
-       
-        while !isempty(to_explore_id);
-
-            id_neigh = popfirst!(to_explore_id);
-
-        #for id_neigh in ids_neigh_filter
-            global graph,visited_id,new_ids = explore_chain(id_neigh,visited_id,id_to_pos,id_to_ind,ind_to_id,id_to_type,graph,tree_pbc)
-        #end
-
-            # Select those that are not already visited
-            mask_new = mapreduce(s->new_ids .!= s,.&,visited_id)
-
-            # Compute the mask
-            new_ids_filter = new_ids[mask_new]; #setdiff(new_ids,visited_id)
-
-            append!(to_explore_id, new_ids_filter);
-
-        end
-
-        # Create a list with the inds of particles in a cluster
-        list_inds_clusters=connected_components(graph);
-
-    # Remove clusters of one elements
-
-        # Create a mask that select clusters bigger than one particle 
-        mask_cluster = length.(list_inds_clusters) .!= 1;
-
-        list_inds_clusters=list_inds_clusters[mask_cluster];
-
-        # Number of clusters in the system
-        N_clusters = length(list_inds_clusters);
-
-        # Biggest cluster
-        Max_cluster = maximum(length.(list_inds_clusters));
-=#
 
 
      #end # For enumerate(paths_dumpf_simulations)
