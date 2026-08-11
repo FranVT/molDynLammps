@@ -483,15 +483,61 @@ df_system = df_systems[1];
         # Biggest cluster
         Max_cluster = maximum(length.(list_inds_clusters));
 
+        # Get the euclidean distance between CL
         distances = get_CL_cistances_euclidean(list_inds_clusters,id_to_type,ind_to_id,id_to_pos,l_x,l_y,l_z)
 
-
+        # Create a histogram with the euclidean distances
         hist_dist_euclidean = create_hist_CL_euclidian(distances);
 
     # Compute the distances between CL
     # Going thru the monomer chain
 
-        
+        # Select one cluster
+        cluster_inds = list_inds_clusters[2]; 
+
+        # Create mask for CrossLinkers 
+            cluster_type = map(s->id_to_type[ind_to_id[s]],cluster_inds)
+            mask_type = cluster_type .== 1;
+
+            # Filter thru the mask
+            cl_cluster = cluster_inds[mask_type];
+
+            if length(cl_cluster) == 1
+                println("Only one Cl in the cluster")
+                # continue or break
+            end
+
+            # Explore a chain
+            # Until it reaches a CL or
+            # It ends
+
+            # Select one cl
+            cl_ind_explore = cl_cluster[1];
+
+            # Create an array for the central particles visited
+            cp_visited = [cl_ind_explore];
+
+    # Patches CL
+                # get the inds neighbors (patches)
+                neigh_inds = all_neighbors(graph,cl_ind_explore);
+
+                # Select one patch
+                patch_ind = neigh_inds[1];
+
+                # Find neighbors of the patch
+                neigh2_inds = all_neighbors(graph,patch_ind);
+
+                # Filter from previous central particles
+                mask_cp=neigh2_inds .!= cl_ind_explore;
+
+                # Apply the filter
+                neigh2_inds=neigh2_inds[mask_cp];
+
+                if length(neigh2_inds) > 1
+                    println("Multi patch interaction")
+                end
+
+            # What if the if is activiated?
 
 
 #=
