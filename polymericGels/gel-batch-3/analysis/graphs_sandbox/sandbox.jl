@@ -334,6 +334,128 @@ function create_hist_CL_euclidian(distances::Vector{Float64})
 
 end
 
+"""
+    explore_chain_cl(chain::Vector{Int64}, graph::SimpleGraph{Int64}, id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64})
+
+Function that explores a chain until it finds another CL 
+"""
+function explore_chain_cl(chain::Vector{Int64}, graph::SimpleGraph{Int64}, id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64})
+
+            while true 
+    
+                # Select the last item of the chain.
+                # MUST BE A PATCH
+                patch_ind = last(chain);
+
+    # patch - patch
+                # Find neighbors of the patch
+                patch_patch_inds = all_neighbors(graph,patch_ind);
+
+                # Filter from central particles
+                # Map from inds to id to type
+                patch_patch_type = map(s-> id_to_type[ind_to_id[s]],patch_patch_inds);
+
+                # Create a mask
+                mask_type1 = patch_patch_type .!= 1;
+                mask_type2 = patch_patch_type .!= 2;
+                mask_type = mask_type1 .& mask_type2;
+
+                # Apply the mask
+                patch_patch_inds = patch_patch_inds[mask_type];
+
+                if length(patch_patch_inds) < 1
+                    break # Chain end
+                end
+
+                # Select one patch
+                #  HERE I DONT TAKE INTO ACCOUTN THREEBODY STUFF
+                patch2_ind = patch_patch_inds[1];
+
+                # Eliminate particles in the chain
+                mask_repeat = mapreduce(s->patch2_ind .!= s,.&,chain);
+
+                # Apply the mask
+                patch2_ind = patch2_ind[mask_repeat];
+
+                # Add the patch to the chain
+                append!(chain,patch2_ind)
+                    
+    # patch - central
+                # Find neighbors of the patch (central particle)
+                patch_central_ind = all_neighbors(graph,last(chain));
+
+                # Filter from patches 
+                # Map from inds to id to type
+                patch_central_type = map(s-> id_to_type[ind_to_id[s]],patch_central_ind);
+
+                # Create a mask
+                mask_type3 = patch_central_type .!= 3;
+                mask_type4 = patch_central_type .!= 4;
+                mask_type = mask_type3 .& mask_type4;
+
+                # Apply the mask
+                patch_central_ind = first(patch_central_ind[mask_type]);
+
+                # Check if it is a Monomer or CL
+                patch_central_type = first(patch_central_type[mask_type]);
+
+                if patch_central_type == 1
+                    println("Is CL")
+                    
+                    # Eliminate particles in the chain
+                    mask_repeat = mapreduce(s->patch_central_ind .!= s,.&,chain);
+
+                    # Apply the mask
+                    patch_central_ind = patch_central_ind[mask_repeat];
+
+                    append!(chain,patch_central_ind)
+
+                    break
+
+                else
+                    # Eliminate particles in the chain
+                    mask_repeat = mapreduce(s->patch_central_ind .!= s,.&,chain);
+
+                    # Apply the mask
+                    patch_central_ind = patch_central_ind[mask_repeat];
+
+                    append!(chain,patch_central_ind)
+                end # if
+
+    # central - patch
+                # Select one central particle 
+                central_ind = last(chain);
+
+                # get the inds neighbors (patches)
+                patches_inds = all_neighbors(graph,central_ind);
+
+                # Filter from central particles
+                # Map from inds to id to type
+                patch_patch_type = map(s-> id_to_type[ind_to_id[s]],patches_inds);
+
+                # Create a mask
+                mask_type1 = patch_patch_type .!= 1;
+                mask_type2 = patch_patch_type .!= 2;
+                mask_type = mask_type1 .& mask_type2;
+
+                # Apply the mask
+                patches_inds = patches_inds[mask_type];
+
+                # Eliminate particles in the chain
+                mask_repeat = mapreduce(s->patches_inds .!= s,.&,chain);
+
+                # Apply the mask
+                patches_inds = patches_inds[mask_repeat];
+
+                # Add the patch to the chain
+                append!(chain,first(patches_inds))
+
+            end # while
+
+        return chain
+
+end
+
 
 
 
@@ -507,245 +629,56 @@ df_system = df_systems[1];
                 # continue or break
             end
 
-            # Explore a chain
-            # Until it reaches a CL or
-            # It ends
+            # To store all the chains
+            all_chains = [[] for _ in eachindex(cl_cluster)]; 
 
-            it = 1;
+            for (it,cl_explore) in enumerate(cl_cluster)
 
-            # Initialize the chain
-            chain = [];
+                # Explore a chain
+                # Until it reaches a CL or
+                # It ends
 
-            # Initialize the test
-            is_old_cl = true;
+                # To store the 4 chains per CL
+                chains_cl = [Vector{Int64}() for _ in 1:4];
 
-            # Start the chain.
-            # It is important to start with a CL.
-            append!(chain,cl_cluster[it])
+                # Find the patches of the initial CL
+                patches_inds = all_neighbors(graph,cl_explore);
 
-            # Find the patches of the initial CL
-            patches_inds = all_neighbors(graph,last(chain));
-
-            # Select one patch 
-            patch_ind = patches_inds[it];
-
-            # Add the patch to the chain
-            append!(chain,patch_ind)
-
-# Need to create functions
-
-            while is_old_cl
-    
-                # Select the last item of the chain.
-                # MUST BE A PATCH
-                patch_ind = last(chain);
-
-    # patch - patch
-                # Find neighbors of the patch
-                patch_patch_inds = all_neighbors(graph,patch_ind);
-
-                # Filter from central particles
-                # Map from inds to id to type
-                patch_patch_type = map(s-> id_to_type[ind_to_id[s]],patch_patch_inds);
-
-                # Create a mask
-                mask_type1 = patch_patch_type .!= 1;
-                mask_type2 = patch_patch_type .!= 2;
-                mask_type = mask_type1 .& mask_type2;
-
-                # Apply the mask
-                patch_patch_inds = patch_patch_inds[mask_type];
-
-                if length(patch_patch_inds) < 1
-                    continue # Chain end
-                end
-
-                # Select one patch
-                patch2_ind = patch_patch_inds[1];
-
-                # Eliminate particles in the chain
-                mask_repeat = mapreduce(s->patch2_ind .!= s,.&,chain);
-
-                # Apply the mask
-                patch2_ind = patch2_ind[mask_repeat];
-
-                # Add the patch to the chain
-                append!(chain,patch2_ind)
-                    
-    # patch - central
-                # Find neighbors of the patch (central particle)
-                patch_central_ind = all_neighbors(graph,last(chain));
-
-                # Filter from patches 
-                # Map from inds to id to type
-                patch_central_type = map(s-> id_to_type[ind_to_id[s]],patch_central_ind);
-
-                # Create a mask
-                mask_type3 = patch_central_type .!= 3;
-                mask_type4 = patch_central_type .!= 4;
-                mask_type = mask_type3 .& mask_type4;
-
-                # Apply the mask
-                patch_central_ind = first(patch_central_ind[mask_type]);
-
-                # Check if it is a Monomer or CL
-                patch_central_type = first(patch_central_type[mask_type]);
-
-                if patch_central_type == 1
-                    println("Is CL")
-                    
-                    # Eliminate particles in the chain
-                    mask_repeat = mapreduce(s->patch_central_ind .!= s,.&,chain);
-
-                    # Apply the mask
-                    patch_central_ind = patch_central_ind[mask_repeat];
-
-                    append!(chain,patch_central_ind)
-
-                    break
-
-                    #global is_old_cl = false # Break
-                else
-                    # Eliminate particles in the chain
-                    mask_repeat = mapreduce(s->patch_central_ind .!= s,.&,chain);
-
-                    # Apply the mask
-                    patch_central_ind = patch_central_ind[mask_repeat];
-
-                    append!(chain,patch_central_ind)
-                end # if
-
-    # central - patch
-                # Select one central particle 
-                central_ind = last(chain);
-
-                # get the inds neighbors (patches)
-                patches_inds = all_neighbors(graph,central_ind);
-
-                # Filter from central particles
-                # Map from inds to id to type
-                patch_patch_type = map(s-> id_to_type[ind_to_id[s]],patches_inds);
-
-                # Create a mask
-                mask_type1 = patch_patch_type .!= 1;
-                mask_type2 = patch_patch_type .!= 2;
-                mask_type = mask_type1 .& mask_type2;
-
-                # Apply the mask
-                patches_inds = patches_inds[mask_type];
-
-                # Eliminate particles in the chain
-                mask_repeat = mapreduce(s->patches_inds .!= s,.&,chain);
-
-                # Apply the mask
-                patches_inds = patches_inds[mask_repeat];
-
-                # Add the patch to the chain
-                append!(chain,first(patches_inds))
-
-
-            end # while
-
+                # Explore the 4 chains of one crosslinker
+                for (it2,patch_ind) in enumerate(patches_inds)
                 
-                
+                    # Start the chain
+                    # IMPORTANT: CENTRAL THEN PATCH
+                    chain = [cl_explore; patch_ind];
 
-    # Patches CL
-                
+                    # Get the chain starting from one patch
+                    chains_cl[it2] = explore_chain_cl(chain,graph,id_to_type,ind_to_id)
 
+                end #for 
 
+                # Store the chains
+                all_chains[it] = chains_cl;
 
-#=
-
-
-                mask_cp=neigh2_inds .!= cl_ind_explore;
-
-                # Apply the filter
-                neigh2_inds=neigh2_inds[mask_cp];
-
-                if length(neigh2_inds) > 1
-                    println("Multi patch interaction")
-                end
-
-            # What if the if is activiated?
-                # Select one patch
-                patch2_ind = neigh2_inds[1];
-
-    # patch - central
-                # Find neighbors of the patch
-                neigh3_inds = all_neighbors(graph,patch2_ind);
-
-                # Filter from previous central particles
-                mask_patch=neigh3_inds .!= patch_ind;
-
-                # Apply the filter
-                neigh3_inds = first(neigh3_inds[mask_patch]); # central particle
-
-=#
+            end # for 
 
 
-#=
-        # Compute distance between crosslinkers
 
-        # Find shortest patch from one cl to another
-        to_explore_id_cl=copy(ids_cl);
+            # The idea is to no double check chains.
+            # But it is more subtle than I expected
+            # Get the last particle
+            #chains_end = last.(chains_cl);
 
-        # Initialize and array of arrays to store the data
-        store_paths=[];
-        store_distances=[];
+            # Find which CL is connect with the other CL
+            #mask = mapreduce(s->chains_end .== s,.&,list_cl)
 
-        while !isempty(to_explore_id_cl)
 
-            # Select one id
-            id_start=popfirst!(to_explore_id_cl);
 
-            for id_final in to_explore_id_cl
-                # Get the shortest patch between the ids
-                path_edge=a_star(graph_cl,id_start,id_final);
 
-                # Check if it is empty
-                if isempty(path_edge)
-                    continue
-                end
-            
-                # Store the path
-                append!(store_paths,[path_edge])
 
-            end # for
-        end # while 
 
-        # Select one path
-        path = store_paths[1];
 
-        for path in store_paths
+# map(s->id_to_type[ind_to_id[s]],chain)
 
-            distance_path=0;
-
-            for edge in path
-        
-                # source index
-                ind_src = src(edge);
-
-                # Destiniy index
-                ind_dst = dst(edge);
-
-                # Convert to id
-                id_src = ind_to_id[ind_src];
-                id_dst = ind_to_id[ind_dst];
-
-                # Get the positions
-                pos_src=id_to_pos[id_src];
-                pos_dst=id_to_pos[id_dst];
-
-                # Get the distance from src to dst
-                distance = sqrt(sum(dist_pbc.(pos_dst .- pos_src,[l; l; l]).^2));
-        
-                # Add the distance
-                distance_path+=distance;
-            end # for path 
-
-            append!(store_distances,distance_path)
-        end # for store_paths
-=#
 
 
 
