@@ -55,23 +55,127 @@ set_theme!(
 
 # Paths and directories
 DIR_MAIN = pwd();
-DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
+DIR_DATA = joinpath(DIR_MAIN,"analyzed_data");
 FILE_DAT = "dat.csv";
-
-# Constants
-DT=0.001;
+DIR_SAVE = joinpath(DIR_MAIN,"figures");
 
 # Read the directory 
-files=readdir(DIR_SAVE);
+files=readdir(DIR_DATA);
 
 # Get only those of the structure factor
 files=filter(s -> occursin("fix_mean_", s), files);
 
 # Read the files
-df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
+df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
 
 # Combine the dataframes
 df_group=reduce(vcat,df_files)
+
+# NEED TO BE THE SAME AS THE FixInfoAnalysis.jl
+# Select the categories that define a system
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
+
+# Create categories to select different experiments (Just in case)
+categories_experiment=[:N_heat,:N_isothermal];
+
+# For id
+categories_id = [categories_system; categories_experiment];
+
+# Group by experiments
+data_per_experiment = groupby(df_group,categories_experiment);
+
+# Selecte one experiment
+data_experiment = data_per_experiment[1];
+
+# Figure same experiment, different systems
+fig_experiment = Figure();
+
+# Create an Axis
+ax_plot = Axis(fig_experiment[1:1, 1:1],
+                   xlabel = L"\mathrm{Time~}[\tau]",
+                   ylabel = L"U(\tau)~[\epsilon]",
+                   xminorticksvisible = true,
+                   xminorgridvisible = true,
+                   limits = (nothing, nothing, nothing, nothing),
+                   xscale = log10
+                  )
+
+    # Group by system
+    data_per_system = groupby(data_experiment,categories_system);
+
+    # For label
+#    plot_fig=[Any for _ in 1:length(data_per_system)];
+
+    for (it_system,data_system) in enumerate(data_per_system)
+
+        # Get time step
+        dt = first(data_system.tstep);
+
+        # Start of the isothermal process
+        start_isothermal = dt*first(data_system.N_heat);
+
+        # Prepare the data for the figure
+        time_domain = dt.*collect(data_system.TimeStep);
+
+        # Extract the potential energy
+        energy_range = collect(data_system.c_ep);
+
+        # Create a mask to consider only isothermal process
+        mask_isothermal = time_domain .> start_isothermal;
+
+        # Apply the mask to domain and range
+        time_domain = time_domain[mask_isothermal];
+        energy_range = energy_range[mask_isothermal];
+
+        # Add the energy to the figure
+        lines!(ax_plot,time_domain,energy_range,
+               label=latexstring("\\mathrm{System}~",it_system),
+               linewidth = 3
+              )
+    end
+    
+    # Add the legend
+    axislegend(ax_plot,
+               merge = true,
+               position=:rt, 
+               framevisible = false
+              )
+
+    # Add legend in the figure
+ax_legend = Axis(fig_experiment[1:1,1:1],
+                limits = (0, 0, 0, 0)
+                )
+
+    # Hide everything
+    hidespines!(ax_legend)
+    hidedecorations!(ax_legend)
+
+    # Add label decoys
+    decoy_1=scatter!(ax_legend,1,1,color=:white)
+    decoy_2=scatter!(ax_legend,1,1,color=:white)
+    decoy_3=scatter!(ax_legend,1,1,color=:white)
+    decoy_4=scatter!(ax_legend,1,1,color=:white)
+    decoy_5=scatter!(ax_legend,1,1,color=:white)
+
+    legends = [];
+
+    for (it_system,data_system) in enumerate(data_per_system)
+        
+        aux=[];
+        for cat in categories_system
+            label=latexstring("\\mathrm{",string(cat),"}:~",first(data_system[!,cat]));
+            append!(aux,[label])
+        end
+        append!(legends,[aux])
+    end
+
+
+    # Create array for the information
+    #legend_labels=[latexstring("t=",DT*time_step,"~\\tau");latexstring("T=",labels_plot[3])]
+
+
+
+#=
 
 # Prepare for a separation by system
 categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
@@ -145,7 +249,7 @@ df_systems=groupby(df_group,categories_system);
               );
      end
     
-        axislegend(ax_plot,
+axislegend(ax_plot,
                    merge = true,
                    position=:rt, 
                    framevisible = false,
@@ -250,4 +354,4 @@ df_systems=groupby(df_group,categories_system);
                   )
 
     save(string("fig_Temperature_phiseries.png"), fig, px_per_unit = 300 / INCH)
-
+=#
