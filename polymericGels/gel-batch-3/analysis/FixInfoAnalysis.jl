@@ -115,15 +115,15 @@ categories_id = [categories_system; categories_experiment];
 meta_data_experiments=groupby(df_dat,categories_experiment);
 
 # Save the infomration of average assembles
-    for meta_data_experiment in meta_data_experiments
+for meta_data_experiment in meta_data_experiments
 
-        # Group by system
-        meta_data_systems = groupby(meta_data_experiment,categories_system);
+    # Group by system
+    meta_data_systems = groupby(meta_data_experiment,categories_system);
 
-        # Go through all systems and experiments 
-        for meta_data_simulations in meta_data_systems
-            # Compute the assemble average and store the data
-            save_mean_fix_analysis(meta_data_simulations,DIR_SAVE,categories_id)
-        end # end systems
-    end # for experiments
+    # Go through all systems and experiments 
+    for meta_data_simulations in meta_data_systems
+        # Compute the assemble average and store the data
+        save_mean_fix_analysis(meta_data_simulations,DIR_SAVE,categories_id)
+    end # end systems
+end # for experiments
 
