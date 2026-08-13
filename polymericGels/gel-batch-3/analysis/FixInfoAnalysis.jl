@@ -71,28 +71,23 @@ end
 
 Store in analyzed_data the mean of a set of experiments
 """
-function save_mean_fix_analysis(df_set::AbstractDataFrame, DIR_SAVE::String, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol})
-    # Create a dataframe with the information of the fix files
-    df_set_info=compute_mean_set_fixf(df_set);
+function save_mean_fix_analysis(meta_data_simulations::AbstractDataFrame, DIR_SAVE::String, categories_id::Vector{Symbol})
+        # Compute the assemble average of the fix info
+        df_set_info = compute_mean_set_fixf(meta_data_simulations);
 
-    # Define a set of categories
-    categories_total=[categories_system; categories_experiment];
+        # Create a file name from the categories_total
+        ids_set_info=[meta_data_simulations[1, col] for col in categories_id];
 
-    # Create a file name from the categories_total
-    ids_set_info=[df_set[1, col] for col in categories_total];
+        # Add the values of the categories to the dataframe 
+        for (col, val) in zip(categories_id, ids_set_info)
+            df_set_info[!, col] .= val; 
+        end
 
-    # Add the values of the categories to the dataframe 
-    for (col, val) in zip(categories_total, ids_set_info)
-        df_set_info[!, col] .= val 
-    end
+        # Create a file name from the ids 
+        file_name=string("fix_mean_",join(string.(ids_set_info)),".csv");
 
-    # Create a file name from the ids 
-    file_name=string("fix_mean_",join(string.(ids_set_info)),".csv");
-
-    # Save the data frame
-    CSV.write(joinpath(DIR_SAVE,file_name),df_set_info);
-  
-    return nothing
+        # Save the data frame
+        CSV.write(joinpath(DIR_SAVE,file_name),df_set_info);
 end
 #=
     Start the script
@@ -113,16 +108,22 @@ categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
 # Create categories to select different experiments (Just in case)
 categories_experiment=[:N_heat,:N_isothermal];
 
-# Group by system 
-df_systems=groupby(df_dat,categories_system);
+# For id
+categories_id = [categories_system; categories_experiment];
 
-# Save the mean of all experiments
-for df_system in df_systems
-    # Group by experiments
-    df_experiments=groupby(df_system,categories_experiment);
+# Group by experiments
+meta_data_experiments=groupby(df_dat,categories_experiment);
 
-    # Save the dataframes per set of experiments
-    for df_set in df_experiments
-        save_mean_fix_analysis(df_set,DIR_SAVE,categories_system,categories_experiment)
-    end
-end
+# Save the infomration of average assembles
+    for meta_data_experiment in meta_data_experiments
+
+        # Group by system
+        meta_data_systems = groupby(meta_data_experiment,categories_system);
+
+        # Go through all systems and experiments 
+        for meta_data_simulations in meta_data_systems
+            # Compute the assemble average and store the data
+            save_mean_fix_analysis(meta_data_simulations,DIR_SAVE,categories_id)
+        end # end systems
+    end # for experiments
+
