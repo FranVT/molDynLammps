@@ -753,7 +753,7 @@ files=readdir(DIR_DATA);
 files=filter(s -> occursin("structure_factor_", s), files);
 
 # Read the files
-#df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
+df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
 
 # Group the Vector{DataFrame} into one DataFrame
 df_group=reduce(vcat,df_files);
