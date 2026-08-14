@@ -742,29 +742,157 @@ end
 
 # Paths and directories
 DIR_MAIN = pwd();
-DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
+DIR_DATA = joinpath(DIR_MAIN,"analyzed_data");
 FILE_DAT = "dat.csv";
-
-# Constants
-DT=0.001;
+DIR_SAVE = joinpath(DIR_MAIN,"figures");
 
 # Read the directory 
-files=readdir(DIR_SAVE);
+files=readdir(DIR_DATA);
 
 # Get only those of the structure factor
 files=filter(s -> occursin("structure_factor_", s), files);
 
 # Read the files
-df_files=[CSV.read(joinpath(DIR_SAVE,file), DataFrame) for file in files];
+#df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
 
 # Group the Vector{DataFrame} into one DataFrame
-df_combo=reduce(vcat,df_files);
+df_group=reduce(vcat,df_files);
 
+# NEED TO BE THE SAME AS THE FixInfoAnalysis.jl
 # Select the categories that define a system
-categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal];
+categories_system=[:phi,:chi_4,:temp,:damp]; #,:tstep
+
+# Create categories to select different experiments (Just in case)
+categories_experiment=[:N_heat,:N_isothermal];
+
+# For id
+categories_id = [categories_system; categories_experiment];
+
+# Categories for time step
+category_time = :timeStep;
+
+# Group by time step
+data_per_time_step = groupby(df_group,category_time);
+
+# Select one time step
+data_time_step = data_per_time_step[1];
+
+for data_time_step in data_per_time_step
+
+    # Get the time step for name and stuff
+    time_step = first(data_time_step.timeStep);
+
+    # Group by experiments
+    data_per_experiment = groupby(data_time_step,categories_experiment);
+
+    # Select one experiment
+    data_experiment = data_per_experiment[1];
+
+    for data_experiment in data_per_experiment
+
+        # Figure same experiment, different systems
+        fig_experiment = Figure();
+
+        # For the legends
+        legends = [];
+
+        # Create an Axis
+        ax_plot = Axis(fig_experiment[1:4,1],
+                       xlabel = L"|\vec{q}|~[1/\sigma]",
+                       ylabel = L"S(|\vec{q}|)",
+                       xminorticksvisible = true,
+                       xminorgridvisible = true,
+                       limits = (nothing, nothing, nothing, nothing),
+                       xscale = log10,
+                       yscale = log10
+                      )
+
+        # Group by system 
+        data_per_system = groupby(data_experiment,categories_system);
+
+        # Select one system
+        data_system = data_per_system[1];
+
+        for (it_system,data_system) in enumerate(data_per_system)
+
+            # Get the domain and range
+            q_domain = data_system.q_mean;
+            Sq_range = data_system.Sq_mean;
+
+            # Add the plot
+            lines!(ax_plot,q_domain,Sq_range,linewidth=3)
+
+            # Create the legend
+            aux=[];
+            append!(aux,[latexstring("\\mathrm{System}~",it_system)])
+            for cat in categories_system
+                label=latexstring("\\mathrm{",string(cat),"}=~",first(data_system[!,cat]));
+                append!(aux,[label])
+            end
+            append!(legends,[aux])
+        end
+
+    # Add legend in the figure
+ax_legend = Axis(fig_experiment[1:1,1:1],
+                limits = (0, 0, 0, 0)
+                )
+
+    # Hide everything
+    hidespines!(ax_legend)
+    hidedecorations!(ax_legend)
+
+    # Create decoy plot per system to add the labels
+    plots_decoy = mapreduce(s->[scatter!(ax_legend,1,1)],vcat,1:length(data_per_system))
+
+    # Add the legend
+    Legend(fig_experiment[5:6,1],
+           plots_decoy,
+           latexstring.(join.(legends,"~")),
+           orientation = :vertical
+          )
+
+    # Display the figure
+    display(fig_experiment)
+
+    # Create the name by getting the experiment id
+    aux_name = []
+    for cat in categories_experiment
+        label=string(cat,"_",first(data_experiment[!,cat]));
+        append!(aux_name,[label])
+    end
+
+    ax_aux = Axis(fig_experiment[1:4,1],limits=(0,0,0,0))
+    hidespines!(ax_aux)
+    hidedecorations!(ax_aux)
+    scatter!(ax_aux,1,1,markersize=0.1,color=:white,label=latexstring("N_{t}=",time_step))
+
+    # add the time step
+        axislegend(ax_aux,
+                   position=:rt, 
+                   framevisible = true,
+                   framewidth = 0.0,
+                   padding=(0.0f0,4.0f0,1.0f0,1.0f0),
+                   patchsize=(0.0f0, 0.0f0)
+                  )
+
+    # Join the categories
+    aux_name = join(aux_name,"_");
+
+    # Create the file name
+    figure_name = string("structure_factor_experiment_",aux_name,"_timestep_",time_step,".png")
+
+    # save the figures
+    save(joinpath(DIR_SAVE,figure_name), fig_experiment, px_per_unit = 300 / INCH)
+
+    end
+end
+
+#=
+# Select the categories that define a system
+#categories_figures=[:phi,:chi_4,:temp,:damp,:N_heat,:N_isothermal];
 
 # Group by system and experiments
-df_systems=groupby(df_combo,categories_figures);
+#df_systems=groupby(df_combo,categories_figures);
 
 #=
     Time series figures
@@ -885,7 +1013,7 @@ df_systems=groupby(df_aux,categories_figures);
         file_name=string("fig_Sq_phi_series_loglog",join(string.(labels_plot)),"_time_",time_max,".png");
 
         #save(file_name, fig, px_per_unit = 300 / INCH)
-
+=#
 
 
 

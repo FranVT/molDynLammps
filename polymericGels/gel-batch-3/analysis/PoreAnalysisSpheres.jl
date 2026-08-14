@@ -239,6 +239,9 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
                 df_to_store[!, col] .= val 
             end
 
+            # add the number of simulation to later make an average
+            df_to_store[!,:sim] .= it_sim;
+
             # Create a file name from the ids 
             file_name=string("pore_analysis_spheres_",join(string.(ids_set_info)),"_step_",ids_time_step[it],"_simulation_",it_sim,".csv");
 
