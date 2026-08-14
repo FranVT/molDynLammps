@@ -52,21 +52,21 @@ set_theme!(
 
 function figure_potential_energy(data_experiment,categories_system,categories_experiment,DIR_SAVE)
 
-# Figure same experiment, different systems
-fig_experiment = Figure();
+    # Figure same experiment, different systems
+    fig_experiment = Figure();
 
-# For the legends
-legends = [];
+    # For the legends
+    legends = [];
 
-# Create an Axis
-ax_plot = Axis(fig_experiment[1:4,1],
-                   xlabel = L"\mathrm{Time~}[\tau]",
-                   ylabel = L"U(\tau)~[\epsilon]",
-                   xminorticksvisible = true,
-                   xminorgridvisible = true,
-                   limits = (nothing, nothing, nothing, nothing),
-                   xscale = log10
-                  )
+    # Create an Axis
+    ax_plot = Axis(fig_experiment[1:4,1],
+                       xlabel = L"\mathrm{Time~}[\tau]",
+                       ylabel = L"U(\tau)~[\epsilon]",
+                       xminorticksvisible = true,
+                       xminorgridvisible = true,
+                       limits = (nothing, nothing, nothing, nothing),
+                       xscale = log10
+                      )
 
     # Group by system
     data_per_system = groupby(data_experiment,categories_system);

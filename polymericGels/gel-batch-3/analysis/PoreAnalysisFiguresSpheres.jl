@@ -140,18 +140,69 @@ end
 
 # Paths and directories
 DIR_MAIN = pwd();
-DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
+DIR_DATA = joinpath(DIR_MAIN,"analyzed_data");
 FILE_DAT = "dat.csv";
-
-# Constants
-DT=0.001;
+DIR_SAVE = joinpath(DIR_MAIN,"figures");
 
 # Read the directory 
-files=readdir(DIR_SAVE);
+files=readdir(DIR_DATA);
 
 # Get only those of the structure factor
 files=filter(s -> occursin("pore_analysis_spheres_", s), files);
 
+# Read the files
+df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
+
+# Combine the dataframes
+df_group=reduce(vcat,df_files)
+
+# NEED TO BE THE SAME AS THE FixInfoAnalysis.jl
+# Select the categories that define a system
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
+
+# Create categories to select different experiments (Just in case)
+categories_experiment=[:N_heat,:N_isothermal];
+
+# For id
+categories_id = [categories_system; categories_experiment];
+
+# Categories for time step
+category_time = :timeStep;
+
+# Group by time step
+data_per_time_step = groupby(df_group,category_time);
+
+# Select one time step
+data_time_step = data_per_time_step[1];
+
+    # Group by experiments
+    data_per_experiment = groupby(data_time_step,categories_experiment);
+
+    data_experiment = data_per_experiment[1];
+
+        # Figure same experiment, different systems
+        fig_experiment = Figure();
+
+        # For the legends
+        legends = [];
+
+        # Create an Axis
+        ax_plot = Axis(fig_experiment[1:4,1],
+                           xlabel = L"\mathrm{Time~}[\tau]",
+                           ylabel = L"U(\tau)~[\epsilon]",
+                           xminorticksvisible = true,
+                           xminorgridvisible = true,
+                           limits = (nothing, nothing, nothing, nothing),
+                           xscale = log10
+                          )
+
+        # Group by system
+        data_per_system = groupby(data_experiment,categories_system);
+
+        data_system = data_per_system[1];
+
+
+#=
 #"pore_analysis_spheres_"
 
 # Prepare for reading the information
@@ -282,7 +333,7 @@ labels_plot=[df_time_step_initial[1, col] for col in categories_figures] # Warin
 
         # Crate a file name with the labels
         file_name=string("fig_pore_histogram_phiseries_spheres",join(string.(labels_plot)),"_time_initial_final.png");
-
+=#
 
 
 #=
