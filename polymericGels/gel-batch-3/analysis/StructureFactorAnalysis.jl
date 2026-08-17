@@ -177,6 +177,21 @@ Store a dataframe with the collective mean of S(q) of a set of simulations at a 
 function save_Sq_timestep_mean(df_set::AbstractDataFrame, paths_traj_timestep::Vector{String}, n_bin::Integer, n_exp::Integer, n_tot_av::Integer, qx_his::Vector{Vector{Any}}, qy_his::Vector{Vector{Any}}, qz_his::Vector{Vector{Any}}, q_his::Vector{Vector{Any}}, q_mean::Vector{Float64}, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
     println("Start one save\n")
 
+    # Get the ids
+    simulation_id = df_set.id;
+
+    # Get the time step analyzed from the files
+    id_time_step=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in paths_traj_timestep];
+    
+    # Get the number
+    id_time_step=first(unique(id_time_step));
+
+    # Define a set of categories
+    categories_total=[categories_system; categories_experiment];
+
+    # Create a file name from the categories_total
+    ids_set_info=[df_set[1, col] for col in categories_total];
+
     # Get the dump
     df_timestep=get_dump.(paths_traj_timestep);
 
@@ -186,53 +201,43 @@ function save_Sq_timestep_mean(df_set::AbstractDataFrame, paths_traj_timestep::V
     # Reduce
     position_timestep_simulations=reduce.(hcat,position_timestep_simulations);
 
-    # Save memory space to save the structure factor and compute the mean 
-    info = [zeros(n_bin, 3) for _ in 1:n_exp]
-
     # Compute the structure factor for all the simulations at a given time step
     println("Start the cycle")
     for it_sim in eachindex(paths_traj_timestep)
-        r = position_timestep_simulations[it_sim]
-        info[it_sim][:, 2:3] = computeSq(n_bin, n_tot_av, qx_his, qy_his, qz_his, q_his, r)
-        println("One experiment done")
-    end
+        # Save memory space to save the structure factor and compute the mean 
+        info = zeros(n_bin, 3)
 
-    # Compute the mean over the simulations
-    info = mean(info);
-    
-    # Store the mean of the wave vectors
-    info[:, 1] = q_mean;
+        # Store the wave vector domain
+        info[:, 1] = q_mean;
+
+        # Get the positions
+        r = position_timestep_simulations[it_sim]
+        
+        # Store the structure factor
+        info[:, 2:3] = computeSq(n_bin, n_tot_av, qx_his, qy_his, qz_his, q_his, r)
 
 # Preparation to store the data
+        # Create the dataframe to be stored
+        df_Sq=DataFrame([repeat([id_time_step], n_bin) info],
+                       [:timeStep, :q_mean, :Sq_mean, :Sq_mean_norm]);
 
-    # Get the time step analyzed from the files
-    id_time_step=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in paths_traj_timestep];
-    
-    # Get the number
-    id_time_step=first(unique(id_time_step));
+        # Add the values of the categories to the dataframe 
+        for (col, val) in zip(categories_total, ids_set_info)
+            df_Sq[!, col] .= val 
+        end
 
-    # Create the dataframe to be stored
-    df_Sq=DataFrame([repeat([id_time_step], n_bin) info],
-                   [:timeStep, :q_mean, :Sq_mean, :Sq_mean_norm]);
+        # Create a file name from the ids 
+        file_name=string("structure_factor_",simulation_id[it_sim],"_step_",id_time_step,".csv");
 
-    # Define a set of categories
-    categories_total=[categories_system; categories_experiment];
+        # Save the information
+        CSV.write(joinpath(DIR_SAVE, file_name), df_Sq)
 
-    # Create a file name from the categories_total
-    ids_set_info=[df_set[1, col] for col in categories_total];
+        println("Experiment ",file_name," saved")
 
-    # Add the values of the categories to the dataframe 
-    for (col, val) in zip(categories_total, ids_set_info)
-        df_Sq[!, col] .= val 
     end
 
-    # Create a file name from the ids 
-    file_name=string("structure_factor_",join(string.(ids_set_info)),"_step_",id_time_step,".csv");
+    println("One set done\n")
 
-    # Save the information
-    CSV.write(joinpath(DIR_SAVE, file_name), df_Sq)
-
-    println("Experiment ",file_name," saved\n")
 end
 
 """
@@ -295,10 +300,10 @@ FILE_FIX = "system_assembly.fixf";
 FILE_DUMP = "traj_assembly.*.dumpf";
 
 # Select the amount of time steps to analyze the structure factor
-n_steps_Sq=32;
+n_steps_Sq=2;
 
 # Define the maximum wave vector
-qmax_0=6;
+qmax_0=2;
 
 # Select the categories that define a system
 categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
