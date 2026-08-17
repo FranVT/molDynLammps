@@ -775,7 +775,7 @@ category_time = :timeStep;
 data_per_time_step = groupby(df_group,category_time);
 
 # Select one time step
-data_time_step = data_per_time_step[1];
+#data_time_step = data_per_time_step[1];
 
 for data_time_step in data_per_time_step
 
