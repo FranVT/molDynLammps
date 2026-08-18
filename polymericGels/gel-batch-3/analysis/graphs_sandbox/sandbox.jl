@@ -661,8 +661,6 @@ df_system = df_systems[1];
 
             end # for 
 
-
-
             # The idea is to no double check chains.
             # But it is more subtle than I expected
             # Get the last particle
@@ -671,6 +669,34 @@ df_system = df_systems[1];
             # Find which CL is connect with the other CL
             #mask = mapreduce(s->chains_end .== s,.&,list_cl)
 
+
+            # Reduce the array
+            all_chains = reduce(vcat,all_chains);
+
+            # To store the distances between CL
+            distances_cl_cl = Array{Float64,1}();
+
+            for chain_to_analyze in all_chains
+                # check if it finishes with a CL
+                if 1 == id_to_type[ind_to_id[last(chain_to_analyze)]]
+                    println("Ended with a CL")
+
+                    # Get the ids of the chain
+                    chain_ids = map(s->ind_to_id[s],chain_to_analyze);
+
+                    # Get the position of the chains
+                    chain_positions = map(s->id_to_pos[s],chain_ids);
+
+                    # Compute the distance between particles in the chain
+                    chain_displacements = chain_positions[2:end] .- chain_positions[1:end-1];
+
+                    # Get the distances
+                    chain_distances = map(s->sqrt(s'*s),chain_displacements);
+
+                    # Distance between CL
+                    append!(distances_cl_cl,sum(chain_distances));
+                end
+            end
 
 
 
