@@ -182,9 +182,12 @@ This function stores the histogram of pores of a set of simulations in a time do
 """
 function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_steps::Integer, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
 
+    # Get the ids
+    simulation_id = df_set.id;
+
     # Definition of parameters for the analysis
     R_CP=0.5;                           # Radius of the central particles
-    delta_rad=0.2;                      # Increment of the radius
+    delta_rad=0.1;                      # Increment of the radius
     l=2*first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
     l_x = l;                            # Length of the box at x 
     l_y = l;                            # Length of the box at y 
@@ -225,6 +228,7 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
         # Get the positions
         position_timestep_simulations=get_position_simulation.(df_dump_timestep);
 
+        # For different time steps
         for (it,position_timestep_simulation) in enumerate(position_timestep_simulations)
             # Get the histogram and mean pore of a configuration
             (hist_pore, mean_pore)=compute_pore_histogram(n_samples,position_timestep_simulation,l_x,l_y,l_z,delta_rad,R_CP,n_bins,bin_size);
@@ -239,17 +243,16 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
                 df_to_store[!, col] .= val 
             end
 
-            # add the number of simulation to later make an average
-            df_to_store[!,:sim] .= it_sim;
-
             # Create a file name from the ids 
-            file_name=string("pore_analysis_spheres_",join(string.(ids_set_info)),"_step_",ids_time_step[it],"_simulation_",it_sim,".csv");
+            file_name=string("pore_analysis_spheres_",simulation_id[it_sim],"_step_",ids_time_step[it],".csv");
 
             # Save the information
             CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
 
             println(file_name," stored.")
         end # for each time step
+
+    println("One set done\n")
 
     end # For each simulation
 
@@ -277,7 +280,7 @@ df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
 n_steps=32;                          # Amount of time steps to analyzed
-n_samples=100000;                     # Amount of sphere samples to construct the histogram
+n_samples=1000000;                     # Amount of sphere samples to construct the histogram
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
