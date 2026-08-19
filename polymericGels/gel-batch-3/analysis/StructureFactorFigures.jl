@@ -811,14 +811,22 @@ data_time_step = data_per_time_step[1];
         data_per_system = groupby(data_experiment,categories_system);
 
         # Select one system
-        it_system = 1;
-        data_system = data_per_system[it_system];
+#        it_system = 1;
+#        data_system = data_per_system[it_system];
 
-#        for (it_system,data_system) in enumerate(data_per_system)
+        for (it_system,data_system) in enumerate(data_per_system)
 
-            # Get the domain and range
-            q_domain = data_system.q_mean;
-            Sq_range = data_system.Sq_mean;
+        # Group by simulation
+            # Group by simulation
+            data_simulations = groupby(data_system,:Nsim);
+
+            # Get the domain and range of all simulations
+            q_domain = map(s->collect(data_simulations[s].q_mean),eachindex(data_simulations));
+            Sq_range = map(s->collect(data_simulations[s].Sq_mean),eachindex(data_simulations));
+
+            # Compute the average
+            q_domain = reduce(vcat,mean(reduce(hcat,q_domain),dims=2));
+            Sq_range = reduce(vcat,mean(reduce(hcat,Sq_range),dims=2));
 
             # Add the plot
             lines!(ax_plot,q_domain,Sq_range,linewidth=3)
@@ -831,7 +839,7 @@ data_time_step = data_per_time_step[1];
                 append!(aux,[label])
             end
             append!(legends,[aux])
-#        end
+        end
 
     # Add legend in the figure
 ax_legend = Axis(fig_experiment[1:1,1:1],
@@ -869,7 +877,7 @@ ax_legend = Axis(fig_experiment[1:1,1:1],
 
     # add the time step
         axislegend(ax_aux,
-                   position=:rt, 
+                   position=:rb, 
                    framevisible = true,
                    framewidth = 0.0,
                    padding=(0.0f0,4.0f0,1.0f0,1.0f0),

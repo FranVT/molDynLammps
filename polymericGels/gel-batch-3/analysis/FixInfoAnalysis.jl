@@ -161,6 +161,7 @@ function save_mean_fix_analysis(meta_data_simulations::AbstractDataFrame, DIR_SA
         # Save the data frame
         CSV.write(joinpath(DIR_SAVE,file_name),df_set_info);
 end
+
 #=
     Start the script
 =#
@@ -188,14 +189,12 @@ meta_data_experiments=groupby(df_dat,categories_experiment);
 
 # Save the infomration of average assembles
 for meta_data_experiment in meta_data_experiments
-#meta_data_experiment = meta_data_experiments[2];
 
     # Group by system
     meta_data_systems = groupby(meta_data_experiment,categories_system);
 
     # Go through all systems and experiments 
     for meta_data_simulations in meta_data_systems
-        #meta_data_simulations = meta_data_systems[1];
         # Compute the assemble average and store the data
         save_mean_fix_analysis(meta_data_simulations,DIR_SAVE,categories_id)
     end # end systems
