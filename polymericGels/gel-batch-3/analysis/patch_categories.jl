@@ -68,9 +68,7 @@ symbols_per_simulation = names.(df_files);
 # Get the unique keys
 symbols = unique(symbols_per_simulation);
 
-if length(symbols) == 1
-    println("Same amount of keys")
-end
+if length(symbols) != 1
 
 # Get all the keys
 all_symbols = union(symbols...);
@@ -102,4 +100,6 @@ key_simulation = keys_diff[1];
 # get the id and the time step
 (id_simulation,time_step_simulation) = key_simulation;
 
+end
 
+println("Same amount of keys")

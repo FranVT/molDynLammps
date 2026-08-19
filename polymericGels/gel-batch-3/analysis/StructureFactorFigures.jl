@@ -760,7 +760,7 @@ df_group=reduce(vcat,df_files);
 
 # NEED TO BE THE SAME AS THE FixInfoAnalysis.jl
 # Select the categories that define a system
-categories_system=[:phi,:chi_4,:temp,:damp]; #,:tstep
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep]; #
 
 # Create categories to select different experiments (Just in case)
 categories_experiment=[:N_heat,:N_isothermal];
@@ -775,9 +775,9 @@ category_time = :timeStep;
 data_per_time_step = groupby(df_group,category_time);
 
 # Select one time step
-#data_time_step = data_per_time_step[1];
+data_time_step = data_per_time_step[1];
 
-for data_time_step in data_per_time_step
+#for data_time_step in data_per_time_step
 
     # Get the time step for name and stuff
     time_step = first(data_time_step.timeStep);
@@ -788,7 +788,7 @@ for data_time_step in data_per_time_step
     # Select one experiment
     data_experiment = data_per_experiment[1];
 
-    for data_experiment in data_per_experiment
+#    for data_experiment in data_per_experiment
 
         # Figure same experiment, different systems
         fig_experiment = Figure();
@@ -811,9 +811,10 @@ for data_time_step in data_per_time_step
         data_per_system = groupby(data_experiment,categories_system);
 
         # Select one system
-        data_system = data_per_system[1];
+        it_system = 1;
+        data_system = data_per_system[it_system];
 
-        for (it_system,data_system) in enumerate(data_per_system)
+#        for (it_system,data_system) in enumerate(data_per_system)
 
             # Get the domain and range
             q_domain = data_system.q_mean;
@@ -830,7 +831,7 @@ for data_time_step in data_per_time_step
                 append!(aux,[label])
             end
             append!(legends,[aux])
-        end
+#        end
 
     # Add legend in the figure
 ax_legend = Axis(fig_experiment[1:1,1:1],
@@ -882,10 +883,12 @@ ax_legend = Axis(fig_experiment[1:1,1:1],
     figure_name = string("structure_factor_experiment_",aux_name,"_timestep_",time_step,".png")
 
     # save the figures
-    save(joinpath(DIR_SAVE,figure_name), fig_experiment, px_per_unit = 300 / INCH)
+#    save(joinpath(DIR_SAVE,figure_name), fig_experiment, px_per_unit = 300 / INCH)
 
-    end
-end
+#    end
+#end
+
+
 
 #=
 # Select the categories that define a system

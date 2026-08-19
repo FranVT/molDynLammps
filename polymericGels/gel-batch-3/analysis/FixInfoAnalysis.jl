@@ -9,6 +9,21 @@ using Statistics
     Functions
 =#
 """
+    getDump(path::String)
+
+Get the data from a single dump file that stores one timeste information
+"""
+function get_dump(path::String)
+    data = split.(readlines(path), " ")[9:end]
+    HEADERS = data[1][3:end]
+    INFO = parse.(Float64, reduce(hcat, data[2:end]))'
+
+    return DataFrame(INFO, HEADERS)
+end
+
+
+
+"""
     extract_fix_scalar(path_file::String)
 Function that extracts the information of fix files that stores global scalar values
 """
@@ -17,10 +32,49 @@ function extract_fix_scalar(path_file::String)
     header = aux[2][2:end]
    
     aux_info = map(s -> parse.(Float64, s), aux[3:end])
-    info = reduce(hcat, aux_info)
+    info = Matrix(reduce(hcat, aux_info)')
 
     return (header,info)
 end
+
+"""
+    promedios_acumulados(arrays)
+
+Compute the mean of an arrays with different amount of elements
+"""
+function promedios_acumulados(arrays)
+    
+    # Get the maximum aomun of rows
+    max_len = maximum(length, arrays)
+    
+    # To store the avergae
+    promedios = Float64[]
+
+    # Go into each row
+    for i in 1:max_len
+        # Start the addition
+        suma = 0.0
+
+        # Count the amount of elements
+        count = 0
+
+        # Explore each array
+        for arr in arrays
+
+            # Check if the length is correct
+            if length(arr) >= i
+                # Add to the mean
+                suma += arr[i]
+                count += 1
+            end
+        end
+        
+        # Store the mean
+        push!(promedios, count > 0 ? suma / count : NaN)
+    end
+    return promedios
+end
+
 
 """
     compute_mean_set_fixf(df_set::DataFrame, FILE_FIX::String="system_assembly.fixf")
@@ -42,28 +96,46 @@ function compute_mean_set_fixf(df_set::AbstractDataFrame, FILE_FIX::String="syst
     # Extract all the information from the fix files
     info_fixf=extract_fix_scalar.(path_fixf)
 
-    # Get the data to compute the mean 
-    data_info_fix = last.(info_fixf);
+    # headers
+    headers=first(unique(first.(info_fixf)));
 
-    # Get the minimum time step 
-    min_time_step = minimum(last.(size.(data_info_fix)))
+    # info
+    info = last.(info_fixf);
 
-    # Format to create the array to compute the mean 
-    data_info_fix = [data[:,1:min_time_step] for data in data_info_fix];
+    # Amount of simulations
+    n_sims = nrow(df_set); 
 
-    # Compute the average of the set of experiments
-    mean_set=first(mean(data_info_fix,dims=1));
+    # Number of columns
+    n_cols = length(headers);
 
-    # Get the headers
-    headers_set=String.(first.(info_fixf)[1]);
+    # Reshape the stuff
+    info_avg = Vector{Vector{Float64}}();
+
+    # Compute the avergae per each column
+    for it_col in 1:n_cols
+        aux = [];
+
+        for it_sim in 1:length(info) 
+            append!(aux,[info[it_sim][:,it_col]])
+        end
+            
+        # Compute the mean
+        mean_mod = promedios_acumulados(aux);
+
+        # Append the mean to the final array
+        append!(info_avg,[mean_mod])
+    end
+
+    # Reduce the dimensions of the array
+    info_avg = reduce(hcat,info_avg);
 
     # Create a dataframe of the average
-    df_set_info=DataFrame(mean_set',headers_set);
+    df_set_info=DataFrame(info_avg,headers);
 
     # Add the amount of experiments
-    df_set_info[!,:N_exp].=[nrow(df_set)];
+    #df_set_info[!,:N_exp].=[nrow(df_set)];
 
-    return df_set_info
+    return df_set_info #data_info_fix #df_set_info
 end
 
 """
@@ -116,12 +188,14 @@ meta_data_experiments=groupby(df_dat,categories_experiment);
 
 # Save the infomration of average assembles
 for meta_data_experiment in meta_data_experiments
+#meta_data_experiment = meta_data_experiments[2];
 
     # Group by system
     meta_data_systems = groupby(meta_data_experiment,categories_system);
 
     # Go through all systems and experiments 
     for meta_data_simulations in meta_data_systems
+        #meta_data_simulations = meta_data_systems[1];
         # Compute the assemble average and store the data
         save_mean_fix_analysis(meta_data_simulations,DIR_SAVE,categories_id)
     end # end systems

@@ -226,6 +226,9 @@ function save_Sq_timestep_mean(df_set::AbstractDataFrame, paths_traj_timestep::V
             df_Sq[!, col] .= val 
         end
 
+        # Add a simulation identification
+        df_Sq[!,:Nsim] .= it_sim;
+
         # Create a file name from the ids 
         file_name=string("structure_factor_",simulation_id[it_sim],"_step_",id_time_step,".csv");
 
@@ -300,7 +303,7 @@ FILE_FIX = "system_assembly.fixf";
 FILE_DUMP = "traj_assembly.*.dumpf";
 
 # Select the amount of time steps to analyze the structure factor
-n_steps_Sq=32;
+n_steps_Sq=2;
 
 # Define the maximum wave vector
 qmax_0=6;

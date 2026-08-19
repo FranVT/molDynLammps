@@ -243,6 +243,9 @@ function save_pore_histogram(df_set::AbstractDataFrame, n_samples::Integer, n_st
                 df_to_store[!, col] .= val 
             end
 
+            # Add a simulation identification
+            df_to_store[!,:Nsim] .= it;
+
             # Create a file name from the ids 
             file_name=string("pore_analysis_spheres_",simulation_id[it_sim],"_step_",ids_time_step[it],".csv");
 
@@ -279,8 +282,8 @@ df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
 df_systems=groupby(df_dat,categories_system);
 
 # Set the parameters
-n_steps=32;                          # Amount of time steps to analyzed
-n_samples=1000000;                     # Amount of sphere samples to construct the histogram
+n_steps=2;                          # Amount of time steps to analyzed
+n_samples=250000;                     # Amount of sphere samples to construct the histogram
 
 # Save the mean of S(q) of a system given a set of experiments and a time domain
 for df_system in df_systems
