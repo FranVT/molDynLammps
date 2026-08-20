@@ -232,8 +232,74 @@ categories_experiment=[:N_heat,:N_isothermal];
 categories_id = [categories_system; categories_experiment];
 
 # Create figures comparing different systems at the same time instant
-figures_per_time(df_group, categories_experiment, categories_system)
+#figures_per_time(df_group, categories_experiment, categories_system)
 
+# Figure of the time evolution of the same system
 
+    # Group by experiments
+    data_per_experiment = groupby(df_group,categories_experiment);
 
+    # Select one experiment
+    data_experiment = data_per_experiment[1];
 
+        # Extract the time domain of all systems
+        time_domain_experiment = unique(data_experiment.time);
+
+        # For the upper limit
+        degree_limit_2 = ceil(log(10,maximum(data_experiment.Sq_mean)));
+
+        # Figure same experiment, different systems
+        fig_experiment = Figure();
+
+        # For the legends
+        legends = [];
+
+        # Create an Axis
+        ax_plot = Axis(fig_experiment[1:4,1],
+                       xlabel = L"|\vec{q}|~[1/\sigma]",
+                       ylabel = L"S(|\vec{q}|)",
+                       xminorticksvisible = true,
+                       xminorgridvisible = true,
+                       limits = (10^(-1.25), 10^(0.8), 10^(-0.5), 10^(degree_limit_2)),
+                       xscale = log10,
+                       yscale = log10
+                      )
+
+        # Group by systems
+        data_by_time = groupby(data_experiment,:time);
+
+        # Select one time instant 
+        data_time = data_by_time[1]
+
+            # Group by systems
+            data_by_systems = groupby(data_time,categories_system);
+
+            # Select one system
+            #it_system = 1;
+            #data_system = data_by_systems[it_system];
+
+            for (it_system,data_system) in enumerate(data_by_systems)
+
+                # Group by simulation
+                data_simulations = groupby(data_system,:Nsim);
+
+                # Get the domain and range of all simulations
+                q_domain = map(s->collect(data_simulations[s].q_mean),eachindex(data_simulations));
+                Sq_range = map(s->collect(data_simulations[s].Sq_mean),eachindex(data_simulations));
+
+                # Compute the average
+                q_domain = reduce(vcat,mean(reduce(hcat,q_domain),dims=2));
+                Sq_range = reduce(vcat,mean(reduce(hcat,Sq_range),dims=2));
+
+                # Add the plot
+                lines!(ax_plot,q_domain,Sq_range,linewidth=3)
+
+                # Create the legend
+                aux=[];
+                append!(aux,[latexstring("\\mathrm{System}~",it_system)])
+                for cat in categories_system
+                    label=latexstring("\\mathrm{",string(cat),"}=~",first(data_system[!,cat]));
+                    append!(aux,[label])
+                end
+                append!(legends,[aux])
+            end
