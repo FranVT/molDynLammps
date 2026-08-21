@@ -43,6 +43,9 @@ set_theme!(
     )
 )
 
+# Define the color
+color_map = :roma;
+
 #=
     Functions 
 =#
@@ -133,7 +136,7 @@ for data_time_step in data_per_time_step
         end
 
     # Add legend in the figure
-ax_legend = Axis(fig_experiment[1:1,1:1],
+    ax_legend = Axis(fig_experiment[1:1,1:1],
                 limits = (0, 0, 0, 0)
                 )
 
@@ -231,6 +234,15 @@ categories_experiment=[:N_heat,:N_isothermal];
 # For id
 categories_id = [categories_system; categories_experiment];
 
+# List of linestyles for each system
+label_systems = [
+                 :solid,
+                 :dot,
+                 :dash,
+                 :dashdot,
+                 :dashdotdot
+                ];
+
 # Create figures comparing different systems at the same time instant
 #figures_per_time(df_group, categories_experiment, categories_system)
 
@@ -245,6 +257,17 @@ categories_id = [categories_system; categories_experiment];
         # Extract the time domain of all systems
         time_domain_experiment = unique(data_experiment.time);
 
+        # Create the label for the time domain
+        time_max = maximum(time_domain_experiment);
+        time_min = minimum(time_domain_experiment);
+
+        # Rime domain nromalize
+        time_norm = time_domain_experiment./time_max;
+
+        # get the min and max color
+        color_min = time_min/time_max;
+        color_max = time_max/time_max;
+
         # For the upper limit
         degree_limit_2 = ceil(log(10,maximum(data_experiment.Sq_mean)));
 
@@ -255,7 +278,7 @@ categories_id = [categories_system; categories_experiment];
         legends = [];
 
         # Create an Axis
-        ax_plot = Axis(fig_experiment[1:4,1],
+        ax_plot = Axis(fig_experiment[1:4,1:2],
                        xlabel = L"|\vec{q}|~[1/\sigma]",
                        ylabel = L"S(|\vec{q}|)",
                        xminorticksvisible = true,
@@ -269,7 +292,12 @@ categories_id = [categories_system; categories_experiment];
         data_by_time = groupby(data_experiment,:time);
 
         # Select one time instant 
-        data_time = data_by_time[1]
+        # data_time = data_by_time[1]
+        for data_time in data_by_time
+
+            # Get the time and color label
+            color_label = first(data_time.time);
+            color_label = color_label/time_max;
 
             # Group by systems
             data_by_systems = groupby(data_time,categories_system);
@@ -292,7 +320,13 @@ categories_id = [categories_system; categories_experiment];
                 Sq_range = reduce(vcat,mean(reduce(hcat,Sq_range),dims=2));
 
                 # Add the plot
-                lines!(ax_plot,q_domain,Sq_range,linewidth=3)
+                lines!(ax_plot,q_domain,Sq_range,
+                       linewidth=3,
+                       colormap = color_map,
+                       color=color_label,
+                       colorrange = (color_min,color_max),
+                       linestyle = label_systems[it_system]
+                      )
 
                 # Create the legend
                 aux=[];
@@ -303,3 +337,53 @@ categories_id = [categories_system; categories_experiment];
                 end
                 append!(legends,[aux])
             end
+
+        end
+
+        # Make unique the stuff
+        legends = unique(legends);
+
+    # Add legend in the figure
+    ax_legend = Axis(fig_experiment[1:1,1:1],
+                limits = (0, 0, 0, 0)
+                )
+
+    # Hide everything
+    hidespines!(ax_legend)
+    hidedecorations!(ax_legend)
+
+    # Create decoy plot per system to add the labels
+    plots_decoy = mapreduce(s->[lines!(ax_legend,1,1,color=:black,linestyle=label_systems[s])],vcat,1:length(legends))
+
+    # Add the legend
+    Legend(fig_experiment[5:6,1:2],
+           plots_decoy,
+           latexstring.(join.(legends,"~")),
+           orientation = :vertical
+          ) 
+
+
+        # Colobar to denote the time evolution 
+        Colorbar(fig_experiment[1:4, 3], label = L"\tau", colormap = color_map, limits = (time_min, time_max))
+
+    # Display the figure
+    display(fig_experiment)
+
+    # Create the name by getting the experiment id
+    aux_name = []
+    for cat in categories_experiment
+        label=string(cat,"_",first(data_experiment[!,cat]));
+        append!(aux_name,[label])
+    end
+
+    # Join the categories
+    aux_name = join(aux_name,"_");
+
+    # Create the file name
+    figure_name = string("structure_factor_experiment_",aux_name,"_time_domain.png")
+
+    # save the figures
+    save(joinpath(DIR_SAVE,figure_name), fig_experiment, px_per_unit = 300 / INCH)
+
+
+
