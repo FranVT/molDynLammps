@@ -253,6 +253,7 @@ label_systems = [
 
     # Select one experiment
     data_experiment = data_per_experiment[1];
+    for data_experiment in data_per_experiment
 
         # Extract the time domain of all systems
         time_domain_experiment = unique(data_experiment.time);
@@ -330,7 +331,7 @@ label_systems = [
 
                 # Create the legend
                 aux=[];
-                append!(aux,[latexstring("\\mathrm{System}~",it_system)])
+                append!(aux,[latexstring("\\mathrm{System:}~")])
                 for cat in categories_system
                     label=latexstring("\\mathrm{",string(cat),"}=~",first(data_system[!,cat]));
                     append!(aux,[label])
@@ -343,47 +344,48 @@ label_systems = [
         # Make unique the stuff
         legends = unique(legends);
 
-    # Add legend in the figure
-    ax_legend = Axis(fig_experiment[1:1,1:1],
-                limits = (0, 0, 0, 0)
-                )
+        # Add legend in the figure
+        ax_legend = Axis(fig_experiment[1:1,1:1],
+                    limits = (0, 0, 0, 0)
+                    )
 
-    # Hide everything
-    hidespines!(ax_legend)
-    hidedecorations!(ax_legend)
+        # Hide everything
+        hidespines!(ax_legend)
+        hidedecorations!(ax_legend)
 
-    # Create decoy plot per system to add the labels
-    plots_decoy = mapreduce(s->[lines!(ax_legend,1,1,color=:black,linestyle=label_systems[s])],vcat,1:length(legends))
+        # Create decoy plot per system to add the labels
+        plots_decoy = mapreduce(s->[lines!(ax_legend,1,1,color=:black,linestyle=label_systems[s])],vcat,1:length(legends))
 
-    # Add the legend
-    Legend(fig_experiment[5:6,1:2],
-           plots_decoy,
-           latexstring.(join.(legends,"~")),
-           orientation = :vertical
-          ) 
+        # Add the legend
+        Legend(fig_experiment[5:6,1:2],
+                plots_decoy,
+                latexstring.(join.(legends,"~")),
+                orientation = :vertical
+                ) 
 
 
         # Colobar to denote the time evolution 
         Colorbar(fig_experiment[1:4, 3], label = L"\tau", colormap = color_map, limits = (time_min, time_max))
 
-    # Display the figure
-    display(fig_experiment)
+        # Display the figure
+        display(fig_experiment)
 
-    # Create the name by getting the experiment id
-    aux_name = []
-    for cat in categories_experiment
-        label=string(cat,"_",first(data_experiment[!,cat]));
-        append!(aux_name,[label])
+        # Create the name by getting the experiment id
+        aux_name = []
+        for cat in categories_experiment
+            label=string(cat,"_",first(data_experiment[!,cat]));
+            append!(aux_name,[label])
+        end
+
+        # Join the categories
+        aux_name = join(aux_name,"_");
+
+        # Create the file name
+        figure_name = string("structure_factor_experiment_",aux_name,"_time_domain.png")
+
+        # save the figures
+        save(joinpath(DIR_SAVE,figure_name), fig_experiment, px_per_unit = 300 / INCH)
+    
     end
-
-    # Join the categories
-    aux_name = join(aux_name,"_");
-
-    # Create the file name
-    figure_name = string("structure_factor_experiment_",aux_name,"_time_domain.png")
-
-    # save the figures
-    save(joinpath(DIR_SAVE,figure_name), fig_experiment, px_per_unit = 300 / INCH)
-
 
 
