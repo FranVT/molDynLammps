@@ -149,7 +149,25 @@ ax_legend = Axis(fig_experiment[1:1,1:1],
     save(joinpath(DIR_SAVE,figure_name), fig_experiment, px_per_unit = 300 / INCH)
 end
 
+"""
+    extract_fix_avg(DIR_DATA::String)
+Get the averages
+"""
+function extract_fix_avg(DIR_DATA::String)
 
+    # Read the directory 
+    files=readdir(DIR_DATA);
+
+    # Get only those of the structure factor
+    files=filter(s -> occursin("fix_mean_", s), files);
+
+    # Read the files
+    df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
+
+    # Combine the dataframes
+    return  reduce(vcat,df_files)   
+
+end
 
 
 #=

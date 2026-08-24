@@ -3,7 +3,7 @@
 =#
 
 using DataFrames, CSV
-using Statistics
+using Statistics, LsqFit
 
 #=
     Functions
@@ -162,6 +162,47 @@ function save_mean_fix_analysis(meta_data_simulations::AbstractDataFrame, DIR_SA
         CSV.write(joinpath(DIR_SAVE,file_name),df_set_info);
 end
 
+"""
+    store_avg()
+Function that store the avg of the simulations
+"""
+function store_avg(meta_data_experiment::AbstractDataFrame, categories_system::Vector{Symbol}, categories_id::Vector{Symbol}, DIR_SAVE::String)
+    
+# Save the infomration of average assembles
+for meta_data_experiment in meta_data_experiments
+
+    # Group by system
+    meta_data_systems = groupby(meta_data_experiment,categories_system);
+
+    # Go through all systems and experiments 
+    for meta_data_simulations in meta_data_systems
+        # Compute the assemble average and store the data
+        save_mean_fix_analysis(meta_data_simulations,DIR_SAVE,categories_id)
+    end # end systems
+end # for experiments
+
+
+end
+
+"""
+    extract_fix_avg(DIR_DATA::String)
+Get the averages
+"""
+function extract_fix_avg(DIR_DATA::String)
+
+    # Read the directory 
+    files=readdir(DIR_DATA);
+
+    # Get only those of the structure factor
+    files=filter(s -> occursin("fix_mean_", s), files);
+
+    # Read the files
+    df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
+
+    # Combine the dataframes
+    return  reduce(vcat,df_files)   
+
+end
 #=
     Start the script
 =#
@@ -169,6 +210,7 @@ end
 # Paths and directories
 DIR_MAIN = pwd();
 DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
+DIR_DATA = joinpath(DIR_MAIN,"analyzed_data");
 FILE_DAT = "dat.csv";
 FILE_FIX = "system_assembly.fixf";
 
@@ -187,16 +229,36 @@ categories_id = [categories_system; categories_experiment];
 # Group by experiments
 meta_data_experiments=groupby(df_dat,categories_experiment);
 
-# Save the infomration of average assembles
-for meta_data_experiment in meta_data_experiments
+# Store the avg.
+#store_avg(meta_data_experiments,categories_system,DIR_SAVE,categories_id)
 
-    # Group by system
-    meta_data_systems = groupby(meta_data_experiment,categories_system);
+# Open the data
+df_group=extract_fix_avg(DIR_DATA)
 
-    # Go through all systems and experiments 
-    for meta_data_simulations in meta_data_systems
-        # Compute the assemble average and store the data
-        save_mean_fix_analysis(meta_data_simulations,DIR_SAVE,categories_id)
-    end # end systems
-end # for experiments
+# Group by experiments
+data_per_experiment = groupby(df_group,categories_experiment);
 
+# Select one experiment
+data_experiment = data_per_experiment[1];
+
+    # Group by systems
+    data_per_system = groupby(data_experiment,categories_system);
+
+    # Select one system
+    data_system = data_per_system[1];
+
+    # Make sure the sorting
+    sort!(data_system,[:TimeStep]);
+
+    # Extract the time domain and potential energy
+    time_domain = (data_system.tstep.*data_system.TimeStep)|>collect;
+    pot_eng = data_system.c_ep|>collect;
+
+    # Define the model to fit the energy
+    model(s,p) = (p[1])./s.^(p[2]) .+ p[3];
+
+    # Set intial values for the fit
+    p_initial = [1.0, 0.5, -5000];
+
+    # Fit the data
+    fit = curve_fit(model, time_domain, pot_eng, p_initial);
