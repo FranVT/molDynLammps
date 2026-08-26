@@ -244,21 +244,49 @@ data_experiment = data_per_experiment[1];
     # Group by systems
     data_per_system = groupby(data_experiment,categories_system);
 
-    # Select one system
-    data_system = data_per_system[1];
+    # To store the parameter of the function
+    systems_parameters = Vector{Vector{Float64}}();
 
-    # Make sure the sorting
-    sort!(data_system,[:TimeStep]);
+    # To store the margin error
+    systems_margin_error = Vector{Vector{Float64}}();
 
-    # Extract the time domain and potential energy
-    time_domain = (data_system.tstep.*data_system.TimeStep)|>collect;
-    pot_eng = data_system.c_ep|>collect;
+    # To store standard error
+    systems_standard_error = Vector{Vector{Float64}}();
 
     # Define the model to fit the energy
-    model(s,p) = (p[1])./s.^(p[2]) .+ p[3];
+    model(s,p) = (p[1])./s.^(0.5) .+ p[2];
 
-    # Set intial values for the fit
-    p_initial = [1.0, 0.5, -5000];
+    # Select one system
+#    data_system = data_per_system[1];
 
-    # Fit the data
-    fit = curve_fit(model, time_domain, pot_eng, p_initial);
+    for (it,data_system) in enumerate(data_per_system)
+        # Make sure the time evolution
+        sort!(data_system,[:TimeStep]);
+
+        # Extract the time domain and potential energy
+        time_domain = (data_system.tstep.*data_system.TimeStep)|>collect;
+        pot_eng = data_system.c_ep|>collect;
+
+        # Set intial values for the fit
+        p_initial = [1.0, sum(pot_eng)/length(pot_eng)];
+
+        # Fit the data
+        fit = curve_fit(model, time_domain, pot_eng, p_initial);
+
+        # Get the parameters
+        p_final = fit.param;
+
+        # Get the standard error
+        se = standard_errors(fit);
+
+        # Get the margin of error
+        margin_of_error = margin_error(fit);
+
+        # Store the parameters
+        data_per_system[it][!,:fit_parameters].=[p_final]
+        data_per_system[it][!,:fit_margin_error].=[margin_of_error]
+        data_per_system[it][!,:fit_standard_error].=[se]
+
+    end
+
+
