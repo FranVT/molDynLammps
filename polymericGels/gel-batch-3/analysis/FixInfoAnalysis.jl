@@ -133,10 +133,52 @@ function compute_mean_set_fixf(df_set::AbstractDataFrame, FILE_FIX::String="syst
     df_set_info=DataFrame(info_avg,headers);
 
     # Add the amount of experiments
-    #df_set_info[!,:N_exp].=[nrow(df_set)];
+    df_set_info[!,:N_exp].=[nrow(df_set)];
 
     return df_set_info #data_info_fix #df_set_info
 end
+
+"""
+    create_energy_fit(data_system::AbstractDataFrame)
+
+Function that returns the parameters of the fit eng(t) = p[1]/.t^(0.5)+p[2]
+"""
+function create_energy_fit(data_system::AbstractDataFrame)
+    # Define the model to fit the energy
+    model(s,p) = (p[1])./s.^(0.5) .+ p[2];
+
+        # Make sure the time evolution
+        sort!(data_system,[:TimeStep]);
+
+        # Extract the time domain and potential energy
+        time_domain = (data_system.tstep.*data_system.TimeStep)|>collect;
+        pot_eng = data_system.c_ep|>collect;
+
+        # Set intial values for the fit
+        p_initial = [1.0, sum(pot_eng)/length(pot_eng)];
+
+        # Fit the data
+        fit = curve_fit(model, time_domain, pot_eng, p_initial);
+
+        # Get the parameters
+        p_final = fit.param|>collect;
+
+        # Get the standard error
+        se = standard_errors(fit)|>collect;
+
+        # Get the margin of error
+        margin_of_error = margin_error(fit)|>collect;
+
+        # Store the parameters
+        data_system[!, :fit_ep_parameters] = [p_final for _ in 1:nrow(data_system)]
+        data_system[!, :fit_ep_margin_error] = [margin_of_error for _ in 1:nrow(data_system)]
+        data_system[!, :fit_ep_standard_error] = [se for _ in 1:nrow(data_system)]
+
+
+    return data_system
+end
+
+
 
 """
     save_mean_fix_analysis(df_set::AbstractDataFrame, FILE_FIX::String, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol})
@@ -155,6 +197,9 @@ function save_mean_fix_analysis(meta_data_simulations::AbstractDataFrame, DIR_SA
             df_set_info[!, col] .= val; 
         end
 
+        # Create the fit of the energy
+        df_set_info = create_energy_fit(df_set_info)
+
         # Create a file name from the ids 
         file_name=string("fix_mean_",join(string.(ids_set_info)),".csv");
 
@@ -166,8 +211,11 @@ end
     store_avg()
 Function that store the avg of the simulations
 """
-function store_avg(meta_data_experiment::AbstractDataFrame, categories_system::Vector{Symbol}, categories_id::Vector{Symbol}, DIR_SAVE::String)
-    
+function store_avg(meta_data::AbstractDataFrame, categories_experiment::Vector{Symbol}, categories_system::Vector{Symbol}, categories_id::Vector{Symbol}, DIR_SAVE::String)
+
+# Group by experiments
+meta_data_experiments = groupby(meta_data,categories_experiment);
+
 # Save the infomration of average assembles
 for meta_data_experiment in meta_data_experiments
 
@@ -182,6 +230,17 @@ for meta_data_experiment in meta_data_experiments
 end # for experiments
 
 
+end
+
+# Función para parsear un string como "[1.0, 2.0]" a Vector{Float64}
+function parse_vector(str::String)
+    # Quitar corchetes y split por comas
+    cleaned = replace(str, r"\[|\]" => "")  # elimina [ y ]
+    if isempty(cleaned)
+        return Float64[]
+    else
+        return parse.(Float64, split(cleaned, ","))
+    end
 end
 
 """
@@ -199,8 +258,15 @@ function extract_fix_avg(DIR_DATA::String)
     # Read the files
     df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
 
-    # Combine the dataframes
-    return  reduce(vcat,df_files)   
+    # Create one dataframe
+    df_files = reduce(vcat,df_files)
+
+    # PArse the vectors of strings into vectors of floats
+    df_files[!, :fit_ep_parameters] = parse_vector.(df_files[!, :fit_ep_parameters])
+    df_files[!, :fit_ep_margin_error] = parse_vector.(df_files[!, :fit_ep_margin_error])
+    df_files[!, :fit_ep_standard_error] = parse_vector.(df_files[!, :fit_ep_standard_error])
+    
+    return  df_files   
 
 end
 #=
@@ -226,11 +292,8 @@ categories_experiment=[:N_heat,:N_isothermal];
 # For id
 categories_id = [categories_system; categories_experiment];
 
-# Group by experiments
-meta_data_experiments=groupby(df_dat,categories_experiment);
-
 # Store the avg.
-#store_avg(meta_data_experiments,categories_system,DIR_SAVE,categories_id)
+store_avg(df_dat,categories_experiment,categories_system,categories_id,DIR_SAVE)
 
 # Open the data
 df_group=extract_fix_avg(DIR_DATA)
@@ -241,6 +304,7 @@ data_per_experiment = groupby(df_group,categories_experiment);
 # Select one experiment
 data_experiment = data_per_experiment[1];
 
+#=
     # Group by systems
     data_per_system = groupby(data_experiment,categories_system);
 
@@ -288,5 +352,5 @@ data_experiment = data_per_experiment[1];
         data_per_system[it][!,:fit_standard_error].=[se]
 
     end
-
+=#
 
