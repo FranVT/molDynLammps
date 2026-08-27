@@ -145,20 +145,46 @@ Function that returns the parameters of the fit eng(t) = p[1]/.t^(0.5)+p[2]
 """
 function create_energy_fit(data_system::AbstractDataFrame)
     # Define the model to fit the energy
-    model(s,p) = (p[1])./s.^(0.5) .+ p[2];
+    model(t,p) = (p[1])./(t.^(p[2])) .+ p[3];
 
         # Make sure the time evolution
         sort!(data_system,[:TimeStep]);
 
-        # Extract the time domain and potential energy
-        time_domain = (data_system.tstep.*data_system.TimeStep)|>collect;
+        # Mask to make the fit only for the isothermal part of the process
+        # Get time step
+        dt = first(data_system.tstep);
+
+        # Start of the isothermal process
+        start_isothermal = dt*first(data_system.N_heat);
+
+        # Prepare the data for the figure
+        time_domain = dt.*collect(data_system.TimeStep);
+
+        # Create a mask to consider only isothermal process
+        mask_isothermal = time_domain .> start_isothermal;
+
+        mask_heat = map(s-> !s,mask_isothermal); 
+
+        # Apply the mask
+        time_domain = time_domain[mask_isothermal];
+
+        # Extract the potential energy
         pot_eng = data_system.c_ep|>collect;
 
+        # Get the final value of the energy at the ond of the heat process
+        pot_eng_final_heat = last(pot_eng[mask_heat]);
+
+        # Apply the mask
+        pot_eng = pot_eng[mask_isothermal];
+
         # Set intial values for the fit
-        p_initial = [1.0, sum(pot_eng)/length(pot_eng)];
+        p_initial = [-pot_eng_final_heat, 0.1, sum(pot_eng)/length(pot_eng)];
+
+        p_lower = [0.0, 0.0, -Inf];
+        p_upper = [Inf, Inf, 0.0];
 
         # Fit the data
-        fit = curve_fit(model, time_domain, pot_eng, p_initial);
+        fit = curve_fit(model, time_domain, pot_eng, p_initial; lower=p_lower, upper=p_upper);
 
         # Get the parameters
         p_final = fit.param|>collect;
@@ -232,7 +258,11 @@ end # for experiments
 
 end
 
-# Función para parsear un string como "[1.0, 2.0]" a Vector{Float64}
+"""
+    parse_vector(str::String)
+
+Functino to parse a string like "[1.0, 2.0]" to Vector{Float64}
+"""
 function parse_vector(str::String)
     # Quitar corchetes y split por comas
     cleaned = replace(str, r"\[|\]" => "")  # elimina [ y ]
@@ -295,6 +325,7 @@ categories_id = [categories_system; categories_experiment];
 # Store the avg.
 store_avg(df_dat,categories_experiment,categories_system,categories_id,DIR_SAVE)
 
+#=
 # Open the data
 df_group=extract_fix_avg(DIR_DATA)
 
@@ -303,54 +334,5 @@ data_per_experiment = groupby(df_group,categories_experiment);
 
 # Select one experiment
 data_experiment = data_per_experiment[1];
-
-#=
-    # Group by systems
-    data_per_system = groupby(data_experiment,categories_system);
-
-    # To store the parameter of the function
-    systems_parameters = Vector{Vector{Float64}}();
-
-    # To store the margin error
-    systems_margin_error = Vector{Vector{Float64}}();
-
-    # To store standard error
-    systems_standard_error = Vector{Vector{Float64}}();
-
-    # Define the model to fit the energy
-    model(s,p) = (p[1])./s.^(0.5) .+ p[2];
-
-    # Select one system
-#    data_system = data_per_system[1];
-
-    for (it,data_system) in enumerate(data_per_system)
-        # Make sure the time evolution
-        sort!(data_system,[:TimeStep]);
-
-        # Extract the time domain and potential energy
-        time_domain = (data_system.tstep.*data_system.TimeStep)|>collect;
-        pot_eng = data_system.c_ep|>collect;
-
-        # Set intial values for the fit
-        p_initial = [1.0, sum(pot_eng)/length(pot_eng)];
-
-        # Fit the data
-        fit = curve_fit(model, time_domain, pot_eng, p_initial);
-
-        # Get the parameters
-        p_final = fit.param;
-
-        # Get the standard error
-        se = standard_errors(fit);
-
-        # Get the margin of error
-        margin_of_error = margin_error(fit);
-
-        # Store the parameters
-        data_per_system[it][!,:fit_parameters].=[p_final]
-        data_per_system[it][!,:fit_margin_error].=[margin_of_error]
-        data_per_system[it][!,:fit_standard_error].=[se]
-
-    end
 =#
 

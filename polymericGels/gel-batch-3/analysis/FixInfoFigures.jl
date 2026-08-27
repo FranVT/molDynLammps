@@ -47,9 +47,17 @@ set_theme!(
 =#
 
 """
+
+"""
+function eval_model(t,params)
+    p = first(unique(params));
+
+    return (p[1])./(t.^(p[2])) .+ p[3]
+end
+
+"""
     figure_potential_energy(data_experiment,categories_system,categories_experiment)
 """
-
 function figure_potential_energy(data_experiment,categories_system,categories_experiment,DIR_SAVE)
 
     # Figure same experiment, different systems
@@ -92,13 +100,19 @@ function figure_potential_energy(data_experiment,categories_system,categories_ex
         mask_isothermal = time_domain .> start_isothermal;
 
         # Apply the mask to domain and range
-        time_domain = time_domain[mask_isothermal];
-        energy_range = energy_range[mask_isothermal];
+        #time_domain = time_domain[mask_isothermal];
+        #energy_range = energy_range[mask_isothermal];
 
         # Add the energy to the figure
         lines!(ax_plot,time_domain,energy_range,
                #label=latexstring("\\mathrm{System}~",it_system),
                linewidth = 3
+              )
+
+        # Add the theoretical lines
+        lines!(ax_plot,time_domain[mask_isothermal],eval_model(time_domain[mask_isothermal],data_system.fit_ep_parameters),
+               color = :black,
+               linestyle = :dash
               )
 
         # Create the legend
@@ -150,6 +164,21 @@ ax_legend = Axis(fig_experiment[1:1,1:1],
 end
 
 """
+    parse_vector(str::String)
+
+Functino to parse a string like "[1.0, 2.0]" to Vector{Float64}
+"""
+function parse_vector(str::String)
+    # Quitar corchetes y split por comas
+    cleaned = replace(str, r"\[|\]" => "")  # elimina [ y ]
+    if isempty(cleaned)
+        return Float64[]
+    else
+        return parse.(Float64, split(cleaned, ","))
+    end
+end
+
+"""
     extract_fix_avg(DIR_DATA::String)
 Get the averages
 """
@@ -164,11 +193,17 @@ function extract_fix_avg(DIR_DATA::String)
     # Read the files
     df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
 
-    # Combine the dataframes
-    return  reduce(vcat,df_files)   
+    # Create one dataframe
+    df_files = reduce(vcat,df_files)
+
+    # PArse the vectors of strings into vectors of floats
+    df_files[!, :fit_ep_parameters] = parse_vector.(df_files[!, :fit_ep_parameters])
+    df_files[!, :fit_ep_margin_error] = parse_vector.(df_files[!, :fit_ep_margin_error])
+    df_files[!, :fit_ep_standard_error] = parse_vector.(df_files[!, :fit_ep_standard_error])
+    
+    return  df_files   
 
 end
-
 
 #=
     Start the script
@@ -180,17 +215,8 @@ DIR_DATA = joinpath(DIR_MAIN,"analyzed_data");
 FILE_DAT = "dat.csv";
 DIR_SAVE = joinpath(DIR_MAIN,"figures");
 
-# Read the directory 
-files=readdir(DIR_DATA);
-
-# Get only those of the structure factor
-files=filter(s -> occursin("fix_mean_", s), files);
-
-# Read the files
-df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
-
 # Combine the dataframes
-df_group=reduce(vcat,df_files)
+df_group=extract_fix_avg(DIR_DATA);
 
 # NEED TO BE THE SAME AS THE FixInfoAnalysis.jl
 # Select the categories that define a system
