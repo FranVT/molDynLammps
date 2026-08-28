@@ -48,8 +48,56 @@ function get_steps_compute(df_set::AbstractDataFrame, n_compute::Int64)
     return (steps_heat_compute, steps_isothermal_compute)
 end
 
+"""
+    correct_steps(files_traj_simulation::Vector{String}, steps_heat_compute::Vector{Int64}, steps_isothermal_compute::Vector{Int64})
 
+If simulation hasn't finish. Extract available time steps
+"""
+function correct_steps(files_traj_simulation::Vector{String}, steps_heat_compute::Vector{Int64}, steps_isothermal_compute::Vector{Int64})
+    # Get the time step analyzed from the files
+    id_time_steps=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in files_traj_simulation];
+   
+    # sort them
+    id_max_time_step = maximum(id_time_steps);
 
+    # Select the time that are available
+    mask_heat = steps_heat_compute .<= id_max_time_steps;
+    mask_isothermal = steps_isothermal_compute .<= id_max_time_steps;
+
+    steps_heat_compute = steps_heat_compute[mask_heat];
+    steps_isothermal_compute = steps_isothermal_compute[mask_isothermal];
+
+    return (steps_heat_compute, steps_isothermal_compute)
+end
+ 
+"""
+    create_paths_compute(path_traj_timestep::String, df_set::AbstractDataFrame, steps_heat_compute::Vector{Int64}, steps_isothermal_compute::Vector{Int64})
+
+Create the paths to the dump files to analyze
+"""
+function create_paths_compute(path_traj_timestep::String, df_set::AbstractDataFrame, steps_heat_compute::Vector{Int64}, steps_isothermal_compute::Vector{Int64})
+    # read the directory
+    files_traj_simulation=readdir(path_traj_timestep);
+
+    # Test if the simulation is complete
+    aux = Int64(first(df_set.N_heat .+ df_set.N_isothermal)/first(df_set.N_dump)) + 1
+
+    # for mid simulation analysis
+    if length(files_traj_simulation) != aux
+        (steps_heat_compute, steps_isothermal_compute) = correct_steps(files_traj_simulation,steps_heat_compute,steps_isothermal_compute)
+    end
+
+    # Complete steps domain
+    steps_analyze = [steps_heat_compute; steps_isothermal_compute];
+
+    # Get the names of the files
+    files_compute = string.("traj_assembly.",steps_analyze,".dumpf");
+
+    # Create the paths
+    paths_compute = joinpath.(path_traj_timestep,files_compute);
+
+    return paths_compute
+end
 #=
     Start script
 =#
@@ -84,45 +132,17 @@ df_set = df_groups[1];
     # Get the ids
     simulation_id = df_set.id;
 
+    # Compute the tiome steps to analyze
+    (steps_heat_compute, steps_isothermal_compute) = get_steps_compute(df_set,n_compute)
+
     # Create the paths to the dump files
     paths_traj_timestep = joinpath.(df_set.dir,"traj")
 
     # Select one path
     path_traj_timestep = paths_traj_timestep[1];
 
-        # Compute the tiome steps to analyze
-        (steps_heat_compute, steps_isothermal_compute) = get_steps_compute(df_set,n_compute)
+    paths_compute = create_paths_compute(path_traj_timestep,df_set,steps_heat_compute,steps_isothermal_compute)
 
-        # read the directory
-        files_traj_simulation=readdir(path_traj_timestep);
-
-        # Test if the simulation is complete
-        aux = Int64(first(df_set.N_heat .+ df_set.N_isothermal)/first(df_set.N_dump)) + 1
-
-        # for mid simulation analysis
-        if length(files_traj_simulation) != aux
-            println("Not finished")
-
-            # Get the time step analyzed from the files
-            id_time_steps=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in files_traj_simulation];
-   
-            # sort them
-            id_max_time_step = maximum(id_time_steps);
-
-            # Select the time that are available
-            mask_heat = steps_heat_compute .<= id_max_time_steps;
-            mask_isothermal = steps_isothermal_compute .<= id_max_time_steps;
-
-            steps_heat_compute = steps_heat_compute[mask_heat];
-            steps_isothermal_compute = steps_isothermal_compute[mask_isothermal];
-
-        else
-            println("All good")
-
-
-        end
-
-        
 
         # Get the number
         #id_time_step=first(unique(id_time_step));
