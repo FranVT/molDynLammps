@@ -206,8 +206,6 @@ function get_position_simulation(path::String)
     return reduce(hcat,positions) 
 end
 
-
-
 """
     computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, r)
 
@@ -249,6 +247,31 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
     return Sq
 end
 
+"""
+    save_Sq_analysis(info::Matrix{Float64}, steps_analyze::Vector{Int64}, n_bin::Inte64, categories_id::Vector{Symbol}, ids_set_info::Vector{Float64}, it_sim::Int64, simulation_id::String)
+
+Function that stores the structure factor analysis
+"""
+function save_Sq_analysis(info::Matrix{Float64}, steps_analyze::Int64, n_bin::Int64, categories_id::Vector{Symbol}, ids_set_info::Vector{Float64}, it_sim::Int64, simulation_id::String, DIR_SAVE::String)
+        
+    # Create the dataframe to be stored
+    df_Sq=DataFrame([repeat([steps_analyze], n_bin) info],[:timeStep, :q_mean, :Sq_mean, :Sq_mean_norm]);
+
+    # Add the values of the categories to the dataframe 
+    for (col, val) in zip(categories_id, ids_set_info)
+        df_Sq[!, col] .= val 
+    end
+
+    # Add a simulation identification
+    df_Sq[!,:Nsim] .= it_sim;
+
+    # Create a file name from the ids 
+    file_name=string("structure_factor_",simulation_id,"_step_",steps_analyze[1],".csv");
+
+    # Save the information
+    CSV.write(joinpath(DIR_SAVE, file_name), df_Sq)
+end
+
 
 #=
     Start script
@@ -257,6 +280,7 @@ end
 # Paths and directories
 DIR_DATA = "/run/media/franvt/rogelio/DinMol/gel-batch-3-long/data/";
 DIR_MAIN = pwd();
+DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
 FILE_DAT = "dat.csv";
 PATTERN_DUMP = r"traj_assembly\.(\d+)\.dumpf";
 
@@ -275,15 +299,15 @@ categories_id = [categories_system; categories_experiment];
 # Group the metadata into categories 
 df_groups = groupby(df_dat,categories_id);
 
-# Select one set
-df_set = df_groups[1];
+# Define the amoun of steps to compute the structure factor
+n_compute = 5;
+q_max = 6;
 
+# Select one set
+#df_set = df_groups[1];
+for df_set in df_groups
     ids_set_info=[df_set[1, col] for col in categories_id];
     simulation_id = df_set.id;
-
-    # Define the amoun of steps to compute the structure factor
-    n_compute = 5;
-    q_max = 3;
 
     # Get the ids
     simulation_id = df_set.id;
@@ -298,14 +322,15 @@ df_set = df_groups[1];
     paths_traj_timestep = joinpath.(df_set.dir,"traj")
 
     # Select one path
-    it_sim = 1
-    path_traj_timestep = paths_traj_timestep[it_sim];
+    #it_sim = 1
+    #path_traj_timestep = paths_traj_timestep[it_sim];
+    for (it_sim,path_traj_timestep) in enumerate(paths_traj_timestep)
 
         # Create the paths to the files
         paths_compute = create_paths_compute(path_traj_timestep,df_set,steps_analyze);
 
         # Select one path 
-        path_to_compute = paths_compute[1];
+        for (it_step,path_to_compute) in enumerate(paths_compute)
 
             # Exctract the position
             r = get_position_simulation(path_to_compute);
@@ -316,130 +341,11 @@ df_set = df_groups[1];
             # Store the structure factor
             info[:, 2:3] = computeSq(n_bin, n_tot_av, qx_his, qy_his, qz_his, q_his, r)
 
-        # Preparation to store the data
-            # Create the dataframe to be stored
-            df_Sq=DataFrame([repeat([steps_analyze[1]], n_bin) info],[:timeStep, :q_mean, :Sq_mean, :Sq_mean_norm]);
+            # Store the analysis 
+            save_Sq_analysis(info,steps_analyze[1],n_bin,categories_id,ids_set_info,it_sim,simulation_id[it_sim],DIR_SAVE)
+        end # time step
+    end # simulation
+end # set
 
-            # Add the values of the categories to the dataframe 
-            for (col, val) in zip(categories_id, ids_set_info)
-                df_Sq[!, col] .= val 
-            end
-
-            # Add a simulation identification
-            df_Sq[!,:Nsim] .= it_sim;
-
-            # Create a file name from the ids 
-            file_name=string("structure_factor_",simulation_id[it_sim],"_step_",steps_analyze[1],".csv");
-
-
-#=
-    # Compute the structure factor for all the simulations at a given time step
-    println("Start the cycle")
-    for it_sim in eachindex(paths_compute)
-        # Store the wave vector domain
-        info[:, 1] = q_mean;
-
-        # Get the positions
-        r = position_timestep_simulations[it_sim]
-        
-        # Add the values of the categories to the dataframe 
-        for (col, val) in zip(categories_total, ids_set_info)
-            df_Sq[!, col] .= val 
-        end
-
-        # Add a simulation identification
-        df_Sq[!,:Nsim] .= it_sim;
-
-        # Create a file name from the ids 
-        file_name=string("structure_factor_",simulation_id[it_sim],"_step_",id_time_step,".csv");
-
-        # Save the information
-        CSV.write(joinpath(DIR_SAVE, file_name), df_Sq)
-
-        println("Experiment ",file_name," saved")
-
-    end
-=#
-
-
-
-# Compute the Structure factor
-
-
-
-
-"""
-    save_Sq_timestep_mean()
-
-Store a dataframe with the collective mean of S(q) of a set of simulations at a time step
-"""
-function save_Sq_timestep_mean(df_set::AbstractDataFrame, paths_traj_timestep::Vector{String}, n_bin::Integer, n_exp::Integer, n_tot_av::Integer, qx_his::Vector{Vector{Any}}, qy_his::Vector{Vector{Any}}, qz_his::Vector{Vector{Any}}, q_his::Vector{Vector{Any}}, q_mean::Vector{Float64}, categories_system::Vector{Symbol}, categories_experiment::Vector{Symbol}, DIR_SAVE::String)
-    println("Start one save\n")
-
-    # Get the ids
-    simulation_id = df_set.id;
-
-    # Get the time step analyzed from the files
-    id_time_step=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in paths_traj_timestep];
-    
-    # Get the number
-    id_time_step=first(unique(id_time_step));
-
-    # Define a set of categories
-    categories_total=[categories_system; categories_experiment];
-
-    # Create a file name from the categories_total
-    ids_set_info=[df_set[1, col] for col in categories_total];
-
-    # Get the dump
-    df_timestep=get_dump.(paths_traj_timestep);
-
-    # Get the positions
-    position_timestep_simulations=get_position_simulation.(df_timestep);
-
-    # Reduce
-    position_timestep_simulations=reduce.(hcat,position_timestep_simulations);
-
-    # Compute the structure factor for all the simulations at a given time step
-    println("Start the cycle")
-    for it_sim in eachindex(paths_traj_timestep)
-        # Save memory space to save the structure factor and compute the mean 
-        info = zeros(n_bin, 3)
-
-        # Store the wave vector domain
-        info[:, 1] = q_mean;
-
-        # Get the positions
-        r = position_timestep_simulations[it_sim]
-        
-        # Store the structure factor
-        info[:, 2:3] = computeSq(n_bin, n_tot_av, qx_his, qy_his, qz_his, q_his, r)
-
-# Preparation to store the data
-        # Create the dataframe to be stored
-        df_Sq=DataFrame([repeat([id_time_step], n_bin) info],
-                       [:timeStep, :q_mean, :Sq_mean, :Sq_mean_norm]);
-
-        # Add the values of the categories to the dataframe 
-        for (col, val) in zip(categories_total, ids_set_info)
-            df_Sq[!, col] .= val 
-        end
-
-        # Add a simulation identification
-        df_Sq[!,:Nsim] .= it_sim;
-
-        # Create a file name from the ids 
-        file_name=string("structure_factor_",simulation_id[it_sim],"_step_",id_time_step,".csv");
-
-        # Save the information
-        CSV.write(joinpath(DIR_SAVE, file_name), df_Sq)
-
-        println("Experiment ",file_name," saved")
-
-    end
-
-    println("One set done\n")
-
-end
 
 
