@@ -135,7 +135,7 @@ function compute_mean_set_fixf(df_set::AbstractDataFrame, FILE_FIX::String="syst
     # Add the amount of experiments
     df_set_info[!,:N_exp].=[nrow(df_set)];
 
-    return df_set_info #data_info_fix #df_set_info
+    return df_set_info 
 end
 
 """
@@ -155,7 +155,7 @@ function create_energy_fit(data_system::AbstractDataFrame)
         dt = first(data_system.tstep);
 
         # Start of the isothermal process
-        start_isothermal = dt*first(data_system.N_heat);
+        start_isothermal = data_system.time_heat;
 
         # Prepare the data for the figure
         time_domain = dt.*collect(data_system.TimeStep);
@@ -222,6 +222,12 @@ function save_mean_fix_analysis(meta_data_simulations::AbstractDataFrame, DIR_SA
         for (col, val) in zip(categories_id, ids_set_info)
             df_set_info[!, col] .= val; 
         end
+
+        # Compute the time domain 
+        time_column = df_set_info.tstep.*df_set_info.TimeStep;
+
+        # Add the time domain into the information
+        df_set_info[!,:time]=time_column
 
         # Create the fit of the energy
         df_set_info = create_energy_fit(df_set_info)
@@ -317,7 +323,7 @@ df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
 categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
 
 # Create categories to select different experiments (Just in case)
-categories_experiment=[:N_heat,:N_isothermal];
+categories_experiment=[:time_heat,:time_isothermal];
 
 # For id
 categories_id = [categories_system; categories_experiment];

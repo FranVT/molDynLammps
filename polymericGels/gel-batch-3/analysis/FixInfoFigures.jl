@@ -88,7 +88,7 @@ function figure_potential_energy(data_experiment,categories_system,categories_ex
         dt = first(data_system.tstep);
 
         # Start of the isothermal process
-        start_isothermal = dt*first(data_system.N_heat);
+        start_isothermal = data_system.time_heat;
 
         # Prepare the data for the figure
         time_domain = dt.*collect(data_system.TimeStep);
@@ -109,11 +109,17 @@ function figure_potential_energy(data_experiment,categories_system,categories_ex
                linewidth = 3
               )
 
-        # Add the theoretical lines
+        # Add the fitted lines
         lines!(ax_plot,time_domain[mask_isothermal],eval_model(time_domain[mask_isothermal],data_system.fit_ep_parameters),
                color = :black,
                linestyle = :dash
               )
+
+        # Add the different parts of the experiments: heat and isothermal
+        vlines!(ax_plot,start_isothermal,
+                color=(:red,0.5),
+                linestyle = :dash
+               )
 
         # Create the legend
         aux=[];
@@ -223,7 +229,7 @@ df_group=extract_fix_avg(DIR_DATA);
 categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
 
 # Create categories to select different experiments (Just in case)
-categories_experiment=[:N_heat,:N_isothermal];
+categories_experiment=[:time_heat,:time_isothermal];
 
 # For id
 categories_id = [categories_system; categories_experiment];

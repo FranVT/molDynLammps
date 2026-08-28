@@ -20,6 +20,19 @@ FILE_DAT = "dat.csv";
 # Create a dataframe from all the experiments
 df_dat=collect_experiments_metadata(DIR_DATA)
 
+# Add the time heat interval 
+df_dat[!,:time_heat].=df_dat.tstep.*df_dat.N_heat
+
+# Add the time isothermal interval 
+df_dat[!,:time_isothermal].=df_dat.tstep.*df_dat.N_isothermal
+
 # Save the dataframe of the metadata of the experiments 
 CSV.write(joinpath(DIR_MAIN,FILE_DAT),df_dat)
+
+# Run the fix analysis
+include("FixInfoAnalysis")
+
+# Create the figures
+include("FixInfoFigures")
+
 
