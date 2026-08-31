@@ -354,8 +354,8 @@ categories_id = [categories_system; categories_experiment];
 df_groups = groupby(df_dat,categories_id);
 
 # Define the amount of steps to compute the structure factor
-n_compute = 2;
-q_max = 2.0;
+n_compute = 5;
+q_max = 2*pi;
 
 # Compute the structure factor
 compute_Sq_simulations(df_groups,n_compute,q_max)
