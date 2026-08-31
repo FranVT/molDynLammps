@@ -53,7 +53,7 @@ end
 
 If simulation hasn't finish. Extract available time steps
 """
-function correct_steps(files_traj_simulation::Vector{String}, steps_heat_compute::Vector{Int64}, steps_isothermal_compute::Vector{Int64})
+function correct_steps(files_traj_simulation::Vector{String}, steps_analyze::Vector{Int64})
     # Get the time step analyzed from the files
     id_time_steps=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in files_traj_simulation];
    
@@ -61,13 +61,11 @@ function correct_steps(files_traj_simulation::Vector{String}, steps_heat_compute
     id_max_time_step = maximum(id_time_steps);
 
     # Select the time that are available
-    mask_heat = steps_heat_compute .<= id_max_time_steps;
-    mask_isothermal = steps_isothermal_compute .<= id_max_time_steps;
+    mask_steps = steps_analyze .<= id_max_time_steps;
 
-    steps_heat_compute = steps_heat_compute[mask_heat];
-    steps_isothermal_compute = steps_isothermal_compute[mask_isothermal];
+    steps_analyze = steps_analyze[mask_steps];
 
-    return [steps_heat_compute; steps_isothermal_compute]
+    return steps_analyze
 end
  
 """
@@ -84,7 +82,7 @@ function create_paths_compute(path_traj_timestep::String, df_set::AbstractDataFr
 
     # for mid simulation analysis
     if length(files_traj_simulation) != aux
-        steps_analyze = correct_steps(files_traj_simulation,steps_heat_compute,steps_isothermal_compute)
+        steps_analyze = correct_steps(files_traj_simulation,steps_analyze)
     end
 
     # Get the names of the files
@@ -266,12 +264,68 @@ function save_Sq_analysis(info::Matrix{Float64}, steps_analyze::Int64, n_bin::In
     df_Sq[!,:Nsim] .= it_sim;
 
     # Create a file name from the ids 
-    file_name=string("structure_factor_",simulation_id,"_step_",steps_analyze[1],".csv");
+    file_name=string("structure_factor_",simulation_id,"_step_",steps_analyze,".csv");
 
     # Save the information
     CSV.write(joinpath(DIR_SAVE, file_name), df_Sq)
 end
 
+"""
+    compute_Sq_simulations(df_groups::AbstractDataFrame, n_compute::Int64, q_max::Float64)
+
+Function that computes and stores the structure factor of n simulations
+"""
+function compute_Sq_simulations(df_groups::GroupedDataFrame{DataFrame}, n_compute::Int64, q_max::Float64)
+
+# Select one set
+#df_set = df_groups[1];
+for df_set in df_groups
+    ids_set_info=[df_set[1, col] for col in categories_id];
+    simulation_id = df_set.id;
+
+    # Get the ids
+    simulation_id = df_set.id;
+
+    # Compute the time steps to analyze
+    steps_analyze = get_steps_compute(df_set,n_compute)
+
+    # Create the reciprocal domain
+    (qx_his,qy_his,qz_his,q_his,q_mean,n_bin,n_tot_av) = createqdom(df_set,q_max);
+
+    # Create the paths to the dump files
+    paths_traj_timestep = joinpath.(df_set.dir,"traj")
+
+    # Select one path
+    #it_sim = 1
+    #path_traj_timestep = paths_traj_timestep[it_sim];
+    for (it_sim,path_traj_timestep) in enumerate(paths_traj_timestep)
+
+        # Create the paths to the files
+        paths_compute = create_paths_compute(path_traj_timestep,df_set,steps_analyze);
+
+        # Select one path 
+        for (it_step,path_to_compute) in enumerate(paths_compute)
+
+            # Exctract the position
+            r = get_position_simulation(path_to_compute);
+
+            # Save memory space to save the structure factor and compute the mean 
+            info = zeros(n_bin, 3)
+
+            # Store the q domain
+            info[:,1] = q_mean;
+
+            # Store the structure factor
+            info[:, 2:3] = computeSq(n_bin, n_tot_av, qx_his, qy_his, qz_his, q_his, r)
+
+            # Store the analysis 
+            save_Sq_analysis(info,steps_analyze[it_step],n_bin,categories_id,ids_set_info,it_sim,simulation_id[it_sim],DIR_SAVE)
+        end # time step
+    end # simulation
+    println("One set done")
+end # set
+
+end
 
 #=
     Start script
@@ -299,53 +353,11 @@ categories_id = [categories_system; categories_experiment];
 # Group the metadata into categories 
 df_groups = groupby(df_dat,categories_id);
 
-# Define the amoun of steps to compute the structure factor
-n_compute = 5;
-q_max = 6;
+# Define the amount of steps to compute the structure factor
+n_compute = 2;
+q_max = 2.0;
 
-# Select one set
-#df_set = df_groups[1];
-for df_set in df_groups
-    ids_set_info=[df_set[1, col] for col in categories_id];
-    simulation_id = df_set.id;
-
-    # Get the ids
-    simulation_id = df_set.id;
-
-    # Compute the tiome steps to analyze
-    steps_analyze = get_steps_compute(df_set,n_compute)
-
-    # Create the reciprocal domain
-    (qx_his,qy_his,qz_his,q_his,q_mean,n_bin,n_tot_av) = createqdom(df_set,q_max);
-
-    # Create the paths to the dump files
-    paths_traj_timestep = joinpath.(df_set.dir,"traj")
-
-    # Select one path
-    #it_sim = 1
-    #path_traj_timestep = paths_traj_timestep[it_sim];
-    for (it_sim,path_traj_timestep) in enumerate(paths_traj_timestep)
-
-        # Create the paths to the files
-        paths_compute = create_paths_compute(path_traj_timestep,df_set,steps_analyze);
-
-        # Select one path 
-        for (it_step,path_to_compute) in enumerate(paths_compute)
-
-            # Exctract the position
-            r = get_position_simulation(path_to_compute);
-
-            # Save memory space to save the structure factor and compute the mean 
-            info = zeros(n_bin, 3)
-
-            # Store the structure factor
-            info[:, 2:3] = computeSq(n_bin, n_tot_av, qx_his, qy_his, qz_his, q_his, r)
-
-            # Store the analysis 
-            save_Sq_analysis(info,steps_analyze[1],n_bin,categories_id,ids_set_info,it_sim,simulation_id[it_sim],DIR_SAVE)
-        end # time step
-    end # simulation
-end # set
-
+# Compute the structure factor
+compute_Sq_simulations(df_groups,n_compute,q_max)
 
 
