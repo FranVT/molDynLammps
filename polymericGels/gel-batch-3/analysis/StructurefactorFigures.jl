@@ -119,4 +119,5 @@ data_per_experiment = groupby(df_group,categories_experiment);
             # Group by simulation
             data_per_simulation = groupby(data_time,:Nsim);
 
-            # Extract something
+            # Extract the q domain
+            q_domain =  

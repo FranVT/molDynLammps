@@ -61,7 +61,7 @@ function correct_steps(files_traj_simulation::Vector{String}, steps_analyze::Vec
     id_max_time_step = maximum(id_time_steps);
 
     # Select the time that are available
-    mask_steps = steps_analyze .<= id_max_time_steps;
+    mask_steps = steps_analyze .<= id_max_time_step;
 
     steps_analyze = steps_analyze[mask_steps];
 
