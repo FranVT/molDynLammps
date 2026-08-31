@@ -110,6 +110,8 @@ data_per_experiment = groupby(df_group,categories_experiment);
     # Select one system
     data_system = data_per_system[1];
 
+
+
         # Group by time instant 
         data_per_time = groupby(data_system,:time)
 
@@ -120,4 +122,13 @@ data_per_experiment = groupby(df_group,categories_experiment);
             data_per_simulation = groupby(data_time,:Nsim);
 
             # Extract the q domain
-            q_domain =  
+            q_domain = data_per_simulation[1].q_mean;
+
+            # Allocate for the mean
+            Sq_mean = zeros(length(q_domain));
+
+            # Compute the mean 
+            for aux in data_per_simulation
+                Sq_mean[:] += aux.Sq_mean
+            end
+            Sq_mean = Sq_mean./length(data_per_simulation);
