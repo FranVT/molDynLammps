@@ -5,6 +5,7 @@
 
 using DataFrames, CSV
 using GLMakie, LaTeXStrings 
+using Statistics, LsqFit
 
 #=
     Set figures 
@@ -132,3 +133,77 @@ data_per_experiment = groupby(df_group,categories_experiment);
                 Sq_mean[:] += aux.Sq_mean
             end
             Sq_mean = Sq_mean./length(data_per_simulation);
+
+            # Take out the last value
+            q_domain = q_domain[1:end-1];
+            Sq_mean = Sq_mean[1:end-1];
+
+            # Transform to length
+            l_domain = 2*pi./q_domain;
+
+            # Model 
+            model(q,p) = (p[1])./(q.^(p[2])) .+ p[3];
+
+            # Set intial values for the fit
+            p_initial = [mean(Sq_mean), 0.0, 0.0];
+
+            # Add limits of the parameters
+            p_lower = [0.0, 0.0, 0.0];
+            p_upper = [Inf, Inf, Inf];
+
+            # Fit the data
+            fit = curve_fit(model, q_domain, Sq_mean, p_initial; lower=p_lower, upper=p_upper);
+
+            # Get the parameters
+            p_final = fit.param|>collect;
+
+            # Get the standard error
+            se = standard_errors(fit)|>collect;
+
+            # Get the margin of error
+            margin_of_error = margin_error(fit)|>collect;
+
+            fig = Figure()
+            
+            # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
+            ax_bottom = Axis(fig[1, 1],
+                             xlabel = L"|\vec{q}|",
+                             ylabel = L"\mathrm{Intensity}",
+                             xticks = (q_domain[1:10:end], string.(q_domain[1:10:end])),
+                            )
+            lines!(ax_bottom, q_domain, Sq_mean)
+
+            # --- Top axis: wavelength λ ---
+            ax_top = Axis(fig[1, 1],
+                          xaxisposition = :top,
+                          yaxisposition = :right,
+
+            # Place ticks at the same data coordinates (q values),
+            # but display the corresponding λ labels.
+                          xticks = (q_domain[1:10:end], string.(l_domain[1:10:end])),
+                          xlabel = L"\mathrm{Wavelength}",
+
+            # Spines: show only the top spine
+                          topspinevisible = true,
+                          bottomspinevisible = false,
+                          leftspinevisible = false,
+                          rightspinevisible = false,
+
+                          xgridvisible = false,
+                          #ygridvisible = false,
+
+            # Hide all y‑axis decorations on the top axis
+                          yticks = ([], []),
+                          ylabelvisible = false,
+                          ygridvisible = false,
+                          yticklabelsvisible = false
+                         )
+
+            # Synchronise limits and zoom/pan behaviour
+            linkaxes!(ax_bottom, ax_top)
+
+            # Adjust layout spacing for clarity
+            #colgap!(fig, 0)
+            #rowgap!(fig, 0)
+
+
