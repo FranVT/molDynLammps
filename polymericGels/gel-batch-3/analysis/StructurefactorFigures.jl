@@ -111,36 +111,91 @@ data_per_experiment = groupby(df_group,categories_experiment);
     # Select one system
     data_system = data_per_system[1];
 
+        # Extract the q domain
+        q_domain = unique(data_system.q_mean)[1:end-1];
+
+        # Transform to length
+        l_domain = 2*pi./q_domain;
+
+        # Start the figure
+        fig = Figure()
+        
+        # Prepare the ticks
+        n_ticks = 10;
+        ind_range = floor.(Int64,range(1,length(q_domain),length=n_ticks));
+        q_positions = round.(q_domain[ind_range],digits=2);
+        q_ticks = latexstring.(q_positions);
+        l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
+
+        # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
+        ax_bottom = Axis(fig[1, 1],
+                             xlabel = L"|\vec{q}|",
+                             ylabel = L"\mathrm{Intensity}",
+                             xticks = (q_positions, q_ticks),
+                             xscale = log10,
+                             yscale = log10
+                            )
+
+        # --- Top axis: wavelength λ ---
+        ax_top = Axis(fig[1, 1],
+                          xaxisposition = :top,
+                          yaxisposition = :right,
+
+        # Place ticks at the same data coordinates (q values),
+        # but display the corresponding λ labels.
+                          xticks = (q_positions, l_ticks),
+                          xlabel = L"\mathrm{Wavelength}",
+
+        # Spines: show only the top spine
+                          topspinevisible = true,
+                          bottomspinevisible = false,
+                          leftspinevisible = false,
+                          rightspinevisible = false,
+
+                          xgridvisible = false,
+                          #ygridvisible = false,
+
+        # Hide all y‑axis decorations on the top axis
+                          yticks = ([], []),
+                          ylabelvisible = false,
+                          ygridvisible = false,
+                          yticklabelsvisible = false,
+                             xscale = log10,
+                             yscale = log10
+                         )
+
+        # Synchronise limits and zoom/pan behaviour
+        linkaxes!(ax_bottom, ax_top)
 
 
         # Group by time instant 
         data_per_time = groupby(data_system,:time)
 
         # Select one time instant
-        data_time = data_per_time[1];
+        #data_time = data_per_time[1];
+        for data_time in data_per_time
 
             # Group by simulation
             data_per_simulation = groupby(data_time,:Nsim);
-
-            # Extract the q domain
-            q_domain = data_per_simulation[1].q_mean;
 
             # Allocate for the mean
             Sq_mean = zeros(length(q_domain));
 
             # Compute the mean 
             for aux in data_per_simulation
-                Sq_mean[:] += aux.Sq_mean
+                Sq_mean[:] += aux.Sq_mean[1:end-1]
             end
             Sq_mean = Sq_mean./length(data_per_simulation);
 
             # Take out the last value
-            q_domain = q_domain[1:end-1];
-            Sq_mean = Sq_mean[1:end-1];
+            Sq_mean = Sq_mean;
 
-            # Transform to length
-            l_domain = 2*pi./q_domain;
+            # Add the line to the plot
+            lines!(ax_bottom, q_domain, Sq_mean)
+        end
 
+
+#=
             # Model 
             model(q,p) = (p[1])./(q.^(p[2])) .+ p[3];
 
@@ -162,45 +217,9 @@ data_per_experiment = groupby(df_group,categories_experiment);
 
             # Get the margin of error
             margin_of_error = margin_error(fit)|>collect;
+=#
 
-            fig = Figure()
-            
-            # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
-            ax_bottom = Axis(fig[1, 1],
-                             xlabel = L"|\vec{q}|",
-                             ylabel = L"\mathrm{Intensity}",
-                             xticks = (q_domain[1:10:end], string.(q_domain[1:10:end])),
-                            )
-            lines!(ax_bottom, q_domain, Sq_mean)
 
-            # --- Top axis: wavelength λ ---
-            ax_top = Axis(fig[1, 1],
-                          xaxisposition = :top,
-                          yaxisposition = :right,
-
-            # Place ticks at the same data coordinates (q values),
-            # but display the corresponding λ labels.
-                          xticks = (q_domain[1:10:end], string.(l_domain[1:10:end])),
-                          xlabel = L"\mathrm{Wavelength}",
-
-            # Spines: show only the top spine
-                          topspinevisible = true,
-                          bottomspinevisible = false,
-                          leftspinevisible = false,
-                          rightspinevisible = false,
-
-                          xgridvisible = false,
-                          #ygridvisible = false,
-
-            # Hide all y‑axis decorations on the top axis
-                          yticks = ([], []),
-                          ylabelvisible = false,
-                          ygridvisible = false,
-                          yticklabelsvisible = false
-                         )
-
-            # Synchronise limits and zoom/pan behaviour
-            linkaxes!(ax_bottom, ax_top)
 
             # Adjust layout spacing for clarity
             #colgap!(fig, 0)
