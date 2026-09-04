@@ -74,37 +74,15 @@ function extract_Sq_analysis(DIR_DATA::String)
 
 end
 
+"""
+    figure_time_evolution(df_group::AbstractDataFrame, categories_experiment::Vector{Symbol}, categories_system::Vector{Symbol}, DIR_SAVE::String)
 
-
-#=
-    Start the script
-=#
-
-# Paths and directories
-DIR_MAIN = pwd();
-DIR_DATA = joinpath(DIR_MAIN,"analyzed_data");
-FILE_DAT = "dat.csv";
-DIR_SAVE = joinpath(DIR_MAIN,"figures");
-
-# Combine the dataframes
-df_group=extract_Sq_analysis(DIR_DATA);
-
-# Add the time instant
-df_group[!,:time] = df_group.timeStep.*df_group.tstep;
-
-
-# NEED TO BE THE SAME AS THE FixInfoAnalysis.jl
-# Select the categories that define a system
-categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
-
-# Create categories to select different experiments (Just in case)
-categories_experiment=[:time_heat,:time_isothermal];
+Create figures for each experiment comparing each system in the time domain
+"""
+function figure_time_evolution(df_group::AbstractDataFrame, categories_experiment::Vector{Symbol}, categories_system::Vector{Symbol}, DIR_SAVE::String)
 
 # For id
 categories_id = [categories_system; categories_experiment];
-
-# Compare the same experiment with different systems
-
 
 # Group by experiments
 data_per_experiment = groupby(df_group,categories_experiment);
@@ -261,8 +239,6 @@ for (it_exp,data_experiment) in enumerate(data_per_experiment)
 
     end #systems
 
-    
-
     # Create decoy plot per system to add the labels
     plots_decoy = mapreduce(s->[lines!(ax_legend,1,1,
                                        linestyle = label_systems[s],
@@ -299,6 +275,39 @@ for (it_exp,data_experiment) in enumerate(data_per_experiment)
     save(joinpath(DIR_SAVE,figure_name), fig, px_per_unit = 300 / INCH)
  
 end # experiments
+end # function
+
+
+
+#=
+    Start the script
+=#
+
+# Paths and directories
+DIR_MAIN = pwd();
+DIR_DATA = joinpath(DIR_MAIN,"analyzed_data");
+FILE_DAT = "dat.csv";
+DIR_SAVE = joinpath(DIR_MAIN,"figures");
+
+# Combine the dataframes
+df_group=extract_Sq_analysis(DIR_DATA);
+
+# Add the time instant
+df_group[!,:time] = df_group.timeStep.*df_group.tstep;
+
+
+# NEED TO BE THE SAME AS THE FixInfoAnalysis.jl
+# Select the categories that define a system
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
+
+# Create categories to select different experiments (Just in case)
+categories_experiment=[:time_heat,:time_isothermal];
+
+# Compare the same experiment with different systems
+figure_time_evolution(df_group,categories_experiment,categories_system,DIR_SAVE)
+
+
+
 
 
 #=
