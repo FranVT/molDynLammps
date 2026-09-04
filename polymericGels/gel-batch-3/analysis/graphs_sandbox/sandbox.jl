@@ -684,6 +684,23 @@ function quantify_loops(graph::SimpleGraph{Int64})
 
 end
 
+"""
+    compute_dangling_chains(graph::SimpleGraph{Int64}, cluster_inds::Vector{Int64})
+
+Compute the amount of vertices that has degree 1
+"""
+function compute_dangling_chains(graph::SimpleGraph{Int64}, list_inds_clusters::Vector{Vector{Int64}})
+        
+        # Compute the end of chain
+        end_of_chain = [sum(map(ind->degree(graph,ind), cluster_inds).==1) for cluster_inds in list_inds_clusters];
+
+        # count the amount of them
+        N_dangling_chains = sum(end_of_chain);
+
+    return N_dangling_chains
+end
+
+
 
 #=
     SCRIPT 
@@ -844,11 +861,11 @@ df_system = df_systems[1];
     # Quantify loops and threebody indetractions
        (count_threebody_loops,N_loops,N_size_real_loop,loops_real_ind) = quantify_loops(graph) 
 
-
-
-
     # Quantify dangling ends
- 
+        N_dangling_chains = compute_dangling_chains(graph,list_inds_clusters);
+
+
+
 
         # Count threebody interactions
 #        unique_types_loops = unique.(loops_box_type);
