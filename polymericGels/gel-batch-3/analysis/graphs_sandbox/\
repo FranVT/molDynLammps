@@ -246,10 +246,10 @@ function create_clusters(N_part::Int64, ids_central::Vector{Int64}, id_to_pos::D
                 (ind_neigh, id_neigh)=get_cp(id_to_pos,ind_to_id,id_to_type,id_patch,tree_pbc)
 
                 if length(id_neigh) == 0
-                    ##println("Chain end")
+                    #println("Chain end")
                     continue
                 elseif length(id_neigh) > 1
-                    #println("Two central particles for one patch.")
+                    println("Two central particles for one patch.")
                     ind_neigh = first(ind_neigh);
                     id_neigh = first(id_neigh);
                 else
@@ -307,11 +307,11 @@ function get_CL_cistances_euclidean(list_inds_clusters::Vector{Vector{Int64}}, i
 end
 
 """
-    create_hist_CL_distances(distances::Vector{Float64})
+    create_hist_CL_euclidian(distances::Vector{Float64})
 
-Create a histogram with the distances between cl
+Create a histogram with the euclidean distances
 """
-function create_hist_CL_distances(distances::Vector{Float64})
+function create_hist_CL_euclidian(distances::Vector{Float64})
 
     # Create a histogram of the distances between CL
         
@@ -400,25 +400,24 @@ function explore_chain_cl(chain::Vector{Int64}, graph::SimpleGraph{Int64}, id_to
                 patch_central_type = first(patch_central_type[mask_type]);
 
                 if patch_central_type == 1
-                    #println("Is CL")
+                    println("Is CL")
                     
                     # Eliminate particles in the chain
                     mask_repeat = mapreduce(s->patch_central_ind .!= s,.&,chain);
 
-                    if mask_repeat == true 
-                        
-                        # Apply the mask
-                        patch_central_ind = patch_central_ind[mask_repeat];
+                    println(mask_repeat)
 
-                        append!(chain,patch_central_ind)
-
-                        break
-                    
-                    elseif mask_repeat == false
-                        # No more CL
-                        #println("No more CL")
-                        break
+                    if mask_repeat == false
+                        continue
                     end
+
+
+                    # Apply the mask
+                    patch_central_ind = patch_central_ind[mask_repeat];
+
+                    append!(chain,patch_central_ind)
+
+                    break
 
                 else
                     # Eliminate particles in the chain
@@ -483,7 +482,7 @@ function compute_cl_cl_distances_same_chain(all_chains)
 
                 # check if it finishes with a CL
                 if 1 == id_to_type[last_particle_id]
-                    #println("Ended with a CL")
+                    println("Ended with a CL")
 
                     # Get the ids of the chain
                     chain_ids = map(s->ind_to_id[s],chain_to_analyze);
@@ -524,7 +523,7 @@ function get_chains_cl_start(cluster_inds::Vector{Int64})
         cl_cluster = cluster_inds[mask_type];
 
         if length(cl_cluster) == 1
-            #println("Only one Cl in the cluster")
+            println("Only one Cl in the cluster")
             # continue or break
             return []
         else
@@ -562,38 +561,6 @@ function get_chains_cl_start(cluster_inds::Vector{Int64})
 
             return all_chains
         end
-
-end
-
-"""
-    get_cl_cl_distances(list_inds_clusters::Vector{Vector{Int64}})
-
-Get the distances betwen cl going throuht the chain. For all chains in the cluster
-"""
-function get_cl_cl_distances(list_inds_clusters::Vector{Vector{Int64}})
-        # Store the distances between cl following the chain
-        distances_cl_cl = Array{Float64,1}();
-
-        for cluster in list_inds_clusters
-
-            # Going thru the monomer chain
-            all_chains = get_chains_cl_start(cluster);
-
-            # Check if there are more than one cl in the cluster
-            if isempty(all_chains)
-                # Implies only one cl in the cluster
-                continue
-            else 
-
-                # Compute the distances between CL
-                aux = compute_cl_cl_distances_same_chain(all_chains);
-
-                # Store the results
-                append!(distances_cl_cl,aux)
-            end
-        end
-
-    return distances_cl_cl
 
 end
 
@@ -749,13 +716,36 @@ df_system = df_systems[1];
         euclidean_cl_cl = get_CL_cistances_euclidean(list_inds_clusters,id_to_type,ind_to_id,id_to_pos,l_x,l_y,l_z)
 
         # Create a histogram with the euclidean distances
-        hist_dist_euclidean = create_hist_CL_distances(euclidean_cl_cl);
-      
-        distances_cl_cl = get_cl_cl_distances(list_inds_clusters);
+        hist_dist_euclidean = create_hist_CL_euclidian(euclidean_cl_cl);
+       
         
-        # Create a histogram with the euclidean distances
-        hist_dist_chain = create_hist_CL_distances(distances_cl_cl);
- 
+        # Store the distances between cl following the chain
+        distances_cl_cl = Array{Float64,1}();
+
+        for (it_cluster,cluster) in enumerate(list_inds_clusters)
+
+            # Going thru the monomer chain
+            all_chains = get_chains_cl_start(cluster);
+
+            # Check if there are more than one cl in the cluster
+            if isempty(all_chains)
+                # Implies only one cl in the cluster
+                continue
+            else 
+                println(it_cluster)
+
+                # Compute the distances between CL
+                aux = compute_cl_cl_distances_same_chain(all_chains);
+
+                # Store the results
+                append!(distances_cl_cl,aux)
+            end
+        end
+
+
+
+# map(s->id_to_type[ind_to_id[s]],chain)
+
 
 
 
