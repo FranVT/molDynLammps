@@ -45,7 +45,7 @@ set_theme!(
 )
 
 # Define the color
-color_map = :roma;
+color_map = :curl;
 
 
 #=
@@ -103,61 +103,79 @@ categories_experiment=[:time_heat,:time_isothermal];
 # For id
 categories_id = [categories_system; categories_experiment];
 
+# Compare the same experiment with different systems
+
+
 # Group by experiments
 data_per_experiment = groupby(df_group,categories_experiment);
 
+# List of linestyles for each system
+label_systems = [
+                 :solid,
+                 :dot,
+                 :dash,
+                 :dashdot,
+                 :dashdotdot
+                ];
+
 # Select one experiment
-    data_experiment = data_per_experiment[1];
+#    data_experiment = data_per_experiment[1];
     
+for (it_exp,data_experiment) in enumerate(data_per_experiment)
+
+    # Start the figure
+    fig = Figure()
+    
+    # Get the time domain
+    time_domain = sort(unique(data_experiment.time));
+
+    # Create the label for the time domain
+    time_max = maximum(time_domain);
+    time_min = minimum(time_domain);
+
+    # Rime domain nromalize
+    time_norm = time_domain./time_max;
+
+    # get the min and max color
+    color_min = time_min/time_max;
+    color_max = time_max/time_max;
+
     # Group by system
     data_per_system = groupby(data_experiment,categories_system);
 
-    # Select one system
-    data_system = data_per_system[1];
+    # For the legends
+    legends = [];
 
-        # Get the time domain
-        time_domain = sort(unique(data_system.time));
+    # Add legend in the figure
+    ax_legend = Axis(fig[1:4,1:5],
+                    limits = (0, 0, 0, 0)
+                    )
 
-        # Create the label for the time domain
-        time_max = maximum(time_domain);
-        time_min = minimum(time_domain);
+    # Hide everything
+    hidespines!(ax_legend)
+    hidedecorations!(ax_legend)
 
-        # Rime domain nromalize
-        time_norm = time_domain./time_max;
+    # Prepare the ticks
+    n_ticks = 10;
+    q_aux_ticks = sort(unique(data_experiment.q_mean));
+    l_domain = 2*pi./q_aux_ticks;
+    ind_range = floor.(Int64,(10).^(range(log(10,1),log(10,length(q_aux_ticks)),length=n_ticks)));
+    q_positions = round.(q_aux_ticks[ind_range],digits=2);
+    q_ticks = latexstring.(q_positions);
+    l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
 
-        # get the min and max color
-        color_min = time_min/time_max;
-        color_max = time_max/time_max;
-
-
-        # Extract the q domain
-        q_domain = unique(data_system.q_mean)[1:end-1];
-
-        # Transform to length
-        l_domain = 2*pi./q_domain;
-
-        # Start the figure
-        fig = Figure()
-        
-        # Prepare the ticks
-        n_ticks = 10;
-        ind_range = floor.(Int64,(10).^(range(log(10,1),log(10,length(q_domain)),length=n_ticks)));
-        q_positions = round.(q_domain[ind_range],digits=2);
-        q_ticks = latexstring.(q_positions);
-        l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
-
-        # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
-        ax_bottom = Axis(fig[1, 1],
-                             xlabel = L"|\vec{q}|",
-                             ylabel = L"\mathrm{Intensity}",
-                             xticks = (q_positions, q_ticks),
+    # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
+    ax_bottom = Axis(fig[1:4, 1:5],
+                         xlabel = L"|\vec{q}|",
+                         ylabel = L"\mathrm{Intensity}",
+                         xticks = (q_positions, q_ticks),
                              xscale = log10,
                              yscale = log10,
                              xticklabelrotation = pi/4
                             )
 
-        # --- Top axis: wavelength λ ---
-        ax_top = Axis(fig[1, 1],
+    # --- Top axis: wavelength λ ---
+    ax_top = Axis(fig[1:4, 1:5],
                           xaxisposition = :top,
                           yaxisposition = :right,
 
@@ -185,9 +203,16 @@ data_per_experiment = groupby(df_group,categories_experiment);
                              xticklabelrotation = pi/4
                          )
 
-        # Synchronise limits and zoom/pan behaviour
-        linkaxes!(ax_bottom, ax_top)
+    # Synchronise limits and zoom/pan behaviour
+    linkaxes!(ax_bottom, ax_top)
 
+    # Select one system
+    #it_system = 1
+    #data_system = data_per_system[it_system];
+    for (it_system,data_system) in enumerate(data_per_system)
+
+        # Extract the q domain
+        q_domain = unique(data_system.q_mean)[1:end-1];
 
         # Group by time instant 
         data_per_time = groupby(data_system,:time)
@@ -219,16 +244,61 @@ data_per_experiment = groupby(df_group,categories_experiment);
             lines!(ax_bottom, q_domain, Sq_mean,
                        colormap = color_map,
                        color=color_label,
-                       colorrange = (color_min,color_max)
-                       #linestyle = label_systems[it_system]
+                       colorrange = (color_min,color_max),
+                       linestyle = label_systems[it_system],
+                       linewidth = 4 
                       )
-        end
+        end # time instants
 
-        # Colobar to denote the time evolution 
-        Colorbar(fig[1, 2], label = L"\tau", colormap = color_map, limits = (time_min, time_max))
+        # Create the legend
+        aux=[];
+        append!(aux,[latexstring("\\mathrm{System}~",it_system)])
+        for cat in categories_system
+            label=latexstring("\\mathrm{",string(cat),"}=~",first(data_system[!,cat]));
+            append!(aux,[label])
+        end # labels 
+        append!(legends,[aux])
 
-        # Display the figure
-        display(fig)
+    end #systems
+
+    
+
+    # Create decoy plot per system to add the labels
+    plots_decoy = mapreduce(s->[lines!(ax_legend,1,1,
+                                       linestyle = label_systems[s],
+                                       color=:black,
+                                      )],vcat,1:length(legends))
+
+    # Add the legend
+    Legend(fig[5:5,1:6],
+            plots_decoy,
+            latexstring.(join.(legends,"~")),
+            orientation = :vertical
+            )
+
+    # Colobar to denote the time evolution 
+    Colorbar(fig[1:4, 6:6], label = L"\tau", colormap = color_map, limits = (time_min, time_max))
+
+    # Display the figure
+    display(fig)
+
+    # Create the name by getting the experiment id
+    aux_name = []
+    for cat in categories_experiment
+        label=string(cat,"_",first(data_experiment[!,cat]));
+        append!(aux_name,[label])
+    end
+
+    # Join the categories
+    aux_name = join(aux_name,"_");
+
+    # Create the file name
+    figure_name = string("structure_factor_experiment_",aux_name,"_time_domain.png")
+
+    # save the figures
+    save(joinpath(DIR_SAVE,figure_name), fig, px_per_unit = 300 / INCH)
+ 
+end # experiments
 
 
 #=
