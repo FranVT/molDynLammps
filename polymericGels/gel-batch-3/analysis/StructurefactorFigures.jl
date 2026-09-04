@@ -44,6 +44,10 @@ set_theme!(
     )
 )
 
+# Define the color
+color_map = :roma;
+
+
 #=
     Functions 
 =#
@@ -111,6 +115,21 @@ data_per_experiment = groupby(df_group,categories_experiment);
     # Select one system
     data_system = data_per_system[1];
 
+        # Get the time domain
+        time_domain = sort(unique(data_system.time));
+
+        # Create the label for the time domain
+        time_max = maximum(time_domain);
+        time_min = minimum(time_domain);
+
+        # Rime domain nromalize
+        time_norm = time_domain./time_max;
+
+        # get the min and max color
+        color_min = time_min/time_max;
+        color_max = time_max/time_max;
+
+
         # Extract the q domain
         q_domain = unique(data_system.q_mean)[1:end-1];
 
@@ -122,7 +141,7 @@ data_per_experiment = groupby(df_group,categories_experiment);
         
         # Prepare the ticks
         n_ticks = 10;
-        ind_range = floor.(Int64,range(1,length(q_domain),length=n_ticks));
+        ind_range = floor.(Int64,(10).^(range(log(10,1),log(10,length(q_domain)),length=n_ticks)));
         q_positions = round.(q_domain[ind_range],digits=2);
         q_ticks = latexstring.(q_positions);
         l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
@@ -133,7 +152,8 @@ data_per_experiment = groupby(df_group,categories_experiment);
                              ylabel = L"\mathrm{Intensity}",
                              xticks = (q_positions, q_ticks),
                              xscale = log10,
-                             yscale = log10
+                             yscale = log10,
+                             xticklabelrotation = pi/4
                             )
 
         # --- Top axis: wavelength λ ---
@@ -161,7 +181,8 @@ data_per_experiment = groupby(df_group,categories_experiment);
                           ygridvisible = false,
                           yticklabelsvisible = false,
                              xscale = log10,
-                             yscale = log10
+                             yscale = log10,
+                             xticklabelrotation = pi/4
                          )
 
         # Synchronise limits and zoom/pan behaviour
@@ -174,6 +195,10 @@ data_per_experiment = groupby(df_group,categories_experiment);
         # Select one time instant
         #data_time = data_per_time[1];
         for data_time in data_per_time
+
+            # Get the time and color label
+            color_label = first(data_time.time);
+            color_label = color_label/time_max;
 
             # Group by simulation
             data_per_simulation = groupby(data_time,:Nsim);
@@ -191,8 +216,19 @@ data_per_experiment = groupby(df_group,categories_experiment);
             Sq_mean = Sq_mean;
 
             # Add the line to the plot
-            lines!(ax_bottom, q_domain, Sq_mean)
+            lines!(ax_bottom, q_domain, Sq_mean,
+                       colormap = color_map,
+                       color=color_label,
+                       colorrange = (color_min,color_max)
+                       #linestyle = label_systems[it_system]
+                      )
         end
+
+        # Colobar to denote the time evolution 
+        Colorbar(fig[1, 2], label = L"\tau", colormap = color_map, limits = (time_min, time_max))
+
+        # Display the figure
+        display(fig)
 
 
 #=
