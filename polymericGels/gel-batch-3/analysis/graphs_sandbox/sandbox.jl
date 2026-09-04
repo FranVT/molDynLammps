@@ -457,6 +457,108 @@ function explore_chain_cl(chain::Vector{Int64}, graph::SimpleGraph{Int64}, id_to
 end
 
 
+"""
+    compute_cl_cl_distances_same_chain(all_chains)
+Compute the distances between crosslinkers in the same chain
+"""
+function compute_cl_cl_distances_same_chain(all_chains)
+            # Reduce the array
+            all_chains = reduce(vcat,all_chains);
+
+            # To store the distances between CL
+            distances_cl_cl = Array{Float64,1}();
+
+            # To store the euclidean separation of the first and final cl
+            euclidean_cl_cl = Array{Float64,1}();
+
+            # Iterate in all chains with the cl
+            for chain_to_analyze in all_chains
+                first_particle_id = ind_to_id[first(chain_to_analyze)];
+                last_particle_id = ind_to_id[last(chain_to_analyze)];
+
+                # check if it finishes with a CL
+                if 1 == id_to_type[last_particle_id]
+                    println("Ended with a CL")
+
+                    # Get the ids of the chain
+                    chain_ids = map(s->ind_to_id[s],chain_to_analyze);
+
+                    # Get the position of the chains
+                    chain_positions = map(s->id_to_pos[s],chain_ids);
+
+                    # Compute the distance between particles in the chain
+                    chain_displacements = chain_positions[2:end] .- chain_positions[1:end-1];
+
+                    # Get the distances
+                    chain_distances = map(s->sqrt(s'*s),chain_displacements);
+
+                    # Get the euclidean distance
+                    euclidean_distance = id_to_pos[last_particle_id] .- id_to_pos[first_particle_id];
+
+                    euclidean_distance = sqrt(euclidean_distance'*euclidean_distance);
+                    
+                    # Distance between CL
+                    append!(distances_cl_cl,sum(chain_distances));
+                    append!(euclidean_cl_cl,euclidean_distance);
+                end
+            end
+
+    return (distances_cl_cl,euclidean_cl_cl)
+end
+
+"""
+    get_chains_cl_start(cluster_inds::Vector{Int64})
+
+Get all the chains in a cluster starting from a crosslinker
+"""
+function get_chains_cl_start(cluster_inds::Vector{Int64})
+        # Create mask for CrossLinkers 
+            cluster_type = map(s->id_to_type[ind_to_id[s]],cluster_inds)
+            mask_type = cluster_type .== 1;
+
+            # Filter thru the mask
+            cl_cluster = cluster_inds[mask_type];
+
+            if length(cl_cluster) == 1
+                println("Only one Cl in the cluster")
+                # continue or break
+            end
+
+            # To store all the chains
+            all_chains = [[] for _ in eachindex(cl_cluster)]; 
+
+            for (it,cl_explore) in enumerate(cl_cluster)
+
+                # Explore a chain
+                # Until it reaches a CL or
+                # It ends
+
+                # To store the 4 chains per CL
+                chains_cl = [Vector{Int64}() for _ in 1:4];
+
+                # Find the patches of the initial CL
+                patches_inds = all_neighbors(graph,cl_explore);
+
+                # Explore the 4 chains of one crosslinker
+                for (it2,patch_ind) in enumerate(patches_inds)
+                
+                    # Start the chain
+                    # IMPORTANT: CENTRAL THEN PATCH
+                    chain = [cl_explore; patch_ind];
+
+                    # Get the chain starting from one patch
+                    chains_cl[it2] = explore_chain_cl(chain,graph,id_to_type,ind_to_id)
+
+                end #for 
+
+                # Store the chains
+                all_chains[it] = chains_cl;
+
+            end # for
+
+    return all_chains
+end
+
 
 
 
@@ -610,94 +712,12 @@ df_system = df_systems[1];
 
         # Create a histogram with the euclidean distances
         hist_dist_euclidean = create_hist_CL_euclidian(distances);
-
-    # Compute the distances between CL
-    # Going thru the monomer chain
-
-        # Select one cluster
-        cluster_inds = list_inds_clusters[2]; 
-
-        # Create mask for CrossLinkers 
-            cluster_type = map(s->id_to_type[ind_to_id[s]],cluster_inds)
-            mask_type = cluster_type .== 1;
-
-            # Filter thru the mask
-            cl_cluster = cluster_inds[mask_type];
-
-            if length(cl_cluster) == 1
-                println("Only one Cl in the cluster")
-                # continue or break
-            end
-
-            # To store all the chains
-            all_chains = [[] for _ in eachindex(cl_cluster)]; 
-
-            for (it,cl_explore) in enumerate(cl_cluster)
-
-                # Explore a chain
-                # Until it reaches a CL or
-                # It ends
-
-                # To store the 4 chains per CL
-                chains_cl = [Vector{Int64}() for _ in 1:4];
-
-                # Find the patches of the initial CL
-                patches_inds = all_neighbors(graph,cl_explore);
-
-                # Explore the 4 chains of one crosslinker
-                for (it2,patch_ind) in enumerate(patches_inds)
-                
-                    # Start the chain
-                    # IMPORTANT: CENTRAL THEN PATCH
-                    chain = [cl_explore; patch_ind];
-
-                    # Get the chain starting from one patch
-                    chains_cl[it2] = explore_chain_cl(chain,graph,id_to_type,ind_to_id)
-
-                end #for 
-
-                # Store the chains
-                all_chains[it] = chains_cl;
-
-            end # for 
-
-            # The idea is to no double check chains.
-            # But it is more subtle than I expected
-            # Get the last particle
-            #chains_end = last.(chains_cl);
-
-            # Find which CL is connect with the other CL
-            #mask = mapreduce(s->chains_end .== s,.&,list_cl)
-
-
-            # Reduce the array
-            all_chains = reduce(vcat,all_chains);
-
-            # To store the distances between CL
-            distances_cl_cl = Array{Float64,1}();
-
-            for chain_to_analyze in all_chains
-                # check if it finishes with a CL
-                if 1 == id_to_type[ind_to_id[last(chain_to_analyze)]]
-                    println("Ended with a CL")
-
-                    # Get the ids of the chain
-                    chain_ids = map(s->ind_to_id[s],chain_to_analyze);
-
-                    # Get the position of the chains
-                    chain_positions = map(s->id_to_pos[s],chain_ids);
-
-                    # Compute the distance between particles in the chain
-                    chain_displacements = chain_positions[2:end] .- chain_positions[1:end-1];
-
-                    # Get the distances
-                    chain_distances = map(s->sqrt(s'*s),chain_displacements);
-
-                    # Distance between CL
-                    append!(distances_cl_cl,sum(chain_distances));
-                end
-            end
-
+        
+        # Going thru the monomer chain
+        all_chains = get_chains_cl_start(list_inds_clusters[2]);
+        
+        # Compute the distances between CL
+        (distances_cl_cl,euclidean_cl_cl) = compute_cl_cl_distances_same_chain(all_chains);
 
 
 
