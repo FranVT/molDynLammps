@@ -206,9 +206,7 @@ end
 
 Function that return a graph with all connection between particles
 """
-
-
-function create_clusters(N_part::Int64, ids_central::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, tree_pbc)
+function create_clusters(N_part::Int64, ids_central::Vector{Int64}, tree_pbc)
 
     # Start the graph
     graph=SimpleGraph(N_part); # Based on index
@@ -264,16 +262,16 @@ function create_clusters(N_part::Int64, ids_central::Vector{Int64}, id_to_pos::D
         end # for patch - patch 
     end # while central
 
-    return (graph, count_threebody)
+    return (graph, div(count_threebody,3))
 
 end
 
 """
-    get_CL_cistances_euclidean(list_inds_clusters::Vector{Vector{Int64}}, id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, l_x::Float64, l_y::Float64, l_z::Float64)
+    get_CL_cistances_euclidean(list_inds_clusters::Vector{Vector{Int64}}, l_x::Float64, l_y::Float64, l_z::Float64)
 
 Compute the arithmetic distances between crosslinkers inside a cluster
 """
-function get_CL_cistances_euclidean(list_inds_clusters::Vector{Vector{Int64}}, id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, l_x::Float64, l_y::Float64, l_z::Float64)
+function get_CL_cistances_euclidean(list_inds_clusters::Vector{Vector{Int64}}, l_x::Float64, l_y::Float64, l_z::Float64)
 
         # Distance between crosslinkers
         distances = Array{Float64,1}();
@@ -473,6 +471,9 @@ function compute_cl_cl_distances_same_chain(all_chains)
             # Reduce the array
             all_chains = reduce(vcat,all_chains);
 
+            # Eliminate duplicates
+            all_chains = unique_undirected(all_chains)
+
             # To store the distances between CL
             distances_cl_cl = Array{Float64,1}();
 
@@ -509,6 +510,43 @@ function compute_cl_cl_distances_same_chain(all_chains)
 
     return distances_cl_cl
 end
+
+"""
+    unique_undirected(arrays)
+
+Done by DeepSeek.
+Para cada vector v:
+
+Calcula rev = reverse(v).
+
+Compara v y rev con < (orden lexicográfico, igual que comparar listas).
+
+La canónica es el menor de los dos (canon = v < rev ? v : rev).
+
+Convierte esa canónica a tupla (para que sea hashable y usable en un Set).
+
+Si la tupla no está en seen, la agregamos y guardamos el vector original en el resultado.
+"""
+function unique_undirected(arrays)
+    seen = Set{Tuple}()                     # guarda tuplas canónicas
+    result = Vector{Vector{Int}}()          # resultado final
+
+    for v in arrays
+        # Asegurar que v es un Vector{Int} (por si es Any)
+        v_int = Vector{Int}(v)
+        rev = reverse(v_int)                # reverso del vector
+        # Canon = el menor entre v y su reverso (orden lexicográfico)
+        canon = v_int < rev ? v_int : rev
+        canon_tuple = Tuple(canon)          # convertir a tupla para usar en Set
+
+        if !(canon_tuple in seen)           # si no lo hemos visto antes
+            push!(seen, canon_tuple)
+            push!(result, v_int)            # guardamos el vector original
+        end
+    end
+    return result
+end
+
 
 """
     get_chains_cl_start(cluster_inds::Vector{Int64})
@@ -597,7 +635,54 @@ function get_cl_cl_distances(list_inds_clusters::Vector{Vector{Int64}})
 
 end
 
+"""
+    quantify_loops(graph::SimpleGraph{Int64})
+    
+Compute the total loops and stuff
+"""
+function quantify_loops(graph::SimpleGraph{Int64})
+        # Get the loops in the box
+        loops_entire_box = cycle_basis(graph);
 
+        # Get the types of the particles in the loops
+        loops_box_type = [map(s->id_to_type[ind_to_id[s]],loops) for loops in loops_entire_box];
+
+        # Count the size of the loops
+        size_loops_type = length.(loops_box_type);
+
+        # Mask of threebody
+        mask_threebody_type = size_loops_type .== 3;
+
+        # Apply the mask
+        threebody_loops_type = loops_box_type[mask_threebody_type];
+
+        # Mask for only patches
+        patches_loops_type = [map(s-> s==4 || s==3,loops) for loops in threebody_loops_type];
+
+        # Make sure that all of them are patches
+        test_patch = first(unique(sum.(patches_loops_type)));
+
+        if test_patch != 3
+            @warn "A central particle has a threebody interaction."
+        end
+    
+        count_threebody_loops = length(threebody_loops_type);
+
+        # Loops between central particles
+        loops_real_ind = loops_entire_box[.!mask_threebody_type];
+
+        # Loops between central particles
+        loops_real_type = loops_box_type[.!mask_threebody_type]; 
+
+        # Amoun of loops
+        N_loops = length(loops_real_type);
+
+        # Amount of central particles in each loop
+        N_size_real_loop = [sum((loop .== 1) .|| (loop .== 2)) for loop in loops_real_type];
+
+        return (count_threebody_loops,N_loops,N_size_real_loop,loops_real_ind)
+
+end
 
 
 #=
@@ -724,7 +809,7 @@ df_system = df_systems[1];
 #        ids_patches=Array{Int64,1}();
 
         # Create a graph with the position of the particles and cutoff distances of the potentials
-        (graph, count_threebody) = create_clusters(N_part,ids_central,id_to_pos,ind_to_id,id_to_type,tree_pbc)
+        (graph, count_threebody) = create_clusters(N_part,ids_central,tree_pbc)
 
 
 # Analysis of the graph
@@ -746,7 +831,7 @@ df_system = df_systems[1];
         Max_cluster = maximum(length.(list_inds_clusters));
 
         # Get the euclidean distance between CL
-        euclidean_cl_cl = get_CL_cistances_euclidean(list_inds_clusters,id_to_type,ind_to_id,id_to_pos,l_x,l_y,l_z)
+        euclidean_cl_cl = get_CL_cistances_euclidean(list_inds_clusters,l_x,l_y,l_z)
 
         # Create a histogram with the euclidean distances
         hist_dist_euclidean = create_hist_CL_distances(euclidean_cl_cl);
@@ -756,8 +841,40 @@ df_system = df_systems[1];
         # Create a histogram with the euclidean distances
         hist_dist_chain = create_hist_CL_distances(distances_cl_cl);
  
+    # Quantify loops and threebody indetractions
+       (count_threebody_loops,N_loops,N_size_real_loop,loops_real_ind) = quantify_loops(graph) 
 
 
+
+
+    # Quantify dangling ends
+ 
+
+        # Count threebody interactions
+#        unique_types_loops = unique.(loops_box_type);
+
+        # Mask of types of particles
+        #mask_n_types = length.(unique_types_loops).<=2
+
+
+        #miau = 
+
+
+        
+
+
+#=
+        it_cluster = 1;
+
+        chains_in_cluster = get_chains_cl_start(list_inds_clusters[it_cluster]);
+
+        all_chains = reduce(vcat,chains_in_cluster)
+
+        # Eliminate duplicates
+        all_chains = unique_undirected(all_chains)
+
+        loops = cycle_basis(graph);
+=#
 
      #end # For enumerate(paths_dumpf_simulations)
 
