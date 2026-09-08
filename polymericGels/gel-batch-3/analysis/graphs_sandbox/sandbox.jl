@@ -36,7 +36,7 @@ function get_paths_simulation(path_dumpf_simulation::String,n_steps::Integer)
         # Create the paths
         files_traj_simulation=joinpath.(path_dumpf_simulation,files_time_step);
 
-        return [files_traj_simulation]
+        return [files_traj_simulation],[time_step_analyze]
     else
         # Create an array with the ids of the elements to analyzed
         ids_files_simulation=range(1,length(files_traj_simulation),length=n_steps);
@@ -53,7 +53,7 @@ function get_paths_simulation(path_dumpf_simulation::String,n_steps::Integer)
         # Create the paths
         files_traj_simulation=joinpath.(path_dumpf_simulation,files_time_step);
 
-        return files_traj_simulation
+        return files_traj_simulation,time_step_analyze
     end
 end
 
@@ -754,7 +754,12 @@ df_system = df_systems[1];
     path_dumpf=joinpath.(dir_set,"traj");
 
     # Get all central particles position of all simulations at a given time domain 
-    paths_dumpf_simulations=get_paths_simulation.(path_dumpf,n_steps);
+    aux=get_paths_simulation.(path_dumpf,n_steps);
+
+    paths_dumpf_simulations=first.(aux);
+    time_steps_domain=reduce(vcat,unique(last.(aux)));
+
+
 
     # Iterate per each time step in each simulation 
     #for (it_sim,paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
@@ -763,13 +768,15 @@ df_system = df_systems[1];
 
 
         # Get the time step analyzed from the files
-        ids_time_step=[parse(Int, match(r"traj_assembly\.(\d+)\.dumpf", s).captures[1]) for s in paths_dumpf_simulation];
+        ids_time_step=time_steps_domain;
 
         # Data frame of the dump
         df_dump_timesteps=get_dump.(paths_dumpf_simulation);
 
 # Select one time step
-        df_dump = df_dump_timesteps[1];
+        it_time = 1;
+
+        df_dump = df_dump_timesteps[it_time];
 
         # Get the number of particles to analyse
         N_part = nrow(df_dump);
@@ -896,7 +903,7 @@ df_system = df_systems[1];
     ids_set_info=[df_set[1, col] for col in categories_id];
 
     # Get the ids
-    simulation_id = df_set.id;
+    simulation_id = df_set.id[it_sim];
 
     # Add the values of the categories to the dataframe 
     for (col, val) in zip(categories_id, ids_set_info)
@@ -906,10 +913,15 @@ df_system = df_systems[1];
     # Add a simulation identification
     df_to_store[!,:Nsim] .= it_sim;
 
+    # Add the time instant 
+    df_to_store[!,:time_instant] .= first(df_set.tstep).*ids_time_step[it_time];
+
+
     # Create a file name from the ids 
-    file_name=string("connectivity_analysis_",simulation_id,"_step_",first(ids_time_step),".csv");
+    file_name=string("connectivity_analysis_",simulation_id,"_step_",ids_time_step[it_time],".csv");
 
-
+    # Save the information
+    CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
 
 
         # Count threebody interactions
