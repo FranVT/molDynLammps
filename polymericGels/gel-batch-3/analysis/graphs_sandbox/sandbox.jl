@@ -734,7 +734,7 @@ categories_id = [categories_system; categories_experiment];
 
 
 # Select the amount of time steps to analyze
-n_steps = 2; # Implies the final configuration
+n_steps = 10; # Implies the final configuration
 
 # Read the dat file
 df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
