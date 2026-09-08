@@ -712,9 +712,17 @@ DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
 FILE_DAT = "dat.csv";
 FILE_DUMP = "traj_assembly.*.dumpf";
 
-# Critera to diffirientiate from system and experiment
-categories_system=[:phi,:chi_4,:temp,:damp,:tstep];    # Select the categories that define a system
-categories_experiment=[:N_heat,:N_isothermal];  # Create categories to select different experiments (Just in case)
+# Select the categories that define a system
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
+
+# Create categories to select different experiments (Just in case)
+categories_experiment=[:time_heat,:time_isothermal];
+
+
+# For id
+categories_id = [categories_system; categories_experiment];
+
+
 
 # Select the amount of time steps to analyze
 n_steps = 1; # Implies the final configuration
@@ -839,6 +847,7 @@ df_system = df_systems[1];
         # Create a mask that select clusters bigger than one particle 
         mask_cluster = length.(list_inds_clusters) .> 3;
 
+        # Apply the mask into the list of clusters
         list_inds_clusters=list_inds_clusters[mask_cluster];
 
         # Number of clusters in the system
@@ -852,17 +861,53 @@ df_system = df_systems[1];
 
         # Create a histogram with the euclidean distances
         hist_dist_euclidean = create_hist_CL_distances(euclidean_cl_cl);
-      
+
+        # Get the distance between cl going thru the chain
         distances_cl_cl = get_cl_cl_distances(list_inds_clusters);
         
-        # Create a histogram with the euclidean distances
+        # Create a histogram with the distances thru the chains 
         hist_dist_chain = create_hist_CL_distances(distances_cl_cl);
  
     # Quantify loops and threebody indetractions
-       (count_threebody_loops,N_loops,N_size_real_loop,loops_real_ind) = quantify_loops(graph) 
+       (count_threebody_loops,N_loops,N_size_real_loop,loops_real_ind) = quantify_loops(graph);
 
     # Quantify dangling ends
         N_dangling_chains = compute_dangling_chains(graph,list_inds_clusters);
+
+    # Create a dataframe to store the information
+        df_to_store = DataFrame(
+                                dict_ind2id = Any[ind_to_id],
+                                dict_id2ind = Any[id_to_ind],
+                                dict_id2type = Any[id_to_type],
+                                dict_pos2id = Any[pos_to_id],
+                                dict_id2pos = Any[id_to_pos],
+                                list_inds_clusters = Any[list_inds_clusters],
+                                N_clusters = Any[N_clusters],
+                                Max_cluster = Any[Max_cluster],
+                                hist_dist_euclidean = Any[hist_dist_euclidean],
+                                hist_dist_chain = Any[hist_dist_chain],
+                                count_threebody_loops = Any[count_threebody_loops],
+                                N_loops = Any[N_loops],
+                                N_size_real_loop = Any[N_size_real_loop],
+                                loops_real_ind = Any[loops_real_ind],
+                                N_dangling_chains = Any[N_dangling_chains]
+                               )
+
+    ids_set_info=[df_set[1, col] for col in categories_id];
+
+    # Get the ids
+    simulation_id = df_set.id;
+
+    # Add the values of the categories to the dataframe 
+    for (col, val) in zip(categories_id, ids_set_info)
+        df_to_store[!, col] .= val 
+    end
+
+    # Add a simulation identification
+    df_to_store[!,:Nsim] .= it_sim;
+
+    # Create a file name from the ids 
+    file_name=string("connectivity_analysis_",simulation_id,"_step_",first(ids_time_step),".csv");
 
 
 
