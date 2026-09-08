@@ -206,7 +206,7 @@ end
 
 Function that return a graph with all connection between particles
 """
-function create_clusters(N_part::Int64, ids_central::Vector{Int64}, tree_pbc)
+function create_clusters(N_part::Int64, ids_central::Vector{Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id_to_ind::Dict{Int64, Int64}, tree_pbc)
 
     # Start the graph
     graph=SimpleGraph(N_part); # Based on index
@@ -271,7 +271,7 @@ end
 
 Compute the arithmetic distances between crosslinkers inside a cluster
 """
-function get_CL_cistances_euclidean(list_inds_clusters::Vector{Vector{Int64}}, l_x::Float64, l_y::Float64, l_z::Float64)
+function get_CL_cistances_euclidean(ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, list_inds_clusters::Vector{Vector{Int64}}, l_x::Float64, l_y::Float64, l_z::Float64)
 
         # Distance between crosslinkers
         distances = Array{Float64,1}();
@@ -315,6 +315,10 @@ function create_hist_CL_distances(distances::Vector{Float64})
         
         # Define a bin size
         bin_size = 1.4;
+
+        if isempty(distances)
+            return distances
+        end
 
         # Maximum number of bins
         N_bins = ceil(Int64,ceil(div(maximum(distances),bin_size))) + 1;
@@ -371,6 +375,10 @@ function explore_chain_cl(chain::Vector{Int64}, graph::SimpleGraph{Int64}, id_to
 
                 # Eliminate particles in the chain
                 mask_repeat = mapreduce(s->patch2_ind .!= s,.&,chain);
+
+                if mask_repeat == false
+                    break # Chain end
+                end
 
                 # Apply the mask
                 patch2_ind = patch2_ind[mask_repeat];
@@ -467,7 +475,7 @@ end
     compute_cl_cl_distances_same_chain(all_chains)
 Compute the distances between crosslinkers in the same chain
 """
-function compute_cl_cl_distances_same_chain(all_chains)
+function compute_cl_cl_distances_same_chain(ind_to_id::Dict{Int64, Int64}, id_to_type::Dict{Int64, Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, all_chains)
             # Reduce the array
             all_chains = reduce(vcat,all_chains);
 
@@ -553,7 +561,8 @@ end
 
 Get all the chains in a cluster starting from a crosslinker
 """
-function get_chains_cl_start(cluster_inds::Vector{Int64})
+function get_chains_cl_start(id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64}, cluster_inds::Vector{Int64},graph)
+        
         # Create mask for CrossLinkers 
         cluster_type = map(s->id_to_type[ind_to_id[s]],cluster_inds)
         mask_type = cluster_type .== 1;
@@ -608,14 +617,14 @@ end
 
 Get the distances betwen cl going throuht the chain. For all chains in the cluster
 """
-function get_cl_cl_distances(list_inds_clusters::Vector{Vector{Int64}})
+function get_cl_cl_distances(id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64}, id_to_pos::Dict{Int64, Vector{Float64}}, list_inds_clusters::Vector{Vector{Int64}}, graph::SimpleGraph{Int64})
         # Store the distances between cl following the chain
         distances_cl_cl = Array{Float64,1}();
 
         for cluster in list_inds_clusters
 
             # Going thru the monomer chain
-            all_chains = get_chains_cl_start(cluster);
+            all_chains = get_chains_cl_start(id_to_type,ind_to_id,cluster,graph);
 
             # Check if there are more than one cl in the cluster
             if isempty(all_chains)
@@ -624,7 +633,7 @@ function get_cl_cl_distances(list_inds_clusters::Vector{Vector{Int64}})
             else 
 
                 # Compute the distances between CL
-                aux = compute_cl_cl_distances_same_chain(all_chains);
+                aux = compute_cl_cl_distances_same_chain(ind_to_id,id_to_type,id_to_pos,all_chains);
 
                 # Store the results
                 append!(distances_cl_cl,aux)
@@ -640,7 +649,7 @@ end
     
 Compute the total loops and stuff
 """
-function quantify_loops(graph::SimpleGraph{Int64})
+function quantify_loops(id_to_type::Dict{Int64, Int64}, ind_to_id::Dict{Int64, Int64}, graph::SimpleGraph{Int64})
         # Get the loops in the box
         loops_entire_box = cycle_basis(graph);
 
@@ -725,7 +734,7 @@ categories_id = [categories_system; categories_experiment];
 
 
 # Select the amount of time steps to analyze
-n_steps = 1; # Implies the final configuration
+n_steps = 2; # Implies the final configuration
 
 # Read the dat file
 df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
@@ -763,8 +772,9 @@ df_system = df_systems[1];
 
     # Iterate per each time step in each simulation 
     #for (it_sim,paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
-    it_sim = 1;
-    paths_dumpf_simulation = paths_dumpf_simulations[1];
+    #it_sim = 1;
+for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
+    #paths_dumpf_simulation = paths_dumpf_simulations[1];
 
 
         # Get the time step analyzed from the files
@@ -774,8 +784,8 @@ df_system = df_systems[1];
         df_dump_timesteps=get_dump.(paths_dumpf_simulation);
 
 # Select one time step
-        it_time = 1;
-
+        #it_time = 1;
+    for it_time in 1:n_steps
         df_dump = df_dump_timesteps[it_time];
 
         # Get the number of particles to analyse
@@ -841,7 +851,7 @@ df_system = df_systems[1];
 #        ids_patches=Array{Int64,1}();
 
         # Create a graph with the position of the particles and cutoff distances of the potentials
-        (graph, count_threebody) = create_clusters(N_part,ids_central,tree_pbc)
+        (graph, count_threebody) = create_clusters(N_part,ids_central,id_to_pos,ind_to_id,id_to_type,id_to_ind,tree_pbc)
 
 
 # Analysis of the graph
@@ -864,19 +874,19 @@ df_system = df_systems[1];
         Max_cluster = maximum(length.(list_inds_clusters));
 
         # Get the euclidean distance between CL
-        euclidean_cl_cl = get_CL_cistances_euclidean(list_inds_clusters,l_x,l_y,l_z)
+        euclidean_cl_cl = get_CL_cistances_euclidean(ind_to_id,id_to_type,id_to_pos,list_inds_clusters,l_x,l_y,l_z)
 
         # Create a histogram with the euclidean distances
         hist_dist_euclidean = create_hist_CL_distances(euclidean_cl_cl);
 
-        # Get the distance between cl going thru the chain
-        distances_cl_cl = get_cl_cl_distances(list_inds_clusters);
+        # Get the distance between cl going thru the chain in each cluster
+        distances_cl_cl = get_cl_cl_distances(id_to_type,ind_to_id,id_to_pos,list_inds_clusters,graph);
         
         # Create a histogram with the distances thru the chains 
         hist_dist_chain = create_hist_CL_distances(distances_cl_cl);
  
     # Quantify loops and threebody indetractions
-       (count_threebody_loops,N_loops,N_size_real_loop,loops_real_ind) = quantify_loops(graph);
+       (count_threebody_loops,N_loops,N_size_real_loop,loops_real_ind) = quantify_loops(id_to_type,ind_to_id,graph);
 
     # Quantify dangling ends
         N_dangling_chains = compute_dangling_chains(graph,list_inds_clusters);
@@ -923,6 +933,8 @@ df_system = df_systems[1];
     # Save the information
     CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
 
+    end # for time
+end # path
 
         # Count threebody interactions
 #        unique_types_loops = unique.(loops_box_type);

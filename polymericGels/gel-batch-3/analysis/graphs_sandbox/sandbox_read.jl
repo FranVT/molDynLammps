@@ -8,6 +8,29 @@ using DataFrames, CSV
 =#
 
 """
+    extract_fix_avg(DIR_DATA::String)
+Get the averages
+"""
+function extract_connectivity_analysis(DIR_DATA::String)
+
+    # Read the directory 
+    files=readdir(DIR_DATA);
+
+    # Get only those of the structure factor
+    files=filter(s -> occursin("connectivity_analysis_", s), files);
+
+    # Read the files
+    df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
+
+    # Create one dataframe
+    df_files = reduce(vcat,df_files)
+   
+    return  df_files   
+
+end
+
+
+"""
     convert_from_an(s::Any)
 
 Convierte un `String` a un tipo de datos Julia adecuado, detectando automáticamente si
