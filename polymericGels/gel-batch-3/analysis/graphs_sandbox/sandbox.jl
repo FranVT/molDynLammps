@@ -709,83 +709,11 @@ function compute_dangling_chains(graph::SimpleGraph{Int64}, list_inds_clusters::
     return N_dangling_chains
 end
 
+"""
+    connectivity_analysis(n_steps, df_dump_timesteps, categories_id,ids_time_step,it_time,it_sim)
+"""
+function connectivity_analysis(l,l_x,l_y,l_z,n_steps, df_dump_timesteps, categories_id,ids_time_step,it_time,it_sim,df_set)
 
-
-#=
-    SCRIPT 
-=#
-
-# Paths and directories
-DIR_MAIN = dirname(pwd());
-DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
-FILE_DAT = "dat.csv";
-FILE_DUMP = "traj_assembly.*.dumpf";
-
-# Select the categories that define a system
-categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
-
-# Create categories to select different experiments (Just in case)
-categories_experiment=[:time_heat,:time_isothermal];
-
-
-# For id
-categories_id = [categories_system; categories_experiment];
-
-
-
-# Select the amount of time steps to analyze
-n_steps = 10; # Implies the final configuration
-
-# Read the dat file
-df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
-
-# Group by system 
-df_systems=groupby(df_dat,categories_system);
-
-# Select one system
-df_system = df_systems[1];
-
-    # Group by experiments
-    df_experiments=groupby(df_system,categories_experiment);
-
-    # Select all simulations of one experiment
-    df_set = df_experiments[1];
-
-    l=first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
-    l_x = 2*l;                            # Length of the box at x 
-    l_y = 2*l;                            # Length of the box at y 
-    l_z = 2*l;                            # Length of the box at z
-
-    # Get the directories of all simulations of the system 
-    dir_set=String.(df_set.dir);
-
-    # Create the paths to the files
-    path_dumpf=joinpath.(dir_set,"traj");
-
-    # Get all central particles position of all simulations at a given time domain 
-    aux=get_paths_simulation.(path_dumpf,n_steps);
-
-    paths_dumpf_simulations=first.(aux);
-    time_steps_domain=reduce(vcat,unique(last.(aux)));
-
-
-
-    # Iterate per each time step in each simulation 
-    #for (it_sim,paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
-    #it_sim = 1;
-for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
-    #paths_dumpf_simulation = paths_dumpf_simulations[1];
-
-
-        # Get the time step analyzed from the files
-        ids_time_step=time_steps_domain;
-
-        # Data frame of the dump
-        df_dump_timesteps=get_dump.(paths_dumpf_simulation);
-
-# Select one time step
-        #it_time = 1;
-    for it_time in 1:n_steps
         df_dump = df_dump_timesteps[it_time];
 
         # Get the number of particles to analyse
@@ -853,7 +781,6 @@ for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
         # Create a graph with the position of the particles and cutoff distances of the potentials
         (graph, count_threebody) = create_clusters(N_part,ids_central,id_to_pos,ind_to_id,id_to_type,id_to_ind,tree_pbc)
 
-
 # Analysis of the graph
 
         # Create a list with the inds of particles in a cluster
@@ -894,12 +821,6 @@ for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
     # Create a dataframe to store the information
     # Store only the observables
         df_to_store = DataFrame(
-                                #dict_ind2id = Any[ind_to_id],
-                                #dict_id2ind = Any[id_to_ind],
-                                #dict_id2type = Any[id_to_type],
-                                #dict_pos2id = Any[pos_to_id],
-                                #dict_id2pos = Any[id_to_pos],
-                                #list_inds_clusters = Any[list_inds_clusters],
                                 N_clusters = Any[N_clusters],
                                 Max_cluster = Any[Max_cluster],
                                 hist_dist_euclidean = Any[hist_dist_euclidean],
@@ -907,38 +828,136 @@ for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
                                 count_threebody_loops = Any[count_threebody_loops],
                                 N_loops = Any[N_loops],
                                 N_size_real_loop = Any[N_size_real_loop],
-                                #loops_real_ind = Any[loops_real_ind],
                                 N_dangling_chains = Any[N_dangling_chains]
                                )
 
-    ids_set_info=[df_set[1, col] for col in categories_id];
+        # Add the ids to the df to store
+        ids_set_info=[df_set[1, col] for col in categories_id];
 
-    # Get the ids
-    simulation_id = df_set.id[it_sim];
+        # Get the ids
+        simulation_id = df_set.id[it_sim];
 
-    # Add the values of the categories to the dataframe 
-    for (col, val) in zip(categories_id, ids_set_info)
-        df_to_store[!, col] .= val 
+        # Add the values of the categories to the dataframe 
+        for (col, val) in zip(categories_id, ids_set_info)
+            df_to_store[!, col] .= val 
+        end
+
+        # Add a simulation identification
+        df_to_store[!,:Nsim] .= it_sim;
+
+        # Add the time instant 
+        df_to_store[!,:time_instant] .= first(df_set.tstep).*ids_time_step[it_time];
+
+
+        # Create a file name from the ids 
+        file_name=string("connectivity_analysis_",simulation_id,"_step_",ids_time_step[it_time],".csv");
+
+        # Save the information
+        CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
+
+        # message
+        println(file_name," written.")
+
+
+
+end
+
+"""
+    compute_the_analysis()
+"""
+function compute_the_analysis(df_set,n_steps)
+    l=first(unique(df_set.L));        # Compute the length of the simulation box of the experiments
+    l_x = 2*l;                            # Length of the box at x 
+    l_y = 2*l;                            # Length of the box at y 
+    l_z = 2*l;                            # Length of the box at z
+
+    # Get the directories of all simulations of the system 
+    dir_set=String.(df_set.dir);
+
+    # Create the paths to the files
+    path_dumpf=joinpath.(dir_set,"traj");
+
+    # Get all central particles position of all simulations at a given time domain 
+    aux=get_paths_simulation.(path_dumpf,n_steps);
+
+    paths_dumpf_simulations=first.(aux);
+    time_steps_domain=reduce(vcat,unique(last.(aux)));
+
+    # Iterate per each time step in each simulation 
+    #for (it_sim,paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
+    #it_sim = 1;
+    for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
+        #paths_dumpf_simulation = paths_dumpf_simulations[1];
+
+        # Get the time step analyzed from the files
+        ids_time_step=time_steps_domain;
+
+        # Data frame of the dump
+        df_dump_timesteps=get_dump.(paths_dumpf_simulation);
+
+# Select one time step
+        #it_time = 1;
+        for it_time in 1:n_steps
+            connectivity_analysis(l,l_x,l_y,l_z,n_steps, df_dump_timesteps,categories_id,ids_time_step,it_time,it_sim,df_set)
+        end # for time
+    end # path
+
+end
+
+
+
+
+
+
+#=
+    SCRIPT 
+=#
+
+# Paths and directories
+DIR_MAIN = dirname(pwd());
+DIR_SAVE = joinpath(DIR_MAIN,"analyzed_data");
+FILE_DAT = "dat.csv";
+FILE_DUMP = "traj_assembly.*.dumpf";
+
+# Select the categories that define a system
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
+
+# Create categories to select different experiments (Just in case)
+categories_experiment=[:time_heat,:time_isothermal];
+
+
+# For id
+categories_id = [categories_system; categories_experiment];
+
+
+
+# Select the amount of time steps to analyze
+n_steps = 2; # Implies the final configuration
+
+# Read the dat file
+df_dat=CSV.read(joinpath(DIR_MAIN,FILE_DAT), DataFrame);
+
+# Group by system 
+df_systems=groupby(df_dat,categories_system);
+
+# Select one system
+#df_system = df_systems[1];
+
+    for df_system in df_systems
+
+    # Group by experiments
+    df_experiments=groupby(df_system,categories_experiment);
+
+    # Select all simulations of one experiment
+    #df_set = df_experiments[1];
+        for df_set in df_experiments
+            compute_the_analysis(df_set,n_steps)
+        end
+
     end
 
-    # Add a simulation identification
-    df_to_store[!,:Nsim] .= it_sim;
-
-    # Add the time instant 
-    df_to_store[!,:time_instant] .= first(df_set.tstep).*ids_time_step[it_time];
 
 
-    # Create a file name from the ids 
-    file_name=string("connectivity_analysis_",simulation_id,"_step_",ids_time_step[it_time],".csv");
-
-    # Save the information
-    CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
-
-    # message
-    println(file_name," written.")
-
-    end # for time
-end # path
 
         # Count threebody interactions
 #        unique_types_loops = unique.(loops_box_type);

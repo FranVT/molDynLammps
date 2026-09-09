@@ -1,0 +1,2 @@
+N_clusters,Max_cluster,hist_dist_euclidean,hist_dist_chain,count_threebody_loops,N_loops,N_size_real_loop,N_dangling_chains,phi,chi_4,temp,damp,tstep,time_heat,time_isothermal,Nsim,time_instant
+250,5,Float64[],Float64[],500,0,Int64[],250,0.04,0.05,0.05,1.0,0.001,500.0,500000.0,5,0.0
