@@ -892,13 +892,14 @@ for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
         N_dangling_chains = compute_dangling_chains(graph,list_inds_clusters);
 
     # Create a dataframe to store the information
+    # Store only the observables
         df_to_store = DataFrame(
-                                dict_ind2id = Any[ind_to_id],
-                                dict_id2ind = Any[id_to_ind],
-                                dict_id2type = Any[id_to_type],
-                                dict_pos2id = Any[pos_to_id],
-                                dict_id2pos = Any[id_to_pos],
-                                list_inds_clusters = Any[list_inds_clusters],
+                                #dict_ind2id = Any[ind_to_id],
+                                #dict_id2ind = Any[id_to_ind],
+                                #dict_id2type = Any[id_to_type],
+                                #dict_pos2id = Any[pos_to_id],
+                                #dict_id2pos = Any[id_to_pos],
+                                #list_inds_clusters = Any[list_inds_clusters],
                                 N_clusters = Any[N_clusters],
                                 Max_cluster = Any[Max_cluster],
                                 hist_dist_euclidean = Any[hist_dist_euclidean],
@@ -906,7 +907,7 @@ for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
                                 count_threebody_loops = Any[count_threebody_loops],
                                 N_loops = Any[N_loops],
                                 N_size_real_loop = Any[N_size_real_loop],
-                                loops_real_ind = Any[loops_real_ind],
+                                #loops_real_ind = Any[loops_real_ind],
                                 N_dangling_chains = Any[N_dangling_chains]
                                )
 
@@ -932,6 +933,9 @@ for (it_sim, paths_dumpf_simulation) in enumerate(paths_dumpf_simulations)
 
     # Save the information
     CSV.write(joinpath(DIR_SAVE, file_name), df_to_store)
+
+    # message
+    println(file_name," written.")
 
     end # for time
 end # path

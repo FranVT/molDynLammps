@@ -8,29 +8,6 @@ using DataFrames, CSV
 =#
 
 """
-    extract_fix_avg(DIR_DATA::String)
-Get the averages
-"""
-function extract_connectivity_analysis(DIR_DATA::String)
-
-    # Read the directory 
-    files=readdir(DIR_DATA);
-
-    # Get only those of the structure factor
-    files=filter(s -> occursin("connectivity_analysis_", s), files);
-
-    # Read the files
-    df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
-
-    # Create one dataframe
-    df_files = reduce(vcat,df_files)
-   
-    return  df_files   
-
-end
-
-
-"""
     convert_from_an(s::Any)
 
 Convierte un `String` a un tipo de datos Julia adecuado, detectando automáticamente si
@@ -59,8 +36,14 @@ convert_from_string("texto")       # "texto" (String)
 Done by deepseek.
 """
 function convert_from_any(s::Any)
-    
-    if typeof(s) != :String
+  
+    #println(typeof(s))
+
+    if typeof(s) == Int64
+        return s
+    end
+
+    if typeof(s) == Float64
         return s
     end
 
@@ -109,8 +92,21 @@ function convert_from_any(s::Any)
         end
     end
 
+
+    # 3. Intentar evaluar como expresión Julia
+    #    Esto cubre arrays, dicts, tuplas, y también Float64[] (arreglos vacíos tipados)
+    try
+        expr = Meta.parse(s)
+        return eval(expr)
+    catch
+        @warn "No conversion done"
+        return s
+    end
+
+    
+
     # 4. Si nada funcionó, devolver el string original
-    return s
+    #return s
 end
 
 """
@@ -125,11 +121,38 @@ df_new = DataFrame();
 # Suponiendo que df es tu DataFrame
 for col in names(df)
     # Aplica la conversión a cada elemento de la columna
-    df_new[!, col] = Any[convert_from_any(df[!, col][1])]
+    df_new[!, col] = convert_from_any.(df[!, col])
 end
 
 return df_new
 end
+
+"""
+    extract_connectivity_analysis(DIR_DATA::String)
+Get the averages
+"""
+function extract_connectivity_analysis(DIR_DATA::String)
+
+    # Read the directory 
+    files=readdir(DIR_DATA);
+
+    # Get only those of the structure factor
+    files=filter(s -> occursin("connectivity_analysis_", s), files);
+
+    # Read the files
+    df_files=[CSV.read(joinpath(DIR_DATA,file), DataFrame) for file in files];
+
+    # Create one dataframe
+    df_files = reduce(vcat,df_files)
+  
+    # Convert the information into computational data
+    df_data = convert_dataframe(df_files)
+
+    return  df_data
+
+end
+
+
 
 #=
     Script
@@ -144,5 +167,27 @@ DIR_SAVE = joinpath(DIR_MAIN,"figures");
 # Paths and directories
 df_group=extract_connectivity_analysis(DIR_DATA);
 
-df_group=convert_dataframe(df_group);
+# Select the categories that define a system
+categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
+
+# Create categories to select different experiments (Just in case)
+categories_experiment=[:time_heat,:time_isothermal];
+
+# For id
+categories_id = [categories_system; categories_experiment];
+
+# Group by experiment
+df_experiments = groupby(df_group,categories_experiment);
+
+# Select one experiment
+df_experiment = df_experiments[1];
+
+    # Group by systems
+    df_systems = groupby(df_experiment,categories_system);
+
+    # Select one system
+    df_system = df_systems[1];
+
+        # Group by time instant
+        df_time = groupby(df_system,:time_instant)
 
