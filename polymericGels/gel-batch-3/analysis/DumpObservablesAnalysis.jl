@@ -92,15 +92,15 @@ data_experiment = data_per_experiment[1];
                 Sq_range = data_simulation.Sq_mean[1:end-1];
 
                 # Transform the domain and range into the log scale
-                #q_log_domain = log.(10,q_domain);
-                #Sq_log_range = log.(10,Sq_range);
+                q_log_domain = log.(10,q_domain);
+                Sq_log_range = log.(10,Sq_range);
     
                 # the idea is to compute the derivative of the range.
                 # When the derivative surpaes a trashhold, the interval is defined.
                 derivative_Sq = diff(Sq_range)./diff(q_domain);
 
                 # Smoothiung the derivative
-                w = 4;   # window of the mean
+                w = 8;   # window of the mean
                 derivative_Sq_smooth = [mean(derivative_Sq[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(derivative_Sq)];
 
                 # Compute the second derivative
@@ -111,7 +111,7 @@ data_experiment = data_per_experiment[1];
 #    Nota: PELT espera el vector de datos, no (x, y).
 #cps, costo = PELT(y_suave, Normal(:?, 1.0))
 
-    umbral = 10; 
+    umbral = 25; 
 
                  # picos locales en |d2|
     picos = Int[]
@@ -138,9 +138,9 @@ ax2 = Axis(f[1, 1], yticklabelcolor = :red, yaxisposition = :right)
 hidespines!(ax2)
 hidexdecorations!(ax2)
 
-scatterlines!(ax1, q_domain, Sq_range, color = :blue)
-scatterlines!(ax2, q_domain[1:end-2], second_derivative_Sq_smooth, color = :red)
+scatterlines!(ax1, q_log_domain, Sq_log_range, color = :blue)
+scatterlines!(ax2, q_log_domain[1:end-2], second_derivative_Sq_smooth, color = :red)
 
-vlines!(ax1,q_domain[cortes])
+vlines!(ax1,q_log_domain[cortes])
 
 f
