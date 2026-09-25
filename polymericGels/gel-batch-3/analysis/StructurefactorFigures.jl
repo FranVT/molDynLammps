@@ -53,10 +53,10 @@ color_map = :curl;
 =#
 
 """
-    extract_Sq_analysis(DIR_DATA::String)
+    extract_Sq_observable(DIR_DATA::String)
 Get the averages
 """
-function extract_Sq_analysis(DIR_DATA::String)
+function extract_Sq_observable(DIR_DATA::String)
 
     # Read the directory 
     files=readdir(DIR_DATA);
@@ -290,7 +290,7 @@ FILE_DAT = "dat.csv";
 DIR_SAVE = joinpath(DIR_MAIN,"figures");
 
 # Combine the dataframes
-df_group=extract_Sq_analysis(DIR_DATA);
+df_group=extract_Sq_observable(DIR_DATA);
 
 # Add the time instant
 df_group[!,:time] = df_group.timeStep.*df_group.tstep;
@@ -304,53 +304,8 @@ categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
 categories_experiment=[:time_heat,:time_isothermal];
 
 # Compare the same experiment with different systems
-#figure_time_evolution(df_group,categories_experiment,categories_system,DIR_SAVE)
+figure_time_evolution(df_group,categories_experiment,categories_system,DIR_SAVE)
 
-
-#############
-# Prepare to create the data analysis
-#############
-
-# For id
-categories_id = [categories_system; categories_experiment];
-
-# Group by experiments
-data_per_experiment = groupby(df_group,categories_experiment);
-
-# Select one experiment
-data_experiment = data_per_experiment[1];
-
-    # Group by system
-    data_per_system = groupby(data_experiment,categories_system);
-
-    # Select one system
-    data_system = data_per_system[1];
-
-        # Group by time instant
-        data_per_time = groupby(data_system,:time);
-
-        # Select one time instant
-        data_time = data_per_time[end];
-
-            # Group by simulation
-            data_per_simulation = groupby(data_time,:Nsim);
-
-            # Select one simulation
-            data_simulation = data_per_simulation[1];
-
-                # Get the q domain
-                q_domain = data_simulation.q_mean[1:end-1];
-
-                # Get the Sq_mean
-                Sq_range = data_simulation.Sq_mean[1:end-1];
-
-                # Transform the domain and range into the log scale
-                q_log_domain = log.(10,q_domain);
-                Sq_log_range = log.(10,Sq_range);
-
-                # the idea is to compute the derivative of the range.
-                # When the derivative surpaes a trashhold, the interval is defined.
-                derivative_Sq_log = (Sq_log_range[2:end].-Sq_log_range[1:end-1])./(q_log_domain[2:end].-q_log_domain[1:end-1]);
 
 #=
             # Model 
