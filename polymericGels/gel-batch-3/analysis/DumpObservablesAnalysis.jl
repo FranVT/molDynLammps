@@ -70,6 +70,97 @@ function derivada_no_uniforme(x::AbstractVector, y::AbstractVector)
     return dy
 end
 
+"""
+    find_spatial_regions_Sq(Sq_range::Vector{Float64})
+
+Function that returns the index of the max and minums of the second derivative of Sq at a log scale
+"""
+function find_spatial_regions_Sq(Sq_range::Vector{Float64}, q_domain::Vector{Float64}; w=2)
+                
+    # Smooth the range
+    Sq_range_smooth = [mean(Sq_range[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(Sq_range)];
+
+    # Transform the domain and range into the log scale
+    q_log_domain = log.(10,q_domain);
+    Sq_log_range = log.(10,Sq_range_smooth);
+    
+    # the idea is to compute the derivative of the range.
+    # When the derivative surpaes a trashhold, the interval is defined.
+    derivative_Sq = derivada_no_uniforme(q_domain, Sq_range_smooth);
+    
+    # Smooth derivative
+    derivative_Sq_smooth = [mean(derivative_Sq[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(derivative_Sq)];
+
+    # Compute the second derivative
+    second_derivative_Sq_smooth = derivada_no_uniforme(q_domain, derivative_Sq_smooth);
+                
+    # Change of variable (Lazziness)
+    d2 = deepcopy(second_derivative_Sq_smooth);
+
+    # Threshold
+    umbral = 1; 
+
+    # picos locales en |d2|
+    picos_ind = Int[]
+    for i in 2:length(d2)-1
+        if abs(d2[i]) > abs(d2[i-1]) && abs(d2[i]) > abs(d2[i+1]) && abs(d2[i]) > umbral
+            push!(picos_ind, i)  # índice en q
+        end
+    end
+
+    return picos_ind
+
+end
+
+"""
+    compute_the_fit(ind_peaks::Vector{Int64}, q_domain::Vector{Float64}, Sq_range::Vector{Float64})
+
+Function that gives the values of m and b for the Sq at log scale in the fractal region
+"""
+function compute_the_fit(ind_peaks::Vector{Int64}, q_domain::Vector{Float64}, Sq_range::Vector{Float64})
+   
+    # Transform the domain and range into the log scale
+    q_log_domain = log.(10,q_domain);
+    Sq_log_range = log.(10,Sq_range_smooth);
+
+    # Get the cut near the particle size
+    q_fractal = q_domain[first(ind_peaks)];
+    q_particle = 2*pi*0.7; # 70% of the particle size
+
+    # Get the index at the middle
+    ind_network = q_fractal .< q_domain .< q_particle
+
+    # Select the region for the linear fit
+    q_network = q_log_domain[ind_network]
+    Sq_network = Sq_log_range[ind_network]
+
+    # Create the fit
+    model(t,p) = p[1].*t.+p[2]
+
+    # Set intial values for the fit
+    p_initial = [-1.0, 0.0];
+
+    p_lower = [-Inf, -Inf];
+    p_upper = [Inf, Inf];
+
+    # Fit the data
+    fit = curve_fit(model, q_network, Sq_network, p_initial; lower=p_lower, upper=p_upper);
+
+    # Get the parameters
+    params_final = fit.param|>collect;
+
+    return params_final
+
+end
+
+
+function eval_model(t,p)
+    return p[1].*t.+p[2]
+end
+
+
+
+
 
 #=
     Start the script
@@ -128,80 +219,18 @@ data_experiment = data_per_experiment[1];
                 # Get the Sq_mean
                 Sq_range = data_simulation.Sq_mean[1:end-1];
 
-                # Smoothe the range
-                w=3
-                Sq_range_smooth = [mean(Sq_range[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(Sq_range)];
+                # Get the index for the spatial domains
+                ind_peaks = find_spatial_regions_Sq(Sq_range::Vector{Float64}, q_domain::Vector{Float64};
 
-                # Transform the domain and range into the log scale
-                q_log_domain = log.(10,q_domain);
-                Sq_log_range = log.(10,Sq_range_smooth);
-    
-                # the idea is to compute the derivative of the range.
-                # When the derivative surpaes a trashhold, the interval is defined.
-                derivative_Sq = derivada_no_uniforme(q_domain, Sq_range_smooth);
-                #diff(Sq_range)./diff(q_domain);
+                # Perform the fit 
+                params_fit = compute_the_fit(ind_peaks,q_domain,Sq_range)
 
-                # Smoothiung the derivative
-                #w = 8;   # window of the mean
-                derivative_Sq_smooth = [mean(derivative_Sq[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(derivative_Sq)];
 
-                # Compute the second derivative
-                second_derivative_Sq_smooth = derivada_no_uniforme(q_domain, derivative_Sq_smooth);
-                #diff(derivative_Sq_smooth)./diff(q_domain[1:end-1]);
-                d2 = deepcopy(derivative_Sq_smooth);
-
-# --- 3. PELT con coste Normal y penalización por defecto (log(n)) ---
-#    Nota: PELT espera el vector de datos, no (x, y).
-#cps, costo = PELT(y_suave, Normal(:?, 1.0))
-
-    umbral = 1; 
-
-                 # picos locales en |d2|
-    picos = Int[]
-    for i in 2:length(d2)-1
-        if abs(d2[i]) > abs(d2[i-1]) && abs(d2[i]) > abs(d2[i+1]) && abs(d2[i]) > umbral
-            push!(picos, i)  # índice en q
-        end
-    end
-    cortes = [1; picos; length(q_domain)]
-
-    # Get the cut near the particle size
-    q_fractal = q_domain[first(picos)];
-    q_particle = 2*pi*0.7; # 70% of the particle size
-
-    ind_network = q_fractal .< q_domain .< q_particle
-
-    # Select the region for the linear fit
-    q_network = q_log_domain[ind_network]
-    Sq_network = Sq_log_range[ind_network]
-
-    # Create the fit
-    model(t,p) = p[1].*t.+p[2]
-
-    # Set intial values for the fit
-    p_initial = [-1.0, 0.0];
-
-    p_lower = [-Inf, -Inf];
-    p_upper = [Inf, Inf];
-
-    # Fit the data
-    fit = curve_fit(model, q_network, Sq_network, p_initial; lower=p_lower, upper=p_upper);
-
-    # Get the parameters
-    p_final = fit.param|>collect;
-
-function eval_model(t,p)
-
-    return p[1].*t.+p[2]
-end
+    cortes = [1; ind_peaks; length(q_domain)]
 
 
 
     
-                # Smoothiung the derivative
-                #w = div(length(Sq_log_range),10);   # window of the mean
-                #second_derivative_Sq_log_smooth = [mean(second_derivative_Sq_log_smooth[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(second_derivative_Sq_log_smooth)];
-
 f = Figure()
 
 ax1 = Axis(f[1, 1], yticklabelcolor = :blue)
@@ -219,4 +248,4 @@ scatterlines!(ax2, q_log_domain, second_derivative_Sq_smooth, color = :red)
 vlines!(ax1,q_log_domain[cortes])
 vlines!(ax1,log(10,2*pi*0.7))
 
-f
+display(f)
