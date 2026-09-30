@@ -3,7 +3,7 @@
 =#
 
 using DataFrames, CSV
-using GLMakie
+using GLMakie, LaTeXStrings
 using Statistics, LsqFit
 
 #=
@@ -75,27 +75,28 @@ end
 
 Function that returns the index of the max and minums of the second derivative of Sq at a log scale
 """
-function find_spatial_regions_Sq(Sq_range::Vector{Float64}, q_domain::Vector{Float64}; w=2)
-                
+function find_spatial_regions_Sq(Sq_range::Vector{Float64}, q_domain::Vector{Float64})
+               
+w=2
     # Smooth the range
     Sq_range_smooth = [mean(Sq_range[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(Sq_range)];
 
     # Transform the domain and range into the log scale
-    q_log_domain = log.(10,q_domain);
-    Sq_log_range = log.(10,Sq_range_smooth);
+    #q_log_domain = log.(10,q_domain);
+    #Sq_log_range = log.(10,Sq_range_smooth);
     
     # the idea is to compute the derivative of the range.
     # When the derivative surpaes a trashhold, the interval is defined.
-    derivative_Sq = derivada_no_uniforme(q_domain, Sq_range_smooth);
+    Sq_prime = derivada_no_uniforme(q_domain, Sq_range_smooth);
     
     # Smooth derivative
-    derivative_Sq_smooth = [mean(derivative_Sq[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(derivative_Sq)];
+    Sq_prime_smooth = [mean(Sq_prime[max(1,i-w÷2):min(end,i+w÷2)]) for i in eachindex(Sq_prime)];
 
     # Compute the second derivative
-    second_derivative_Sq_smooth = derivada_no_uniforme(q_domain, derivative_Sq_smooth);
+    Sq_dprime_smooth = derivada_no_uniforme(q_domain, Sq_prime_smooth);
                 
     # Change of variable (Lazziness)
-    d2 = deepcopy(second_derivative_Sq_smooth);
+    d2 = deepcopy(Sq_dprime_smooth);
 
     # Threshold
     umbral = 1; 
@@ -108,7 +109,7 @@ function find_spatial_regions_Sq(Sq_range::Vector{Float64}, q_domain::Vector{Flo
         end
     end
 
-    return picos_ind
+    return picos_ind, Sq_prime_smooth, Sq_dprime_smooth
 
 end
 
@@ -121,7 +122,7 @@ function compute_the_fit(ind_peaks::Vector{Int64}, q_domain::Vector{Float64}, Sq
    
     # Transform the domain and range into the log scale
     q_log_domain = log.(10,q_domain);
-    Sq_log_range = log.(10,Sq_range_smooth);
+    Sq_log_range = log.(10,Sq_range);
 
     # Get the cut near the particle size
     q_fractal = q_domain[first(ind_peaks)];
@@ -153,9 +154,12 @@ function compute_the_fit(ind_peaks::Vector{Int64}, q_domain::Vector{Float64}, Sq
 
 end
 
-
-function eval_model(t,p)
+function eval_model_log(t,p)
     return p[1].*t.+p[2]
+end
+
+function eval_model_linear(t,p)
+    return (10).^(p[2]).*t.^(p[1])
 end
 
 
@@ -213,39 +217,124 @@ data_experiment = data_per_experiment[1];
             # Select one simulation
             data_simulation = data_per_simulation[1];
 
-                # Get the q domain
-                q_domain = data_simulation.q_mean[1:end-1];
+            # Get the q domain
+            q_domain = data_simulation.q_mean[1:end-1];
 
-                # Get the Sq_mean
-                Sq_range = data_simulation.Sq_mean[1:end-1];
+            # Allocate for the mean
+            Sq_mean = zeros(length(q_domain));
+
+            # Compute the mean 
+            for aux in data_per_simulation
+                Sq_mean[:] += aux.Sq_mean[1:end-1]
+            end
+            Sq_mean = Sq_mean./length(data_per_simulation);
 
                 # Get the index for the spatial domains
-                ind_peaks = find_spatial_regions_Sq(Sq_range::Vector{Float64}, q_domain::Vector{Float64};
+                ind_peaks, Sq_prime_smooth, Sq_dprime_smooth = find_spatial_regions_Sq(Sq_mean,q_domain);
 
                 # Perform the fit 
-                params_fit = compute_the_fit(ind_peaks,q_domain,Sq_range)
+                params_fit = compute_the_fit(ind_peaks,q_domain,Sq_mean)
 
 
-    cortes = [1; ind_peaks; length(q_domain)]
 
 
 
     
-f = Figure()
+fig = Figure()
 
-ax1 = Axis(f[1, 1], yticklabelcolor = :blue)
-ax2 = Axis(f[1, 1], yticklabelcolor = :red, yaxisposition = :right)
+    # Prepare the ticks
+    n_ticks = 10;
+    q_aux_ticks = q_domain;
+    l_domain = 2*pi./q_aux_ticks;
+    ind_range = floor.(Int64,(10).^(range(log(10,1),log(10,length(q_aux_ticks)),length=n_ticks)));
+    q_positions = round.(q_aux_ticks[ind_range],digits=2);
+    q_ticks = latexstring.(q_positions);
+    l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
+
+    # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
+    ax_bottom = Axis(fig[1:4, 1:5],
+                         xlabel = L"|\vec{q}|",
+                         ylabel = L"\mathrm{Intensity}",
+                         xticks = (q_positions, q_ticks),
+                             xscale = log10,
+                             yscale = log10,
+                             xticklabelrotation = pi/4
+                            )
+
+    # --- Top axis: wavelength λ ---
+    ax_top = Axis(fig[1:4, 1:5],
+                          xaxisposition = :top,
+                          yaxisposition = :right,
+
+        # Place ticks at the same data coordinates (q values),
+        # but display the corresponding λ labels.
+                          xticks = (q_positions, l_ticks),
+                          xlabel = L"\mathrm{Wavelength}",
+
+        # Spines: show only the top spine
+                          topspinevisible = true,
+                          bottomspinevisible = false,
+                          leftspinevisible = false,
+                          rightspinevisible = false,
+
+                          xgridvisible = false,
+                          #ygridvisible = false,
+
+        # Hide all y‑axis decorations on the top axis
+                          yticks = ([], []),
+                          ylabelvisible = false,
+                          ygridvisible = false,
+                          yticklabelsvisible = false,
+                             xscale = log10,
+                             yscale = log10,
+                             xticklabelrotation = pi/4
+                         )
+
+    # Synchronise limits and zoom/pan behaviour
+    linkaxes!(ax_bottom, ax_top)
+
+
+    # Transform the domain and range into the log scale
+    q_log_domain = log.(10,q_domain);
+    Sq_log_range = log.(10,Sq_range);
+
+    cortes = [ind_peaks[1:end-1]]
+
+    q_cut = [q_domain[ind_peaks[1:end-1]]; 2*pi*0.7];
+
+ 
+
+#ax1 = Axis(fig[1, 1], yticklabelcolor = :blue)
+ax2 = Axis(fig[1:4, 1:5], yticklabelcolor = :red, yaxisposition = :right)
 hidespines!(ax2)
 hidexdecorations!(ax2)
 
-lines!(ax1,q_log_domain,eval_model(q_log_domain,p_final),linestyle=:dash, color =:black,
+q_reg_low = q_cut[1:end-1];
+q_reg_high = q_cut[2:end];
+
+vspan!(ax_bottom,[q_reg_low[1]],[q_reg_high[1]], color = (:dodgerblue,0.5))
+vspan!(ax_bottom,[q_reg_low[2]],[q_reg_high[2]], color = (:orange,0.5))
+
+
+scatterlines!(ax2, q_log_domain, Sq_prime_smooth, color = (:red,0.5))
+scatterlines!(ax2, q_log_domain, Sq_dprime_smooth, color = :red)
+
+
+    lines!(ax_bottom,q_domain,eval_model_linear(q_domain,params_fit),linestyle=:dash, color =:black,
        linewidth=2.5)
-scatterlines!(ax1, q_log_domain, Sq_log_range, color = :blue)
-scatterlines!(ax1, q_log_domain, log.(10,Sq_range), color = :grey)
-scatterlines!(ax2, q_log_domain, derivative_Sq_smooth, color = (:red,0.5))
-scatterlines!(ax2, q_log_domain, second_derivative_Sq_smooth, color = :red)
 
-vlines!(ax1,q_log_domain[cortes])
-vlines!(ax1,log(10,2*pi*0.7))
+    # Add the line to the plot
+    scatterlines!(ax_bottom, q_domain, Sq_mean,
+        #linestyle = label_systems[it_system],
+        linewidth = 4
+       )
 
-display(f)
+#scatterlines!(ax1, q_log_domain, Sq_log_range, color = :blue)
+#scatterlines!(ax1, q_log_domain, log.(10,Sq_range), color = :grey)
+#vlines!(ax_bottom,q_domain[ind_peaks])
+#vlines!(ax_bottom,2*pi*0.7)
+
+
+
+
+display(fig)
