@@ -125,8 +125,8 @@ function compute_the_fit(ind_peaks::Vector{Int64}, q_domain::Vector{Float64}, Sq
     Sq_log_range = log.(10,Sq_range);
 
     # Get the cut near the particle size
-    q_fractal = q_domain[first(ind_peaks)];
-    q_particle = 2*pi*0.7; # 70% of the particle size
+    q_fractal = q_domain[ind_peaks[2]];
+    q_particle = 2*pi/1.6; # 70% of the particle size
 
     # Get the index at the middle
     ind_network = q_fractal .< q_domain .< q_particle
@@ -150,7 +150,10 @@ function compute_the_fit(ind_peaks::Vector{Int64}, q_domain::Vector{Float64}, Sq
     # Get the parameters
     params_final = fit.param|>collect;
 
-    return params_final
+    # Evaluate the fit at the domain
+    fit_eval = eval_model_linear(q_domain[ind_network],params_fit);
+
+    return params_final, q_domain[ind_network], fit_eval 
 
 end
 
@@ -197,7 +200,7 @@ categories_id = [categories_system; categories_experiment];
 data_per_experiment = groupby(df_group,categories_experiment);
 
 # Select one experiment
-data_experiment = data_per_experiment[1];
+data_experiment = data_per_experiment[3];
 
     # Group by system
     data_per_system = groupby(data_experiment,categories_system);
@@ -214,11 +217,8 @@ data_experiment = data_per_experiment[1];
             # Group by simulation
             data_per_simulation = groupby(data_time,:Nsim);
 
-            # Select one simulation
-            data_simulation = data_per_simulation[1];
-
             # Get the q domain
-            q_domain = data_simulation.q_mean[1:end-1];
+            q_domain = data_per_simulation[1].q_mean[1:end-1];
 
             # Allocate for the mean
             Sq_mean = zeros(length(q_domain));
@@ -229,15 +229,14 @@ data_experiment = data_per_experiment[1];
             end
             Sq_mean = Sq_mean./length(data_per_simulation);
 
-                # Get the index for the spatial domains
-                ind_peaks, Sq_prime_smooth, Sq_dprime_smooth = find_spatial_regions_Sq(Sq_mean,q_domain);
+            # Get the index for the spatial domains
+            ind_peaks, Sq_prime_smooth, Sq_dprime_smooth = find_spatial_regions_Sq(Sq_mean,q_domain);
 
-                # Perform the fit 
-                params_fit = compute_the_fit(ind_peaks,q_domain,Sq_mean)
+            # Perform the fit 
+            params_fit, q_network, fit_eval = compute_the_fit(ind_peaks,q_domain,Sq_mean)
 
-
-
-
+            # Get the limits of the region of the fit
+            q_cut = [q_domain[ind_peaks[1:end-1]]; 2*pi/1.6];
 
     
 fig = Figure()
@@ -296,13 +295,7 @@ fig = Figure()
 
     # Transform the domain and range into the log scale
     q_log_domain = log.(10,q_domain);
-    Sq_log_range = log.(10,Sq_range);
-
-    cortes = [ind_peaks[1:end-1]]
-
-    q_cut = [q_domain[ind_peaks[1:end-1]]; 2*pi*0.7];
-
- 
+    Sq_log_range = log.(10,Sq_mean);
 
 #ax1 = Axis(fig[1, 1], yticklabelcolor = :blue)
 ax2 = Axis(fig[1:4, 1:5], yticklabelcolor = :red, yaxisposition = :right)
@@ -313,14 +306,14 @@ q_reg_low = q_cut[1:end-1];
 q_reg_high = q_cut[2:end];
 
 vspan!(ax_bottom,[q_reg_low[1]],[q_reg_high[1]], color = (:dodgerblue,0.5))
-vspan!(ax_bottom,[q_reg_low[2]],[q_reg_high[2]], color = (:orange,0.5))
+#vspan!(ax_bottom,[q_reg_low[2]],[q_reg_high[2]], color = (:orange,0.5))
 
 
 scatterlines!(ax2, q_log_domain, Sq_prime_smooth, color = (:red,0.5))
 scatterlines!(ax2, q_log_domain, Sq_dprime_smooth, color = :red)
 
 
-    lines!(ax_bottom,q_domain,eval_model_linear(q_domain,params_fit),linestyle=:dash, color =:black,
+    lines!(ax_bottom,q_network,fit_eval,linestyle=:dash, color =:black,
        linewidth=2.5)
 
     # Add the line to the plot
