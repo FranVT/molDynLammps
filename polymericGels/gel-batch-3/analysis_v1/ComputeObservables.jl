@@ -5,7 +5,8 @@
 =#
 
 using DataFrames, CSV
-using Statistics
+using Statistics, LsqFit
+
 
 #=
     Functions
@@ -169,7 +170,7 @@ function createqdom(l::Real, n_cp::Int64, qmax_0::Real)
     # Compute the mean handeling the empty vectors
     qmean=[isempty(v) ? 0.0 : mean(v) for v in qhis];
 
-    return qmean, n_bin
+    return qmean, qxhis, qyhis, qzhis, n_bin
 end
 
 """
@@ -177,8 +178,11 @@ end
 
 Compute the structure factor of a set of positions
 """
-function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, r)
-    Sq = zeros(numbin, 2)
+function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, r)
+    #Sq = zeros(numbin, 2)
+    Sq_mean = zeros(numbin);
+    Sq_norm = zeros(numbin);
+
     rho = [[] for _ in 1:numbin]
 
     for it_bin in 1:numbin
@@ -206,11 +210,73 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, qhis, 
 
     # Guardamos información
     # Valor esperado del factor de estructura
-    Sq[:, 1] = sum.(rho) ./ length.(rho) 
-    smax = maximum(Sq[:, 1])
-    Sq[:, 2] = Sq[:, 1] / smax
+    Sq_mean = sum.(rho) ./ length.(rho) 
 
-    return Sq
+    return Sq_mean
+end
+
+function moving_mean(y::Vector{Float64}; w::Int=3)
+    n = length(y)
+    @assert w ≥ 1 "w debe ser ≥ 1"
+    @assert isodd(w) "w debe ser impar"
+    @assert w ≤ n   "w no puede exceder la longitud de y"
+
+    y_s = similar(y, Float64)
+    r = w ÷ 2  # radio
+
+    @inbounds for i in 1:n
+        lo = max(1, i - r)
+        hi = min(n, i + r)
+        s = 0.0
+        for j in lo:hi
+            s += y[j]
+        end
+        y_s[i] = s / (hi - lo + 1)
+    end
+
+    return y_s
+end
+
+"""
+    derivate(x::AbstractVector, y::AbstractVector)
+
+Por DeepSeek
+"""
+function derivate(x::AbstractVector, y::AbstractVector)
+    n = length(x)
+    @assert n == length(y) "x e y deben tener la misma longitud"
+    @assert n ≥ 3 "Se necesitan al menos 3 puntos"
+
+    dy = zeros(eltype(y), n)
+
+    # --- Primer punto: hacia adelante (3 puntos) ---
+    h1 = x[2] - x[1]
+    h2 = x[3] - x[2]
+    dy[1] = y[1] * (-(2h1 + h2) / (h1 * (h1 + h2))) +
+            y[2] * ((h1 + h2) / (h1 * h2)) +
+            y[3] * (-h1 / (h2 * (h1 + h2)))
+
+    # --- Puntos interiores: centrada (3 puntos) ---
+    @inbounds for i in 2:n-1
+        ha = x[i]   - x[i-1]   # espaciado hacia atrás
+        hb = x[i+1] - x[i]     # espaciado hacia adelante
+        dy[i] = y[i-1] * (-hb / (ha * (ha + hb))) +
+                y[i]   * ((hb - ha) / (ha * hb)) +
+                y[i+1] * ( ha / (hb * (ha + hb)))
+    end
+
+    # --- Último punto: hacia atrás (3 puntos) ---
+    h1 = x[n-1] - x[n-2]
+    h2 = x[n]   - x[n-1]
+    dy[n] = y[n-2] * ( h2 / (h1 * (h1 + h2))) +
+            y[n-1] * (-(h1 + h2) / (h1 * h2)) +
+            y[n]   * ((h1 + 2h2) / (h2 * (h1 + h2)))
+
+    return dy
+end
+
+function eval_model_log(t,p)
+    return p[1].*t.+p[2]
 end
 
 #=
@@ -246,25 +312,74 @@ box_length = df_dat.L;
 N_central = df_dat.N_PP; 
 
 # Select one simulation
-it_sim = 1;
+it_sim = 2;
 
     # Compute the domain
-    q_mean, n_bin = createqdom(box_length[it_sim], N_central[it_sim], 2*pi);
+    q_sim, qx_his, qy_his, qz_his, n_bin = createqdom(box_length[it_sim], N_central[it_sim], 2*pi);
 
     # Extract the positions
     r = get_position_simulation(path_dump_to_analyse[it_sim]);
 
-    # Save memory space to save the structure factor and compute the mean 
-    info = zeros(n_bin, 3)
-
-    # Store the q domain
-    info[:,1] = q_mean;
-
     # Store the structure factor
-    # S_q and S_q/max(S_q)
-    info[:, 2:3] = computeSq(n_bin, n_tot_av, qx_his, qy_his, qz_his, q_his, r);
+    Sq_sim = computeSq(n_bin,N_central[it_sim],qx_his,qy_his,qz_his,r);
+
+    # Smooth the the information
+    Sq_sim_smooth = moving_mean(Sq_sim);
+
+    # First derivate
+    dSq_sim_smooth = derivate(q_sim,Sq_sim_smooth);
+
+    # Second derivative
+    ddSq_sim_smooth = derivate(q_sim,dSq_sim_smooth);
+
+    # Find the region to do the 1/q fit
+    d2 = ddSq_sim_smooth;
+
+    # Threshold
+    umbral = 10; 
+
+    # picos locales en |d2|
+    ind_peaks = Int[]
+    for i in 2:length(d2)-1
+        if abs(d2[i]) > abs(d2[i-1]) && abs(d2[i]) > abs(d2[i+1]) && abs(d2[i]) > umbral
+            push!(ind_peaks, i)  # índice en q
+        end
+    end
+
+    # Modify the peaks to get the second derivative
+    
+    # Get the cut near the particle size
+    q_fractal = q_sim[last(ind_peaks)];
+    q_particle = 2*pi/1.6; # Bond distance between central particles 
+
+    # Get the index at the middle
+    ind_network = q_fractal .< q_sim .< q_particle
+
+    # Select the region for the linear fit
+    q_network = deepcopy(q_sim[ind_network])
+    Sq_network = deepcopy(Sq_sim[ind_network])
+
+    # Create the fit
+    model(t,p) = (p[2])./t.^(p[1])
+
+    # Set intial values for the fit
+    p_initial = [1.0, 1.0];
+
+    p_lower = [0.0, 0.0];
+    p_upper = [Inf, Inf];
+
+    # Fit the data
+    fit = curve_fit(model, q_network, Sq_network, p_initial; lower=p_lower, upper=p_upper);
+
+    # Get the parameters
+    params_final = fit.param|>collect;
+
+    # Evaluate the fit at the domain
+    fit_eval = model(q_sim[ind_network],params_final);
 
 
+
+#moving_mean(y::Vector{Floatu64}; w::Int=3)
 
 
 #    j
