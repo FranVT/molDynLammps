@@ -323,6 +323,14 @@ it_sim = 2;
     # Store the structure factor
     Sq_sim = computeSq(n_bin,N_central[it_sim],qx_his,qy_his,qz_his,r);
 
+
+
+
+
+#=
+
+# Analysis of the observable
+
     # Smooth the the information
     Sq_sim_smooth = moving_mean(Sq_sim);
 
@@ -376,7 +384,7 @@ it_sim = 2;
 
     # Evaluate the fit at the domain
     fit_eval = model(q_sim[ind_network],params_final);
-
+=#
 
 
 #moving_mean(y::Vector{Floatu64}; w::Int=3)
