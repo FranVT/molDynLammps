@@ -60,7 +60,9 @@ function directories_to_analyze(DIR_MAIN::String, FILE_DAT::String)
     # Filter the directories of the simulations that al ready finish 
     simulations_dir = simulations_dir[test_filter];
 
-    return simulations_dir, time_steps_range[test_filter], df_dat[test_filter,:]
+    
+
+    return String.(simulations_dir), time_steps_range[test_filter], df_dat[test_filter,:]
 end
 
 """
@@ -81,8 +83,14 @@ end
 
 Get the position of the central particles of a given dump
 """
-function get_position_simulation(path::String)
-    
+function get_position_simulation(simulation_dir::String,time_step::Int64)
+  
+    # Create the file name
+    file_name_dump_to_analyse = string("traj_assembly.",time_step,".dumpf");
+
+    # Create the path to the file
+    path = joinpath(simulation_dir,"traj",file_name_dump_to_analyse);
+
     # Extract the dump
     dump = get_dump(path);
 
@@ -215,6 +223,42 @@ function computeSq(numbin::Integer, ntotav::Integer, qxhis, qyhis, qzhis, r)
     return Sq_mean
 end
 
+"""
+    save_timesteps(ruta::String, timesteps::Vector, info::Vector)
+
+Guarda en `ruta` los bloques con el formato:
+
+Timestep 0
+q Sq
+1.24 3.76
+...
+
+Timestep 1
+q Sq
+...
+
+# Argumentos
+- `ruta`      : ruta del archivo a escribir.
+- `timesteps` : vector con los números de timestep, p.ej. [0, 1, 2, 5, 10].
+- `info`      : vector de matrices Nx2 (columna q, columna Sq), una por timestep.
+
+`timesteps` e `info` deben tener la misma longitud.
+"""
+function save_timesteps(ruta::String, timesteps::Vector, info::Vector)
+    @assert length(timesteps) == length(info) "timesteps e info deben tener la misma longitud"
+
+    open(ruta, "w") do io
+        for (t, datos) in zip(timesteps, info)
+            println(io, "Timestep $t")
+            println(io, "q Sq")
+            for fila in eachrow(datos)
+                println(io, join(fila, " "))
+            end
+            #println(io)   # línea en blanco entre bloques
+        end
+    end
+end
+
 function moving_mean(y::Vector{Float64}; w::Int=3)
     n = length(y)
     @assert w ≥ 1 "w debe ser ≥ 1"
@@ -294,34 +338,47 @@ simulations_dir, time_steps_range, df_dat = directories_to_analyze(DIR_MAIN,FILE
 
 # Compute Observables from dump files 
 
-# Select a time step to analyze
-time_step_to_analyze = last.(time_steps_range);
-
-# Create the file name
-file_name_dump_to_analyse = string.("traj_assembly.",time_step_to_analyze,".dumpf");
-
-# Create the path to the file
-path_dump_to_analyse = joinpath.(simulations_dir,"traj",file_name_dump_to_analyse);
-
-# Compute the structure factor for each simulation
-
 # Get the length of each simulation
 box_length = df_dat.L;
 
 # Get the amount of central particles in the simulation
 N_central = df_dat.N_PP; 
 
+# Select a time step to analyze
+time_step_to_analyze = time_steps_range;
+
 # Select one simulation
-it_sim = 2;
+it_sim = 1;
+
+for it_sim in eachindex(simulations_dir)
+
+    # Create a function for the exponential sampling
+    time_range_to_analyze = [first(time_steps_range[it_sim]),last(time_steps_range[it_sim])];
 
     # Compute the domain
     q_sim, qx_his, qy_his, qz_his, n_bin = createqdom(box_length[it_sim], N_central[it_sim], 2*pi);
 
-    # Extract the positions
-    r = get_position_simulation(path_dump_to_analyse[it_sim]);
+    # To store the time evolution of the structure factor
+    info = [];
 
-    # Store the structure factor
-    Sq_sim = computeSq(n_bin,N_central[it_sim],qx_his,qy_his,qz_his,r);
+    it_time = length(time_range_to_analyze); 
+
+        # Extract the positions
+        r = get_position_simulation(simulations_dir[it_sim],time_range_to_analyze[it_time]);
+
+        # Store the structure factor
+        Sq_sim = computeSq(n_bin,N_central[it_sim],qx_his,qy_his,qz_his,r);
+
+        # Prepare a dataframe to be stored.
+        append!(info,[[q_sim Sq_sim]])
+        
+
+    # Store the data in a file
+    path = joinpath(simulations_dir[it_sim],"structure_factor.txt");
+    save_timesteps(path, time_range_to_analyze, info)
+
+    println("One Simulation done")
+end
 
 
 
