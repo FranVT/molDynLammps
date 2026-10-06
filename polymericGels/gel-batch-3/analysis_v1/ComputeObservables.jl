@@ -254,7 +254,7 @@ function save_timesteps(ruta::String, timesteps::Vector, info::Vector)
             for fila in eachrow(datos)
                 println(io, join(fila, " "))
             end
-            #println(io)   # línea en blanco entre bloques
+            println(io)   # línea en blanco entre bloques
         end
     end
 end
@@ -337,6 +337,7 @@ FILE_FIX = "system_assembly.fixf";
 simulations_dir, time_steps_range, df_dat = directories_to_analyze(DIR_MAIN,FILE_DAT);
 
 # Compute Observables from dump files 
+N_sims = length(simulations_dir);
 
 # Get the length of each simulation
 box_length = df_dat.L;
@@ -347,21 +348,19 @@ N_central = df_dat.N_PP;
 # Select a time step to analyze
 time_step_to_analyze = time_steps_range;
 
-# Select one simulation
-it_sim = 1;
-
 for it_sim in eachindex(simulations_dir)
 
     # Create a function for the exponential sampling
     time_range_to_analyze = [first(time_steps_range[it_sim]),last(time_steps_range[it_sim])];
 
     # Compute the domain
-    q_sim, qx_his, qy_his, qz_his, n_bin = createqdom(box_length[it_sim], N_central[it_sim], 2*pi);
+    q_sim, qx_his, qy_his, qz_his, n_bin = createqdom(box_length[it_sim],N_central[it_sim],2*pi);
 
     # To store the time evolution of the structure factor
     info = [];
 
-    it_time = length(time_range_to_analyze); 
+    # compute each time step
+    for it_time in eachindex(time_range_to_analyze)
 
         # Extract the positions
         r = get_position_simulation(simulations_dir[it_sim],time_range_to_analyze[it_time]);
@@ -371,17 +370,14 @@ for it_sim in eachindex(simulations_dir)
 
         # Prepare a dataframe to be stored.
         append!(info,[[q_sim Sq_sim]])
-        
+    end 
 
     # Store the data in a file
     path = joinpath(simulations_dir[it_sim],"structure_factor.txt");
     save_timesteps(path, time_range_to_analyze, info)
 
-    println("One Simulation done")
+    println(it_sim," simulation done of ",length(N_sims)," simulations")
 end
-
-
-
 
 
 #=
