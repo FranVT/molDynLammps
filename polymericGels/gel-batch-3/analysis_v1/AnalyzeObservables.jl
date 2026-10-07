@@ -73,7 +73,7 @@ los archivos que sí existen en el sistema.
 - `Vector{String}` con los nombres (sin directorio) de los archivos existentes.
 """
 function files_exist(paths::Vector{<:AbstractString})
-    return [basename(p) for p in paths if isfile(p)]
+    return [p for p in paths if isfile(p)]
 end
 
 """
@@ -139,11 +139,111 @@ categories_system=[:phi,:chi_4,:temp,:damp,:tstep];
 categories_experiment=[:time_heat,:time_isothermal];
 
 # Group by experiment 
-df_dat_categories = groupby(df_dat,[categories_experiment; categories_system]);
+df_dat_experiments = groupby(df_dat,categories_experiment);
+
+# Select one experiment
+df_dat_experiment = df_dat_categories[1];
+
+    # Group by system
+    df_dat_systems = groupby(df_dat_experiment,categories_system);
+
+    # Select one system
+    df_dat_system = df_dat_systems[1];
+
+        # Get the paths to the files 
+        paths = files_exist(joinpath.(df_dat_system.dir,"structure_factor.txt"));
+      
+        # Amount of simulations per system in one experiment
+        N_sim = length(paths);
+
+        # This only works if all files have the same timesteps stored.
+
+        # To compute the mean
+        #timestep = Array{Float64}[];
+        q_mean = [];
+        Sq_mean = [];
+
+        # Exctract the Structure factor information
+        for path in paths
+            # Get the information
+            df_Sq = read_Sqtimesteps(path)
+
+            # Get the timestep
+            #timestep = df_Sq.timestep;
+            q_sim = df_Sq.q;
+            Sq_sim = df_Sq.Sq;
+
+            # Prepare for the mean 
+            append!(q_mean,[q_sim])
+            append!(Sq_mean,[Sq_sim])
+
+        end
+   
+        # Compute the mean
+        q_mean = reduce(+,q_mean)/N_sim;
+        Sq_mean = reduce(+,Sq_mean)/N_sim
+
+#=
+        # Smooth the the information
+        Sq_mean_smooth = moving_mean(Sq_mean);
+
+        # First derivate
+        dSq_mean_smooth = derivate(q_mean,Sq_mean_smooth);
+
+        # Second derivative
+        ddSq_mean_smooth = derivate(q_mean,dSq_mean_smooth);
+
+        # Find the region to do the 1/q fit
+        d2 = ddSq_mean_smooth;
+
+        # Threshold
+        umbral = 10; 
+
+        # picos locales en |d2|
+        ind_peaks = Int[]
+        for i in 2:length(d2)-1
+            if abs(d2[i]) > abs(d2[i-1]) && abs(d2[i]) > abs(d2[i+1]) && abs(d2[i]) > umbral
+                push!(ind_peaks, i)  # índice en q
+            end
+        end
+
+        # Modify the peaks to get the second derivative
+        
+        # Get the cut near the particle size
+        q_fractal = q_sim[last(ind_peaks)];
+        q_particle = 2*pi/1.6; # Bond distance between central particles 
+
+        # Get the index at the middle
+        ind_network = q_fractal .< q_sim .< q_particle
+
+        # Select the region for the linear fit
+        q_network = deepcopy(q_mean[ind_network])
+        Sq_network = deepcopy(Sq_mean[ind_network])
+
+        # Create the fit
+        model(t,p) = (p[2])./t.^(p[1])
+
+        # Set intial values for the fit
+        p_initial = [1.0, 1.0];
+
+        p_lower = [0.0, 0.0];
+        p_upper = [Inf, Inf];
+
+        # Fit the data
+        fit = curve_fit(model, q_network, Sq_network, p_initial; lower=p_lower, upper=p_upper);
+
+        # Get the parameters
+        params_final = fit.param|>collect;
+
+        # Evaluate the fit at the domain
+        fit_eval = model(q_mean[ind_network],params_final);
+=#
+
+#df_dat_categories = groupby(df_dat,[categories_experiment; categories_system]);
 
 # Group each experiment by systems
 #df_dat_experiment_system = [groupby(s,categories_system) for s in df_dat_experiment];
 
 
 # Paths
-#paths = files_exist(joinpath.(simulations_dir,"structure_factor.txt"));
+#
