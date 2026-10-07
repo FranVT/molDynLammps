@@ -117,6 +117,63 @@ function read_Sqtimesteps(ruta::String)
     return vcat(dfs...)                             # un solo DataFrame
 end
 
+"""
+    compute_Sq_mean_time_series(paths::Vector{String})
+
+Return time domain, mean of the the wave vector and mean of the Sq given N simulations paths
+"""
+function compute_Sq_mean_time_series(paths::Vector{String})
+    # Amount of simulations per system in one experiment
+    N_sim = length(paths);
+
+    # This only works if all files have the same timesteps stored.
+    
+    # Extract all dataframes
+    df_Sq_all = read_Sqtimesteps.(paths);
+
+    # Prepare to get time domain
+    aux = [unique(df.timestep) for df in df_Sq_all];
+
+    # Time domain
+    time_domain = unique(reduce(vcat,aux));
+
+    q_t_domain = [];
+    Sq_t_domain = [];
+
+    for s in eachindex(time_domain)
+
+        q_mean = [];
+        Sq_mean = [];
+
+        for it_sim in 1:N_sim
+            # Select one simulation
+            df_aux = df_Sq_all[it_sim];
+    
+            # Create the time mask
+            time_mask = df_aux.timestep .== time_domain[s];
+
+            # Extract the data
+            q_sim = df_aux.q[time_mask];
+            Sq_sim = df_aux.q[time_mask];
+
+            # Prepare for the mean 
+            append!(q_mean,[q_sim])
+            append!(Sq_mean,[Sq_sim])
+        end
+
+        # Compute the mean
+        q_mean = reduce(+,q_mean)/N_sim;
+        Sq_mean = reduce(+,Sq_mean)/N_sim;
+
+        append!(q_t_domain,[q_mean]);
+        append!(Sq_t_domain,[Sq_mean]);
+    end
+
+    return time_domain, q_t_domain, Sq_t_domain
+end
+
+
+
 #=
     Start the script
 =#
@@ -153,11 +210,11 @@ df_dat_experiment = df_dat_categories[1];
         # Get the paths to the files 
         paths = files_exist(joinpath.(df_dat_system.dir,"structure_factor.txt"));
       
-        # Amount of simulations per system in one experiment
-        N_sim = length(paths);
+        time_domain, q_t_series, Sq_t_series = compute_Sq_mean_time_series(paths)
 
-        # This only works if all files have the same timesteps stored.
 
+
+#=
         # To compute the mean
         #timestep = Array{Float64}[];
         q_mean = [];
@@ -182,6 +239,8 @@ df_dat_experiment = df_dat_categories[1];
         # Compute the mean
         q_mean = reduce(+,q_mean)/N_sim;
         Sq_mean = reduce(+,Sq_mean)/N_sim
+=#
+
 
 #=
         # Smooth the the information
