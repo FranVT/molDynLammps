@@ -4,10 +4,6 @@
     Energy and temperature are already in the fix file
 =#
 
-using DataFrames, CSV
-using Statistics, LsqFit
-
-
 #=
     Functions
 =#
@@ -59,8 +55,6 @@ function directories_to_analyze(DIR_MAIN::String, FILE_DAT::String)
 
     # Filter the directories of the simulations that al ready finish 
     simulations_dir = simulations_dir[test_filter];
-
-    
 
     return String.(simulations_dir), time_steps_range[test_filter], df_dat[test_filter,:]
 end
