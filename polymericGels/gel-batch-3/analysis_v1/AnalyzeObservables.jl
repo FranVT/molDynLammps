@@ -60,8 +60,6 @@ function directories_to_analyze(DIR_MAIN::String, FILE_DAT::String)
     return String.(simulations_dir), time_steps_range[test_filter], df_dat[test_filter,:]
 end
 
-
-
 """
 Recibe un vector de paths y devuelve un vector con los **nombres** de
 los archivos que sí existen en el sistema.
@@ -154,7 +152,7 @@ function compute_Sq_mean_time_series(paths::Vector{String})
 
             # Extract the data
             q_sim = df_aux.q[time_mask];
-            Sq_sim = df_aux.q[time_mask];
+            Sq_sim = df_aux.Sq[time_mask];
 
             # Prepare for the mean 
             append!(q_mean,[q_sim])
@@ -170,6 +168,88 @@ function compute_Sq_mean_time_series(paths::Vector{String})
     end
 
     return time_domain, q_t_domain, Sq_t_domain
+end
+
+"""
+    moving_mean(y::Vector{Float64}; w::Int=3)
+
+Return a "smother" set of points
+"""
+function moving_mean(y::Vector{Float64}; w::Int=5)
+    n = length(y)
+    @assert w ≥ 1 "w debe ser ≥ 1"
+    @assert isodd(w) "w debe ser impar"
+    @assert w ≤ n   "w no puede exceder la longitud de y"
+
+    y_s = similar(y, Float64)
+    r = w ÷ 2  # radio
+
+    @inbounds for i in 1:n
+        lo = max(1, i - r)
+        hi = min(n, i + r)
+        s = 0.0
+        for j in lo:hi
+            s += y[j]
+        end
+        y_s[i] = s / (hi - lo + 1)
+    end
+
+    return y_s
+end
+
+"""
+    derivate(x::AbstractVector, y::AbstractVector)
+
+Por DeepSeek
+"""
+function derivate(x::AbstractVector, y::AbstractVector)
+    n = length(x)
+    @assert n == length(y) "x e y deben tener la misma longitud"
+    @assert n ≥ 3 "Se necesitan al menos 3 puntos"
+
+    dy = zeros(eltype(y), n)
+
+    # --- Primer punto: hacia adelante (3 puntos) ---
+    h1 = x[2] - x[1]
+    h2 = x[3] - x[2]
+    dy[1] = y[1] * (-(2h1 + h2) / (h1 * (h1 + h2))) +
+            y[2] * ((h1 + h2) / (h1 * h2)) +
+            y[3] * (-h1 / (h2 * (h1 + h2)))
+
+    # --- Puntos interiores: centrada (3 puntos) ---
+    @inbounds for i in 2:n-1
+        ha = x[i]   - x[i-1]   # espaciado hacia atrás
+        hb = x[i+1] - x[i]     # espaciado hacia adelante
+        dy[i] = y[i-1] * (-hb / (ha * (ha + hb))) +
+                y[i]   * ((hb - ha) / (ha * hb)) +
+                y[i+1] * ( ha / (hb * (ha + hb)))
+    end
+
+    # --- Último punto: hacia atrás (3 puntos) ---
+    h1 = x[n-1] - x[n-2]
+    h2 = x[n]   - x[n-1]
+    dy[n] = y[n-2] * ( h2 / (h1 * (h1 + h2))) +
+            y[n-1] * (-(h1 + h2) / (h1 * h2)) +
+            y[n]   * ((h1 + 2h2) / (h2 * (h1 + h2)))
+
+    return dy
+end
+
+"""
+    norm_robust()
+
+Normalize a set of point to identify easily the maximums and minimus
+"""
+function norm_robust(y)
+    m = median(y)
+    s = median(abs.(y .- m))  # MAD
+    s == 0 && (s = std(y))
+    return (y .- m) ./ s, m, s
+end
+
+
+function eval_model_log(t,p)
+    return p[1].*t.+p[2]
 end
 
 
@@ -199,7 +279,7 @@ categories_experiment=[:time_heat,:time_isothermal];
 df_dat_experiments = groupby(df_dat,categories_experiment);
 
 # Select one experiment
-df_dat_experiment = df_dat_categories[1];
+df_dat_experiment = df_dat_experiments[1];
 
     # Group by system
     df_dat_systems = groupby(df_dat_experiment,categories_system);
@@ -209,94 +289,153 @@ df_dat_experiment = df_dat_categories[1];
 
         # Get the paths to the files 
         paths = files_exist(joinpath.(df_dat_system.dir,"structure_factor.txt"));
-      
-        time_domain, q_t_series, Sq_t_series = compute_Sq_mean_time_series(paths)
 
+        # Compute the mean of a time series of the structure factor
+        time_domain, q_t_series, Sq_t_series = compute_Sq_mean_time_series(paths);
 
+        # Create the fit for fractal dimension
+        it_time = length(time_domain);
 
-#=
-        # To compute the mean
-        #timestep = Array{Float64}[];
-        q_mean = [];
-        Sq_mean = [];
+            # Get the data
+            q_mean = q_t_series[it_time];
+            Sq_mean = Sq_t_series[it_time];
 
-        # Exctract the Structure factor information
-        for path in paths
-            # Get the information
-            df_Sq = read_Sqtimesteps(path)
+            # Smooth the the information
+            Sq_mean_smooth = moving_mean(Sq_mean);
 
-            # Get the timestep
-            #timestep = df_Sq.timestep;
-            q_sim = df_Sq.q;
-            Sq_sim = df_Sq.Sq;
+            # First derivate
+            dSq_mean_smooth = derivate(q_mean,Sq_mean_smooth);
 
-            # Prepare for the mean 
-            append!(q_mean,[q_sim])
-            append!(Sq_mean,[Sq_sim])
+            # Second derivative
+            ddSq_mean_smooth = derivate(q_mean,dSq_mean_smooth);
 
-        end
-   
-        # Compute the mean
-        q_mean = reduce(+,q_mean)/N_sim;
-        Sq_mean = reduce(+,Sq_mean)/N_sim
-=#
+            # Find the region to do the 1/q fit
+            d2, m_aux, s_aux = norm_robust(ddSq_mean_smooth);
 
+            #=
+            # Threshold
+            umbral = 10; 
 
-#=
-        # Smooth the the information
-        Sq_mean_smooth = moving_mean(Sq_mean);
-
-        # First derivate
-        dSq_mean_smooth = derivate(q_mean,Sq_mean_smooth);
-
-        # Second derivative
-        ddSq_mean_smooth = derivate(q_mean,dSq_mean_smooth);
-
-        # Find the region to do the 1/q fit
-        d2 = ddSq_mean_smooth;
-
-        # Threshold
-        umbral = 10; 
-
-        # picos locales en |d2|
-        ind_peaks = Int[]
-        for i in 2:length(d2)-1
-            if abs(d2[i]) > abs(d2[i-1]) && abs(d2[i]) > abs(d2[i+1]) && abs(d2[i]) > umbral
-                push!(ind_peaks, i)  # índice en q
+            # picos locales en |d2|
+            ind_peaks = Int[]
+            for i in 2:length(d2)-1
+                if abs(d2[i]) > abs(d2[i-1]) && abs(d2[i]) > abs(d2[i+1]) && abs(d2[i]) > umbral
+                    push!(ind_peaks, i)  # índice en q
+                end
             end
-        end
+            =#
 
-        # Modify the peaks to get the second derivative
-        
-        # Get the cut near the particle size
-        q_fractal = q_sim[last(ind_peaks)];
-        q_particle = 2*pi/1.6; # Bond distance between central particles 
+            # Modify the peaks to get the second derivative
+            
+            # Get the cut near the particle size
+            q_fractal = q_mean[argmax(Sq_mean_smooth)];
+            q_particle = 2*pi*0.25; # Bond distance between central particles 
 
-        # Get the index at the middle
-        ind_network = q_fractal .< q_sim .< q_particle
+            # Get the index at the middle
+            ind_network = q_fractal .< q_mean .< q_particle
 
-        # Select the region for the linear fit
-        q_network = deepcopy(q_mean[ind_network])
-        Sq_network = deepcopy(Sq_mean[ind_network])
+            # Select the region for the linear fit
+            q_network = deepcopy(q_mean[ind_network])
+            Sq_network = deepcopy(Sq_mean[ind_network])
 
-        # Create the fit
-        model(t,p) = (p[2])./t.^(p[1])
+            # Create the fit
+            model(t,p) = (p[2])./t.^(p[1]) 
 
-        # Set intial values for the fit
-        p_initial = [1.0, 1.0];
+            # Set intial values for the fit
+            p_initial = [1.0, 1.0];
 
-        p_lower = [0.0, 0.0];
-        p_upper = [Inf, Inf];
+            p_lower = [0.0, 1.0];
+            p_upper = [Inf, Inf];
 
-        # Fit the data
-        fit = curve_fit(model, q_network, Sq_network, p_initial; lower=p_lower, upper=p_upper);
+            # Fit the data
+            fit = curve_fit(model, q_network, Sq_network, p_initial; lower=p_lower, upper=p_upper);
 
-        # Get the parameters
-        params_final = fit.param|>collect;
+            # Get the parameters
+            params_final = fit.param|>collect;
 
-        # Evaluate the fit at the domain
-        fit_eval = model(q_mean[ind_network],params_final);
-=#
+            # Evaluate the fit at the domain
+            fit_eval = model(q_mean,params_final);
+
+
+
+fig = Figure()
+
+    # Prepare the ticks
+    n_ticks = 10;
+    q_aux_ticks = q_mean;
+    l_domain = 2*pi./q_aux_ticks;
+    ind_range = floor.(Int64,(10).^(range(log(10,1),log(10,length(q_aux_ticks)),length=n_ticks)));
+    q_positions = round.(q_aux_ticks[ind_range],digits=2);
+    q_ticks = latexstring.(q_positions);
+    l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
+
+    # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
+    ax_bottom = Axis(fig[1:4, 1:5],
+                         xlabel = L"|\vec{q}|",
+                         ylabel = L"\mathrm{Intensity}",
+                         xticks = (q_positions, q_ticks),
+                             xscale = log10,
+                             yscale = log10,
+                             xticklabelrotation = pi/4
+                            )
+
+    # --- Top axis: wavelength λ ---
+    ax_top = Axis(fig[1:4, 1:5],
+                          xaxisposition = :top,
+                          yaxisposition = :right,
+
+        # Place ticks at the same data coordinates (q values),
+        # but display the corresponding λ labels.
+                          xticks = (q_positions, l_ticks),
+                          xlabel = L"\mathrm{Wavelength}",
+
+        # Spines: show only the top spine
+                          topspinevisible = true,
+                          bottomspinevisible = false,
+                          leftspinevisible = false,
+                          rightspinevisible = false,
+
+                          xgridvisible = false,
+                          #ygridvisible = false,
+
+        # Hide all y‑axis decorations on the top axis
+                          yticks = ([], []),
+                          ylabelvisible = false,
+                          ygridvisible = false,
+                          yticklabelsvisible = false,
+                             xscale = log10,
+                             yscale = log10,
+                             xticklabelrotation = pi/4
+                         )
+
+    # Synchronise limits and zoom/pan behaviour
+    linkaxes!(ax_bottom, ax_top)
+
+ax2 = Axis(fig[1:4, 1:5], yticklabelcolor = :red, yaxisposition = :right)
+hidespines!(ax2)
+hidexdecorations!(ax2)
+
+
+#scatterlines!(ax2, log.(10,q_mean), dSq_mean_smooth, color = (:red,0.5))
+#scatterlines!(ax2, log.(10,q_mean), ddSq_mean_smooth, color = :red)
+
+
+    lines!(ax_bottom,q_mean,fit_eval,linestyle=:dash, color =:black,
+       linewidth=2.5)
+
+    # Add the line to the plot
+    scatterlines!(ax_bottom, q_mean, Sq_mean,
+        #linestyle = label_systems[it_system],
+        linewidth = 2 
+       )
+    
+#    scatterlines!(ax_bottom, q_mean, Sq_mean_smooth,
+        #linestyle = label_systems[it_system],
+#        linewidth = 2,
+#        color=:orange
+#       )
+
+
 
 #df_dat_categories = groupby(df_dat,[categories_experiment; categories_system]);
 
