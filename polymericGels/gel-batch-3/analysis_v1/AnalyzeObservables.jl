@@ -280,7 +280,7 @@ categories_experiment=[:time_heat,:time_isothermal];
 df_dat_experiments = groupby(df_dat,categories_experiment);
 
 # Select one experiment
-df_dat_experiment = df_dat_experiments[1];
+df_dat_experiment = df_dat_experiments[2];
 
     # Group by system
     df_dat_systems = groupby(df_dat_experiment,categories_system);
@@ -313,17 +313,29 @@ df_dat_experiment = df_dat_experiments[1];
             append!(Sq_systems,[Sq_mean]);
 
     end
-            
+
+    L_all = map(s->first(df_dat_systems[s].L),1:length(df_dat_systems))
+
+
 fig = Figure()
 
     # Prepare the ticks
     n_ticks = 10;
     q_aux_ticks = q_systems[1];
+    
+
     l_domain = 2*pi./q_aux_ticks;
     ind_range = floor.(Int64,(10).^(range(log(10,1),log(10,length(q_aux_ticks)),length=n_ticks)));
+    
+    
     q_positions = round.(q_aux_ticks[ind_range],digits=2);
     q_ticks = latexstring.(q_positions);
     l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
+
+
+
+
+
 
     # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
     ax_bottom = Axis(fig[1:4, 1:5],
@@ -381,6 +393,17 @@ hidexdecorations!(ax2)
        linewidth=2.5)
 =#
     
+    vlines!(ax_bottom,2*pi/1.4,color=:black,linestyle=:dash)
+
+    vlines!(ax_bottom,2*pi/(1.4+1.2),color=:black,linestyle=:dash)
+
+    vlines!(ax_bottom,2*pi/(2*2.6),color=:black,linestyle=:dash)
+
+    #foreach(s->vlines!(ax_bottom,s,color=:blue,linestyle=:dash),2*pi./(2*L_all./8))
+    
+
+
+
     # Add the line to the plot
     foreach(s->scatterlines!(ax_bottom,q_systems[s], Sq_systems[s],linewidth = 2),1:length(df_dat_systems)  )
 
