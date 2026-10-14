@@ -327,16 +327,17 @@ df_dat_experiment = df_dat_experiments[1];
     lambda_2_max = L_all./2;
 
     # Get the domains and ranges
-    
+    it_sys = 2;
+
     # Zone 1
-    q_z1_filter = 2*pi/lambda_1_max[1] .<= q_systems[1] .<= 2*pi/lambda_1_min[1]
-    q_z1 = q_systems[1][q_z1_filter]
-    Sq_z1 = Sq_systems[1][q_z1_filter]
+    q_z1_filter = 2*pi/lambda_1_max[it_sys] .<= q_systems[it_sys] .<= 2*pi/lambda_1_min[it_sys]
+    q_z1 = q_systems[it_sys][q_z1_filter]
+    Sq_z1 = Sq_systems[it_sys][q_z1_filter]
 
     # Zone 2
-    q_z2_filter = 2*pi/lambda_2_max[1] .<= q_systems[1] .<= 2*pi/lambda_2_min[1]
-    q_z2 = q_systems[1][q_z2_filter]
-    Sq_z2 = Sq_systems[1][q_z2_filter]
+    q_z2_filter = 2*pi/lambda_2_max[it_sys] .<= q_systems[it_sys] .<= 2*pi/lambda_2_min[it_sys]
+    q_z2 = q_systems[it_sys][q_z2_filter]
+    Sq_z2 = Sq_systems[it_sys][q_z2_filter]
 
     # Create the fit
             model(t,p) = (p[2])./(t.^(p[1]))
