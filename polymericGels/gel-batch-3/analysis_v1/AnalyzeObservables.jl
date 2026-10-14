@@ -280,7 +280,7 @@ categories_experiment=[:time_heat,:time_isothermal];
 df_dat_experiments = groupby(df_dat,categories_experiment);
 
 # Select one experiment
-df_dat_experiment = df_dat_experiments[2];
+df_dat_experiment = df_dat_experiments[1];
 
     # Group by system
     df_dat_systems = groupby(df_dat_experiment,categories_system);
@@ -316,6 +316,54 @@ df_dat_experiment = df_dat_experiments[2];
 
     L_all = map(s->first(df_dat_systems[s].L),1:length(df_dat_systems))
 
+# Create the fits
+
+    # Define the domains for the fits
+    sigma_p = 2/5;
+    lambda_1_min = [7/2*sigma_p for _ in eachindex(L_all)];
+    lambda_1_max = [21/2*sigma_p for _ in eachindex(L_all)];
+
+    lambda_2_min = [21/2*sigma_p for _ in eachindex(L_all)];
+    lambda_2_max = L_all./2;
+
+    # Get the domains and ranges
+    
+    # Zone 1
+    q_z1_filter = 2*pi/lambda_1_max[1] .<= q_systems[1] .<= 2*pi/lambda_1_min[1]
+    q_z1 = q_systems[1][q_z1_filter]
+    Sq_z1 = Sq_systems[1][q_z1_filter]
+
+    # Zone 2
+    q_z2_filter = 2*pi/lambda_2_max[1] .<= q_systems[1] .<= 2*pi/lambda_2_min[1]
+    q_z2 = q_systems[1][q_z2_filter]
+    Sq_z2 = Sq_systems[1][q_z2_filter]
+
+    # Create the fit
+            model(t,p) = (p[2])./(t.^(p[1]))
+
+            # Set intial values for the fit
+            p_initial = [1.0, 1.0];
+
+            p_lower = [0.0, 1.0];
+            p_upper = [Inf, Inf];
+
+            # Fit the data
+            fit_z1 = curve_fit(model, q_z1, Sq_z1, p_initial; lower=p_lower, upper=p_upper);
+            fit_z2 = curve_fit(model, q_z2, Sq_z2, p_initial; lower=p_lower, upper=p_upper);
+
+            # Get the parameters
+            params_final_z1 = fit_z1.param|>collect;
+            params_final_z2 = fit_z2.param|>collect;
+
+            # Evaluate the fit at the domain
+            fit_eval_z1 = model(q_z1,params_final_z1);
+            fit_eval_z2 = model(q_z2,params_final_z2);
+
+
+
+
+
+# Figure
 
 fig = Figure()
 
@@ -392,20 +440,48 @@ hidexdecorations!(ax2)
     lines!(ax_bottom,q_mean,fit_eval,linestyle=:dash, color =:black,
        linewidth=2.5)
 =#
+
+    r_int_min = 2*0.4 + 0.4;
+    r_int_max = 2*0.4 + 0.6;
+
+    r_z1_min = (7/2)*(0.4);
+    r_z1_max = (21/2)*(0.4);
+
+
+    # Two central 
+    #vspan!(ax_bottom,[2*pi/(1.2)],[2*pi/1.4],color=(:black,0.5))
+
+    # Three central
+    #vspan!(ax_bottom,[2*pi/(2*r_int_min)],[2*pi/(2*r_int_max)],color=(:black,0.5))
+
+    # Four central
+    #vspan!(ax_bottom,[2*pi/(3*r_int_min)],[2*pi/(3*r_int_max)],color=(:black,0.5))
+
+    # Four central
+    #vspan!(ax_bottom,[2*pi/(r_z1_min)],[2*pi/(r_z1_max)],color=(:blue,0.5))
+
+
     
-    vlines!(ax_bottom,2*pi/1.4,color=:black,linestyle=:dash)
-
-    vlines!(ax_bottom,2*pi/(1.4+1.2),color=:black,linestyle=:dash)
-
-    vlines!(ax_bottom,2*pi/(2*2.6),color=:black,linestyle=:dash)
-
-    #foreach(s->vlines!(ax_bottom,s,color=:blue,linestyle=:dash),2*pi./(2*L_all./8))
-    
 
 
+    #vlines!(ax_bottom,2*pi/(2*r_int_min),color=:black,linestyle=:dash)
+
+    vlines!(ax_bottom,2*pi/(3*r_int_max),color=:black,linestyle=:dash)
+
+    #vlines!(ax_bottom,2*pi/(0.4),color=:green,linestyle=:dash)
+
+    foreach(s->vlines!(ax_bottom,s,linestyle=:dash),2*pi./((1/4).*(2).*L_all))
 
     # Add the line to the plot
     foreach(s->scatterlines!(ax_bottom,q_systems[s], Sq_systems[s],linewidth = 2),1:length(df_dat_systems)  )
+
+
+
+
+    lines!(ax_bottom,q_z1,fit_eval_z1,linestyle=:dash,linewidth=3.0,color=:black)
+    lines!(ax_bottom,q_z2,fit_eval_z2,linestyle=:dash,linewidth=3.0,color=:black)
+    
+
 
 
 
