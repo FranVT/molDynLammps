@@ -314,52 +314,89 @@ df_dat_experiment = df_dat_experiments[1];
 
     end
 
-    L_all = map(s->first(df_dat_systems[s].L),1:length(df_dat_systems))
+    L_all = map(s->first(df_dat_systems[s].L),1:length(df_dat_systems));
 
 # Create the fits
 
-    # Define the domains for the fits
+    # Prepare to save the data 
     sigma_p = 2/5;
+    limits_zones = [
+                    (7/2*sigma_p, 21/2*sigma_p),
+                    (21/2*sigma_p, L_all./2)
+                   ];
+
+    q_zones = [];
+    Sq_zones = [];
+
+    # Define the domains for the fits
+    
     lambda_1_min = [7/2*sigma_p for _ in eachindex(L_all)];
     lambda_1_max = [21/2*sigma_p for _ in eachindex(L_all)];
 
     lambda_2_min = [21/2*sigma_p for _ in eachindex(L_all)];
     lambda_2_max = L_all./2;
 
+    # Define the model to fit 
+    model(t,p) = (p[2])./(t.^(p[1]))
+
+    # Set intial values for the fit
+    p_initial = [1.0, 1.0];
+
+    # Limits of the domain of search
+    p_lower = [0.0, 1.0];
+    p_upper = [Inf, Inf];
+
+
+
     # Get the domains and ranges
     it_sys = 2;
 
-    # Zone 1
-    q_z1_filter = 2*pi/lambda_1_max[it_sys] .<= q_systems[it_sys] .<= 2*pi/lambda_1_min[it_sys]
-    q_z1 = q_systems[it_sys][q_z1_filter]
-    Sq_z1 = Sq_systems[it_sys][q_z1_filter]
 
-    # Zone 2
-    q_z2_filter = 2*pi/lambda_2_max[it_sys] .<= q_systems[it_sys] .<= 2*pi/lambda_2_min[it_sys]
-    q_z2 = q_systems[it_sys][q_z2_filter]
-    Sq_z2 = Sq_systems[it_sys][q_z2_filter]
+    it_zones = 1;
 
-    # Create the fit
-            model(t,p) = (p[2])./(t.^(p[1]))
+        lambda_max = last(limits_zones[it_zones]);
+        lambda_min = first(limits_zones[it_zones]);
 
-            # Set intial values for the fit
-            p_initial = [1.0, 1.0];
+        # Zone 1
+        q_z_filter = 2*pi/lambda_max .<= q_systems[it_sys] .<= 2*pi/lambda_min;
+        q_z = q_systems[it_sys][q_z_filter];
+        Sq_z = Sq_systems[it_sys][q_z_filter];
 
-            p_lower = [0.0, 1.0];
-            p_upper = [Inf, Inf];
+        # Fit the data
+        fit_z = curve_fit(model, q_z, Sq_z, p_initial; lower=p_lower, upper=p_upper);
 
-            # Fit the data
-            fit_z1 = curve_fit(model, q_z1, Sq_z1, p_initial; lower=p_lower, upper=p_upper);
-            fit_z2 = curve_fit(model, q_z2, Sq_z2, p_initial; lower=p_lower, upper=p_upper);
+        # Get the parameters
+        params_final_z = fit_z.param|>collect;
 
-            # Get the parameters
-            params_final_z1 = fit_z1.param|>collect;
-            params_final_z2 = fit_z2.param|>collect;
+        # Evaluate the fit at the domain
+        fit_eval_z = model(q_z,params_final_z);
 
-            # Evaluate the fit at the domain
-            fit_eval_z1 = model(q_z1,params_final_z1);
-            fit_eval_z2 = model(q_z2,params_final_z2);
+        # Store the analysis
+        append!(q_zones,[q_z])
+        append!(Sq_zones,[Sq_z])
 
+
+
+
+        # Zone 2
+        q_z2_filter = 2*pi/lambda_2_max[it_sys] .<= q_systems[it_sys] .<= 2*pi/lambda_2_min[it_sys]
+        q_z2 = q_systems[it_sys][q_z2_filter]
+        Sq_z2 = Sq_systems[it_sys][q_z2_filter]
+
+        # Fit the data
+        fit_z2 = curve_fit(model, q_z2, Sq_z2, p_initial; lower=p_lower, upper=p_upper);
+
+        # Get the parameters
+        params_final_z2 = fit_z2.param|>collect;
+
+        # Evaluate the fit at the domain
+        fit_eval_z2 = model(q_z2,params_final_z2);
+
+        # Store the data of the fit and stuff
+
+
+confidence_interval(fit_z2)
+standard_errors(fit_z1)
 
 
 
