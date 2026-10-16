@@ -321,15 +321,12 @@ df_dat_experiment = df_dat_experiments[1];
     # Prepare to save the data 
     sigma_p = 2/5;
     limits_zones = [
-                    (7/2*sigma_p, 21/2*sigma_p),
-                    (21/2*sigma_p, L_all./2)
+                    ([7/2*sigma_p for _ in eachindex(L_all)], [21/2*sigma_p for _ in eachindex(L_all)]),
+                    ([21/2*sigma_p for _ in eachindex(L_all)], L_all./2)
                    ];
 
-    q_zones = [];
-    Sq_zones = [];
-
     # Define the domains for the fits
-    
+   
     lambda_1_min = [7/2*sigma_p for _ in eachindex(L_all)];
     lambda_1_max = [21/2*sigma_p for _ in eachindex(L_all)];
 
@@ -346,60 +343,47 @@ df_dat_experiment = df_dat_experiments[1];
     p_lower = [0.0, 1.0];
     p_upper = [Inf, Inf];
 
+    q_fits = [];
+    Sq_fits = [];
 
+    # Get the fits on each zone and each system 
+    for it_sys in 1:length(df_dat_systems) 
+        
+        q_zones = [];
+        Sq_zones = [];
 
-    # Get the domains and ranges
-    it_sys = 2;
+        for it_zones in eachindex(limits_zones)
 
+            lambda_max = last(limits_zones[it_zones])[it_sys];
+            lambda_min = first(limits_zones[it_zones])[it_sys];
 
-    it_zones = 1;
+            # Zone 1
+            q_z_filter = 2*pi/lambda_max .<= q_systems[it_sys] .<= 2*pi/lambda_min;
+            q_z = q_systems[it_sys][q_z_filter];
+            Sq_z = Sq_systems[it_sys][q_z_filter];
 
-        lambda_max = last(limits_zones[it_zones]);
-        lambda_min = first(limits_zones[it_zones]);
+            # Fit the data
+            fit_z = curve_fit(model, q_z, Sq_z, p_initial; lower=p_lower, upper=p_upper);
 
-        # Zone 1
-        q_z_filter = 2*pi/lambda_max .<= q_systems[it_sys] .<= 2*pi/lambda_min;
-        q_z = q_systems[it_sys][q_z_filter];
-        Sq_z = Sq_systems[it_sys][q_z_filter];
+            # Get the parameters
+            params_final_z = fit_z.param|>collect;
 
-        # Fit the data
-        fit_z = curve_fit(model, q_z, Sq_z, p_initial; lower=p_lower, upper=p_upper);
+            # Evaluate the fit at the domain
+            fit_eval_z = model(q_z,params_final_z);
 
-        # Get the parameters
-        params_final_z = fit_z.param|>collect;
+            #confidence_interval(fit_z2)
+            #standard_errors(fit_z1)
+                
+            # Store the analysis
+            append!(q_zones,[q_z])
+            append!(Sq_zones,[fit_eval_z])
 
-        # Evaluate the fit at the domain
-        fit_eval_z = model(q_z,params_final_z);
-
-        # Store the analysis
-        append!(q_zones,[q_z])
-        append!(Sq_zones,[Sq_z])
-
-
-
-
-        # Zone 2
-        q_z2_filter = 2*pi/lambda_2_max[it_sys] .<= q_systems[it_sys] .<= 2*pi/lambda_2_min[it_sys]
-        q_z2 = q_systems[it_sys][q_z2_filter]
-        Sq_z2 = Sq_systems[it_sys][q_z2_filter]
-
-        # Fit the data
-        fit_z2 = curve_fit(model, q_z2, Sq_z2, p_initial; lower=p_lower, upper=p_upper);
-
-        # Get the parameters
-        params_final_z2 = fit_z2.param|>collect;
-
-        # Evaluate the fit at the domain
-        fit_eval_z2 = model(q_z2,params_final_z2);
+        end
 
         # Store the data of the fit and stuff
-
-
-confidence_interval(fit_z2)
-standard_errors(fit_z1)
-
-
-
+        append!(q_fits,[q_zones])
+        append!(Sq_fits,[Sq_zones])
+    end
 
 # Figure
 
@@ -417,10 +401,6 @@ fig = Figure()
     q_positions = round.(q_aux_ticks[ind_range],digits=2);
     q_ticks = latexstring.(q_positions);
     l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
-
-
-
-
 
 
     # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
@@ -498,10 +478,6 @@ hidexdecorations!(ax2)
     # Four central
     #vspan!(ax_bottom,[2*pi/(r_z1_min)],[2*pi/(r_z1_max)],color=(:blue,0.5))
 
-
-    
-
-
     #vlines!(ax_bottom,2*pi/(2*r_int_min),color=:black,linestyle=:dash)
 
     vlines!(ax_bottom,2*pi/(3*r_int_max),color=:black,linestyle=:dash)
@@ -516,11 +492,13 @@ hidexdecorations!(ax2)
 
 
 
-    lines!(ax_bottom,q_z1,fit_eval_z1,linestyle=:dash,linewidth=3.0,color=:black)
-    lines!(ax_bottom,q_z2,fit_eval_z2,linestyle=:dash,linewidth=3.0,color=:black)
+   
+
+    foreach(it_sys-> 
+            foreach(it_zones->lines!(ax_bottom,q_fits[it_sys][it_zones],Sq_fits[it_sys][it_zones],color = :black), 1:length(limits_zones) ) 
+            , 1:length(df_dat_systems)) 
+
     
-
-
 
 
 
