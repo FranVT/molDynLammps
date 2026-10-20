@@ -292,9 +292,10 @@ df_dat_experiment = df_dat_experiments[1];
     q_systems = [];
     Sq_systems = [];
 
+    # For the legends
+    legends = [];
 
-
-    for df_dat_system in df_dat_systems
+    for (it_system,df_dat_system) in enumerate(df_dat_systems)
 
         # Get the paths to the files 
         paths = files_exist(joinpath.(df_dat_system.dir,"structure_factor.txt"));
@@ -312,6 +313,15 @@ df_dat_experiment = df_dat_experiments[1];
             append!(q_systems,[q_mean]);
             append!(Sq_systems,[Sq_mean]);
 
+        # Create the legend
+        aux=[];
+        append!(aux,[latexstring("\\mathrm{System}~",it_system)])
+        for cat in categories_system
+            label=latexstring("\\mathrm{",string(cat),"}=~",first(df_dat_system[!,cat]));
+            append!(aux,[label])
+        end
+        append!(legends,[aux])
+    
     end
 
     L_all = map(s->first(df_dat_systems[s].L),1:length(df_dat_systems));
@@ -391,8 +401,16 @@ fig = Figure()
 
     # Prepare the ticks
     n_ticks = 10;
-    q_aux_ticks = q_systems[1];
-    
+   
+    # Select the biggest spatial domain
+    max_lambda = maximum(length.(q_systems));
+
+    # Create the filter
+    filter_max_lambda = length.(q_systems).==max_lambda;
+
+    # Select the spatial ticksz
+    q_aux_ticks = first(q_systems[filter_max_lambda]);
+
 
     l_domain = 2*pi./q_aux_ticks;
     ind_range = floor.(Int64,(10).^(range(log(10,1),log(10,length(q_aux_ticks)),length=n_ticks)));
@@ -413,7 +431,6 @@ fig = Figure()
                              xticklabelrotation = pi/4
                             )
 
-#=
     # --- Top axis: wavelength λ ---
     ax_top = Axis(fig[1:4, 1:5],
                           xaxisposition = :top,
@@ -422,7 +439,7 @@ fig = Figure()
         # Place ticks at the same data coordinates (q values),
         # but display the corresponding λ labels.
                           xticks = (q_positions, l_ticks),
-                          xlabel = L"\mathrm{Wavelength}",
+                          xlabel = L"\lambda",
 
         # Spines: show only the top spine
                           topspinevisible = true,
@@ -446,10 +463,10 @@ fig = Figure()
     # Synchronise limits and zoom/pan behaviour
     linkaxes!(ax_bottom, ax_top)
 
+#=
 ax2 = Axis(fig[1:4, 1:5], yticklabelcolor = :red, yaxisposition = :right)
 hidespines!(ax2)
 hidexdecorations!(ax2)
-
 
 #scatterlines!(ax2, log.(10,q_mean), dSq_mean_smooth, color = (:red,0.5))
 #scatterlines!(ax2, log.(10,q_mean), ddSq_mean_smooth, color = :red)
@@ -465,21 +482,6 @@ hidexdecorations!(ax2)
     r_z1_min = (7/2)*(0.4);
     r_z1_max = (21/2)*(0.4);
 
-
-    # Two central 
-    #vspan!(ax_bottom,[2*pi/(1.2)],[2*pi/1.4],color=(:black,0.5))
-
-    # Three central
-    #vspan!(ax_bottom,[2*pi/(2*r_int_min)],[2*pi/(2*r_int_max)],color=(:black,0.5))
-
-    # Four central
-    #vspan!(ax_bottom,[2*pi/(3*r_int_min)],[2*pi/(3*r_int_max)],color=(:black,0.5))
-
-    # Four central
-    #vspan!(ax_bottom,[2*pi/(r_z1_min)],[2*pi/(r_z1_max)],color=(:blue,0.5))
-
-    #vlines!(ax_bottom,2*pi/(2*r_int_min),color=:black,linestyle=:dash)
-
     vlines!(ax_bottom,2*pi/(3*r_int_max),color=:black,linestyle=:dash)
 
     #vlines!(ax_bottom,2*pi/(0.4),color=:green,linestyle=:dash)
@@ -489,90 +491,34 @@ hidexdecorations!(ax2)
     # Add the line to the plot
     foreach(s->scatterlines!(ax_bottom,q_systems[s], Sq_systems[s],linewidth = 2),1:length(df_dat_systems)  )
 
-
-
-
-   
-
-    foreach(it_sys-> 
+        foreach(it_sys-> 
             foreach(it_zones->lines!(ax_bottom,q_fits[it_sys][it_zones],Sq_fits[it_sys][it_zones],color = :black), 1:length(limits_zones) ) 
             , 1:length(df_dat_systems)) 
 
-    
+    # Add legend in the figure
+    ax_legend = Axis(fig[1:1,1:1],
+                limits = (0, 0, 0, 0)
+                )
+
+    # Hide everything
+    hidespines!(ax_legend)
+    hidedecorations!(ax_legend)
+
+    # Create decoy plot per system to add the labels
+    plots_decoy = mapreduce(s->[scatter!(ax_legend,1,1)],vcat,1:length(df_dat_systems))
+
+    # Add the legend
+    Legend(fig[5:6,1:5],
+           plots_decoy,
+           latexstring.(join.(legends,"~")),
+           orientation = :vertical
+          )
+
+    # Display the figure
+    display(fig)
 
 
-
-
-            #=
-
-            # Smooth the the information
-            Sq_mean_smooth = moving_mean(Sq_mean);
-
-            # First derivate
-            dSq_mean_smooth = derivate(q_mean,Sq_mean_smooth);
-
-            # Second derivative
-            ddSq_mean_smooth = derivate(q_mean,dSq_mean_smooth);
-
-            # Find the region to do the 1/q fit
-            d2, m_aux, s_aux = norm_robust(ddSq_mean_smooth);
-
-            #=
-            # Threshold
-            umbral = 10; 
-
-            # picos locales en |d2|
-            ind_peaks = Int[]
-            for i in 2:length(d2)-1
-                if abs(d2[i]) > abs(d2[i-1]) && abs(d2[i]) > abs(d2[i+1]) && abs(d2[i]) > umbral
-                    push!(ind_peaks, i)  # índice en q
-                end
-            end
-            =#
-
-            # Modify the peaks to get the second derivative
-            
-            # Get the cut near the particle size
-            q_fractal = q_mean[argmax(Sq_mean_smooth)];
-            q_particle = 2*pi*0.25; # Bond distance between central particles 
-
-            # Get the index at the middle
-            ind_network = q_fractal .< q_mean .< q_particle
-
-            # Select the region for the linear fit
-            q_network = deepcopy(q_mean[ind_network])
-            Sq_network = deepcopy(Sq_mean[ind_network])
-
-            # Create the fit
-            model(t,p) = (p[2])./t.^(p[1]) 
-
-            # Set intial values for the fit
-            p_initial = [1.0, 1.0];
-
-            p_lower = [0.0, 1.0];
-            p_upper = [Inf, Inf];
-
-            # Fit the data
-            fit = curve_fit(model, q_network, Sq_network, p_initial; lower=p_lower, upper=p_upper);
-
-            # Get the parameters
-            params_final = fit.param|>collect;
-
-            # Evaluate the fit at the domain
-            fit_eval = model(q_mean,params_final);
-
-
-            
-
-            #q_mean
-            #Sq_mean
-            #fit_eval
-
-
-            #params_final
-
-
-
+#=
 fig = Figure()
 
     # Prepare the ticks

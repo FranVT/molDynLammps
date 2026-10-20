@@ -1,0 +1,97 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tufte Essay
+% LaTeX Template
+% Version 2.0 (19/1/19)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% The Tufte-LaTeX Developers (https://www.ctan.org/pkg/tufte-latex)
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% Apache License, version 2.0
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[a4paper]{tufte-handout} % Use A4 paper by default, remove 'a4paper' for US letter
+
+\usepackage{graphicx} % Required for including images
+\setkeys{Gin}{width=\linewidth, totalheight=\textheight, keepaspectratio} % Default images settings
+%\graphicspath{{Figures/}{./}} % Specifies where to look for included images (trailing slash required)
+
+\usepackage{amsmath, amsfonts, amssymb, amsthm} % For math equations, theorems, symbols, etc
+%\usepackage{units} % Non-stacked fractions and better unit spacing
+\usepackage{physics,siunitx}
+\usepackage{cancel}
+
+\usepackage{booktabs} % Required for better horizontal rules in tables
+\usepackage{subfiles}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{Structure Factor report}
+
+\author{Francisco Vazquez-Tavares}
+
+\date{\today} % Date, use \date{} for no date
+
+
+%----------------------------------------------------------------------------------------
+%	COMMANDS SECTION
+%----------------------------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT/SUMMARY
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+    In this report are the main results of the structure factor analysis.
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	ESSAY BODY
+%----------------------------------------------------------------------------------------
+
+\justifying
+
+\paragraph{Characteristic distances in the system.}
+The distance range for the pair-wise interaction is \(r_{b}\in[0.4,0.6]\).
+The total distance between the center of two central particles that aire in a pairwise interaction is \(r_{\mathrm{int}}=0.8+r_b\therefore r_{\mathrm{int}}\in[1.2,1.4]\).
+By doind some math we get that if we increase the amount of central particles in a line within the pairwise distance interaction range, the distance increases as follows, \(d_{\mathrm{int}}(N_{\mathrm{central}}) = \left(N_{\mathrm{central}}-1\right)\left(2\sigma_p + r_b\right)\).
+
+\paragraph{Domains for the fits.} 
+From the characteristic distances we can define the following spatial domains \(\lambda_1\in\left[ 7/2\sigma_p,21/2\sigma_p \right]\) and \(\lambda_2\in\left[ 21/2\sigma_p,L/4 \right]\).
+
+\paragraph{About the fit.}
+The experimental data was subjected to a fit
+\begin{gather*}
+    f(\abs{\vec{q}}) = \frac{p_1}{\abs{\vec{q}}^{p_2}}.
+\end{gather*}
+
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/fig_Sq_tf.png}
+    \caption{Structure factor of two different systems at the same experiment.}
+\end{figure}
+
+
+
+
+
+\end{document}

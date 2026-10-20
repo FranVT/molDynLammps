@@ -132,7 +132,7 @@ function figure_potential_energy(data_experiment,categories_system,categories_ex
     end
     
     # Add legend in the figure
-ax_legend = Axis(fig_experiment[1:1,1:1],
+    ax_legend = Axis(fig_experiment[1:1,1:1],
                 limits = (0, 0, 0, 0)
                 )
 
