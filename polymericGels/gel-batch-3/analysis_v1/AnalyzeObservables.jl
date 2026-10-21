@@ -280,7 +280,7 @@ categories_experiment=[:time_heat,:time_isothermal];
 df_dat_experiments = groupby(df_dat,categories_experiment);
 
 # Select one experiment
-df_dat_experiment = df_dat_experiments[1];
+df_dat_experiment = df_dat_experiments[2];
 
     # Group by system
     df_dat_systems = groupby(df_dat_experiment,categories_system);
@@ -315,11 +315,14 @@ df_dat_experiment = df_dat_experiments[1];
 
         # Create the legend
         aux=[];
-        append!(aux,[latexstring("\\mathrm{System}~",it_system)])
+        #append!(aux,[latexstring("\\mathrm{System}~",it_system)])
         for cat in categories_system
             label=latexstring("\\mathrm{",string(cat),"}=~",first(df_dat_system[!,cat]));
             append!(aux,[label])
         end
+
+        label=latexstring("t=~",time_domain[it_time]*0.001);
+        append!(aux,[label])
         append!(legends,[aux])
     
     end
@@ -332,26 +335,18 @@ df_dat_experiment = df_dat_experiments[1];
     sigma_p = 2/5;
     limits_zones = [
                     ([7/2*sigma_p for _ in eachindex(L_all)], [21/2*sigma_p for _ in eachindex(L_all)]),
-                    ([21/2*sigma_p for _ in eachindex(L_all)], L_all./2)
+                    ([21/2*sigma_p for _ in eachindex(L_all)], [(8-1)*(2*sigma_p+3/2*sigma_p) for _ in eachindex(L_all)])
                    ];
 
     # Define the domains for the fits
    
-    lambda_1_min = [7/2*sigma_p for _ in eachindex(L_all)];
-    lambda_1_max = [21/2*sigma_p for _ in eachindex(L_all)];
+    #lambda_1_min = [7/2*sigma_p for _ in eachindex(L_all)];
+    #lambda_1_max = [21/2*sigma_p for _ in eachindex(L_all)];
 
-    lambda_2_min = [21/2*sigma_p for _ in eachindex(L_all)];
-    lambda_2_max = L_all./2;
+    #lambda_2_min = [21/2*sigma_p for _ in eachindex(L_all)];
+    #lambda_2_max = [(8-1)*(2*sigma_p+3/2*sigma_p) for _ in eachindex(L_all)];
 
-    # Define the model to fit 
-    model(t,p) = (p[2])./(t.^(p[1]))
 
-    # Set intial values for the fit
-    p_initial = [1.0, 1.0];
-
-    # Limits of the domain of search
-    p_lower = [0.0, 1.0];
-    p_upper = [Inf, Inf];
 
     q_fits = [];
     Sq_fits = [];
@@ -364,6 +359,16 @@ df_dat_experiment = df_dat_experiments[1];
         Sq_zones = [];
 
         for it_zones in eachindex(limits_zones)
+
+            # Define the model to fit 
+            model(t,p) = (p[2])./(t.^(p[1]))
+
+            # Set intial values for the fit
+            p_initial = [1.0, 1.0];
+
+            # Limits of the domain of search
+            p_lower = [0.0, 1.0];
+            p_upper = [Inf, Inf];
 
             lambda_max = last(limits_zones[it_zones])[it_sys];
             lambda_min = first(limits_zones[it_zones])[it_sys];
@@ -391,6 +396,38 @@ df_dat_experiment = df_dat_experiments[1];
             append!(fit_params,[params_final_z])
 
         end
+
+        # Now the lgeneral lorentian fit
+        model_l(t,p) = p[1]./( 1 .+ (p[3].*t).^(p[2]));
+
+        # Set intial values for the fit
+        p_initial = [1.0, 2.0, 1.0];
+
+        # Limits of the domain of search
+        p_lower = [0.0, 0.0, 0.4];
+        p_upper = [Inf, Inf, Inf];
+
+        lambda_max = 2*L_all[it_sys];
+        lambda_min = ((4-1)*(2*0.4+3/2*0.4));
+
+            # Zone 1
+            q_z_filter = 2*pi/lambda_max .<= q_systems[it_sys] .<= 2*pi/lambda_min;
+            q_z = q_systems[it_sys][q_z_filter];
+            Sq_z = Sq_systems[it_sys][q_z_filter];
+
+            # Fit the data
+            fit_z = curve_fit(model_l, q_z, Sq_z, p_initial; lower=p_lower, upper=p_upper);
+
+            # Get the parameters
+            params_final_z = fit_z.param|>collect;
+
+            # Evaluate the fit at the domain
+            fit_eval_z = model_l(q_z,params_final_z);
+
+            # Store the analysis
+            append!(q_zones,[q_z])
+            append!(Sq_zones,[fit_eval_z])
+            append!(fit_params,[params_final_z])
 
         # Store the data of the fit and stuff
         append!(q_fits,[q_zones])
@@ -484,18 +521,28 @@ hidexdecorations!(ax2)
     r_z1_min = (7/2)*(0.4);
     r_z1_max = (21/2)*(0.4);
 
+
+    (9-1)*(2*0.4+3/2*0.4)
+
+
     vlines!(ax_bottom,2*pi/(3*r_int_max),color=:black,linestyle=:dash)
+
+    vlines!(ax_bottom,2*pi/((8-1)*(2*0.4+3/2*0.4)),color=:black,linestyle=:dash)
+
+
 
     #vlines!(ax_bottom,2*pi/(0.4),color=:green,linestyle=:dash)
 
-    foreach(s->vlines!(ax_bottom,s,linestyle=:dash),2*pi./((1/4).*(2).*L_all))
+    #foreach(s->vlines!(ax_bottom,s,linestyle=:dash),2*pi./((1/6).*(2).*L_all))
 
     # Add the line to the plot
     foreach(s->scatterlines!(ax_bottom,q_systems[s], Sq_systems[s],linewidth = 2),1:length(df_dat_systems)  )
 
+
         foreach(it_sys-> 
-            foreach(it_zones->lines!(ax_bottom,q_fits[it_sys][it_zones],Sq_fits[it_sys][it_zones],color = :black), 1:length(limits_zones) ) 
+            foreach(it_zones->lines!(ax_bottom,q_fits[it_sys][it_zones],Sq_fits[it_sys][it_zones],color = :black), 1:length(limits_zones)+1 ) 
             , 1:length(df_dat_systems)) 
+
 
     # Add legend in the figure
     ax_legend = Axis(fig[1:1,1:1],

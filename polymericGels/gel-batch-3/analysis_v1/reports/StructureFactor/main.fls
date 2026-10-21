@@ -261,8 +261,8 @@ INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
-INPUT ./Figures/fig_Sq_tf.png
-INPUT ./Figures/fig_Sq_tf.png
+INPUT ./Figures/fig_Sq_tf_exp1.png
+INPUT ./Figures/fig_Sq_tf_exp1.png
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
 INPUT ./main.aux
 INPUT ./main.out

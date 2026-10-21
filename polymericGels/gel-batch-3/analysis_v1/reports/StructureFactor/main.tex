@@ -69,14 +69,80 @@
 
 \justifying
 
+\section{Results Experiment 1}
+
+An exponential fit,\(f(\abs{\vec{q}}) = \dfrac{A}{\abs{\vec{q}}^{\alpha}}\), is performed to the structure factor of the systems shown in the following figure~\ref{fig:StructureFactor}.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/fig_Sq_tf_exp1.png}
+    \caption{Structure factor of two systems with different packing fraction at the same time instant.}\label{fig:StructureFactor1}
+\end{figure}
+
+The result of the parameters are shown in the following table~\ref{tab:parameters_fit}.
+The systems 1 and 2 are represented with blue and yellow colours repectively.
+Finally, zone 1 is defined as \(\lambda_1\in\left[ 7/2\sigma_p,21/2\sigma_p \right]\) and zone two is defined as \(\lambda_2\in\left[ 21/2\sigma_p,L/4 \right]\).
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    System & Zone & A        & $\alpha$ \\ \hline
+    1      & 1    & 0.925179 & 2.486543 \\ \hline
+    2      & 1    & 0.794425 & 2.08354  \\ \hline
+    1      & 2    & 1.264535 & 2.731100 \\ \hline
+    2      & 2    & 0.561453 & 1.948924 \\ \hline
+    \end{tabular}
+    \caption{Results of the fit.}\label{tab:parameters_fit1}
+\end{table}
+
+\subsection{Discussion}
+
+For me it is not clear the interpretation of $\alpha$.
+On the other hand, it is intereset to see that the structure factor can be analyzed in three domains.
+
+\section{Results Experiment 2}
+
+An exponential fit,\(f(\abs{\vec{q}}) = \dfrac{A}{\abs{\vec{q}}^{\alpha}}\), is performed to the structure factor of the systems shown in the following figure~\ref{fig:StructureFactor}.
+
+\begin{figure}[ht!]
+    \centering
+%    \includegraphics[width=\textwidth]{Figures/fig_Sq_tf_exp2.png}
+    \caption{Structure factor of two systems with different packing fraction at the same time instant.}\label{fig:StructureFactor2}
+\end{figure}
+
+The result of the parameters are shown in the following table~\ref{tab:parameters_fit}.
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    System & Zone & A        & $\alpha$ \\ \hline
+    1      & 1    & 0.925179 & 2.486543 \\ \hline
+    2      & 1    & 0.794425 & 2.08354  \\ \hline
+    1      & 2    & 1.264535 & 2.731100 \\ \hline
+    2      & 2    & 0.561453 & 1.948924 \\ \hline
+    \end{tabular}
+    \caption{Results of the fit.}\label{tab:parameters_fit2}
+\end{table}
+
+\subsection{Discussion}
+
+For me it is not clear the interpretation of $\alpha$.
+On the other hand, it is intereset to see that the structure factor can be analyzed in three domains.
+
+
+
 \section{Characteristic distances in the system and the domains for the fit}
 The distance range for the pair-wise interaction is defined by the distance at minimum energy, to the cutoff, \(r_{b}\in[\sigma_p,3/2\sigma_p]\).
 Then, considering that the center of all particles, central and patch, lies on the same line the distances between the center of the central particles is given by \(r_{\mathrm{int}}=2\sigma_p+r_b\).
 If we evaluate $r_b$ at the limits, the interaction distance is \(r_{\mathrm{int}}\in[1.2,1.4]\).
 Finally, if we increase the amount of patchy particles in pair-wise interaction, the distance between central particles is given by
 \begin{gather*}
-    d_{\mathrm{int}} = \left(N-1\right)\left(2\sigma_p + r_b\right).
+        d_{\mathrm{int}} = \left(N-1\right)\left(2\sigma_p + r_b\right).
 \end{gather*}
+
+\subsection{Zone definition of Experiment 1}
 
 The result fo this analysis is used to defined the region at small distances.
 More specifically, the lower limit of this region is set at $N=2$ and $r_b=3/2\sigma_p$ and the upper limit is set to $N=4$ and $r_b=3/2\sigma_p$.
@@ -89,33 +155,7 @@ Then, we define a second spatial domain, which it's upper limit is set the order
     \lambda_2\in\left[ 21/2\sigma_p,L/4 \right].
 \end{gather*}
 
-\paragraph{About the fit.}
-The experimental data was subjected to an exponential fit
-\begin{gather*}
-    f(\abs{\vec{q}}) = \frac{A}{\abs{\vec{q}}^{\alpha}}.
-\end{gather*}
-The values are the following,
-
-\begin{table}[ht!]
-    \centering
-    \begin{tabular}{|c|c|c|c|}
-    \hline
-    System & Zone & A        & $\alpha$ \\ \hline
-    1      & 1    & 0.925179 & 2.486543 \\ \hline
-    2      & 1    & 0.794425 & 2.08354  \\ \hline
-    1      & 2    & 1.264535 & 2.731100 \\ \hline
-    2      & 2    & 0.561453 & 1.948924 \\ \hline
-    \end{tabular}
-    \caption{Results of the fit.}
-\end{table}
-
-\begin{figure}[ht!]
-    \centering
-    \includegraphics[width=\textwidth]{Figures/fig_Sq_tf.png}
-    \caption{Structure factor of two different systems at the same experiment.}
-\end{figure}
-
-
+\subsection{Zone definition of Experiment 2}
 
 
 
