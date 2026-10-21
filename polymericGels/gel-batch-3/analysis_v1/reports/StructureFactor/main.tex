@@ -69,20 +69,45 @@
 
 \justifying
 
-\paragraph{Characteristic distances in the system.}
-The distance range for the pair-wise interaction is \(r_{b}\in[0.4,0.6]\).
-The total distance between the center of two central particles that aire in a pairwise interaction is \(r_{\mathrm{int}}=0.8+r_b\therefore r_{\mathrm{int}}\in[1.2,1.4]\).
-By doind some math we get that if we increase the amount of central particles in a line within the pairwise distance interaction range, the distance increases as follows, \(d_{\mathrm{int}}(N_{\mathrm{central}}) = \left(N_{\mathrm{central}}-1\right)\left(2\sigma_p + r_b\right)\).
-
-\paragraph{Domains for the fits.} 
-From the characteristic distances we can define the following spatial domains \(\lambda_1\in\left[ 7/2\sigma_p,21/2\sigma_p \right]\) and \(\lambda_2\in\left[ 21/2\sigma_p,L/4 \right]\).
-
-\paragraph{About the fit.}
-The experimental data was subjected to a fit
+\section{Characteristic distances in the system and the domains for the fit}
+The distance range for the pair-wise interaction is defined by the distance at minimum energy, to the cutoff, \(r_{b}\in[\sigma_p,3/2\sigma_p]\).
+Then, considering that the center of all particles, central and patch, lies on the same line the distances between the center of the central particles is given by \(r_{\mathrm{int}}=2\sigma_p+r_b\).
+If we evaluate $r_b$ at the limits, the interaction distance is \(r_{\mathrm{int}}\in[1.2,1.4]\).
+Finally, if we increase the amount of patchy particles in pair-wise interaction, the distance between central particles is given by
 \begin{gather*}
-    f(\abs{\vec{q}}) = \frac{p_1}{\abs{\vec{q}}^{p_2}}.
+    d_{\mathrm{int}} = \left(N-1\right)\left(2\sigma_p + r_b\right).
 \end{gather*}
 
+The result fo this analysis is used to defined the region at small distances.
+More specifically, the lower limit of this region is set at $N=2$ and $r_b=3/2\sigma_p$ and the upper limit is set to $N=4$ and $r_b=3/2\sigma_p$.
+Leading to the following spatial domain,
+\begin{gather*}
+    \lambda_1\in\left[ 7/2\sigma_p,21/2\sigma_p \right].
+\end{gather*}
+Then, we define a second spatial domain, which it's upper limit is set the order of magnitud of the total length of the simulation box, as follows,
+\begin{gather*}
+    \lambda_2\in\left[ 21/2\sigma_p,L/4 \right].
+\end{gather*}
+
+\paragraph{About the fit.}
+The experimental data was subjected to an exponential fit
+\begin{gather*}
+    f(\abs{\vec{q}}) = \frac{A}{\abs{\vec{q}}^{\alpha}}.
+\end{gather*}
+The values are the following,
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    System & Zone & A        & $\alpha$ \\ \hline
+    1      & 1    & 0.925179 & 2.486543 \\ \hline
+    2      & 1    & 0.794425 & 2.08354  \\ \hline
+    1      & 2    & 1.264535 & 2.731100 \\ \hline
+    2      & 2    & 0.561453 & 1.948924 \\ \hline
+    \end{tabular}
+    \caption{Results of the fit.}
+\end{table}
 
 \begin{figure}[ht!]
     \centering

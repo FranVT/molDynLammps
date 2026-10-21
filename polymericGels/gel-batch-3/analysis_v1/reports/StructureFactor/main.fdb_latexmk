@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 1792519960.93412 "main.aux" "main.bbl" "main" 1792520144.21355 2
-  "main.aux" 1792520144.04268 714 6bbc99483eba750be501b10d20123f05 "pdflatex"
+["bibtex main"] 1792540135.98596 "main.aux" "main.bbl" "main" 1792540850.35649 2
+  "main.aux" 1792540850.18057 784 178e4683c0cc5d00141c170fecde7d16 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1792520142.45507 "main.tex" "main.pdf" "main" 1792520144.2137 0
+["pdflatex"] 1792540848.62039 "main.tex" "main.pdf" "main" 1792540850.35662 2
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1776097119.09146 128397 dc8cded2bbafe8195c86cdaea92e40b2 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1776097118.76811 127314 7c5efae986e60281c7ad546cf8ed9a14 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1776097121.1949 128950 b259fc34906ff4c20552f96907d63131 ""
@@ -20,7 +20,7 @@
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrepagella-bolditalic.luc" 1776097119.53815 287782 6ee80be4eab3b2c86206420ea3b22196 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrepagella-italic.luc" 1776097119.97817 311406 73578b173f3ed4ae82fdd3dc04ebf71d ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrepagella-regular.luc" 1776097119.32814 310169 9b3e9edf24e20b573531feac5c631c5c ""
-  "/home/franvt/.texlive/texmf-var/luatex-cache/generic/names/luaotfload-lookup-cache.luc" 1787770098.89224 5790 98e004c0c289b9ec5528a7fb099a9d5e ""
+  "/home/franvt/.texlive/texmf-var/luatex-cache/generic/names/luaotfload-lookup-cache.luc" 1792539828.91129 5895 18e6317534fa9d96889a9c66b9cb588e ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz" 1773443583.11097 834001 9a55e276a5a2728c64a9644abbb10060 ""
   "/usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrepagella-italic.otf" 1775415801 221936 4d7ac678310008b3b26bd10cf015c648 ""
   "/usr/share/texmf-dist/fonts/opentype/public/tex-gyre/texgyrepagella-regular.otf" 1775415801 218100 ee927992843e53183a6e7c09838e9f82 ""
@@ -44,7 +44,6 @@
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1775415801 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1775415801 35752 024fb6c41858982481f6968b5fc26508 ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1775415801 32569 5e5ddc8df908dea60932f3c484a54c0d ""
-  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb" 1775415801 31764 459c573c03a4949a528c2cc7f557e217 ""
   "/usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb" 1775415801 15213 d999bbe8bd9c8f231f3f66a737c76478 ""
   "/usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb" 1775415801 52665 661b1e6b26edb5f50dd491f8a701cb57 ""
   "/usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb" 1775415801 50022 90249cba7e3e4e9845f80328d6f9bd13 ""
@@ -215,10 +214,10 @@
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1786055616 5381098 9f966685d344a3d34adbc94f52661a01 ""
   "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1786055589 5658295 a4598ccefedbfd28c9e7347883973bc7 ""
   "Figures/fig_Sq_tf.png" 1792519286.45731 221811 c2a7fa31b5fbc901af317a1b91a66022 ""
-  "main.aux" 1792520144.04268 714 6bbc99483eba750be501b10d20123f05 "pdflatex"
-  "main.bbl" 1792519960.98214 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1792520143.66556 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "main.tex" 1792520141.79463 3600 ee6cf28ca1178ebdf8678e7dc106fa13 ""
+  "main.aux" 1792540850.18057 784 178e4683c0cc5d00141c170fecde7d16 "pdflatex"
+  "main.bbl" 1792540136.03488 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.out" 1792540850.18118 404 f564de30f48801f171e45b3e03c1f54d "pdflatex"
+  "main.tex" 1792540848.27251 4564 346978f7f9d0588fa496a3749d489ae8 ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)

@@ -181,9 +181,9 @@ INPUT ./main.aux
 OUTPUT main.aux
 INPUT ./main.out
 INPUT ./main.out
+OUTPUT main.pdf
 INPUT ./main.out
 OUTPUT main.out
-OUTPUT main.pdf
 INPUT /usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 INPUT /usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 INPUT /usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
@@ -271,6 +271,5 @@ INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb
-INPUT /usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb

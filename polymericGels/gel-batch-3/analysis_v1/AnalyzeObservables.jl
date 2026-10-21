@@ -355,6 +355,7 @@ df_dat_experiment = df_dat_experiments[1];
 
     q_fits = [];
     Sq_fits = [];
+    fit_params = [];
 
     # Get the fits on each zone and each system 
     for it_sys in 1:length(df_dat_systems) 
@@ -387,6 +388,7 @@ df_dat_experiment = df_dat_experiments[1];
             # Store the analysis
             append!(q_zones,[q_z])
             append!(Sq_zones,[fit_eval_z])
+            append!(fit_params,[params_final_z])
 
         end
 
