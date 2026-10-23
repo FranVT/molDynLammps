@@ -331,6 +331,9 @@ df_dat_experiment = df_dat_experiments[2];
 
 # Create the fits
 
+
+    N_z3 = 7;
+
     # Prepare to save the data 
     sigma_p = 2/5;
     limits_zones = [
@@ -408,10 +411,10 @@ df_dat_experiment = df_dat_experiments[2];
         p_upper = [Inf, Inf, Inf];
 
         lambda_max = 2*L_all[it_sys];
-        lambda_min = ((4-1)*(2*0.4+3/2*0.4));
+        lambda_min = ((8-1)*(2*0.4+3/2*0.4));
 
             # Zone 1
-            q_z_filter = 2*pi/lambda_max .<= q_systems[it_sys] .<= 2*pi/lambda_min;
+            q_z_filter = q_systems[it_sys] .<= 2*pi/lambda_min;
             q_z = q_systems[it_sys][q_z_filter];
             Sq_z = Sq_systems[it_sys][q_z_filter];
 
@@ -521,10 +524,6 @@ hidexdecorations!(ax2)
     r_z1_min = (7/2)*(0.4);
     r_z1_max = (21/2)*(0.4);
 
-
-    (9-1)*(2*0.4+3/2*0.4)
-
-
     vlines!(ax_bottom,2*pi/(3*r_int_max),color=:black,linestyle=:dash)
 
     vlines!(ax_bottom,2*pi/((8-1)*(2*0.4+3/2*0.4)),color=:black,linestyle=:dash)
@@ -567,91 +566,4 @@ hidexdecorations!(ax2)
     display(fig)
 
 
-#=
-fig = Figure()
 
-    # Prepare the ticks
-    n_ticks = 10;
-    q_aux_ticks = q_mean;
-    l_domain = 2*pi./q_aux_ticks;
-    ind_range = floor.(Int64,(10).^(range(log(10,1),log(10,length(q_aux_ticks)),length=n_ticks)));
-    q_positions = round.(q_aux_ticks[ind_range],digits=2);
-    q_ticks = latexstring.(q_positions);
-    l_ticks = latexstring.(round.(l_domain[ind_range],digits=2));
-
-    # --- Define tick positions (in q-space) and their top labels (λ = 2π/q) ---
-    ax_bottom = Axis(fig[1:4, 1:5],
-                         xlabel = L"|\vec{q}|",
-                         ylabel = L"\mathrm{Intensity}",
-                         xticks = (q_positions, q_ticks),
-                             xscale = log10,
-                             yscale = log10,
-                             xticklabelrotation = pi/4
-                            )
-
-    # --- Top axis: wavelength λ ---
-    ax_top = Axis(fig[1:4, 1:5],
-                          xaxisposition = :top,
-                          yaxisposition = :right,
-
-        # Place ticks at the same data coordinates (q values),
-        # but display the corresponding λ labels.
-                          xticks = (q_positions, l_ticks),
-                          xlabel = L"\mathrm{Wavelength}",
-
-        # Spines: show only the top spine
-                          topspinevisible = true,
-                          bottomspinevisible = false,
-                          leftspinevisible = false,
-                          rightspinevisible = false,
-
-                          xgridvisible = false,
-                          #ygridvisible = false,
-
-        # Hide all y‑axis decorations on the top axis
-                          yticks = ([], []),
-                          ylabelvisible = false,
-                          ygridvisible = false,
-                          yticklabelsvisible = false,
-                             xscale = log10,
-                             yscale = log10,
-                             xticklabelrotation = pi/4
-                         )
-
-    # Synchronise limits and zoom/pan behaviour
-    linkaxes!(ax_bottom, ax_top)
-
-ax2 = Axis(fig[1:4, 1:5], yticklabelcolor = :red, yaxisposition = :right)
-hidespines!(ax2)
-hidexdecorations!(ax2)
-
-
-#scatterlines!(ax2, log.(10,q_mean), dSq_mean_smooth, color = (:red,0.5))
-#scatterlines!(ax2, log.(10,q_mean), ddSq_mean_smooth, color = :red)
-
-
-    lines!(ax_bottom,q_mean,fit_eval,linestyle=:dash, color =:black,
-       linewidth=2.5)
-
-    # Add the line to the plot
-    scatterlines!(ax_bottom, q_mean, Sq_mean,
-        #linestyle = label_systems[it_system],
-        linewidth = 2 
-       )
-    
-#    scatterlines!(ax_bottom, q_mean, Sq_mean_smooth,
-        #linestyle = label_systems[it_system],
-#        linewidth = 2,
-#        color=:orange
-#       )
-
-=#
-
-#df_dat_categories = groupby(df_dat,[categories_experiment; categories_system]);
-
-# Group each experiment by systems
-#df_dat_experiment_system = [groupby(s,categories_system) for s in df_dat_experiment];
-
-
-# Paths
-#
