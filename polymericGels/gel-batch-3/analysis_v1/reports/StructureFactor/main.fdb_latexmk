@@ -1,11 +1,11 @@
 # Fdb version 4
-["bibtex main"] 0 "main.aux" "main.bbl" "main" 1792719245.43162 -1
-  "main.aux" 1792719245.21667 2022 c6d0992198244c3a41dafde715b26a6a "pdflatex"
+["bibtex main"] 0 "main.aux" "main.bbl" "main" 1792777723.35214 -1
+  "main.aux" 1792777723.11979 2250 70ef067f2fd7302122402cf44fee2c1e "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1792719243.35662 "main.tex" "main.pdf" "main" 1792719245.43174 2
+["pdflatex"] 1792777721.10889 "main.tex" "main.pdf" "main" 1792777723.35235 2
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-bold.luc" 1776097119.09146 128397 dc8cded2bbafe8195c86cdaea92e40b2 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1776097118.76811 127314 7c5efae986e60281c7ad546cf8ed9a14 ""
   "/home/franvt/.texlive/texmf-var/luatex-cache/generic/fonts/otl/texgyrecursor-bold.luc" 1776097121.1949 128950 b259fc34906ff4c20552f96907d63131 ""
@@ -216,10 +216,10 @@
   "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1786055589 5658295 a4598ccefedbfd28c9e7347883973bc7 ""
   "Figures/fig_Sq_tf_Test_lorentz.png" 1792719063.17963 225261 cdabc549aead47b715923cd3e4400d19 ""
   "Figures/fig_Sq_tf_exp1.png" 1792603001.76207 221574 19065af7dd9dc04df671212bb187a445 ""
-  "main.aux" 1792719245.21667 2022 c6d0992198244c3a41dafde715b26a6a "pdflatex"
+  "main.aux" 1792777723.11979 2250 70ef067f2fd7302122402cf44fee2c1e "pdflatex"
   "main.bbl" 1792540136.03488 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
-  "main.out" 1792719245.21755 704 ff3d57180818d239d46abcafc564fe36 "pdflatex"
-  "main.tex" 1792719241.67829 6731 b863e96542ac280766356448d56b8880 ""
+  "main.out" 1792777723.12074 704 ff3d57180818d239d46abcafc564fe36 "pdflatex"
+  "main.tex" 1792777720.72936 9699 57c45f68928af9907306ca9d8434104a ""
   "tufte-common.def" 1768416826.61074 70892 d170883770a3fb3b643fabc94d55da1e ""
   "tufte-handout.cls" 1768416826.61084 928 8b9bf4e8b298d7266b4bbfb41f032b03 ""
   (generated)
