@@ -401,14 +401,14 @@ df_dat_experiment = df_dat_experiments[2];
         end
 
         # Now the lgeneral lorentian fit
-        model_l(t,p) = p[1]./( 1 .+ (p[3].*t).^(p[2]));
+        model_l(t,p) = p[1]./( 1 .+ (p[2].*t).^(2));
 
         # Set intial values for the fit
-        p_initial = [1.0, 2.0, 1.0];
+        p_initial = [1.0, 1.0];
 
         # Limits of the domain of search
-        p_lower = [0.0, 0.0, 0.4];
-        p_upper = [Inf, Inf, Inf];
+        p_lower = [0.0, 0.4];
+        p_upper = [Inf, Inf];
 
         lambda_max = 2*L_all[it_sys];
         lambda_min = ((8-1)*(2*0.4+3/2*0.4));
