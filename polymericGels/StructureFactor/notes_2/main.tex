@@ -1,0 +1,370 @@
+\documentclass{tufte-handout}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+El factor de estructura estático $S(\mathbf{q})$ describe cómo un material dispersa radiación (rayos X o neutrones) en función del vector de onda $\mathbf{q}$.  
+Para un sistema de $N$ partículas con posiciones $\mathbf{r}_j$, se define como $S(\mathbf{q}) = \frac{1}{N} \left\langle \sum_{j=1}^N \sum_{k=1}^N e^{-i\mathbf{q}\cdot(\mathbf{r}_j - \mathbf{r}_k)} \right\rangle$.  
+El promedio $\langle \cdot \rangle$ se toma sobre configuraciones y orientaciones de $\mathbf{q}$ equivalentes en sistemas isotrópicos.  
+Su valor en $\mathbf{q}=0$ está relacionado con la compresibilidad isotérmica del sistema.
+
+Para sistemas homogéneos e isótropos, $S(q)$ depende solo de la magnitud $q = |\mathbf{q}|$ y se calcula directamente desde la trayectoria MD mediante $S(q) = 1 + \frac{1}{N} \left\langle \left| \sum_{j=1}^N e^{-i\mathbf{q}\cdot\mathbf{r}_j} \right|^2 \right\rangle - N \delta_{\mathbf{q},0}$.  
+Alternativamente, se relaciona con la función de distribución radial $g(r)$ a través de la transformada de Fourier: $S(q) = 1 + \rho \int_0^\infty [g(r) - 1] \frac{\sin(qr)}{qr} 4\pi r^2 dr$.  
+Aquí $\rho = N/V$ es la densidad numérica.  
+Este vínculo permite calcular $S(q)$ mediante histogramas de pares de distancia sin sumas dobles explícitas.
+
+En la práctica numérica con caja de simulación periódica, $\mathbf{q}$ debe ser un vector recíproco $\mathbf{q} = 2\pi (n_x/L_x, n_y/L_y, n_z/L_z)$ con $n_i$ enteros.  
+La expresión operativa es $S(\mathbf{q}) = \frac{1}{N} \left[ \left( \sum_{j=1}^N \cos(\mathbf{q}\cdot\mathbf{r}_j) \right)^2 + \left( \sum_{j=1}^N \sin(\mathbf{q}\cdot\mathbf{r}_j) \right)^2 \right]$.  
+Se promedian los valores de $S(\mathbf{q})$ correspondientes a vectores $\mathbf{q}$ con igual magnitud $q$ para obtener la curva $S(q)$.  
+El resultado refleja el orden local (picos en $q \approx 2\pi/d_{vecinos}$) y de largo alcance (comportamiento asintótico a $1$).
+
+\newpage
+
+\section{Obtener factor de estructura}
+
+Para calcular el factor de estructura estático $S(q)$ desde un archivo de trayectoria (posiciones $\mathbf{r}_j(t)$ y velocidades), sigue esta guía matemática orientada a implementación computacional. Las velocidades no intervienen en $S(q)$ estático.
+
+\paragraph{1. Preparación de los datos}
+Extrae únicamente las posiciones de las $N$ partículas para cada configuración (frame) $t$.  
+Define la caja de simulación mediante sus vectores $\mathbf{L} = (L_x, L_y, L_z)$, usualmente constante en simulaciones NVT o NPT.  
+La densidad numérica es $\rho = N / V$ con $V = L_x L_y L_z$.  
+Asegúrate de que las posiciones estén "desenvueltas" (sin aplicar condiciones periódicas de imagen mínima) para calcular $\mathbf{q} \cdot \mathbf{r}_j$ correctamente.
+
+\paragraph{2. Definición de vectores de onda $\mathbf{q}$ compatibles con condiciones periódicas}
+Los vectores de onda permitidos son $\mathbf{q} = 2\pi \left( \frac{n_x}{L_x}, \frac{n_y}{L_y}, \frac{n_z}{L_z} \right)$ con $n_i \in \mathbb{Z}$.  
+Para un espectro isotrópico $S(q)$ debes agrupar todos los vectores $\mathbf{q}$ por magnitud $q = |\mathbf{q}|$.  
+Define un rango de $q$ de interés: desde $q_{min} = 2\pi / \max(L_x,L_y,L_z)$ hasta un $q_{max}$ suficiente (ej. $q_{max} \approx 10$–$20$ Å$^{-1}$ según resolución atómica).  
+Genera todos los tripletes $(n_x, n_y, n_z)$ tales que $|\mathbf{q}| \leq q_{max}$ y calcula sus magnitudes $q$.
+
+\paragraph{3. Cálculo de $S(\mathbf{q})$ para una configuración dada}
+Para un $\mathbf{q}$ específico y una configuración de posiciones $\{\mathbf{r}_j\}$ ($j=1,\dots,N$), la expresión directa es  
+$$ S(\mathbf{q}) = \frac{1}{N} \left[ \left( \sum_{j=1}^N \cos(\mathbf{q}\cdot\mathbf{r}_j) \right)^2 + \left( \sum_{j=1}^N \sin(\mathbf{q}\cdot\mathbf{r}_j) \right)^2 \right] - N\delta_{\mathbf{q},\mathbf{0}} \,. $$  
+El término delta evita contar el pico de dispersión hacia adelante ($\mathbf{q}=\mathbf{0}$), el cual en práctica ignoramos porque $q>0$.  
+Esta expresión es equivalente a $S(\mathbf{q}) = \frac{1}{N} \left| \sum_{j=1}^N e^{-i\mathbf{q}\cdot\mathbf{r}_j} \right|^2$.
+
+\paragraph{4. Promedio sobre configuraciones y promediado isotrópico}
+Repite el cálculo del paso 3 para cada configuración $t$ disponible en la trayectoria.  
+Obtén el valor medio $\langle S(\mathbf{q}) \rangle_t$ para cada $\mathbf{q}$ individual.  
+Luego, para cada magnitud $q$, promedia los valores de todos los vectores $\mathbf{q}$ con esa misma $q$:  
+$$ S(q) = \frac{1}{M(q)} \sum_{\mathbf{q}' : |\mathbf{q}'|=q} \langle S(\mathbf{q}') \rangle_t \,, $$  
+donde $M(q)$ es el número de vectores de onda en la esfera de radio $q$ (teniendo en cuenta la red recíproca de la caja).
+
+\paragraph{5. Detalles de implementación eficiente}
+El cálculo directo mediante sumas sobre $j$ y bucles sobre $\mathbf{q}$ es costoso: $O(N_{\mathbf{q}} \cdot N \cdot N_{frames})$.  
+Para acelerar, si tu malla de $\mathbf{q}$ coincide con una rejilla FFT (tamaño $M_x \times M_y \times M_z$), puedes usar la Transformada Rápida de Fourier: deposita las partículas en la rejilla de densidad numérica $\rho(\mathbf{r})$, calcula $\hat{\rho}(\mathbf{k})$ con FFT y obtén $S(\mathbf{k}) \propto |\hat{\rho}(\mathbf{k})|^2$.  
+Sin embargo, para partículas puntuales esto introduce errores de interpolación; un enfoque de precisión "exacta" para $N$ moderado es la suma directa descrita, pero restringiendo $\mathbf{q}$ a los necesarios para $q \leq q_{max}$.
+
+\paragraph{6. Normalización y consideraciones prácticas}
+Asegúrate de que $S(q) \to 1$ cuando $q \to \infty$. Si oscila alrededor de un valor $>1$, verifica que no hayas incluido el pico $\mathbf{q}=0$ y que la normalización por $N$ sea correcta.  
+En sistemas moleculares con múltiples tipos de átomos se calcula el factor de estructura parcial $S_{\alpha\beta}(q)$, pero para un solo tipo la fórmula dada es suficiente.  
+Guarda los resultados como una tabla de $q$ vs. $S(q)$ para su posterior análisis (picos corresponden a distancias interplanares $d = 2\pi/q$).
+
+\newpage
+
+\subsection{Desenvolver coordenadas}
+
+Para desenvolver coordenadas de una trayectoria con condiciones periódicas de contorno (PBC), el objetivo es reconstruir las posiciones reales $\mathbf{R}_j(t)$ a partir de las coordenadas envueltas $\mathbf{r}_j(t) \in [0, L_x) \times [0, L_y) \times [0, L_z)$ que reporta el archivo de simulación.
+
+\paragraph{1. Fundamento matemático}
+La posición real de una partícula $j$ en el tiempo $t$ se relaciona con la envuelta mediante un vector de imagen $\mathbf{w}_j(t) \in \mathbb{Z}^3$:
+$$ \mathbf{R}_j(t) = \mathbf{r}_j(t) + \mathbf{w}_j(t) \odot \mathbf{L} $$
+donde $\mathbf{L} = (L_x, L_y, L_z)$ y $\odot$ es el producto de Hadamard (componente a componente).  
+El vector de imagen $\mathbf{w}_j(t)$ cuenta cuántas veces la partícula ha cruzado cada borde de la caja desde el tiempo inicial.  
+Inicializamos $\mathbf{w}_j(t_0) = \mathbf{0}$ (asumiendo que la configuración inicial está centrada adecuadamente).  
+Para cada paso de tiempo $t_k \to t_{k+1}$, el cambio en la imagen se deduce del desplazamiento envuelto $\Delta \mathbf{r} = \mathbf{r}_j(t_{k+1}) - \mathbf{r}_j(t_k)$.
+
+\paragraph{2. Criterio de cruce de bordes}
+En una simulación PBC, las partículas no pueden moverse más de $L/2$ en un solo paso (condición de estabilidad numérica). Por tanto, un desplazamiento mayor a $L/2$ en valor absoluto indica un cruce de borde y no un movimiento físico real.  
+La corrección de imagen se actualiza según:
+$$ \mathbf{w}_j(t_{k+1}) = \mathbf{w}_j(t_k) - \text{round}\left( \frac{\Delta \mathbf{r}}{\mathbf{L}} \right) $$
+donde la división es componente a componente y $\text{round}(\cdot)$ redondea al entero más cercano.  
+Equivalentemente, el desplazamiento real es $\Delta \mathbf{R} = \Delta \mathbf{r} + \text{round}\left( \frac{\Delta \mathbf{r}}{\mathbf{L}} \right) \odot \mathbf{L}$, pero en la práctica conviene acumular $\mathbf{w}_j$ y aplicar la transformación solo al final o cuando sea necesario.
+
+\paragraph{3. Algoritmo de desenvolvimiento para una implementación computacional}
+**Entrada:** Trayectoria de posiciones envueltas $\{\mathbf{r}_j(t_0), \mathbf{r}_j(t_1), \ldots, \mathbf{r}_j(t_{M-1})\}$ para cada partícula $j=1,\dots,N$ y dimensiones de caja $\mathbf{L}$ constantes.
+
+**Salida:** Posiciones desenvueltas $\{\mathbf{R}_j(t)\}$ para cada frame.
+
+**Pasos:**
+1. **Inicialización:** Para cada partícula $j$, sea $\mathbf{w}_j = \mathbf{0}$ (arreglo de tres enteros).  
+   Guardar $\mathbf{R}_j(t_0) = \mathbf{r}_j(t_0)$.
+
+2. **Bucle sobre tiempos $k$ desde $1$ hasta $M-1$:**
+   - Para cada partícula $j$:
+     - Calcular $\Delta \mathbf{r} = \mathbf{r}_j(t_k) - \mathbf{r}_j(t_{k-1})$.
+     - Calcular el vector de cambio de imagen $\Delta \mathbf{w} = \text{round}(\Delta \mathbf{r} \oslash \mathbf{L})$ (división elemento a elemento).
+     - Actualizar la imagen acumulada: $\mathbf{w}_j \gets \mathbf{w}_j - \Delta \mathbf{w}$.
+     - Obtener la posición desenvuelta: $\mathbf{R}_j(t_k) = \mathbf{r}_j(t_k) + \mathbf{w}_j \odot \mathbf{L}$.
+
+3. **Resultado:** Se dispone de $\mathbf{R}_j(t_k)$ para todos los frames, que representan la trayectoria continua sin saltos por PBC.
+
+\paragraph{4. Consideraciones prácticas para el cálculo del factor de estructura}
+- Para $S(\mathbf{q})$ solo se necesita la posición desenvuelta en cada frame de manera independiente, no la continuidad temporal. Por tanto, basta aplicar el desenvolvimiento una vez sobre toda la trayectoria antes de calcular $\mathbf{q}\cdot\mathbf{R}_j$.
+- Si el archivo de simulación contiene velocidades, estas **no** necesitan desenvolvimiento porque son derivadas temporales de la posición desenvuelta y no sufren saltos artificiales.
+- En caso de caja variable (NPT), el proceso es análogo pero $\mathbf{L}$ puede cambiar entre frames; se debe usar el $\mathbf{L}$ del paso correspondiente al calcular $\Delta \mathbf{w}$.
+- Almacenar $\mathbf{w}_j$ como enteros evita errores de redondeo acumulado con floats. El cálculo final $\mathbf{R}_j = \mathbf{r}_j + \mathbf{w}_j \odot \mathbf{L}$ se realiza en punto flotante de precisión doble.
+
+\paragraph{5. Ejemplo numérico mínimo}
+Supón $L_x=10$, $r_j(t_0)=9.8$, $r_j(t_1)=0.2$.  
+$\Delta r = 0.2 - 9.8 = -9.6$.  
+$\Delta w = \text{round}(-9.6/10) = \text{round}(-0.96) = -1$.  
+Imagen acumulada $w_j$ (inicialmente $0$) pasa a $0 - (-1) = 1$.  
+Posición real $R_j(t_1) = 0.2 + 1 \times 10 = 10.2$.  
+El desplazamiento físico real fue $10.2 - 9.8 = 0.4$, consistente con $|0.4| < L/2$.
+
+\newpage
+
+\subsection{Desenvolvimiento de coordenadas para trayectorias submuestreadas}
+
+Cuando las configuraciones no son consecutivas (por ejemplo, $t = 0, 1000, 2000, \dots$), no es posible seguir la continuidad de la trayectoria. En su lugar, se reconstruye la configuración real $\mathbf{R}_j$ en cada \textit{frame} de manera independiente utilizando el criterio de mínima imagen entre pares de partículas.
+
+
+
+\paragraph*{Fundamento matemático}
+
+Sean $\mathbf{r}_j$ las coordenadas envueltas en la caja de simulación de dimensiones $\mathbf{L} = (L_x, L_y, L_z)$. La separación física real entre dos partículas $j$ y $k$ está dada por el vector de mínima imagen:
+\begin{equation}
+\Delta \mathbf{R}_{jk} = \Delta \mathbf{r}_{jk} - \mathbf{L} \odot \operatorname{round}\left( \frac{\Delta \mathbf{r}_{jk}}{\mathbf{L}} \right),
+\end{equation}
+donde $\Delta \mathbf{r}_{jk} = \mathbf{r}_k - \mathbf{r}_j$, la división y la función $\operatorname{round}(\cdot)$ son componente a componente, y $\odot$ denota el producto de Hadamard.
+
+Fijando una partícula de referencia (por ejemplo, $j=1$) en $\mathbf{R}_1 = \mathbf{r}_1$, se pueden propagar las posiciones reales del resto de partículas sumando los vectores de mínima imagen a lo largo de una red de conexiones que cubra todo el sistema.
+
+\paragraph*{Algoritmo por \textit{frame} único}
+
+Para cada configuración independiente en el tiempo $t$, se ejecuta el siguiente procedimiento:
+\begin{enumerate}
+    \item Inicializar un arreglo booleano \texttt{visitado} de tamaño $N$ con todos los valores en \texttt{false}.
+    \item Establecer $\mathbf{R}_1 = \mathbf{r}_1$ y marcar \texttt{visitado[1] = true}.
+    \item Mientras existan partículas no visitadas:
+    \begin{enumerate}
+        \item Seleccionar una partícula $j$ que ya esté visitada.
+        \item Para cada partícula $k$ no visitada, calcular el desplazamiento envuelto $\Delta \mathbf{r}_{jk} = \mathbf{r}_k - \mathbf{r}_j$.
+        \item Calcular la corrección de imagen $\mathbf{w}_{jk} = \operatorname{round}(\Delta \mathbf{r}_{jk} \oslash \mathbf{L})$.
+        \item Asignar la posición desenvuelta de $k$ como:
+        \begin{equation}
+            \mathbf{R}_k = \mathbf{R}_j + \Delta \mathbf{r}_{jk} - \mathbf{w}_{jk} \odot \mathbf{L}.
+        \end{equation}
+        \item Marcar \texttt{visitado[k] = true}.
+    \end{enumerate}
+    \item (Opcional) Trasladar la configuración para centrarla, restando el centro de masa $\mathbf{R}_{\text{CM}} = \frac{1}{N} \sum_{j=1}^N \mathbf{R}_j$ a todas las posiciones.
+\end{enumerate}
+
+\paragraph*{Observación sobre el cálculo del factor de estructura}
+
+Para el cálculo del factor de estructura $S(\mathbf{q})$ con vectores de onda compatibles con la red recíproca $\mathbf{q} = 2\pi(n_x/L_x, n_y/L_y, n_z/L_z)$, las fases $e^{-i\mathbf{q}\cdot\mathbf{r}_j}$ son invariantes bajo traslaciones de $\mathbf{L}$. Por lo tanto, \textbf{no es estrictamente necesario desenvolver las coordenadas} para este propósito. Las posiciones envueltas $\mathbf{r}_j$ pueden utilizarse directamente en la expresión 
+\begin{equation}
+S(\mathbf{q}) = \frac{1}{N}\left| \sum_{j=1}^N e^{-i\mathbf{q}\cdot\mathbf{r}_j} \right|^2.
+\end{equation}
+El procedimiento de desenvolvimiento descrito es relevante para el cálculo de propiedades que dependen de la continuidad espacial absoluta, como el desplazamiento cuadrático medio.
+
+\newpage
+
+\section{Cálculo del factor de estructura sin desenvolvimiento de coordenadas}
+
+En simulaciones con condiciones periódicas de contorno, el factor de estructura estático $S(\mathbf{q})$ puede calcularse directamente a partir de las coordenadas envueltas $\mathbf{r}_j \in [0, L_x)\times[0, L_y)\times[0, L_z)$ sin necesidad de reconstruir la trayectoria desenvuelta. Esta propiedad se fundamenta en la periodicidad de la función de onda plana para vectores de onda compatibles con la red recíproca.
+
+\paragraph*{Justificación matemática}
+
+Para un vector de onda de la red recíproca $\mathbf{q} = 2\pi\left(\frac{n_x}{L_x}, \frac{n_y}{L_y}, \frac{n_z}{L_z}\right)$ con $n_x,n_y,n_z \in \mathbb{Z}$, el factor de fase cumple:
+\begin{equation}
+e^{-i\mathbf{q}\cdot(\mathbf{r} + \mathbf{L})} = e^{-i\mathbf{q}\cdot\mathbf{r}} e^{-i 2\pi n} = e^{-i\mathbf{q}\cdot\mathbf{r}}.
+\end{equation}
+Por lo tanto, la contribución de cada partícula al factor de estructura es invariante bajo traslaciones por el vector de caja $\mathbf{L}$. Las coordenadas envueltas y las desenvueltas difieren únicamente en múltiplos enteros de $\mathbf{L}$, por lo que el resultado de la suma coherente
+\begin{equation}
+\rho_{\mathbf{q}} = \sum_{j=1}^{N} e^{-i\mathbf{q}\cdot\mathbf{r}_j}
+\end{equation}
+es idéntico al que se obtendría con las posiciones reales $\mathbf{R}_j$.
+
+\paragraph*{Procedimiento de cálculo}
+
+Para cada configuración $t$ en la trayectoria (sin desenvolver) se ejecutan los siguientes pasos:
+
+\begin{enumerate}
+    \item Definir un conjunto de vectores de onda permitidos por las dimensiones de la caja $\mathbf{L}$:
+    \begin{equation}
+        \mathbf{q} = 2\pi\left( \frac{n_x}{L_x}, \frac{n_y}{L_y}, \frac{n_z}{L_z} \right), \quad |\mathbf{q}| \leq q_{\text{max}}.
+    \end{equation}
+    
+    \item Para cada $\mathbf{q}$ y cada configuración, calcular la suma de ondas planas usando las coordenadas envueltas:
+    \begin{equation}
+        S(\mathbf{q}) = \frac{1}{N} \left[ \left( \sum_{j=1}^N \cos(\mathbf{q}\cdot\mathbf{r}_j) \right)^2 + \left( \sum_{j=1}^N \sin(\mathbf{q}\cdot\mathbf{r}_j) \right)^2 \right].
+    \end{equation}
+    
+    \item Promediar $S(\mathbf{q})$ sobre todas las configuraciones disponibles para obtener $\langle S(\mathbf{q}) \rangle$.
+    
+    \item Para sistemas isotrópicos, promediar sobre todos los vectores $\mathbf{q}$ con igual magnitud $q = |\mathbf{q}|$:
+    \begin{equation}
+        S(q) = \frac{1}{M(q)} \sum_{\mathbf{q}' : |\mathbf{q}'|=q} \langle S(\mathbf{q}') \rangle,
+    \end{equation}
+    donde $M(q)$ es el número de vectores de onda en la esfera de radio $q$ compatibles con la red recíproca.
+\end{enumerate}
+
+\paragraph*{Interpretaciones válidas a partir de este cálculo}
+
+El factor de estructura calculado de esta manera mantiene toda la información estructural del sistema periódico. Las interpretaciones posibles incluyen:
+\begin{itemize}
+    \item \textbf{Orden de corto y mediano alcance:} Posición e intensidad de los picos de $S(q)$ revelan distancias interplanares dominantes ($d = 2\pi/q$) y el grado de correlación espacial entre partículas.
+    \item \textbf{Propiedades termodinámicas:} El límite $S(q\to 0)$ está relacionado con la compresibilidad isotérmica $\kappa_T = \lim_{q\to 0} S(q) / (\rho k_B T)$.
+    \item \textbf{Estructura local:} La transformada de Fourier inversa de $S(q)$ permite recuperar la función de distribución radial $g(r)$ dentro de la caja periódica.
+    \item \textbf{Comparación con experimentos:} $S(q)$ es directamente comparable con patrones de dispersión de rayos X o neutrones en muestras cristalinas o amorfas periódicas.
+\end{itemize}
+
+\paragraph*{Limitaciones e interpretaciones no válidas}
+
+El uso de coordenadas envueltas sin desenvolver impide acceder a información que depende de las posiciones absolutas en el espacio real continuo. No es posible interpretar o calcular:
+\begin{itemize}
+    \item \textbf{Difusión de largo alcance:} El desplazamiento cuadrático medio $\langle |\mathbf{R}(t) - \mathbf{R}(0)|^2 \rangle$ requiere la trayectoria continua desenvuelta; las coordenadas envueltas artificialmente reinician el movimiento en los bordes.
+    \item \textbf{Modos colectivos con longitud de onda mayor que la caja:} El espectro de $S(\mathbf{q})$ está limitado por $q_{\text{min}} = 2\pi/\max(L_x,L_y,L_z)$. No se obtiene información de fluctuaciones de densidad a escalas mayores que la caja de simulación.
+    \item \textbf{Heterogeneidades espaciales no periódicas:} Gradientes de concentración o interfaces (ej. sistemas confinados) no pueden ser descritas correctamente, pues el sistema se asume periódico y homogéneo a escala de la caja.
+    \item \textbf{Funciones de correlación de orden superior dependientes de la conectividad absoluta:} Por ejemplo, trayectorias de partículas que cruzan múltiples réplicas de la caja.
+\end{itemize}
+
+\newpage
+\subsection{Almacenamiento del factor de estructura $S(q)$ en Julia}
+
+El código proporcionado utiliza un diccionario para agrupar vectores de onda $\mathbf{q}$ por su magnitud cuadrada $q^2$. Para guardar los resultados de forma estructurada y continuar el análisis, se recomienda construir un arreglo con las columnas $q$ y $S(q)$.
+
+\paragraph*{Correcciones al código original}
+
+\begin{enumerate}
+    \item La condición de selección debe ser \texttt{q > Q\_max \&\& continue} (descartar vectores con magnitud mayor que $Q_{\text{max}}$). El código original descarta incorrectamente los vectores válidos.
+    \item El cálculo de $S_{\mathbf{q}}$ debe dividirse entre el número de partículas $N_{\text{part}}$, no el índice del bucle $N$.
+    \item Se debe acumular el promedio de $S_{\mathbf{q}}$ sobre todos los vectores en el grupo y luego dividir por el número de elementos en \texttt{lista\_q}.
+\end{enumerate}
+
+\paragraph*{Código corregido con almacenamiento en archivo}
+
+\begin{verbatim}
+using Printf
+
+# Parámetros
+tol = 10
+grupos = Dict{Float64, Vector{Tuple{Float64,Float64,Float64}}}()
+N_recip = 1                # Rango de índices de Miller
+Q_max = 6.0                # Corte en magnitud de q
+N_part = length(rx)        # Número total de partículas
+
+# Construcción de vectores q (red recíproca)
+Lx, Ly, Lz = dat_DF.L[5], dat_DF.L[5], dat_DF.L[5]  # Asumiendo caja cúbica
+
+for nx in -N_recip:N_recip, ny in -N_recip:N_recip, nz in -N_recip:N_recip
+    qx = 2π * nx / Lx
+    qy = 2π * ny / Ly
+    qz = 2π * nz / Lz
+    q2 = qx^2 + qy^2 + qz^2
+    q = sqrt(q2)
+    if q > Q_max || q == 0.0
+        continue
+    end
+    clave = round(q2, digits=tol)
+    push!(get!(grupos, clave, []), (qx, qy, qz))
+end
+
+# Cálculo de S(q) promediado isotrópicamente
+resultados = []  # Vector para almacenar pares (q, S_q)
+
+for (clave, lista_q) in grupos
+    q_mod = sqrt(clave)
+    S_acumulado = 0.0
+    for v_q in lista_q
+        qr = v_q[1] .* rx .+ v_q[2] .* ry .+ v_q[3] .* rz
+        S_q = (1 / N_part) * (sum(cos.(qr))^2 + sum(sin.(qr))^2)
+        S_acumulado += S_q
+    end
+    S_promedio = S_acumulado / length(lista_q)
+    push!(resultados, (q_mod, S_promedio))
+end
+
+# Ordenar por q creciente
+sort!(resultados, by = x -> x[1])
+
+# Guardar en archivo de texto para análisis posterior
+open("estructura_factor.dat", "w") do io
+    println(io, "# q    S(q)")
+    for (q_val, S_val) in resultados
+        @printf(io, "%.6f  %.6f\n", q_val, S_val)
+    end
+end
+
+println("Cálculo completado. Resultados guardados en 'estructura_factor.dat'")
+\end{verbatim}
+
+\paragraph*{Explicación para usuarios no familiarizados con diccionarios}
+
+\begin{itemize}
+    \item \texttt{grupos} es un diccionario donde cada \textit{llave} es la magnitud cuadrada $q^2$ redondeada y cada \textit{valor} es un vector de tripletas $(q_x,q_y,q_z)$ que comparten esa magnitud.
+    \item El bucle \texttt{for (clave, lista\_q) in grupos} itera sobre cada grupo. No es necesario manipular el diccionario manualmente.
+    \item Los resultados se almacenan en un arreglo simple \texttt{resultados} (lista de tuplas) que luego se ordena y se escribe en disco.
+    \item El archivo generado \texttt{estructura\_factor.dat} contiene dos columnas numéricas listas para ser graficadas con cualquier herramienta (Gnuplot, Python, MATLAB).
+\end{itemize}
+
+\paragraph*{Nota sobre el promedio temporal}
+
+El código anterior calcula $S(q)$ para \textbf{una sola configuración} (un frame). Para promediar sobre múltiples configuraciones de la trayectoria, se debe envolver el cálculo de $S_{\mathbf{q}}$ en un bucle sobre tiempos y acumular el promedio antes de la agrupación isotrópica. En ese caso, la línea $S_q = \dots$ se convierte en un promedio sobre frames.
+
+\newpage
+
+\paragraph*{Naturaleza del promedio $\langle S(\mathbf{q}) \rangle$}
+
+La definición estadística del factor de estructura estático es un promedio sobre el ensamble canónico (o el ensamble termodinámico correspondiente):
+\begin{equation}
+S(\mathbf{q}) = \frac{1}{N} \left\langle \left| \sum_{j=1}^N e^{-i\mathbf{q}\cdot\mathbf{r}_j} \right|^2 \right\rangle_{\text{ensamble}}.
+\end{equation}
+Este promedio implica, en principio, promediar sobre un número infinito de configuraciones microscópicas generadas con la distribución de probabilidad del ensamble ($NVT$, $NpT$, etc.).
+
+En simulaciones de dinámica molecular se genera una sola trayectoria larga $\{\mathbf{r}_j(t)\}_{t=0}^{T}$. Bajo la hipótesis ergódica, el **promedio temporal** a lo largo de la trayectoria converge al promedio de ensamble:
+\begin{equation}
+\langle A \rangle_{\text{ensamble}} = \lim_{T \to \infty} \frac{1}{M} \sum_{k=0}^{M-1} A(t_k), \quad t_k = k\Delta t.
+\end{equation}
+Por lo tanto, en la práctica se calcula:
+\begin{equation}
+\langle S(\mathbf{q}) \rangle_{\text{MD}} = \frac{1}{M} \sum_{k=0}^{M-1} S(\mathbf{q}; \{\mathbf{r}_j(t_k)\}).
+\end{equation}
+
+\textbf{¿Son necesarios múltiples experimentos independientes?} No es imprescindible. Si se dispone de $N_{\text{sim}}$ simulaciones independientes con las mismas condiciones termodinámicas pero diferente semilla inicial, se puede realizar un promedio híbrido (temporal + entre réplicas) para mejorar la estadística y verificar la convergencia. No obstante, en la mayoría de los análisis de rutina se asume ergodicidad y se usa exclusivamente el promedio temporal sobre una única trayectoria suficientemente larga.
+
+\textbf{Consecuencia práctica:} En la guía previa, el promedio "sobre todas las configuraciones disponibles" se refiere al conjunto de \textit{frames} guardados de la misma simulación. No es necesario descomponer el archivo de trayectoria en bloques independientes a menos que se desee estimar incertidumbres mediante \textit{block averaging}.
+
+\newpage
+
+\subsection{Interpretación física y selección del vector de onda $\mathbf{q}$}
+
+\paragraph*{¿Por qué solo enteros $n_x, n_y, n_z$?}
+
+En una simulación con condiciones periódicas de contorno, el sistema se replica infinitamente en el espacio. Las posiciones de las partículas cumplen $\mathbf{r}_j + \mathbf{L} \equiv \mathbf{r}_j$, donde $\mathbf{L} = (L_x, L_y, L_z)$ es el vector de la caja. Al calcular el factor de estructura como transformada de Fourier de la densidad, la función de correlación es periódica y su desarrollo en ondas planas debe respetar esa periodicidad. Esto impone que la onda plana $e^{-i\mathbf{q}\cdot\mathbf{r}}$ sea invariante bajo traslaciones $\mathbf{r} \to \mathbf{r} + \mathbf{L}$:
+\begin{equation}
+e^{-i\mathbf{q}\cdot(\mathbf{r}+\mathbf{L})} = e^{-i\mathbf{q}\cdot\mathbf{r}} \quad \Rightarrow \quad e^{-i\mathbf{q}\cdot\mathbf{L}} = 1.
+\end{equation}
+Esta condición se satisface únicamente si $\mathbf{q}\cdot\mathbf{L}$ es un múltiplo entero de $2\pi$. Para una caja ortorrómbica, esto equivale a:
+\begin{equation}
+\mathbf{q} = 2\pi\left( \frac{n_x}{L_x}, \frac{n_y}{L_y}, \frac{n_z}{L_z} \right), \qquad n_x, n_y, n_z \in \mathbb{Z}.
+\end{equation}
+Los enteros $n_i$ son los \textbf{índices de Miller} del vector de onda en la red recíproca de la caja de simulación.
+
+\paragraph*{¿Qué ocurre si $n_x = 0.5$?}
+
+Si se usaran números no enteros, la función $e^{-i\mathbf{q}\cdot\mathbf{r}}$ tomaría valores distintos en puntos equivalentes por periodicidad, rompiendo la consistencia física. Matemáticamente, la transformada de Fourier de una función periódica solo tiene componentes no nulas en los vectores de la red recíproca. Un $\mathbf{q}$ no compatible produciría un factor de estructura que no refleja la simetría traslacional del sistema y carece de significado termodinámico. En términos prácticos, usar $n_x = 0.5$ equivale a calcular la dispersión de una sola caja aislada en el vacío (ignorando las réplicas periódicas), lo cual es incorrecto para un bulk modelado con PBC.
+
+\paragraph*{Significado físico del vector de onda $\mathbf{q}$}
+
+El vector $\mathbf{q}$ representa el \textbf{momento transferido} en un experimento de dispersión. Su magnitud $q = |\mathbf{q}|$ se relaciona con el ángulo de dispersión $2\theta$ y la longitud de onda de la radiación $\lambda$ mediante $q = (4\pi/\lambda)\sin\theta$. En el contexto de la simulación, $S(\mathbf{q})$ cuantifica las correlaciones de densidad a una escala espacial $\sim 2\pi/q$. Valores pequeños de $q$ (bajos índices $n$) exploran fluctuaciones de largo alcance (orden de la caja completa), mientras que $q$ grandes revelan la estructura local (distancias interatómicas).
+
+\paragraph*{¿Cómo elegir el rango máximo $N$?}
+
+El parámetro $N$ (no confundir con el número de partículas) define el conjunto de índices a considerar: $n_x, n_y, n_z \in \{-N, -N+1, \dots, N\}$. El valor máximo de $q$ explorado es $q_{\text{max}} = \frac{2\pi}{L} \sqrt{3N^2}$ para caja cúbica. Los criterios para elegir $N$ son:
+
+\begin{enumerate}
+    \item \textbf{Resolución espacial deseada:} $q_{\text{max}}$ debe ser al menos comparable a $2\pi / r_{\text{min}}$, donde $r_{\text{min}}$ es la distancia más pequeña que se quiere resolver (ej. $\sim 1$~Å para picos atómicos). En sistemas líquidos, $q_{\text{max}} \approx 10\text{--}20$~Å$^{-1}$ suele ser suficiente.
+    
+    \item \textbf{Costo computacional:} El número total de vectores $\mathbf{q}$ crece como $(2N+1)^3$. Por ejemplo, $N=5$ da $1331$ vectores, manejable. $N=20$ produce $\sim 68\,000$, que puede ser costoso sin optimización FFT.
+    
+    \item \textbf{Límite de Nyquist de la caja:} La información estructural más allá de $q = \pi / \Delta x$ no está definida para partículas puntuales. Como la distancia mínima entre partículas está acotada por el tamaño atómico, $q_{\text{max}}$ efectivo es finito.
+    
+    \item \textbf{Observación práctica:} Para un líquido simple con $L \approx 50$~Å, $N=5$ da $q_{\text{max}} \approx 2.2$~Å$^{-1}$, insuficiente para el segundo pico de $S(q)$. Se recomienda $N \approx 10\text{--}15$ para capturar varios picos. Una regla empírica es elegir $N$ tal que $q_{\text{max}} \cdot r_{\text{cut}} \gtrsim 30$, donde $r_{\text{cut}}$ es el radio de corte del potencial.
+\end{enumerate}
+
+En resumen, $N$ determina el dominio en el espacio recíproco muestreado y debe ser lo suficientemente grande para resolver las oscilaciones de $S(q)$ hasta que éstas decaigan a 1, pero sin desperdiciar cómputo en $q$ donde $S(q)\approx 1$ sin estructura.
+
+\end{document}
