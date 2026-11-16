@@ -1,0 +1,192 @@
+\documentclass[justified, notoc]{tufte-handout}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{minted}                     % Para resaltado de código
+\usepackage{xcolor}
+\usemintedstyle{colorful}
+\setminted[julia]{fontsize=\footnotesize, breaklines, frame=single, framesep=2mm}
+
+\title{Optimización del cálculo del factor de estructura mediante FFT}
+\author{Usuario de Dinámica Molecular}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+El cálculo directo del factor de estructura $S(\mathbf{q})$ mediante doble suma sobre partículas se vuelve prohibitivo para sistemas grandes. La transformada rápida de Fourier (FFT) ofrece una alternativa escalable que reduce la complejidad de $\mathcal{O}(N^2)$ a $\mathcal{O}(N_g \log N_g)$. Este documento describe el fundamento matemático y proporciona una implementación práctica en Julia.
+\end{abstract}
+
+\section{Fundamento matemático}\label{sec:teoria}
+
+El factor de estructura estático se define como
+\begin{equation}
+S(\mathbf{q}) = \frac{1}{N} \left\langle \left| \sum_{j=1}^{N} e^{-i\mathbf{q}\cdot\mathbf{r}_j} \right|^2 \right\rangle,
+\end{equation}
+donde $\mathbf{r}_j$ son las posiciones de las $N$ partículas y $\langle \cdot \rangle$ denota promedio sobre configuraciones. 
+\marginnote{El vector $\mathbf{q}$ pertenece a la red recíproca de la caja de simulación: $\mathbf{q}=2\pi(n_x/L_x, n_y/L_y, n_z/L_z)$.}
+
+La expresión anterior puede reescribirse en términos de la densidad numérica local $\rho(\mathbf{r}) = \sum_{j=1}^N \delta(\mathbf{r} - \mathbf{r}_j)$.
+\marginnote{La delta de Dirac $\delta$ representa partículas puntuales.} 
+Su transformada de Fourier es
+\begin{equation}
+\hat{\rho}(\mathbf{q}) = \int_V \rho(\mathbf{r}) e^{-i\mathbf{q}\cdot\mathbf{r}} d\mathbf{r} = \sum_{j=1}^N e^{-i\mathbf{q}\cdot\mathbf{r}_j}.
+\end{equation}
+Por lo tanto,
+\begin{equation}
+S(\mathbf{q}) = \frac{1}{N} \left\langle |\hat{\rho}(\mathbf{q})|^2 \right\rangle.
+\end{equation}
+
+Para evaluar $\hat{\rho}(\mathbf{q})$ de manera eficiente, se discretiza el espacio en una rejilla tridimensional de $M_x \times M_y \times M_z$ celdas. La densidad en cada punto de rejilla $\mathbf{r}_\mathbf{n}$ se obtiene mediante un esquema de asignación (interpolación) de las partículas. La FFT tridimensional de esta rejilla proporciona $\hat{\rho}$ en todos los vectores $\mathbf{q}$ compatibles simultáneamente.
+
+\section{Ventajas y limitaciones}\label{sec:ventajas}
+
+El método FFT presenta los siguientes puntos a considerar:
+
+\begin{itemize}
+    \item \textbf{Velocidad}: La FFT escala como $\mathcal{O}(M\log M)$, con $M = M_x M_y M_z$, independiente de $N$. Para sistemas con $N \gtrsim 10^4$ es notablemente más rápido que el cálculo directo.
+    \item \textbf{Malla completa de $\mathbf{q}$}: Se obtienen todos los vectores de la red recíproca hasta la frecuencia de Nyquist de la rejilla, lo que facilita el promediado isotrópico.
+    \item \textbf{Error de interpolación}: La discretización introduce un error que depende del esquema de asignación y de la resolución de la rejilla. Esquemas de orden superior (CIC, TSC) mitigan este efecto.
+    \marginnote{El error también puede corregirse dividiendo por el factor de forma de la función de asignación.}
+\end{itemize}
+
+\section{Implementación en Julia}\label{sec:implementacion}
+
+A continuación se presenta una implementación completa utilizando el paquete \texttt{FFTW.jl}. El código incluye un esquema de asignación \textit{Cloud-in-Cell} (CIC) de primer orden, que ofrece un buen compromiso entre precisión y simplicidad.
+
+\subsection*{Código fuente}
+
+\begin{minted}{julia}
+using FFTW, Statistics, LinearAlgebra
+
+"""
+    structure_factor_fft(positions, box_size, grid_dims)
+
+Calcula S(q) para una configuración usando FFT con asignación CIC.
+- `positions`: matriz de tamaño (3, N) con coordenadas (x,y,z) en [0, L).
+- `box_size`: tupla (Lx, Ly, Lz).
+- `grid_dims`: tupla (Nx, Ny, Nz) puntos de rejilla.
+
+Retorna:
+- `q_vals`: vector de magnitudes q (ordenado).
+- `Sq`: vector de S(q) promediado isotrópicamente.
+"""
+function structure_factor_fft(positions, box_size, grid_dims)
+    Lx, Ly, Lz = box_size
+    Nx, Ny, Nz = grid_dims
+    N_part = size(positions, 2)
+    
+    # 1. Inicializar rejilla de densidad (Float64)
+    ρ = zeros(Float64, Nx, Ny, Nz)
+    
+    # Factores de conversión: índice = floor(pos / L * N) + 1
+    dx, dy, dz = Lx / Nx, Ly / Ny, Lz / Nz
+    inv_dx, inv_dy, inv_dz = 1.0 / dx, 1.0 / dy, 1.0 / dz
+    
+    # 2. Asignación Cloud-in-Cell (CIC) a la rejilla
+    for j in 1:N_part
+        x, y, z = positions[1, j], positions[2, j], positions[3, j]
+        
+        # Coordenadas continuas en unidades de celda (0-indexadas)
+        fx = x * inv_dx
+        fy = y * inv_dy
+        fz = z * inv_dz
+        
+        # Índices de la celda base
+        i0 = floor(Int, fx)
+        j0 = floor(Int, fy)
+        k0 = floor(Int, fz)
+        
+        # Distancias a la esquina inferior
+        wx = fx - i0
+        wy = fy - j0
+        wz = fz - k0
+        
+        # Pesos para las 8 esquinas
+        w000 = (1-wx)*(1-wy)*(1-wz)
+        w100 = wx    *(1-wy)*(1-wz)
+        w010 = (1-wx)*wy    *(1-wz)
+        w001 = (1-wx)*(1-wy)*wz
+        w110 = wx    *wy    *(1-wz)
+        w101 = wx    *(1-wy)*wz
+        w011 = (1-wx)*wy    *wz
+        w111 = wx    *wy    *wz
+        
+        # Convertir a índices 1-based con condiciones periódicas
+        i0 = mod1(i0, Nx); i1 = mod1(i0+1, Nx)
+        j0 = mod1(j0, Ny); j1 = mod1(j0+1, Ny)
+        k0 = mod1(k0, Nz); k1 = mod1(k0+1, Nz)
+        
+        # Acumular densidad
+        ρ[i0, j0, k0] += w000
+        ρ[i1, j0, k0] += w100
+        ρ[i0, j1, k0] += w010
+        ρ[i0, j0, k1] += w001
+        ρ[i1, j1, k0] += w110
+        ρ[i1, j0, k1] += w101
+        ρ[i0, j1, k1] += w011
+        ρ[i1, j1, k1] += w111
+    end
+    
+    # 3. Transformada rápida de Fourier
+    ρ_hat = fft(ρ)
+    
+    # 4. Calcular |ρ_hat|^2 normalizado
+    S_all = abs2.(ρ_hat) ./ N_part
+    
+    # 5. Construir vectores q y agrupar isotrópicamente
+    #    Primero obtenemos las coordenadas de cada punto en el espacio recíproco
+    qx = fftfreq(Nx, 2π/dx) |> fftshift
+    qy = fftfreq(Ny, 2π/dy) |> fftshift
+    qz = fftfreq(Nz, 2π/dz) |> fftshift
+    
+    S_shifted = fftshift(S_all)   # Centrar el origen de frecuencias
+    
+    q_vals = Float64[]
+    S_q_vals = Float64[]
+    
+    # Diccionario para acumular por magnitud de q
+    groups = Dict{Float64, Vector{Float64}}()
+    
+    for k in 1:Nz, j in 1:Ny, i in 1:Nx
+        q = sqrt(qx[i]^2 + qy[j]^2 + qz[k]^2)
+        if q == 0.0
+            continue  # excluir el pico central
+        end
+        # Redondear a 6 decimales para agrupar magnitudes similares
+        key = round(q, digits=6)
+        push!(get!(groups, key, Float64[]), S_shifted[i,j,k])
+    end
+    
+    for (key, vals) in groups
+        q = parse(Float64, key)  # key es string por redondeo, mejor usar Float64 directamente
+        # Alternativa: convertir a Float64
+        q_val = key
+        push!(q_vals, q_val)
+        push!(S_q_vals, mean(vals))
+    end
+    
+    # Ordenar por q
+    idx = sortperm(q_vals)
+    return q_vals[idx], S_q_vals[idx]
+end
+\end{minted}
+
+\subsection*{Notas sobre el código}
+\marginnote[-2\baselineskip]{La función \texttt{fftfreq} de FFTW genera las frecuencias sin desplazar. \texttt{fftshift} centra el origen en el centro del arreglo para facilitar la interpretación.}
+\begin{itemize}
+    \item El esquema CIC distribuye la contribución de cada partícula entre los 8 vértices de la celda que la contiene, proporcionalmente a la distancia.
+    \item La normalización por $N$ produce $S(q)$ que tiende a $1$ para $q \to \infty$ (asumiendo ruido de disparo corregido).
+    \item El promediado isotrópico agrupa todos los puntos de la rejilla recíproca con igual magnitud $q$. El número de puntos por esfera crece con $q$, lo que mejora la estadística a $q$ altos.
+\end{itemize}
+
+\section{Corrección por factor de forma de la asignación}\label{sec:correccion}
+
+La interpolación de partículas puntuales a una rejilla actúa como una convolución con la función de asignación $W(\mathbf{r})$. En el espacio recíproco, esto multiplica el verdadero $\hat{\rho}(\mathbf{q})$ por la transformada de Fourier de $W$, es decir, $\hat{W}(\mathbf{q})$. Para recuperar $S(\mathbf{q})$ sin sesgo, se debe dividir $|\hat{\rho}_{\text{grid}}(\mathbf{q})|^2$ por $|\hat{W}(\mathbf{q})|^2$.
+\marginnote{Para la asignación CIC en una rejilla ortorrómbica, el factor de corrección es $\hat{W}(\mathbf{q}) = \operatorname{sinc}\left(\frac{q_x \Delta x}{2}\right) \operatorname{sinc}\left(\frac{q_y \Delta y}{2}\right) \operatorname{sinc}\left(\frac{q_z \Delta z}{2}\right)$.}
+En el código anterior no se incluye esta corrección por brevedad; en implementaciones precisas se debe aplicar antes del promediado isotrópico.
+
+\end{document}

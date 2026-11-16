@@ -1,0 +1,115 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{FFTW}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Statistics}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{LinearAlgebra}
+
+\PYG{l+s}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s}{    structure\PYGZus{}factor\PYGZus{}fft(positions, box\PYGZus{}size, grid\PYGZus{}dims)}
+
+\PYG{l+s}{Calcula S(q) para una configuración usando FFT con asignación CIC.}
+\PYG{l+s}{\PYGZhy{} `positions`: matriz de tamaño (3, N) con coordenadas (x,y,z) en [0, L).}
+\PYG{l+s}{\PYGZhy{} `box\PYGZus{}size`: tupla (Lx, Ly, Lz).}
+\PYG{l+s}{\PYGZhy{} `grid\PYGZus{}dims`: tupla (Nx, Ny, Nz) puntos de rejilla.}
+
+\PYG{l+s}{Retorna:}
+\PYG{l+s}{\PYGZhy{} `q\PYGZus{}vals`: vector de magnitudes q (ordenado).}
+\PYG{l+s}{\PYGZhy{} `Sq`: vector de S(q) promediado isotrópicamente.}
+\PYG{l+s}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{structure\PYGZus{}factor\PYGZus{}fft}\PYG{p}{(}\PYG{n}{positions}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{box\PYGZus{}size}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{grid\PYGZus{}dims}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{Lx}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Ly}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Lz}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{box\PYGZus{}size}
+\PYG{+w}{    }\PYG{n}{Nx}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Ny}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Nz}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{grid\PYGZus{}dims}
+\PYG{+w}{    }\PYG{n}{N\PYGZus{}part}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{size}\PYG{p}{(}\PYG{n}{positions}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} 1. Inicializar rejilla de densidad (Float64)}
+\PYG{+w}{    }\PYG{n}{ρ}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{zeros}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Nx}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Ny}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Nz}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} Factores de conversión: índice = floor(pos / L * N) + 1}
+\PYG{+w}{    }\PYG{n}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{dy}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{dz}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Lx}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{Nx}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Ly}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{Ny}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Lz}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{Nz}
+\PYG{+w}{    }\PYG{n}{inv\PYGZus{}dx}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{inv\PYGZus{}dy}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{inv\PYGZus{}dz}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{dx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{dy}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{dz}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} 2. Asignación Cloud\PYGZhy{}in\PYGZhy{}Cell (CIC) a la rejilla}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{o}{:}\PYG{n}{N\PYGZus{}part}
+\PYG{+w}{        }\PYG{n}{x}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{z}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{positions}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{],}\PYG{+w}{ }\PYG{n}{positions}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{],}\PYG{+w}{ }\PYG{n}{positions}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{]}
+
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} Coordenadas continuas en unidades de celda (0\PYGZhy{}indexadas)}
+\PYG{+w}{        }\PYG{n}{fx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{inv\PYGZus{}dx}
+\PYG{+w}{        }\PYG{n}{fy}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{inv\PYGZus{}dy}
+\PYG{+w}{        }\PYG{n}{fz}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{z}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{inv\PYGZus{}dz}
+
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} Índices de la celda base}
+\PYG{+w}{        }\PYG{n}{i0}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{floor}\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fx}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{j0}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{floor}\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fy}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{k0}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{floor}\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fz}\PYG{p}{)}
+
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} Distancias a la esquina inferior}
+\PYG{+w}{        }\PYG{n}{wx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fx}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{i0}
+\PYG{+w}{        }\PYG{n}{wy}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fy}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{j0}
+\PYG{+w}{        }\PYG{n}{wz}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fz}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{k0}
+
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} Pesos para las 8 esquinas}
+\PYG{+w}{        }\PYG{n}{w000}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wx}\PYG{p}{)}\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wy}\PYG{p}{)}\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wz}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{w100}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{wx}\PYG{+w}{    }\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wy}\PYG{p}{)}\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wz}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{w010}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wx}\PYG{p}{)}\PYG{o}{*}\PYG{n}{wy}\PYG{+w}{    }\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wz}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{w001}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wx}\PYG{p}{)}\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wy}\PYG{p}{)}\PYG{o}{*}\PYG{n}{wz}
+\PYG{+w}{        }\PYG{n}{w110}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{wx}\PYG{+w}{    }\PYG{o}{*}\PYG{n}{wy}\PYG{+w}{    }\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wz}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{w101}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{wx}\PYG{+w}{    }\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wy}\PYG{p}{)}\PYG{o}{*}\PYG{n}{wz}
+\PYG{+w}{        }\PYG{n}{w011}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{wx}\PYG{p}{)}\PYG{o}{*}\PYG{n}{wy}\PYG{+w}{    }\PYG{o}{*}\PYG{n}{wz}
+\PYG{+w}{        }\PYG{n}{w111}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{wx}\PYG{+w}{    }\PYG{o}{*}\PYG{n}{wy}\PYG{+w}{    }\PYG{o}{*}\PYG{n}{wz}
+
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} Convertir a índices 1\PYGZhy{}based con condiciones periódicas}
+\PYG{+w}{        }\PYG{n}{i0}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mod1}\PYG{p}{(}\PYG{n}{i0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Nx}\PYG{p}{);}\PYG{+w}{ }\PYG{n}{i1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mod1}\PYG{p}{(}\PYG{n}{i0}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Nx}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{j0}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mod1}\PYG{p}{(}\PYG{n}{j0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Ny}\PYG{p}{);}\PYG{+w}{ }\PYG{n}{j1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mod1}\PYG{p}{(}\PYG{n}{j0}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Ny}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{k0}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mod1}\PYG{p}{(}\PYG{n}{k0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Nz}\PYG{p}{);}\PYG{+w}{ }\PYG{n}{k1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mod1}\PYG{p}{(}\PYG{n}{k0}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Nz}\PYG{p}{)}
+
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} Acumular densidad}
+\PYG{+w}{        }\PYG{n}{ρ}\PYG{p}{[}\PYG{n}{i0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{w000}
+\PYG{+w}{        }\PYG{n}{ρ}\PYG{p}{[}\PYG{n}{i1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{w100}
+\PYG{+w}{        }\PYG{n}{ρ}\PYG{p}{[}\PYG{n}{i0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{w010}
+\PYG{+w}{        }\PYG{n}{ρ}\PYG{p}{[}\PYG{n}{i0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k1}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{w001}
+\PYG{+w}{        }\PYG{n}{ρ}\PYG{p}{[}\PYG{n}{i1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{w110}
+\PYG{+w}{        }\PYG{n}{ρ}\PYG{p}{[}\PYG{n}{i1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k1}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{w101}
+\PYG{+w}{        }\PYG{n}{ρ}\PYG{p}{[}\PYG{n}{i0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k1}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{w011}
+\PYG{+w}{        }\PYG{n}{ρ}\PYG{p}{[}\PYG{n}{i1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k1}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{w111}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} 3. Transformada rápida de Fourier}
+\PYG{+w}{    }\PYG{n}{ρ\PYGZus{}hat}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fft}\PYG{p}{(}\PYG{n}{ρ}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} 4. Calcular |ρ\PYGZus{}hat|\PYGZca{}2 normalizado}
+\PYG{+w}{    }\PYG{n}{S\PYGZus{}all}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{abs2}\PYG{o}{.}\PYG{p}{(}\PYG{n}{ρ\PYGZus{}hat}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{./}\PYG{+w}{ }\PYG{n}{N\PYGZus{}part}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} 5. Construir vectores q y agrupar isotrópicamente}
+\PYG{+w}{    }\PYG{c}{\PYGZsh{}    Primero obtenemos las coordenadas de cada punto en el espacio recíproco}
+\PYG{+w}{    }\PYG{n}{qx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fftfreq}\PYG{p}{(}\PYG{n}{Nx}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{n+nb}{π}\PYG{o}{/}\PYG{n}{dx}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{|\PYGZgt{}}\PYG{+w}{ }\PYG{n}{fftshift}
+\PYG{+w}{    }\PYG{n}{qy}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fftfreq}\PYG{p}{(}\PYG{n}{Ny}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{n+nb}{π}\PYG{o}{/}\PYG{n}{dy}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{|\PYGZgt{}}\PYG{+w}{ }\PYG{n}{fftshift}
+\PYG{+w}{    }\PYG{n}{qz}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fftfreq}\PYG{p}{(}\PYG{n}{Nz}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{n+nb}{π}\PYG{o}{/}\PYG{n}{dz}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{|\PYGZgt{}}\PYG{+w}{ }\PYG{n}{fftshift}
+
+\PYG{+w}{    }\PYG{n}{S\PYGZus{}shifted}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{fftshift}\PYG{p}{(}\PYG{n}{S\PYGZus{}all}\PYG{p}{)}\PYG{+w}{   }\PYG{c}{\PYGZsh{} Centrar el origen de frecuencias}
+
+\PYG{+w}{    }\PYG{n}{q\PYGZus{}vals}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+\PYG{+w}{    }\PYG{n}{S\PYGZus{}q\PYGZus{}vals}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} Diccionario para acumular por magnitud de q}
+\PYG{+w}{    }\PYG{n}{groups}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Dict}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Vector}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{}\PYGZcb{}()}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{k}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{o}{:}\PYG{n}{Nz}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{o}{:}\PYG{n}{Ny}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{o}{:}\PYG{n}{Nx}
+\PYG{+w}{        }\PYG{n}{q}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{qx}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{qy}\PYG{p}{[}\PYG{n}{j}\PYG{p}{]}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{qz}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{2}\PYG{p}{)}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{q}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+\PYG{+w}{            }\PYG{k}{continue}\PYG{+w}{  }\PYG{c}{\PYGZsh{} excluir el pico central}
+\PYG{+w}{        }\PYG{k}{end}
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} Redondear a 6 decimales para agrupar magnitudes similares}
+\PYG{+w}{        }\PYG{n}{key}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{round}\PYG{p}{(}\PYG{n}{q}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{digits}\PYG{o}{=}\PYG{l+m+mi}{6}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{get!}\PYG{p}{(}\PYG{n}{groups}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{key}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]),}\PYG{+w}{ }\PYG{n}{S\PYGZus{}shifted}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,}\PYG{n}{j}\PYG{p}{,}\PYG{n}{k}\PYG{p}{])}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{key}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{vals}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{groups}
+\PYG{+w}{        }\PYG{n}{q}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{key}\PYG{p}{)}\PYG{+w}{  }\PYG{c}{\PYGZsh{} key es string por redondeo, mejor usar Float64 directamente}
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} Alternativa: convertir a Float64}
+\PYG{+w}{        }\PYG{n}{q\PYGZus{}val}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{key}
+\PYG{+w}{        }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{q\PYGZus{}vals}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{q\PYGZus{}val}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{S\PYGZus{}q\PYGZus{}vals}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{mean}\PYG{p}{(}\PYG{n}{vals}\PYG{p}{))}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} Ordenar por q}
+\PYG{+w}{    }\PYG{n}{idx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sortperm}\PYG{p}{(}\PYG{n}{q\PYGZus{}vals}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{q\PYGZus{}vals}\PYG{p}{[}\PYG{n}{idx}\PYG{p}{],}\PYG{+w}{ }\PYG{n}{S\PYGZus{}q\PYGZus{}vals}\PYG{p}{[}\PYG{n}{idx}\PYG{p}{]}
+\PYG{k}{end}
+\end{MintedVerbatim}
